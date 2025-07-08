@@ -1,0 +1,32 @@
+# === Logs ===
+client/logs/
+client/*.log
+client/npm-debug.log*
+client/yarn-debug.log*
+client/yarn-error.log*
+client/pnpm-debug.log*
+client/lerna-debug.log*
+
+# === Dependencies ===
+client/node_modules/
+
+# === Build and Output ===
+client/dist/
+client/dist-ssr/
+
+# === Local Environment Files ===
+client/*.local
+client/.env
+client/.env.local
+client/.env.*.local
+
+# === Editor Directories and Files ===
+client/.vscode/
+!client/.vscode/extensions.json
+client/.idea/
+client/.DS_Store
+client/*.suo
+client/*.ntvs*
+client/*.njsproj
+client/*.sln
+client/*.sw?

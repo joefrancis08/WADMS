@@ -1,19 +1,15 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Home from './components/Home'
-import Create from './components/Create'
-import Edit from './components/Edit'
-import Read from './components/Read'
+import Register from './pages/Register';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/' element = {<Create />} />
-        <Route path='/home' element = {<Home />} />
-        <Route path='/edit/:id' element = {<Edit />} />
-        <Route path='/read/:id' element = {<Read />} />
+        <Route path='/' element = {<Register />} />
       </Routes>
+      <ToastContainer />
     </BrowserRouter>
   )
 }
