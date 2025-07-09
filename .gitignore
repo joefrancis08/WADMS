@@ -9,6 +9,7 @@ client/lerna-debug.log*
 
 # === Dependencies ===
 client/node_modules/
+server/node_modules/
 
 # === Build and Output ===
 client/dist/
@@ -19,6 +20,11 @@ client/*.local
 client/.env
 client/.env.local
 client/.env.*.local
+server/*.local
+server/.env
+server/.env.local
+server/.env.*.local
+
 
 # === Editor Directories and Files ===
 client/.vscode/

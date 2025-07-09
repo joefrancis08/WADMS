@@ -1,8 +1,10 @@
 import bcrypt from 'bcrypt';
-import { insertUser, getAllUsers, getUserById, updateUserInfo, deleteAllUsers, deleteUserById } from '../models/userModel.js';
+import { insertUser, getAllUsers, getUserById, updateUserInfo, deleteAllUsers, deleteUserById, getUserByEmail } from '../models/userModel.js';
+import sessionMiddleware from '../middlewares/session.js';
+import { handleBlankUserInput } from '../utils/handleBlankField.js';
 
 // Create new user
-export const createUser = async (req, res) => {
+export const registerUser = async (req, res) => {
   const {
     fullName,
     email,
@@ -10,6 +12,8 @@ export const createUser = async (req, res) => {
     role = "Unverified User",
     status = "Pending",
   } = req.body;
+
+  if (handleBlankUserInput(res, fullName, email, password)) return;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10); // Hash password using bcrypt
@@ -26,7 +30,7 @@ export const createUser = async (req, res) => {
       return res.status(409).json({ 
         message: 'Email already exists.', 
         success: false,
-        emailAlreadyExist: true
+        alreadyExist: true
       });
     }
 
@@ -38,6 +42,53 @@ export const createUser = async (req, res) => {
     });
   }
 };
+
+// Login
+export const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await getUserByEmail(email);
+
+    if (!user) {
+      return res.status(401).json({
+        message: 'User not found.',
+        success: false,
+        isValid: false,
+      });
+    }
+
+    const matchPassword = await bcrypt.compare(password, user.password);
+
+    if (!matchPassword) {
+      return res.status(401).json({
+        message: 'Invalid password.',
+        success: false,
+        isValid: false,
+      });
+    }
+
+    // Save user to session
+    req.session.user = {
+      email: user.email,
+      fullName: user.full_name,
+    };
+
+    return res.json({
+      data: req.session.user,
+      message: 'Logged in successfully.',
+      success: true,
+    });
+
+  } catch (error) {
+    console.error('Error logging in:', error);
+    return res.status(500).json({
+      message: 'Server error.',
+      success: false,
+    });
+  }
+};
+
 
 // Fetch all users
 export const fetchUsers = async (req, res) => {
@@ -85,10 +136,27 @@ export const fetchUserById = async (req, res) => {
   }
 };
 
-// Update user
+// Update user (For users, except Dean (admin))
 export const updateUser = async (req, res) => {
   const userId = req.params.id;
-  const { fullName, email, password, role, status} = req.body;
+  const user = await getUserById(userId);
+
+  if (!user) {
+    return res.status(404).json({
+      message: 'User not found.',
+      success: false
+    });
+  }
+
+  const { 
+    fullName, 
+    email, 
+    password, 
+    role = user.role, 
+    status= user.status
+  } = req.body;
+
+  if (handleBlankUserInput(res, fullName, email, password)) return;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10); // Hash password using bcrypt
