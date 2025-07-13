@@ -16,7 +16,7 @@ try {
 
   console.log('Connected to MySQL Database.');
 } catch (error) {
-  console.error('Failed to connect to MySQL database', error);
+  console.error('Failed to connect to MySQL database.');
   process.exit(1); // Optional: Exit the app if DB connection fails
 }
 

@@ -2,7 +2,7 @@
 export function handleBlankUserInput(res, fullName, email, password) {
   if (!fullName || !email || !password) {
     res.status(400).json({ 
-      message: "Blank field/s are required.", 
+      message: "Full name, email, and password are required.", 
       success: false,
       isFieldBlank: true
     });

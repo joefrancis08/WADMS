@@ -5,6 +5,7 @@ import { handleBlankUserInput } from '../utils/handleBlankField.js';
 
 // Create new user
 export const registerUser = async (req, res) => {
+  // Step 1: Get the data from the request body (typically from the frontend)
   const {
     fullName,
     email,
@@ -13,35 +14,85 @@ export const registerUser = async (req, res) => {
     status = "Pending",
   } = req.body;
 
+  // Step 2: Check if data from the request body is not blank
   if (handleBlankUserInput(res, fullName, email, password)) return;
-
+  
+  // Step 3: Use try/catch to catch any errors if database queries are unsuccessful. Best practice when fetching or posting data
   try {
+    // Step 4: Check if email already exists in the database and return a response
+    const user = await getUserByEmail(email);
+    if (user === email) {
+      return res.status(200).json({
+        message: 'Email already exists.',
+        alreadyExists: true, 
+        data: user.email
+      });
+    }
+
+    // Step 5: Proceed to inserting the user to the database if email does not exist and return the response
     const hashedPassword = await bcrypt.hash(password, 10); // Hash password using bcrypt
     await insertUser(fullName, email, hashedPassword, role, status);
+
+    // Save user to session temporarily after registration
+    req.session.user = {
+      email,
+      fullName,
+    };
 
     return res.status(201).json({ 
       message: "User created successfully.", 
       success: true 
     });
 
+
+
   } catch (err) {
-    // Handle duplicate entry error
+    // Step 6: Return an error if any (typically server error)
     if (err.code === 'ER_DUP_ENTRY') {
-      return res.status(409).json({ 
-        message: 'Email already exists.', 
+      return res.status(409).json({
+        message: 'Email already exists.',
         success: false,
-        alreadyExist: true
+        alreadyExists: true, 
       });
     }
-
-    // Fallback for other errors
     console.error(err);
     return res.status(500).json({ 
-      message: "Error creating user.", 
+      message: "Something went wrong in our server.", 
       success: false 
     });
   }
 };
+
+// Check email
+export const checkEmail = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await getUserByEmail(email);
+
+    if (user) {
+      return res.status(200).json({
+        message: 'Email already exists.',
+        success: false,
+        alreadyExists: true,
+        data: user
+      });
+    }
+
+    return res.status(200).json({
+      message: 'Email is available.',
+      success: true,
+      alreadyExists: false,
+    });
+
+  } catch (error) {
+    console.error('Error checking email:', error);
+    return res.status(500).json({
+      message: 'Server error.',
+      success: false,
+    });
+  }
+}
 
 // Login
 export const loginUser = async (req, res) => {
@@ -96,7 +147,7 @@ export const fetchUsers = async (req, res) => {
     const users = await getAllUsers();
     res.status(200).json({
       success: true,
-      data: users
+      data: users.length ? users : 'No users yet.'
     });
 
   } catch (error) {

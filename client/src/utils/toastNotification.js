@@ -1,8 +1,9 @@
 import { Bounce, toast } from 'react-toastify';
 
-const toastOptions = {
-    position: "top-right",
-    autoClose: 2000,
+export function showSuccessToast(message, position = "top-right", autoClose = 3000) {
+  const toastOptions = {
+    position,
+    autoClose,
     hideProgressBar: true,
     closeOnClick: true,
     pauseOnHover: true,
@@ -10,12 +11,23 @@ const toastOptions = {
     progress: undefined,
     theme: "colored",
     transition: Bounce,
-};
+  };
 
-export function showSuccessToast(message) {
   toast.success(message, toastOptions);
 }
 
-export function showErrorToast(message) {
+export function showErrorToast(message, position = "top-right", autoClose = 3000) {
+  const toastOptions = {
+    position,
+    autoClose,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "colored",
+    transition: Bounce,
+  };
+
   toast.error(message, toastOptions);
 }
