@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios'; // Importing axios for HTTP requests
 import { Link, useNavigate } from 'react-router-dom'; // Importing Link and useNavigate for navigation
+import { validateForm } from '../utils/validateForm.js'; // Importing validateForm for form validation
 import { showErrorToast, showSuccessToast } from '../utils/toastNotification.js'; // Importing utility functions for toast notifications
 import SubmitButton from '../components/Auth/SubmitButton.jsx'; // Importing custom SubmitButton component
 import AlertMessage from '../components/Auth/AlertMessage.jsx'; // Importing custom AlertMessage component
 import LoadSpinner from '../components/LoadSpinner.jsx'; // Importing custom LoadSpinner component
-import { emailRegex, passwordRegex } from '../utils/regEx.js'; // Importing regex
 import eyeShowIcon from '../assets/eye-show-icon.svg'; // Importing the eye show icon
 import eyeHideIcon from '../assets/eye-hide-icon.svg'; // Importing the eye hide
-
 
 // Base URL for API requests
 // This should be set in environment variables for security and flexibility
@@ -27,17 +26,10 @@ function Register() {
     password: ''
   });
 
-  // State for empty fields
-  const [isEmailEmpty, setIsEmailEmpty] = useState();
-  const [isFullNameEmpty, setIsFullNameEmpty] = useState();
-  const [isPasswordEmpty, setIsPasswordEmpty] = useState();
+  // State for form errors
+  const [errors, setErrors] = useState({});
   
-  // State for email validation
-  const [isValidEmail, setIsValidEmail] = useState(true);
-  const [alreadyTaken, setAlreadyTaken] = useState(false);
-
-  // State for password visibility and strength
-  const [isStrongPassword, setIsStrongPassword] = useState(true);
+  // State for the visibility of the password
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   // State for loading and error
@@ -46,87 +38,55 @@ function Register() {
   // Function to handle input changes
   // Updates the corresponding state based on input field changes
   const handleChange = (e) => {
+    e.stopPropagation(); // Prevents the event from bubbling up to parent elements
     const { name, value } = e.target;
-    setValues(prevValues => ({
-      ...prevValues,
-      [name]: value
-    }));
-
-    if (name === 'fullName') setIsFullNameEmpty(false);
-    if (name === 'email') {
-      setIsEmailEmpty(false);
-      setAlreadyTaken(false);
-      setIsValidEmail(true);
-    }
-
-    if (name === 'password') {
-      setIsPasswordEmpty(false);
-      setIsStrongPassword(true);
-    }
+    setValues(prevValues => ({ ...prevValues, [name]: value }));
+    setErrors(prevErrors => ({ ...prevErrors, [name]: '' }));
   }
 
+  // Function to handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Step 1: Validate form for common errors (i.e., empty fields, invalid email, weak passwords)
+    const formErrors = validateForm(values);
+    setErrors(formErrors);
+
+    // Step 2: Stop submitting form if there are any form errors
+    if (Object.keys(formErrors).length > 0) return; 
+
     try {
-      // Step 1: Check if any field is empty. If empty, stop form submission
-      if (!values.fullName || !values.email || !values.password) {
-        setIsEmailEmpty(!values.email);
-        setIsFullNameEmpty(!values.fullName);
-        setIsPasswordEmpty(!values.password);
-        return; // Stop form submission
-      }
-
-      /* 
-        Step 2: Check if email is good. If criteria not met, stop form submission.
-        A good email:
-          - Has one or more characters before the '@' symbol
-          - Has '@' symbol followed by one or more characters after it and before the '.' symbol
-          - Has a '.' symbol followed by at least two characters
-       */
-      if (!emailRegex.test(values.email)) {
-        setIsValidEmail(false);
-        return; // Stop form submission
-      }
-
-      // Step 3: Check if email already exists
+      // Step 3: Check if email already exists 
+      // Note: This is a server-side validation so I think it's good to keep the code here, still I update the errors if there's any.
       const res = await axios.post(`${API_BASE_URL}/users/check-email`, {email: values.email});
       const emailAlreadyExists = res?.data?.alreadyExists;
       if (emailAlreadyExists) {
-        setAlreadyTaken(true);
+        setErrors(prev => ({ ...prev, email: 'This email was already registered. Try another.'}))
         return;
       }
 
-      /* 
-        Step 4: Check if password is good. If criteria not met, stop form submission.
-        A good password:
-          - Has at least 8 characters
-          - Contains at least one uppercase letter, one lowercase letter, one number, and one special character
-       */
-      if (!passwordRegex.test(values.password)) {
-        setIsStrongPassword(false);
-        return; // Stop form submission
-      }
-
-      // Step 5: Register the user if meet the conditions above
-      setIsLoading(true); // Show loading spinner
+      // Step 4: Register the user if there are no errors
+      setIsLoading(true); // Show loading spinner while waiting to post the data
       const { data } = await axios.post(`${API_BASE_URL}/users/register`, values);
-      setIsLoading(false); // Hide loading spinner
+      setIsLoading(false); // Hide loading spinner after posting the data to the db
 
-      // Step 6: If registration unsuccessful. Let the user know thru toast notification.
+      // Step 5: If registration unsuccessful. Let the user know thru toast notification.
       if (!data.success) {
         showErrorToast(data?.message || 'Unsuccessful Registration. Try again.');
         return;
       }
 
-      // Step 7: Reset field values after successful form submission
+      // Step 6: Reset field values after successful form submission
       setValues({ ...values, fullName: '', email: '', password: '' });
       showSuccessToast('Registration successful.'); // Show success notification
 
       // Step 8: Redirect to pending verification page
       // navigate('/pending-verification');
+
     } catch (error) {
+      // Additional Step: Log the error and let the user know thru toast notification
       console.error(error);
-      showErrorToast('Something went wrong. Please try again.');
+      showErrorToast('Something went wrong. Please try again later.');
     }
   }
 
@@ -154,14 +114,14 @@ function Register() {
                 autoComplete='off'
                 name="fullName"
                 value={values.fullName}
-                className={`${isFullNameEmpty 
+                onChange={handleChange}
+                className={`${errors.fullName 
                   ? 'border-red-500 focus:outline-none' 
                   : 'border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-600'} input-field-style`
                 }
-                onChange={handleChange}
               />
             </div>
-            {isFullNameEmpty && <AlertMessage message="This field is required." />}
+            {errors.fullName && <AlertMessage message={errors.fullName} />}
           </div>
 
           <div className="relative w-full">
@@ -175,17 +135,13 @@ function Register() {
                 autoComplete='off'
                 name="email"
                 value={values.email}
-                className={`${alreadyTaken 
-                  || isEmailEmpty 
-                  || !isValidEmail 
+                onChange={handleChange}
+                className={`${errors.email 
                   ? 'border-red-500 focus:outline-none' 
                   : 'border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-600'} input-field-style`}
-                onChange={handleChange}
               />
             </div>
-            {alreadyTaken && <AlertMessage message="This email was already registered." />}
-            {isEmailEmpty && <AlertMessage message="This field is required." />}
-            {!isValidEmail && <AlertMessage message="Please enter a valid email (e.g., user@example.com)." />}
+            {errors.email && <AlertMessage message={errors.email} />}
           </div>
 
           <div className="relative w-full">
@@ -198,18 +154,16 @@ function Register() {
                 placeholder='Password'
                 name="password"
                 value={values.password}
-                className={`${isPasswordEmpty 
-                  || !isStrongPassword 
+                onChange={handleChange}
+                className={`${errors.password 
                   ? 'border-red-500 focus:outline-none' 
                   : 'border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-600'} input-field-style`}
-                onChange={handleChange}
               />
               <span onClick={() => setIsPasswordVisible(!isPasswordVisible)} className="absolute inset-y-7 right-0 flex items-center pr-4 hover:cursor-pointer hover:text-gray-500">
                 <img src={isPasswordVisible ? eyeHideIcon : eyeShowIcon} alt="show password icon" className="w-6 h-6" />
               </span>
             </div>
-            {isPasswordEmpty && <AlertMessage message="This field is required." />}
-            {!isStrongPassword && <AlertMessage message="Password must be at least 8 characters long with uppercase and lowercase letters, a number, and a symbol." />}
+            {errors.password && <AlertMessage message={errors.password} />}
           </div>
 
           <div>
