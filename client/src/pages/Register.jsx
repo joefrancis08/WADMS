@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios'; // Importing axios for HTTP requests
+import { useAuth } from '../contexts/AuthContext.jsx';
 import { Link, useNavigate } from 'react-router-dom'; // Importing Link and useNavigate for navigation
 import { validateForm } from '../utils/validateForm.js'; // Importing validateForm for form validation
 import { showErrorToast, showSuccessToast } from '../utils/toastNotification.js'; // Importing utility functions for toast notifications
@@ -11,13 +12,15 @@ import eyeHideIcon from '../assets/eye-hide-icon.svg'; // Importing the eye hide
 
 // Base URL for API requests
 // This should be set in environment variables for security and flexibility
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // Register component
 // Handles user registration, form validation, and error handling
 function Register() {
   // Hook to navigate programmatically
   const navigate = useNavigate();
+
+  const { register } = useAuth();
 
   // State of form values
   const [values, setValues] = useState({
@@ -39,7 +42,8 @@ function Register() {
   // Updates the corresponding state based on input field changes
   const handleChange = (e) => {
     e.stopPropagation(); // Prevents the event from bubbling up to parent elements
-    const { name, value } = e.target;
+    const { name, value } = e.target; 
+
     setValues(prevValues => ({ ...prevValues, [name]: value }));
     setErrors(prevErrors => ({ ...prevErrors, [name]: '' }));
   }
@@ -67,8 +71,11 @@ function Register() {
 
       // Step 4: Register the user if there are no errors
       setIsLoading(true); // Show loading spinner while waiting to post the data
-      const { data } = await axios.post(`${API_BASE_URL}/users/register`, values);
+      const { data } = await axios.post(`${API_BASE_URL}/users/register`, values, { withCredentials: true });
       setIsLoading(false); // Hide loading spinner after posting the data to the db
+
+      register(data.user.email, data.user.fullName, data.user.role, data.user.status); 
+      console.log(data.user.fullName);
 
       // Step 5: If registration unsuccessful. Let the user know thru toast notification.
       if (!data.success) {
@@ -81,7 +88,7 @@ function Register() {
       showSuccessToast('Registration successful.'); // Show success notification
 
       // Step 8: Redirect to pending verification page
-      // navigate('/pending-verification');
+      navigate('/pending-verification');
 
     } catch (error) {
       // Additional Step: Log the error and let the user know thru toast notification

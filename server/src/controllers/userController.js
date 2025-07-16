@@ -25,7 +25,6 @@ export const registerUser = async (req, res) => {
       return res.status(200).json({
         message: 'Email already exists.',
         alreadyExists: true, 
-        data: user.email
       });
     }
 
@@ -37,14 +36,15 @@ export const registerUser = async (req, res) => {
     req.session.user = {
       email,
       fullName,
+      role, 
+      status
     };
 
     return res.status(201).json({ 
       message: "User created successfully.", 
-      success: true 
+      success: true, 
+      user: req.session.user
     });
-
-
 
   } catch (err) {
     // Step 6: Return an error if any (typically server error)
@@ -123,6 +123,8 @@ export const loginUser = async (req, res) => {
     req.session.user = {
       email: user.email,
       fullName: user.full_name,
+      role: user.role,
+      status: user.status
     };
 
     return res.json({
@@ -140,6 +142,14 @@ export const loginUser = async (req, res) => {
   }
 };
 
+// Get session info
+export const userSession = (req, res) => {
+  if (req.session.user) {
+    return res.json({ user: req.session.user });
+  } else {
+    return res.status(401).json({ message: 'Not authenticated' });
+  }
+}
 
 // Fetch all users
 export const fetchUsers = async (req, res) => {
