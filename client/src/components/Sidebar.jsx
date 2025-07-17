@@ -31,12 +31,16 @@ const Sidebar = () => {
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-4 border-b-2 border-gray-700  h-20">
         {!isCollapsed && (
-          <div className="h-10 flex items-center space-x-2">
+          <div className="h-10 flex items-center space-x-2 transition-all duration-300">
             <img className="h-10 w-auto" src="CGS_Logo.png" alt="Logo" />
-            <div className="leading-tight">
-              <p className="text-lg font-bold">WDMS</p>
-              <p className="text-[10px] leading-none">Web-Based Document</p>
-              <p className="text-[10px] leading-none">Management System</p>
+            <div
+              className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                isCollapsed ? 'opacity-0 max-w-0' : 'opacity-100 max-w-[200px]'
+              }`}
+            >
+              <p className="text-lg font-bold whitespace-nowrap">WDMS</p>
+              <p className="text-[10px] leading-none whitespace-nowrap">Web-Based Document</p>
+              <p className="text-[10px] leading-none whitespace-nowrap">Management System</p>
             </div>
           </div>
         )}
@@ -58,8 +62,8 @@ const Sidebar = () => {
           >
             <img className='w-8 h-8' src={item.icon} alt="" />
             <span
-              className={`text-sm transition-all duration-300 ease-in-out ${
-                isCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100 w-auto'
+              className={`text-sm whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out ${
+                isCollapsed ? 'opacity-0 max-w-0' : 'opacity-100 max-w-[200px]'
               }`}
             >
               {item.label}
@@ -72,21 +76,26 @@ const Sidebar = () => {
       <div className="px-5 py-4 border-t border-gray-700">
         <div className="flex items-center justify-between">
           {/* Left: User Icon + Name/Role */}
-          <div className="flex items-center space-x-3 overflow-hidden">
+          <div
+            className={`flex items-center overflow-hidden transition-all duration-300 ${
+              isCollapsed ? 'gap-0' : 'gap-3'
+            }`}
+          >
             <span className="text-2xl">👤</span>
-            {!isCollapsed && (
-              <div className="leading-tight">
-                <p className="text-sm font-semibold">John Francis Casinillo Doe</p>
-                <p className="text-xs text-gray-400">Administrator</p>
-              </div>
-            )}
+            <div
+              className={`transition-all duration-200 ease-in-out overflow-hidden ${
+                isCollapsed ? 'opacity-0 max-w-0' : 'opacity-100 max-w-[300px]'
+              }`}
+            >
+              <p className="text-sm font-semibold">John Francis Casinillo Doe</p>
+              <p className="text-xs text-gray-400">Administrator</p>
+            </div>
           </div>
-
           {/* Right: Logout Icon */}
           {!isCollapsed && (
-            <button className="flex flex-col items-center justify-center transition-colors duration-200 border-l-2 border-gray-400 pl-5 cursor-pointer">
-              <img className='opacity-100 hover:opacity-75 w-8 h-8' src={Icons.logout} alt="Logout icon" />
-              <p className="text-xs text-gray-100 opacity-100 hover:opacity-75">Logout</p>
+            <button className="flex flex-col items-center justify-center transition-colors duration-200 border-l-2 border-gray-400 pl-4 cursor-pointer">
+              <img className='opacity-100 hover:opacity-75 w-7 h-7' src={Icons.logout} alt="Logout icon" />
+              <p className="text-xs text-gray-400 opacity-100 hover:opacity-75">Logout</p>
             </button>
           )}
         </div>
