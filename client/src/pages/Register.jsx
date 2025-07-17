@@ -6,9 +6,8 @@ import { validateForm } from '../utils/validateForm.js'; // Importing validateFo
 import { showErrorToast, showSuccessToast } from '../utils/toastNotification.js'; // Importing utility functions for toast notifications
 import SubmitButton from '../components/Auth/SubmitButton.jsx'; // Importing custom SubmitButton component
 import AlertMessage from '../components/Auth/AlertMessage.jsx'; // Importing custom AlertMessage component
-import LoadSpinner from '../components/LoadSpinner.jsx'; // Importing custom LoadSpinner component
-import eyeShowIcon from '../assets/eye-show-icon.svg'; // Importing the eye show icon
-import eyeHideIcon from '../assets/eye-hide-icon.svg'; // Importing the eye hide
+import LoadSpinner from '../components/Loaders/LoadSpinner.jsx'; // Importing custom LoadSpinner component
+import Icons from '../assets/icons.js';
 
 // Base URL for API requests
 // This was set in environment variables (.env) for security and flexibility
@@ -115,7 +114,7 @@ function Register() {
           <div className="relative w-full">
             <div className="relative">
               <span className="absolute inset-y-7 left-0 flex items-center pl-4">
-                <img src="user-icon.svg" alt="icon" className="w-5 h-5" />
+                <img src={Icons.user} alt="icon" className="w-5 h-5" />
               </span>
               <input
                 type="text"
@@ -136,7 +135,7 @@ function Register() {
           <div className="relative w-full">
             <div className="relative">
               <span className="absolute inset-y-7 left-0 flex items-center pl-4">
-                <img src="email-icon.svg" alt="icon" className="w-5 h-5" />
+                <img src={Icons.email} alt="icon" className="w-5 h-5" />
               </span>
               <input
                 type="text"
@@ -156,7 +155,7 @@ function Register() {
           <div className="relative w-full">
             <div className="relative">
               <span className="absolute inset-y-5 left-0 flex items-center pl-4">
-                <img src="key-icon.svg" alt="lock icon" className="w-5 h-5" />
+                <img src={Icons.key} alt="lock icon" className="w-5 h-5" />
               </span>
               <input
                 type={isPasswordVisible ? 'text' : 'password'}
@@ -169,7 +168,7 @@ function Register() {
                   : 'border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-600'} input-field-style`}
               />
               <span onClick={() => setIsPasswordVisible(!isPasswordVisible)} className="absolute inset-y-7 right-0 flex items-center pr-4 hover:cursor-pointer hover:text-gray-500">
-                <img src={isPasswordVisible ? eyeHideIcon : eyeShowIcon} alt="show password icon" className="w-6 h-6" />
+                <img src={isPasswordVisible ? Icons.hide : Icons.show} className="w-6 h-6" />
               </span>
             </div>
             {errors.password && <AlertMessage message={errors.password} />}

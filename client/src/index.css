@@ -5,30 +5,40 @@
 @tailwind utilities;
 
 @theme {
-/* 🎨 Color Variables */
-  --color-primary: oklch(52.7% 0.154 150.069); /* greenish */
-  --color-secondary: #f59e0b;
+   /* === Brand Colors === */
+  --color-primary: #007e33;    /* Green */
+  --color-secondary: #d6aa00;  /* Gold */
+  --color-accent: #c42b2b;     /* Red */
+  --color-tertiary: #c7801a;   /* Burnt Orange */
+
+  /* === Neutrals === */
+  --color-text: #1a1a1a;
   --color-background: #ffffff;
-  --color-foreground: #111827;
-  --color-border: #e5e7eb;
-  --color-muted: #6b7280;
+  --color-surface: #f9f9f9;
+  --color-border: #e0e0e0;
 
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --color-danger: #ef4444;
-  --color-info: #3b82f6;
+  /* === Semantic UI Colors === */
+  --color-success: #28a745;
+  --color-warning: #ffc107;
+  --color-error: #dc3545;
+  --color-info: #17a2b8;
 
-  /* 🖋️ Font Styling */
-  --font-sans: 'Inter', 'Segoe UI', 'Helvetica Neue', sans-serif;
-  --font-serif: 'Merriweather', serif;
-  --font-mono: 'Fira Code', monospace;
+  /* === Gradients === */
+  --gradient-primary: linear-gradient(to right, #007e33, #20cd8d);
+  --gradient-secondary: linear-gradient(to right, #d6aa00, #fcd34d);
+  --gradient-accent: linear-gradient(to right, #c42b2b, #f87171);
 
-  --text-base-size: 1rem;
-  --text-heading-size: 1.5rem;
+  /* === Typography === */
+  --font-heading: 'Archivo Black', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-size-base: 16px;
+  --line-height-base: 1.6;
+  --letter-spacing: 0.02em;
 
-  /* 🌈 Gradients */
-  --gradient-primary: linear-gradient(to right, #20cd8d, #3b82f6);
-  --gradient-danger: linear-gradient(to right, #ef4444, #f87171);
+  /* === Elevation === */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
 }
 
 .dark {
@@ -47,6 +57,25 @@
   --gradient-primary: linear-gradient(to right, #60a5fa, #3b82f6);
   --gradient-danger: linear-gradient(to right, #f87171, #ef4444);
 }
+
+@layer utilities {
+  .text-gradient-primary {
+    background-image: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-danger {
+    background-image: var(--gradient-danger);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
 
 .input-field-style {
   @apply pl-12 text-[14px] mt-1 w-full border rounded-md p-3;

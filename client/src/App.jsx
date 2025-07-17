@@ -7,6 +7,7 @@ import NotFound from './pages/NotFound';
 import ProtectedRoute from './routes/ProtectedRoute';
 import PendingSkeleton from './pages/Pending/PendingSkeletonLoader';
 import LandingRedirect from './pages/LandingRedirect';
+import AdminHome from './pages/Dean-and-Chairman/AdminHome';
 
 function App() {
   return (
@@ -23,6 +24,20 @@ function App() {
               loader={<PendingSkeleton />} 
             >
               <Pending />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route 
+          path="/admin"
+          element={
+            <ProtectedRoute 
+              allowedStatuses={['Verified', 'Pending']} 
+              allowedRoles={['Dean', 'Chairman', 'Unverified User']} 
+              fallbackRoute='*'
+              loader={<PendingSkeleton />} 
+            >
+              <AdminHome />
             </ProtectedRoute>
           }
         />

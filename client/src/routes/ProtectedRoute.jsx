@@ -19,7 +19,7 @@ const ProtectedRoute = ({
   // If isRoleAllowed are not empty, allow only the role that are in the list/array, if empty allow any role.
   const isRoleAllowed = allowedRoles.length === 0 || allowedRoles.includes(user.role);
 
-  if (!isStatusAllowed || !isRoleAllowed) {
+  if (!isStatusAllowed && !isRoleAllowed) {
     return <Navigate to={fallbackRoute} replace />
   }
 
