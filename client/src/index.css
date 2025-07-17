@@ -4,10 +4,53 @@
 @tailwind components;
 @tailwind utilities;
 
+@theme {
+/* 🎨 Color Variables */
+  --color-primary: oklch(52.7% 0.154 150.069); /* greenish */
+  --color-secondary: #f59e0b;
+  --color-background: #ffffff;
+  --color-foreground: #111827;
+  --color-border: #e5e7eb;
+  --color-muted: #6b7280;
+
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-info: #3b82f6;
+
+  /* 🖋️ Font Styling */
+  --font-sans: 'Inter', 'Segoe UI', 'Helvetica Neue', sans-serif;
+  --font-serif: 'Merriweather', serif;
+  --font-mono: 'Fira Code', monospace;
+
+  --text-base-size: 1rem;
+  --text-heading-size: 1.5rem;
+
+  /* 🌈 Gradients */
+  --gradient-primary: linear-gradient(to right, #20cd8d, #3b82f6);
+  --gradient-danger: linear-gradient(to right, #ef4444, #f87171);
+}
+
+.dark {
+  --color-primary: #60a5fa;
+  --color-secondary: #fcd34d;
+  --color-background: #172627;
+  --color-foreground: #f9fafb;
+  --color-border: #374151;
+  --color-muted: #9ca3af;
+
+  --color-success: #34d399;
+  --color-warning: #fbbf24;
+  --color-danger: #f87171;
+  --color-info: #60a5fa;
+
+  --gradient-primary: linear-gradient(to right, #60a5fa, #3b82f6);
+  --gradient-danger: linear-gradient(to right, #f87171, #ef4444);
+}
 
 .input-field-style {
-  @apply pl-12 text-[14px] mt-1 w-full border rounded-md p-3
+  @apply pl-12 text-[14px] mt-1 w-full border rounded-md p-3;
 }
 .input-label-style {
-  @apply block text-sm font-medium text-gray-700
+  @apply block text-sm font-medium text-gray-700;
 }

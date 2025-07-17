@@ -1,7 +1,7 @@
 import React from 'react';
-import pendingIcon from '../assets/pending-icon.svg';
-import { useAuth } from '../contexts/AuthContext.jsx';
-import PendingSkeletonLoader from '../components/Pending-Page/PendingSkeletonLoader.jsx';
+import pendingIcon from '../../assets/pending-icon.svg';
+import { useAuth } from '../../contexts/AuthContext';
+import PendingSkeletonLoader from '../Pending/PendingSkeletonLoader.jsx';
 
 const Pending = () => {
   const { user, isLoading } = useAuth();
@@ -26,7 +26,7 @@ const Pending = () => {
           <img className='w-24 md:w-32 h-auto' src={pendingIcon} alt="Pending Icon" />
         </div>
         <div className="content border-2 border-green-500 rounded-3xl pt-4">
-          <h1 className="text-2xl font-bold text-center text-green-500">Pending Verification</h1>
+          <h1 className="text-2xl font-bold text-center text-green-600">Pending Verification</h1>
           <p className="text-center mt-4 m-2">
             Hello, <strong>{user.fullName}</strong>!
           </p>

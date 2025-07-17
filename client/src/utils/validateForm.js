@@ -12,7 +12,7 @@ export const validateForm = (values) => {
   if (!values.email?.trim()) {
     errors.email = emptyFieldMessage;
   } else if (!emailRegex.test(values.email)) {
-    errors.email = 'Please enter a valid email (e.g., user@example.com).';
+    errors.email = 'Please enter a valid email (e.g., user@domain.com).';
   }
 
   if (!values.password?.trim()) {
