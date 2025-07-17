@@ -11,7 +11,7 @@ import eyeShowIcon from '../assets/eye-show-icon.svg'; // Importing the eye show
 import eyeHideIcon from '../assets/eye-hide-icon.svg'; // Importing the eye hide
 
 // Base URL for API requests
-// This should be set in environment variables for security and flexibility
+// This was set in environment variables (.env) for security and flexibility
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // Register component
@@ -20,6 +20,7 @@ function Register() {
   // Hook to navigate programmatically
   const navigate = useNavigate();
 
+  // Context of where to save the user's data, user data will be passed to the register variable
   const { register } = useAuth();
 
   // State of form values
@@ -72,22 +73,23 @@ function Register() {
       // Step 4: Register the user if there are no errors
       setIsLoading(true); // Show loading spinner while waiting to post the data
       const { data } = await axios.post(`${API_BASE_URL}/users/register`, values, { withCredentials: true });
+      const { email, fullName, role, status } = data.user; // Destructure the data for easy usage
       setIsLoading(false); // Hide loading spinner after posting the data to the db
 
-      register(data.user.email, data.user.fullName, data.user.role, data.user.status); 
-      console.log(data.user.fullName);
+      // Step 5: Save the data of the registered user to the context so that it can be used in other components
+      register(email, fullName, role, status); 
 
-      // Step 5: If registration unsuccessful. Let the user know thru toast notification.
+      // Step 6: If registration unsuccessful. Let the user know thru toast notification.
       if (!data.success) {
         showErrorToast(data?.message || 'Unsuccessful Registration. Try again.');
         return;
       }
 
-      // Step 6: Reset field values after successful form submission
+      // Step 7: Reset field values after successful form submission
       setValues({ ...values, fullName: '', email: '', password: '' });
       showSuccessToast('Registration successful.'); // Show success notification
 
-      // Step 8: Redirect to pending verification page
+      // Step 9: Redirect to pending verification page
       navigate('/pending-verification');
 
     } catch (error) {
