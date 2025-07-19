@@ -4,7 +4,7 @@ import Icons from '../assets/icons';
 const MobileHeader = ({ onMenuClick }) => {
   return (
     <>
-      <div className='max-sm:flex sm:hidden items-center justify-start space-x-5 p-4 bg-gray-200 shadow-md sticky top-0 border-b border-gray-300 h-18'>
+      <div className='max-sm:flex max-md:flex md:hidden items-center justify-start space-x-5 p-4 bg-gray-200 shadow-md sticky top-0 border-b border-gray-300 h-18'>
         <button 
           onClick={() => onMenuClick(true)}
           className='p-2 hover:bg-gray-300 hover:rounded-full hover:shadow-sm cursor-pointer'>

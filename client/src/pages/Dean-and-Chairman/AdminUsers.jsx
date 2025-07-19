@@ -27,7 +27,7 @@ const AdminUsers = () => {
   return (
     <>
       <div className='min-h-screen flex flex-col md:flex-row'>
-        <div className='sm:flex md:hidden'>
+        <div className='sm:flex max-md:flex md:hidden'>
           <SidebarSM sideBarOpen={menuIsClicked} setSideBarOpen={setMenuIsClicked} />
         </div>
         <div className='hidden md:block'>

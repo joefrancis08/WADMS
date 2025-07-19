@@ -19,7 +19,7 @@ const SidebarSM = ({ sideBarOpen, setSideBarOpen }) => {
           ></div>
         )
       }
-      <div className={`fixed max-md:h-full max-sm:w-80 sm:hidden bg-gray-800 z-50 flex flex-col h-full transition-transform duration-300 ease-in-out transform ${sideBarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <div className={`fixed max-md:h-full max-sm:w-80 max-md:block max-md:w-90 md:hidden bg-gray-800 z-50 flex flex-col h-full transition-transform duration-300 ease-in-out transform ${sideBarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className='relative'>
           <header className="flex items-center justify-between px-4 py-4 border-b-2 border-gray-700 h-18">
             <div className="h-10 flex items-center space-x-2 transition-all duration-300">
