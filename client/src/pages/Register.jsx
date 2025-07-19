@@ -176,7 +176,12 @@ function Register() {
 
           <div>
             <SubmitButton disabled={isLoading}>
-              {isLoading ? <LoadSpinner height={5} width={5}>Registering...</LoadSpinner> : "Register"}
+              {isLoading 
+                ? <LoadSpinner height={'h-5'} width={'w-5'}>
+                    Registering...
+                  </LoadSpinner> 
+                : "Register"
+              }
             </SubmitButton>
           </div>
 

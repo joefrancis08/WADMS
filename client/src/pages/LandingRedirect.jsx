@@ -20,12 +20,9 @@ const LandingRedirect = () => {
   }, [user, isLoading, navigate]);
 
   return (
-    <div className='w-full absolute'>
-      <div className='relative flex items-center justify-center top-100'>
-        <LoadSpinner height={'6'} width={'6'}/>
-      </div>
+    <div className="w-full h-screen flex items-center justify-center">
+      <LoadSpinner height={'h-16'} width={'w-16'}/>
     </div>
-    
   );
 };
 

@@ -1,13 +1,14 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import ProtectedRoute from './routes/ProtectedRoute';
 import Register from './pages/Register';
 import Pending from './pages/Pending/Pending';
-import { ToastContainer } from 'react-toastify';
 import NotFound from './pages/NotFound';
-import ProtectedRoute from './routes/ProtectedRoute';
 import PendingSkeleton from './pages/Pending/PendingSkeletonLoader';
 import LandingRedirect from './pages/LandingRedirect';
-import AdminHome from './pages/Dean-and-Chairman/AdminHome';
+import AdminHome from './pages/Dean-and-Chairman/adminHome';
+import AdminUsers from './pages/Dean-and-Chairman/AdminUsers';
 
 function App() {
   return (
@@ -28,16 +29,31 @@ function App() {
           }
         />
 
+        {/* Routes for admin */}
         <Route 
           path="/admin"
           element={
             <ProtectedRoute 
               allowedStatuses={['Verified', 'Pending']} 
               allowedRoles={['Dean', 'Chairman', 'Unverified User']} 
-              fallbackRoute='*'
-              loader={<PendingSkeleton />} 
+              fallbackRoute='/not-found'
+              loader={<div>Loading...</div>} 
             >
               <AdminHome />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route 
+          path="/admin/users"
+          element={
+            <ProtectedRoute 
+              allowedStatuses={['Verified', 'Pending']} 
+              allowedRoles={['Dean', 'Chairman', 'Unverified User']} 
+              fallbackRoute='/not-found'
+              loader={<div>Loading...</div>} 
+            >
+              <AdminUsers />
             </ProtectedRoute>
           }
         />

@@ -6,11 +6,14 @@ import key from './icons/key-icon.svg';
 import pending from './icons/pending-icon.svg';
 import user from './icons/user-icon.svg';
 import users from './icons/users-icon.svg';
+import userProfile from './icons/user-profile-icon.svg';
 import notFound from './icons/not-found-icon.png';
 import menu from './icons/menu-icon.svg';
+import menuBlack from './icons/menu-icon-black.svg';
 import dashboard from './icons/dashboard-icon.svg';
 import close from './icons/close-icon.svg';
 import logout from './icons/logout-icon.svg';
+import sunset from './icons/sunset.jpg';
 
 const Icons = {
   circleAlert,
@@ -21,12 +24,14 @@ const Icons = {
   pending,
   user,
   users,
+  userProfile,
   notFound,
   menu,
+  menuBlack,
   dashboard,
   close,
   logout,
-
+  sunset,
 };
 
 export default Icons;

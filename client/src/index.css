@@ -76,10 +76,24 @@
   }
 }
 
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
 
 .input-field-style {
   @apply pl-12 text-[14px] mt-1 w-full border rounded-md p-3;
 }
 .input-label-style {
   @apply block text-sm font-medium text-gray-700;
+}
+
+/* Sidebar */
+.sidebar-container {
+  @apply flex min-h-screen bg-gray-800 text-white flex-col justify-between transition-[width] duration-300 ease-in-out
 }
