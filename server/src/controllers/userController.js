@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid';
 import { insertUser, getAllUsers, getUserById, updateUserInfo, deleteAllUsers, deleteUserById, getUserByEmail } from '../models/userModel.js';
-import sessionMiddleware from '../middlewares/session.js';
 import { handleBlankUserInput } from '../utils/handleBlankField.js';
 
 // Create new user
@@ -10,6 +10,7 @@ export const registerUser = async (req, res) => {
     fullName,
     email,
     password,
+    userUUID = uuidv4(),
     role = "Unverified User",
     status = "Pending",
   } = req.body;
@@ -21,7 +22,8 @@ export const registerUser = async (req, res) => {
   try {
     // Step 4: Check if email already exists in the database and return a response
     const user = await getUserByEmail(email);
-    if (user === email) {
+    if (user && user.email === email) {
+      console.log(user, user.email);
       return res.status(200).json({
         message: 'Email already exists.',
         alreadyExists: true, 
@@ -30,10 +32,11 @@ export const registerUser = async (req, res) => {
 
     // Step 5: Proceed to inserting the user to the database if email does not exist and return the response
     const hashedPassword = await bcrypt.hash(password, 10); // Hash password using bcrypt
-    await insertUser(fullName, email, hashedPassword, role, status);
+    await insertUser(userUUID, fullName, email, hashedPassword, role, status);
 
     // Save user to session temporarily after registration
     req.session.user = {
+      userUUID,
       email,
       fullName,
       role, 
@@ -94,7 +97,7 @@ export const checkEmail = async (req, res) => {
   }
 }
 
-// Login
+// Login user
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -150,6 +153,25 @@ export const userSession = (req, res) => {
     return res.status(401).json({ message: 'Not authenticated' });
   }
 }
+
+// Logout user
+export const logoutUser = (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      console.error('Error destroying session:', err);
+      return res.status(500).json({
+        message: 'Logout failed. Could not destroy session.',
+        success: false,
+      });
+    }
+
+    res.clearCookie(process.env.SESSION_KEY);
+    return res.status(200).json({
+      message: 'Logged out successfully.',
+      success: true,
+    });
+  });
+};
 
 // Fetch all users
 export const fetchUsers = async (req, res) => {
@@ -210,6 +232,7 @@ export const updateUser = async (req, res) => {
   }
 
   const { 
+    userUUID = user.userUUID,
     fullName, 
     email, 
     password, 
@@ -221,7 +244,7 @@ export const updateUser = async (req, res) => {
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10); // Hash password using bcrypt
-    const result = await updateUserInfo(fullName, email, hashedPassword, role, status, userId);
+    const result = await updateUserInfo(userUUID, fullName, email, hashedPassword, role, status, userId);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({
