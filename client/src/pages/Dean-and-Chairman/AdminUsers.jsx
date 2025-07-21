@@ -65,7 +65,7 @@ const AdminUsers = () => {
         <div className='flex-1 p-0 space-y-3'>
 
           {/* Main Content Header */}
-          <div className='max-md:pt-2 md:bg-gray-100 pb-2 md:py-3 md:shadow-md md:sticky top-0 md:z-1 bg-white'>
+          <div className='max-md:pt-2 md:bg-gray-100 pb-2 md:py-3.5 md:shadow-md md:sticky top-0 md:z-1 bg-white'>
             <div className='flex justify-between items-center px-3'>
               <div className='flex items-center'>
                 <img className='h-10 w-auto pr-2' src={Icons.verifiedUserDark} alt='' />
