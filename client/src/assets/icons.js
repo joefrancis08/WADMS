@@ -13,7 +13,15 @@ import menuBlack from './icons/menu-icon-black.svg';
 import dashboard from './icons/dashboard-icon.svg';
 import close from './icons/close-icon.svg';
 import logout from './icons/logout-icon.svg';
-import sunset from './icons/sunset.jpg';
+import verifiedUserDark from './icons/verified-user-dark.svg';
+import verifiedUserLight from './icons/verified-user-light.svg';
+import unverifiedUserDark from './icons/unverified-user-dark.svg';
+import unverifiedUserLight from './icons/unverified-user-light.svg';
+import arrowDark from './icons/arrow-dark.svg';
+import arrowLight from './icons/arrow-light.svg';
+import searchIconDark from './icons/search-icon-dark.svg';
+import searchIconLight from './icons/search-icon-light.svg';
+
 
 const Icons = {
   circleAlert,
@@ -31,7 +39,14 @@ const Icons = {
   dashboard,
   close,
   logout,
-  sunset,
+  verifiedUserDark,
+  verifiedUserLight,
+  unverifiedUserDark,
+  unverifiedUserLight,
+  arrowDark, 
+  arrowLight,
+  searchIconDark,
+  searchIconLight,
 };
 
 export default Icons;

@@ -95,5 +95,5 @@
 
 /* Sidebar */
 .sidebar-container {
-  @apply flex min-h-screen bg-gray-800 text-white flex-col justify-between transition-[width] duration-300 ease-in-out
+  @apply flex sticky top-0 h-screen bg-gray-800 text-white flex-col justify-between transition-[width] duration-300 ease-in-out
 }

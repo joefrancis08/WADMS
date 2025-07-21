@@ -44,7 +44,7 @@ const SidebarSM = ({ sideBarOpen, setSideBarOpen }) => {
         </div>
 
         <nav className="flex-1 mt-4 px-2">
-          <div className='flex flex-col space-y-2'>
+          <div className='flex flex-col space-y-3'>
             {menuItems.map((item) => {
               const isActive = location.pathname === item.link;
               return (
