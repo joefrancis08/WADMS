@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios'; // Importing axios for HTTP requests
 import { useAuth } from '../contexts/AuthContext.jsx';
 import { Link, useNavigate } from 'react-router-dom'; // Importing Link and useNavigate for navigation
@@ -7,7 +7,13 @@ import { showErrorToast, showSuccessToast } from '../utils/toastNotification.js'
 import SubmitButton from '../components/Auth/SubmitButton.jsx'; // Importing custom SubmitButton component
 import AlertMessage from '../components/Auth/AlertMessage.jsx'; // Importing custom AlertMessage component
 import LoadSpinner from '../components/Loaders/LoadSpinner.jsx'; // Importing custom LoadSpinner component
-import Icons from '../assets/icons.js';
+import { 
+  emailIcon, 
+  eyeCloseIcon, 
+  eyeOpenIcon, 
+  keyIcon, 
+  userIcon } 
+from '../assets/icons.js';
 
 // Base URL for API requests
 // This was set in environment variables (.env) for security and flexibility
@@ -28,6 +34,18 @@ function Register() {
     email: '',
     password: ''
   });
+
+  // 
+  const fullNameRef = useRef(null);
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+
+  // 
+  const fieldRefs = {
+    fullName: fullNameRef,
+    email: emailRef,
+    password: passwordRef,
+  };
 
   // State for form errors
   const [errors, setErrors] = useState({});
@@ -57,7 +75,13 @@ function Register() {
     setErrors(formErrors);
 
     // Step 2: Stop submitting form if there are any form errors
-    if (Object.keys(formErrors).length > 0) return; 
+    if (Object.keys(formErrors).length > 0) {
+      const firstErrorKey = Object.keys(formErrors)[0];
+      const ref = fieldRefs[firstErrorKey];
+      ref?.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      ref?.current?.focus();
+      return;
+    }
 
     try {
       // Step 3: Check if email already exists 
@@ -100,24 +124,25 @@ function Register() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
-        <div>
-          <img src="/CGS_Logo.png" alt="Logo" className="h-20 mx-auto mb-4" />
+      <div className="w-full max-w-md bg-white px-8 pb-8 pt-2 rounded-lg shadow-md">
+        <div className='flex justify-center'>
+          <img src="/CGS_Logo.png" alt="Logo" className="h-25 mb-4" />
         </div>
         <h2 className="font-bold mb-6 text-center text-green-700">
           Web-Based Document Management System
         </h2>
         <hr className="opacity-20" />
-        <h2 className="text-2xl font-bold mb-6 mt-6 text-center text-green-700">REGISTER</h2>
+        <h2 className="text-2xl font-bold py-4 text-center text-green-700">REGISTER</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="relative w-full">
-            <div className="relative">
+        <form onSubmit={handleSubmit} className="space-y-2">
+          <div className="w-full">
+            <div className="relative flex items-center">
               <span className="absolute inset-y-7 left-0 flex items-center pl-4">
-                <img src={Icons.user} alt="icon" className="w-5 h-5" />
+                <img src={userIcon} alt="icon" className="w-7 h-7" />
               </span>
               <input
                 type="text"
+                ref={fullNameRef}
                 placeholder="Full Name"
                 autoComplete='off'
                 name="fullName"
@@ -129,16 +154,19 @@ function Register() {
                 }
               />
             </div>
-            {errors.fullName && <AlertMessage message={errors.fullName} />}
+            <div className="min-h-[1.25rem]">
+              {errors.fullName && <AlertMessage message={errors.fullName} />}
+            </div>
           </div>
 
           <div className="relative w-full">
             <div className="relative">
               <span className="absolute inset-y-7 left-0 flex items-center pl-4">
-                <img src={Icons.email} alt="icon" className="w-5 h-5" />
+                <img src={emailIcon} alt="icon" className="w-5 h-5" />
               </span>
               <input
                 type="text"
+                ref={emailRef}
                 placeholder="Email Address"
                 autoComplete='off'
                 name="email"
@@ -149,16 +177,19 @@ function Register() {
                   : 'border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-600'} input-field-style`}
               />
             </div>
-            {errors.email && <AlertMessage message={errors.email} />}
+            <div className="min-h-[1.25rem]">
+              {errors.email && <AlertMessage message={errors.email} />}
+            </div>
           </div>
 
           <div className="relative w-full">
             <div className="relative">
-              <span className="absolute inset-y-5 left-0 flex items-center pl-4">
-                <img src={Icons.key} alt="lock icon" className="w-5 h-5" />
+              <span className="absolute inset-y-7 left-0 flex items-center pl-4">
+                <img src={keyIcon} alt="lock icon" className="w-5 h-5" />
               </span>
               <input
                 type={isPasswordVisible ? 'text' : 'password'}
+                ref={passwordRef}
                 placeholder='Password'
                 name="password"
                 value={values.password}
@@ -168,13 +199,18 @@ function Register() {
                   : 'border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-600'} input-field-style`}
               />
               <span onClick={() => setIsPasswordVisible(!isPasswordVisible)} className="absolute inset-y-7 right-0 flex items-center pr-4 hover:cursor-pointer hover:text-gray-500">
-                <img src={isPasswordVisible ? Icons.hide : Icons.show} className="w-6 h-6" />
+                <img 
+                  title={isPasswordVisible ? 'Hide Password' : 'Show Password'}
+                  src={isPasswordVisible ? eyeCloseIcon : eyeOpenIcon} className="w-6 h-6" 
+                />
               </span>
             </div>
-            {errors.password && <AlertMessage message={errors.password} />}
+            <div className="transition-all ease-linear duration-700 min-h-[1.25rem]">
+              {errors.password && <AlertMessage message={errors.password} />}
+            </div>
           </div>
 
-          <div>
+          <div className='flex justify-center'>
             <SubmitButton disabled={isLoading}>
               {isLoading 
                 ? <LoadSpinner height={'h-5'} width={'w-5'}>
@@ -188,7 +224,7 @@ function Register() {
           <div>
             <p className="text-center mt-4">
               Already have an account?
-              <Link to="/login" className="text-blue-500 hover:underline"> Login </Link>
+              <Link to="/login" className="text-green-700 hover:underline"> Login </Link>
             </p>
           </div>
         </form>

@@ -1,5 +1,5 @@
 import React from 'react';
-import Icons from '../../assets/icons.js';
+import { pendingIcon } from '../../assets/icons.js';
 import { useAuth } from '../../contexts/AuthContext';
 import PendingSkeletonLoader from '../Pending/PendingSkeletonLoader.jsx';
 
@@ -23,7 +23,7 @@ const Pending = () => {
     <div className='min-h-screen flex items-center justify-center bg-gray-200'>
       <div className='w-full max-w-md bg-white p-4 sm:p-6 md:p-8 rounded-lg shadow-lg'>
         <div className='justify-center flex mb-6'>
-          <img className='w-24 md:w-32 h-auto' src={Icons.pending} alt="Pending Icon" />
+          <img className='w-24 md:w-32 h-auto' src={pendingIcon} alt="Pending Icon" />
         </div>
         <div className="content border-2 border-green-500 rounded-3xl pt-4">
           <h1 className="text-2xl font-bold text-center text-green-700">Pending Verification</h1>

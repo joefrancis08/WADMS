@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import Icons from "../assets/icons";
+import { usersIcon, dashboardIcon, closeIcon, logoutIcon, userProfileIcon } from "../assets/icons";
 import { Link } from 'react-router-dom';
 
 const SidebarSM = ({ sideBarOpen, setSideBarOpen }) => {
 
   const menuItems = [
-    { id: 'dashboard', icon: Icons.dashboard, label: 'Dashboard', link: '/admin'},
-    { id: 'users', icon: Icons.users, label: 'Users', link: '/admin/users' },
+    { id: 'dashboard', icon: dashboardIcon, label: 'Dashboard', link: '/admin'},
+    { id: 'users', icon: usersIcon, label: 'Users', link: '/admin/users' },
   ];
 
   return (
@@ -37,7 +37,7 @@ const SidebarSM = ({ sideBarOpen, setSideBarOpen }) => {
                 className="text-white cursor-pointer pl-1"
                 onClick={() => setSideBarOpen(false)}
               >
-                <img className='opacity-100 hover:opacity-85 w-6 h-6 pl-2' src={Icons.close} alt='Close icon' />
+                <img className='opacity-100 hover:opacity-85 w-6 h-6 pl-2' src={closeIcon} alt='Close icon' />
               </button>
             </div>
           </header>
@@ -72,7 +72,7 @@ const SidebarSM = ({ sideBarOpen, setSideBarOpen }) => {
           <div className="flex items-center justify-between">
             {/* Left: User Icon + Name/Role */}
             <div className='flex items-center overflow-hidden transition-all duration-300 gap-3'>
-              <img className='opacity-100 hover:opacity-85 cursor-pointer rounded-b-full rounded-t-full w-8 h-8' src={Icons.userProfile} alt="User Profile" />
+              <img className='opacity-100 hover:opacity-85 cursor-pointer rounded-b-full rounded-t-full w-8 h-8' src={userProfileIcon} alt="User Profile" />
               <div className='transition-all duration-200 ease-in-out overflow-hidden opacity-100 max-w-[300px]'>
                 <p className="text-sm text-white font-semibold">Joe Francis</p>
                 <p className="text-xs text-gray-400">Administrator</p>
@@ -80,7 +80,7 @@ const SidebarSM = ({ sideBarOpen, setSideBarOpen }) => {
             </div>
             {/* Right: Logout Icon */}
             <button className="flex flex-col items-center justify-center transition-colors duration-200 border-l-2 border-gray-400 pl-4 cursor-pointer">
-              <img className='opacity-100 hover:opacity-75 w-7 h-7' src={Icons.logout} alt="Logout icon" />
+              <img className='opacity-100 hover:opacity-75 w-7 h-7' src={logoutIcon} alt="Logout icon" />
               <p className="text-xs text-gray-400 opacity-100 hover:opacity-75">Logout</p>
             </button>
           </div>

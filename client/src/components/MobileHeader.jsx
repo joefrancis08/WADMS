@@ -1,5 +1,5 @@
 import React from 'react';
-import Icons from '../assets/icons';
+import { menuIconDark } from '../assets/icons';
 
 const MobileHeader = ({ onMenuClick }) => {
   return (
@@ -8,7 +8,7 @@ const MobileHeader = ({ onMenuClick }) => {
         <button 
           onClick={() => onMenuClick(true)}
           className='p-2 hover:bg-gray-300 hover:rounded-full hover:shadow-sm cursor-pointer'>
-          <img className='opacity-100 hover:opacity-75 w-8 h-8' src={Icons.menuBlack} alt="Menu icon" />
+          <img className='opacity-100 hover:opacity-75 w-8 h-8' src={menuIconDark} alt="Menu icon" />
         </button>
         <div className='flex items-center space-x-2'>
           <img className='w-14 h-auto' src="/CGS_Logo.png" alt="" />

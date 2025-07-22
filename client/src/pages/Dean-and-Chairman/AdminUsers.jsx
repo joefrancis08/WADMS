@@ -1,9 +1,17 @@
 import { useState, useEffect} from 'react';
 import SidebarLG from '../../components/SidebarLG';
-import Icons from '../../assets/icons';
 import SidebarSM from '../../components/SidebarSM';
 import MobileHeader from '../../components/MobileHeader';
 import { Link } from 'react-router-dom';
+import { 
+  addUserIconDark, 
+  deleteAllIcon, 
+  searchIconDark, 
+  shieldXIcon, 
+  unverifiedUserIconDark, 
+  verifiedUserIconDark 
+} from '../../assets/icons';
+
 
 const AdminUsers = () => {
   const [menuIsClicked, setMenuIsClicked] = useState(false);
@@ -68,17 +76,20 @@ const AdminUsers = () => {
           <div className='max-md:pt-2 md:bg-gray-100 pb-2 md:py-3.5 md:shadow-md md:sticky top-0 md:z-1 bg-white'>
             <div className='flex justify-between items-center px-3'>
               <div className='flex items-center'>
-                <img className='h-10 w-auto pr-2' src={Icons.verifiedUserDark} alt='' />
+                <img className='h-10 w-auto pr-2' src={verifiedUserIconDark} alt='' />
                 <p className='text-2xl font-bold transition-all ease-in-out duration-300'>
                   {view === 'verified' ? 'Verified Users' : 'Unverified Users'}
                 </p>
               </div>
-              <div className='relative pr-1'>
+              <div className='relative mr-2'>
                 <button className='cursor-pointer hover:bg-transparent hover:drop-shadow-sm p-1 rounded-md' title='Unverified Users'>
-                  <img className='opacity-65 hover:opacity-100 h-auto w-10' src={Icons.unverifiedUserDark} alt='' />
+                  <img className='opacity-65 hover:opacity-100 h-auto w-10' src={unverifiedUserIconDark} alt='' />
+                  <div className='absolute left-6 top-6'>
+                    <img className='hover:drop-shadow-sm h-auto w-5' src={shieldXIcon} alt='Unverified sign' />
+                  </div>
                 </button>
-                <div className='absolute right-1 top-0'>
-                  <p className='text-[12px] font-bold px-2 text-white bg-red-500 rounded-4xl'>{9}</p>
+                <div className='absolute left-7 top-0'>
+                  <p className='text-[11px] font-bold px-2 text-white bg-red-500 rounded-4xl'>{2}</p>
                 </div>
               </div>
             </div>
@@ -86,17 +97,29 @@ const AdminUsers = () => {
 
           {/* Toggle Buttons */}
           <div className='relative px-4 flex justify-between'>
-            <img className='absolute inset-y-3.5 inset-x-8 h-8 w-8 opacity-50' src={Icons.searchIconDark} alt='' />
+            <img className='absolute inset-y-3.5 inset-x-8 h-8 w-8 opacity-50' src={searchIconDark} alt='Search icon' />
             <input
               name='search-bar'
-              className='bg-white pl-14 text-md mt-1 max-sm:w-90 w-1/2 border rounded-full p-3 border-gray-400 focus:outline-none focus:ring-1 focus:ring-green-600 shadow focus:shadow-lg' 
+              className='bg-white pl-14 text-md mt-1 max-sm:w-75 w-1/2 border rounded-full p-3 border-gray-400 focus:outline-none focus:ring-1 focus:ring-green-600 shadow focus:shadow-lg' 
               type='text' 
               placeholder='Search...' 
             />
+            <div className='flex items-center md:gap-5'>
+              <button 
+                title='Add User'
+                className='opacity-65 hover:opacity-100 hover:drop-shadow-sm mr-2 cursor-pointer hover:bg-green-10'>
+                <img className='h-auto w-10' src={addUserIconDark} alt='Add user icon'/>
+              </button>
+              <button 
+                title='Delete all users'
+                className='opacity-85 hover:opacity-100 hover:drop-shadow-sm mr-2 cursor-pointer hover:bg-green-10'>
+                <img className='h-auto w-8' src={deleteAllIcon} alt='Add user icon'/>
+              </button>
+            </div>
           </div>
 
           {/* User Cards */}
-          <div className='px-3 pb-10 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6'>
+          <div className='px-3 pb-4 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6'>
             {usersToDisplay.map(user => (
               <div key={user.id} className='bg-gray-50 p-4 rounded-xl border border-gray-100 shadow hover:shadow-xl transition cursor-pointer'>
                 <div className='flex flex-col items-center text-center'>

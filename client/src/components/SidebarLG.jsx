@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import Icons from '../assets/icons.js';
 import { Link } from 'react-router-dom';
+import { 
+  closeIcon, 
+  dashboardIcon, 
+  logoutIcon,  
+  menuIconLight, 
+  userProfileIcon, 
+  usersIcon } from '../assets/icons.js';
 
 const SidebarLG = () => {
   const savedState = localStorage.getItem('sidebar-collapsed');
@@ -21,8 +27,8 @@ const SidebarLG = () => {
     localStorage.setItem('sidebar-collapsed', newState.toString());
   };
   const menuItems = [
-    { id: 'dashboard', icon: Icons.dashboard, label: 'Dashboard', link: '/admin'},
-    { id: 'users', icon: Icons.users, label: 'Users', link: '/admin/users' },
+    { id: 'dashboard', icon: dashboardIcon, label: 'Dashboard', link: '/admin'},
+    { id: 'users', icon: usersIcon, label: 'Users', link: '/admin/users' },
   ];
 
   return (
@@ -47,8 +53,8 @@ const SidebarLG = () => {
           <button onClick={toggleSidebar} className="text-white cursor-pointer pl-1">
             {
               isCollapsed 
-                ? <img className='opacity-100 hover:opacity-85 w-8 h-8 pl-2' src={Icons.menu} alt='Menu icon' />
-                : <img className='opacity-100 hover:opacity-85 w-3 h-auto ' src={Icons.close} alt='Close icon' />
+                ? <img className='opacity-100 hover:opacity-85 w-8 h-8 pl-2' src={menuIconLight} alt='Menu icon' />
+                : <img className='opacity-100 hover:opacity-85 w-3 h-auto ' src={closeIcon} alt='Close icon' />
             } 
           </button>
         </div>
@@ -92,7 +98,7 @@ const SidebarLG = () => {
               isCollapsed ? 'gap-0' : 'gap-3'
             }`}
           >
-            <img className='opacity-100 hover:opacity-85 cursor-pointer rounded-b-full rounded-t-full w-8 h-8' src={Icons.userProfile} alt="User Profile" />
+            <img className='opacity-100 hover:opacity-85 cursor-pointer rounded-b-full rounded-t-full w-8 h-8' src={userProfileIcon} alt="User Profile" />
             <div
               className={`transition-all duration-200 ease-in-out overflow-hidden ${
                 isCollapsed ? 'opacity-0 max-w-0' : 'opacity-100 max-w-[300px]'
@@ -105,7 +111,7 @@ const SidebarLG = () => {
           {/* Right: Logout Icon */}
           {!isCollapsed && (
             <button className="flex flex-col items-center justify-center transition-colors duration-200 border-l-2 border-gray-400 pl-4 cursor-pointer">
-              <img className='opacity-100 hover:opacity-75 w-7 h-7' src={Icons.logout} alt="Logout icon" />
+              <img className='opacity-100 hover:opacity-75 w-7 h-7' src={logoutIcon} alt="Logout icon" />
               <p className="text-xs text-gray-400 opacity-100 hover:opacity-75">Logout</p>
             </button>
           )}

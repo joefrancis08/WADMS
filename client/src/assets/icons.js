@@ -1,52 +1,27 @@
-import circleAlert from './icons/circle-alert.svg';
-import email from './icons/email-icon.svg';
-import hide from './icons/eye-hide-icon.svg';
-import show from './icons/eye-show-icon.svg';
-import key from './icons/key-icon.svg';
-import pending from './icons/pending-icon.svg';
-import user from './icons/user-icon.svg';
-import users from './icons/users-icon.svg';
-import userProfile from './icons/user-profile-icon.svg';
-import notFound from './icons/not-found-icon.png';
-import menu from './icons/menu-icon.svg';
-import menuBlack from './icons/menu-icon-black.svg';
-import dashboard from './icons/dashboard-icon.svg';
-import close from './icons/close-icon.svg';
-import logout from './icons/logout-icon.svg';
-import verifiedUserDark from './icons/verified-user-dark.svg';
-import verifiedUserLight from './icons/verified-user-light.svg';
-import unverifiedUserDark from './icons/unverified-user-dark.svg';
-import unverifiedUserLight from './icons/unverified-user-light.svg';
-import arrowDark from './icons/arrow-dark.svg';
-import arrowLight from './icons/arrow-light.svg';
-import searchIconDark from './icons/search-icon-dark.svg';
-import searchIconLight from './icons/search-icon-light.svg';
-
-
-const Icons = {
-  circleAlert,
-  email,
-  hide,
-  show,
-  key,
-  pending,
-  user,
-  users,
-  userProfile,
-  notFound,
-  menu,
-  menuBlack,
-  dashboard,
-  close,
-  logout,
-  verifiedUserDark,
-  verifiedUserLight,
-  unverifiedUserDark,
-  unverifiedUserLight,
-  arrowDark, 
-  arrowLight,
-  searchIconDark,
-  searchIconLight,
-};
-
-export default Icons;
+export { default as addUserIconDark } from './icons/add-user-icon-dark.svg';
+export { default as addUserIconLight } from './icons/add-user-icon-light.svg';
+export { default as arrowIconDark } from './icons/arrow-icon-dark.svg';
+export { default as arrowIconLight } from './icons/arrow-icon-light.svg';
+export { default as circleAlertIcon } from './icons/circle-alert-icon.svg';
+export { default as closeIcon } from './icons/close-icon.svg';
+export { default as dashboardIcon } from './icons/dashboard-icon.svg';
+export { default as deleteAllIcon } from './icons/delete-all-icon.svg';
+export { default as emailIcon } from './icons/email-icon.svg';
+export { default as eyeCloseIcon } from './icons/eye-close-icon.svg';
+export { default as eyeOpenIcon } from './icons/eye-open-icon.svg';
+export { default as keyIcon } from './icons/key-icon.svg';
+export { default as logoutIcon } from './icons/logout-icon.svg';
+export { default as menuIconLight } from './icons/menu-icon.svg';
+export { default as menuIconDark } from './icons/menu-icon-black.svg';
+export { default as notFoundIcon } from './icons/not-found-icon.png';
+export { default as pendingIcon } from './icons/pending-icon.svg';
+export { default as searchIconDark } from './icons/search-icon-dark.svg';
+export { default as searchIconLight } from './icons/search-icon-light.svg';
+export { default as shieldXIcon } from './icons/shield-x-icon.svg';
+export { default as unverifiedUserIconDark } from './icons/unverified-user-icon-dark.svg';
+export { default as unverifiedUserIconLight } from './icons/unverified-user-icon-light.svg';
+export { default as userIcon } from './icons/user-icon.svg';
+export { default as userProfileIcon } from './icons/user-profile-icon.svg';
+export { default as usersIcon } from './icons/users-icon.svg';
+export { default as verifiedUserIconDark } from './icons/verified-user-icon-dark.svg';
+export { default as verifiedUserIconLight } from './icons/verified-user-icon-light.svg';
