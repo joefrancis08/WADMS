@@ -73,10 +73,13 @@ const AdminUsers = () => {
                   {view === 'verified' ? 'Verified Users' : 'Unverified Users'}
                 </p>
               </div>
-              <div>
-                <button className='cursor-pointer hover:bg-orange-50 hover:drop-shadow-sm p-1 rounded-md' title='Unverified User'>
-                  <img className='opacity-65 hover:opacity-100 h-10 w-10' src={Icons.unverifiedUserDark} alt='' />
+              <div className='relative pr-1'>
+                <button className='cursor-pointer hover:bg-transparent hover:drop-shadow-sm p-1 rounded-md' title='Unverified Users'>
+                  <img className='opacity-65 hover:opacity-100 h-auto w-10' src={Icons.unverifiedUserDark} alt='' />
                 </button>
+                <div className='absolute right-1 top-0'>
+                  <p className='text-[12px] font-bold px-2 text-white bg-red-500 rounded-4xl'>{9}</p>
+                </div>
               </div>
             </div>
           </div>
@@ -84,14 +87,13 @@ const AdminUsers = () => {
           {/* Toggle Buttons */}
           <div className='relative px-4 flex justify-between'>
             <img className='absolute inset-y-3.5 inset-x-8 h-8 w-8 opacity-50' src={Icons.searchIconDark} alt='' />
-            <input 
+            <input
+              name='search-bar'
               className='bg-white pl-14 text-md mt-1 max-sm:w-90 w-1/2 border rounded-full p-3 border-gray-400 focus:outline-none focus:ring-1 focus:ring-green-600 shadow focus:shadow-lg' 
               type='text' 
               placeholder='Search...' 
             />
           </div>
-          
-          
 
           {/* User Cards */}
           <div className='px-3 pb-10 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6'>
