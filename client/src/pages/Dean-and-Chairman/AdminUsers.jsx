@@ -83,17 +83,19 @@ const AdminUsers = () => {
                   Verified Users
                 </p>
               </div>
-              <div className='relative mr-2'>
-                <button className='cursor-pointer opacity-65 hover:opacity-100 hover:drop-shadow-sm p-1 rounded-md' title='Unverified Users'>
-                  <UserRound size={36} color='#004030'/>
-                  <div className='absolute left-6 top-6'>
-                    <ShieldX color='red' size={20} fill='white'/>
+              <Link to='/admin/users/unverified'>
+                <div className='relative mr-2'>
+                  <button className='cursor-pointer opacity-65 hover:opacity-100 hover:drop-shadow-sm p-1 rounded-md' title='Unverified Users'>
+                    <UserRound size={36} color='#004030'/>
+                    <div className='absolute left-6 top-6'>
+                      <ShieldX color='red' size={20} fill='white'/>
+                    </div>
+                  </button>
+                  <div className='absolute left-7 top-0'>
+                    <p className='text-[11px] font-bold px-2 text-white bg-red-500 rounded-4xl'>{2}</p>
                   </div>
-                </button>
-                <div className='absolute left-7 top-0'>
-                  <p className='text-[11px] font-bold px-2 text-white bg-red-500 rounded-4xl'>{2}</p>
                 </div>
-              </div>
+              </Link>
             </div>
           </div>
 

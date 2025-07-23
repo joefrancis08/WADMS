@@ -9,6 +9,7 @@ import PendingSkeleton from './pages/Pending/PendingSkeletonLoader';
 import LandingRedirect from './pages/LandingRedirect';
 import AdminHome from './pages/Dean-and-Chairman/adminHome';
 import AdminUsers from './pages/Dean-and-Chairman/AdminUsers';
+import AdminUnverifiedUsers from './pages/Dean-and-Chairman/AdminUnverifiedUsers';
 
 function App() {
   return (
@@ -54,6 +55,20 @@ function App() {
               loader={<div>Loading...</div>} 
             >
               <AdminUsers />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route 
+          path="/admin/users/unverified"
+          element={
+            <ProtectedRoute 
+              allowedStatuses={['Verified', 'Pending']} 
+              allowedRoles={['Dean', 'Chairman', 'Unverified User']} 
+              fallbackRoute='/not-found'
+              loader={<div>Loading...</div>} 
+            >
+              <AdminUnverifiedUsers />
             </ProtectedRoute>
           }
         />
