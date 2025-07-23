@@ -44,8 +44,8 @@ const SidebarLG = () => {
                 isCollapsed ? 'opacity-0 max-w-0' : 'opacity-100 max-w-[200px]'
               }`}
             >
-              <p className="text-2xl font-bold whitespace-nowrap">WDMS</p>
-              <p className="text-[8px] leading-none whitespace-nowrap">Web-Based Document</p>
+              <p className="text-2xl font-bold whitespace-nowrap">DMS</p>
+              <p className="text-[8px] leading-none whitespace-nowrap">Document</p>
               <p className="text-[8px] leading-none whitespace-nowrap">Management System</p>
             </div>
           </div>

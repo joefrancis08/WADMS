@@ -37,8 +37,8 @@ const SidebarSM = ({ sideBarOpen, setSideBarOpen }) => {
           <div className="flex items-center space-x-2">
             <img src="/CGS_Logo.png" alt="Logo" className="h-14 w-auto" />
             <div>
-              <p className="text-2xl font-bold">WDMS</p>
-              <p className="text-[8px] leading-none">Web-Based Document</p>
+              <p className="text-2xl font-bold">DMS</p>
+              <p className="text-[8px] leading-none">Document</p>
               <p className="text-[8px] leading-none">Management System</p>
             </div>
           </div>

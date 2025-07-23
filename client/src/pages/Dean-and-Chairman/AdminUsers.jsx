@@ -74,17 +74,17 @@ const AdminUsers = () => {
         <div className='flex-1 p-0 space-y-3'>
 
           {/* Main Content Header */}
-          <div className='max-md:pt-2 md:bg-gray-100 pb-2 md:py-4 md:shadow-md md:sticky top-0 md:z-1 bg-white'>
+          <div className='max-md:pt-2 md:bg-gradient-to-r from-gray-100 to-gray-200 pb-2 md:py-4 md:shadow-md md:sticky top-0 md:z-1 bg-white'>
             <div className='flex justify-between items-center px-3'>
               <div className='relative flex items-center'>
                 <UserRound size={36} color='green'/>
                 <ShieldCheck className='absolute top-4 left-5' color='green' size={20} fill='white'/>
-                <p className='ml-2 mt-1 text-2xl font-bold transition-all ease-in-out duration-300'>
-                  {view === 'verified' ? 'Verified Users' : 'Unverified Users'}
+                <p className='ml-2 mt-1 text-green-900 text-2xl font-bold transition-all ease-in-out duration-300'>
+                  Verified Users
                 </p>
               </div>
               <div className='relative mr-2'>
-                <button className='cursor-pointer hover:bg-transparent hover:drop-shadow-sm p-1 rounded-md' title='Unverified Users'>
+                <button className='cursor-pointer opacity-65 hover:opacity-100 hover:drop-shadow-sm p-1 rounded-md' title='Unverified Users'>
                   <UserRound size={36} color='#004030'/>
                   <div className='absolute left-6 top-6'>
                     <ShieldX color='red' size={20} fill='white'/>
