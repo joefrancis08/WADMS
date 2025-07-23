@@ -8,8 +8,8 @@ function SubmitButton({ disabled, children }) {
         type="submit" 
         className={
           disabled 
-            ? "w-full flex items-center justify-center bg-gray-400 text-white font-semibold py-2 px-4 rounded cursor-not-allowed" 
-            : "w-full flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded cursor-pointer hover:shadow-lg"}>
+            ? "w-80 flex items-center justify-center bg-gray-400 text-white font-semibold py-3 px-4 rounded-full cursor-not-allowed" 
+            : "w-80 flex items-center justify-center bg-green-500 hover:bg-green-600 text-lg text-white font-semibold py-3 px-4 rounded-full cursor-pointer hover:drop-shadow-lg"}>
         {children}
       </button>
     </>

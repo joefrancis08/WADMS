@@ -1,8 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect} from 'react';
 import SidebarLG from '../../components/SidebarLG';
-import Icons from '../../assets/icons';
 import SidebarSM from '../../components/SidebarSM';
 import MobileHeader from '../../components/MobileHeader';
+import { Link } from 'react-router-dom';
+import { 
+  addUserIconDark, 
+  deleteAllIcon, 
+  searchIconDark, 
+  shieldXIcon, 
+  unverifiedUserIconDark, 
+  verifiedUserIconDark 
+} from '../../assets/icons';
+import { Search, ShieldCheck, ShieldX, Trash, UserRound, UserRoundPlus, Users } from 'lucide-react';
+
 
 const AdminUsers = () => {
   const [menuIsClicked, setMenuIsClicked] = useState(false);
@@ -15,6 +25,18 @@ const AdminUsers = () => {
     { id: 4, name: 'Bob Smith', role: 'Moderator', emoji: '👨‍💻' },
     { id: 5, name: 'Alice Johnson', role: 'Administrator', emoji: '👩‍💼' },
     { id: 6, name: 'Bob Smith', role: 'Moderator', emoji: '👨‍💻' },
+    { id: 7, name: 'Alice Johnson', role: 'Administrator', emoji: '👩‍💼' },
+    { id: 8, name: 'Bob Smith', role: 'Moderator', emoji: '👨‍💻' },
+    { id: 9, name: 'Alice Johnson', role: 'Administrator', emoji: '👩‍💼' },
+    { id: 10, name: 'Bob Smith', role: 'Moderator', emoji: '👨‍💻' },
+    { id: 11, name: 'Alice Johnson', role: 'Administrator', emoji: '👩‍💼' },
+    { id: 12, name: 'Bob Smith', role: 'Moderator', emoji: '👨‍💻' },
+    { id: 13, name: 'Alice Johnson', role: 'Administrator', emoji: '👩‍💼' },
+    { id: 14, name: 'Bob Smith', role: 'Moderator', emoji: '👨‍💻' },
+    { id: 15, name: 'Alice Johnson', role: 'Administrator', emoji: '👩‍💼' },
+    { id: 16, name: 'Bob Smith', role: 'Moderator', emoji: '👨‍💻' },
+    { id: 17, name: 'Alice Johnson', role: 'Administrator', emoji: '👩‍💼' },
+    { id: 18, name: 'Bob Smith', role: 'Moderator', emoji: '👨‍💻' },
   ];
 
   const unverifiedUsers = [
@@ -23,6 +45,18 @@ const AdminUsers = () => {
   ];
 
   const usersToDisplay = view === 'verified' ? verifiedUsers : unverifiedUsers;
+
+  useEffect(() => {
+    if (menuIsClicked) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [menuIsClicked]);
 
   return (
     <>
@@ -36,47 +70,63 @@ const AdminUsers = () => {
 
         {/* Mobile Header */}
         <MobileHeader onMenuClick={setMenuIsClicked}/>
-        <div className='flex-1 p-0 space-y-6'>
-          {/* Breadcrumbs */}
-          <div className=' pt-4 px-4 text-sm text-gray-500'>
-            <span className='text-gray-600 cursor-pointer hover:underline'>Users</span> &gt;
-            <span className='ml-1 font-semibold text-gray-700'>
-              {view === 'verified' ? 'Verified Users' : 'Unverified Users'}
-            </span>
-          </div>
 
-          {/* Header */}
-          <div className='flex justify-between items-center px-4'>
-            <h2 className='text-2xl font-bold'>
-              {view === 'verified' ? 'Verified Users' : 'Unverified Users'}
-            </h2>
-            <span className='text-2xl'>📋</span>
+        <div className='flex-1 p-0 space-y-3'>
+
+          {/* Main Content Header */}
+          <div className='max-md:pt-2 md:bg-gradient-to-r from-gray-100 to-gray-200 pb-2 md:py-4 md:shadow-md md:sticky top-0 md:z-1 bg-white'>
+            <div className='flex justify-between items-center px-3'>
+              <div className='relative flex items-center'>
+                <UserRound size={36} color='green'/>
+                <ShieldCheck className='absolute top-4 left-5' color='green' size={20} fill='white'/>
+                <p className='ml-2 mt-1 text-green-900 text-2xl font-bold transition-all ease-in-out duration-300'>
+                  Verified Users
+                </p>
+              </div>
+              <Link to='/admin/users/unverified'>
+                <div className='relative mr-2'>
+                  <button className='cursor-pointer opacity-65 hover:opacity-100 hover:drop-shadow-sm p-1 rounded-md' title='Unverified Users'>
+                    <UserRound size={36} color='#004030'/>
+                    <div className='absolute left-6 top-6'>
+                      <ShieldX color='red' size={20} fill='white'/>
+                    </div>
+                  </button>
+                  <div className='absolute left-7 top-0'>
+                    <p className='text-[11px] font-bold px-2 text-white bg-red-500 rounded-4xl'>{2}</p>
+                  </div>
+                </div>
+              </Link>
+            </div>
           </div>
 
           {/* Toggle Buttons */}
-          <div className='px-4 flex space-x-4'>
-            <button
-              className={`px-6 py-2 rounded-full font-medium ${
-                view === 'verified' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'
-              }`}
-              onClick={() => setView('verified')}
-            >
-              ✅ Verified
-            </button>
-            <button
-              className={`px-6 py-2 rounded-full font-medium ${
-                view === 'unverified' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'
-              }`}
-              onClick={() => setView('unverified')}
-            >
-              ⚠️ Unverified
-            </button>
+          <div className='relative px-4 flex justify-between'>
+            <Search className='absolute inset-y-4 inset-x-8 opacity-50'/>
+            <input
+              name='search-bar'
+              className='bg-white pl-14 text-md mt-1 max-sm:w-60 w-1/2 border rounded-full p-3 border-gray-400 focus:outline-none focus:ring-1 focus:ring-green-600 shadow focus:shadow-lg' 
+              type='text' 
+              placeholder='Search...' 
+            />
+            <div className='flex items-center md:gap-5'>
+              <button 
+                title='Add User'
+                className='opacity-65 hover:opacity-100 hover:drop-shadow-sm mr-2 cursor-pointer hover:bg-green-10'>
+                <UserRoundPlus size={28}/>
+              </button>
+              <button 
+                title='Delete all users'
+                className='relative opacity-65 hover:opacity-100 hover:drop-shadow-sm mr-2 cursor-pointer hover:bg-green-10'>
+                <Trash color='red' size={28}/>
+                <Users className='absolute top-3 left-2' size={12} color='red'/>
+              </button>
+            </div>
           </div>
 
           {/* User Cards */}
-          <div className='p-4 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6'>
+          <div className='px-3 pb-4 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6'>
             {usersToDisplay.map(user => (
-              <div key={user.id} className='bg-white p-4 rounded-xl shadow hover:shadow-lg transition'>
+              <div key={user.id} className='bg-gray-50 p-4 rounded-xl border border-gray-100 shadow hover:shadow-xl transition cursor-pointer'>
                 <div className='flex flex-col items-center text-center'>
                   <div className='text-5xl mb-3'>{user.emoji}</div>
                   <h3 className='text-lg font-semibold'>{user.name}</h3>

@@ -1,15 +1,20 @@
+@import './styles/global.css';
+
 @import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
+@import './styles/pages/register.css';
+@import './styles/pages/notfound.css';
+@import './styles/components/mobile-header.css';
+
 @tailwind utilities;
+
 
 @theme {
    /* === Brand Colors === */
-  --color-primary: #007e33;    /* Green */
-  --color-secondary: #d6aa00;  /* Gold */
-  --color-accent: #c42b2b;     /* Red */
-  --color-tertiary: #c7801a;   /* Burnt Orange */
+  --color-primary: #E8FFD7;    
+  --color-secondary: #93DA97;  
+  --color-accent: #5E936C;     
+  --color-tertiary: #3E5F44;  
 
   /* === Neutrals === */
   --color-text: #1a1a1a;
@@ -76,24 +81,10 @@
   }
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.spinner {
-  animation: spin 1s linear infinite;
-}
 
 
-.input-field-style {
-  @apply pl-12 text-[14px] mt-1 w-full border rounded-md p-3;
-}
-.input-label-style {
-  @apply block text-sm font-medium text-gray-700;
-}
 
 /* Sidebar */
 .sidebar-container {
-  @apply flex min-h-screen bg-gray-800 text-white flex-col justify-between transition-[width] duration-300 ease-in-out
+  @apply flex sticky top-0 h-screen bg-gradient-to-r from-gray-700 to-gray-800 text-white flex-col justify-between transition-[width] duration-300 ease-in-out
 }

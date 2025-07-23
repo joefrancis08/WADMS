@@ -1,87 +1,98 @@
-import { useState } from 'react';
-import Icons from "../assets/icons";
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import {
+  usersIcon,
+  dashboardIcon,
+  closeIcon,
+  logoutIcon,
+  userProfileIcon
+} from '../assets/icons';
+import { LayoutDashboard, Users, X } from 'lucide-react';
 
 const SidebarSM = ({ sideBarOpen, setSideBarOpen }) => {
+  const location = useLocation();
 
   const menuItems = [
-    { id: 'dashboard', icon: Icons.dashboard, label: 'Dashboard', link: '/admin'},
-    { id: 'users', icon: Icons.users, label: 'Users', link: '/admin/users' },
+    { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', link: '/admin' },
+    { id: 'users', icon: Users, label: 'Users', link: '/admin/users' }
   ];
 
   return (
     <>
-      {
-        sideBarOpen && (
-          <div
-            className="fixed sm:hidden inset-0 bg-gray-500 opacity-50 z-40"
-            onClick={() => setSideBarOpen(false)}
-          ></div>
-        )
-      }
-      <div className={`fixed max-md:h-full max-sm:w-80 max-md:block max-md:w-90 md:hidden bg-gray-800 z-50 flex flex-col h-full transition-transform duration-300 ease-in-out transform ${sideBarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className='relative'>
-          <header className="flex items-center justify-between px-4 py-4 border-b-2 border-gray-700 h-18">
-            <div className="h-10 flex items-center space-x-2 transition-all duration-300">
-              <img className="h-14 w-auto" src="/CGS_Logo.png" alt="Logo" />
-              <div
-                className='transition-all duration-300 ease-in-out overflow-hidden opacity-100 max-w-[200px]'
-              >
-                <p className="text-2xl text-white font-bold whitespace-nowrap">WDMS</p>
-                <p className="text-[8px] text-white leading-none whitespace-nowrap">Web-Based Document</p>
-                <p className="text-[8px] text-white leading-none whitespace-nowrap">Management System</p>
-              </div>
-            </div>
-            <div>
-              <button 
-                className="text-white cursor-pointer pl-1"
-                onClick={() => setSideBarOpen(false)}
-              >
-                <img className='opacity-100 hover:opacity-85 w-6 h-6 pl-2' src={Icons.close} alt='Close icon' />
-              </button>
-            </div>
-          </header>
-        </div>
+      {/* Backdrop */}
+      {sideBarOpen && (
+        <div
+          className="fixed inset-0 bg-black opacity-40 z-40 sm:hidden"
+          onClick={() => setSideBarOpen(false)}
+        />
+      )}
 
-        <nav className="flex-1 mt-4 px-2">
-          <div className='flex flex-col space-y-2'>
+      {/* Sidebar */}
+      <div
+        className={`fixed z-50 top-0 left-0 h-full w-72 max-w-full bg-gradient-to-r from-gray-800 to-gray-900 text-white transform transition-transform duration-300 ease-in-out
+        ${sideBarOpen ? 'translate-x-0' : '-translate-x-full'}
+        sm:hidden flex flex-col`}
+      >
+        {/* Header */}
+        <header className="flex items-center justify-between px-4 py-4 border-b border-gray-700 bg-gray-900">
+          <div className="flex items-center space-x-2">
+            <img src="/CGS_Logo.png" alt="Logo" className="h-14 w-auto" />
+            <div>
+              <p className="text-2xl font-bold">DMS</p>
+              <p className="text-[8px] leading-none">Document</p>
+              <p className="text-[8px] leading-none">Management System</p>
+            </div>
+          </div>
+          <button className='opacity-100 hover:opacity-85 ml-2 cursor-pointer' onClick={() => setSideBarOpen(false)}>
+            <X />
+          </button>
+        </header>
+
+        {/* Menu Items */}
+        <nav className="flex-1 px-4 py-4 overflow-y-auto">
+          <ul className="space-y-3 ml-2">
             {menuItems.map((item) => {
               const isActive = location.pathname === item.link;
+              const Icon = item.icon;
               return (
-                <Link key={item.id} to={item.link}>
-                  <div
-                    onClick={() => setSideBarOpen(false)}
-                    className={`flex items-center space-x-5 px-5 py-3 cursor-pointer transition-opacity duration-200 opacity-85 hover:opacity-100
-                      ${isActive 
-                        ? 'bg-gray-600 text-white font-semibold opacity-100 rounded-full transition-all ease-in-out duration-1000' 
-                        : 'hover:bg-gray-700 rounded-full text-white'}
-                    `}
-                  >
-                    <img className='brightness-200 w-7 h-7' src={item.icon} alt="" aria-hidden />
-                    <span className='text-sm whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out opacity-100 max-w-[200px]'>
-                      {item.label}
-                    </span>
-                  </div>
-                </Link>
+                <li key={item.id}>
+                  <Link to={item.link} onClick={() => setSideBarOpen(false)}>
+                    <div
+                      className={`flex items-center space-x-4 px-4 py-3 rounded-full cursor-pointer transition-all
+                        ${isActive
+                          ? 'bg-gray-600 font-semibold'
+                          : 'hover:bg-gray-700 text-white opacity-85 hover:opacity-100'}`}
+                    >
+                      <Icon
+                        fill={isActive ? 'white' : 'none'}
+                        className={`flex-shrink-0 transition-all duration-300`}
+                        aria-hidden="true"
+                      />
+                      <span className="text-sm ml-2">{item.label}</span>
+                    </div>
+                  </Link>
+                </li>
               );
             })}
-          </div>
+          </ul>
         </nav>
-        
-        <div className="px-5 py-4 border-t border-gray-700 mt-auto">
+
+        {/* User Info Bottom Section */}
+        <div className="px-5 py-4 border-t border-gray-700 bg-gray-900">
           <div className="flex items-center justify-between">
-            {/* Left: User Icon + Name/Role */}
-            <div className='flex items-center overflow-hidden transition-all duration-300 gap-3'>
-              <img className='opacity-100 hover:opacity-85 cursor-pointer rounded-b-full rounded-t-full w-8 h-8' src={Icons.userProfile} alt="User Profile" />
-              <div className='transition-all duration-200 ease-in-out overflow-hidden opacity-100 max-w-[300px]'>
-                <p className="text-sm text-white font-semibold">Joe Francis</p>
+            <div className="flex items-center space-x-3">
+              <img
+                src={userProfileIcon}
+                alt="User"
+                className="w-8 h-8 rounded-full cursor-pointer hover:opacity-85"
+              />
+              <div>
+                <p className="text-sm font-semibold">Joe Francis</p>
                 <p className="text-xs text-gray-400">Administrator</p>
               </div>
             </div>
-            {/* Right: Logout Icon */}
-            <button className="flex flex-col items-center justify-center transition-colors duration-200 border-l-2 border-gray-400 pl-4 cursor-pointer">
-              <img className='opacity-100 hover:opacity-75 w-7 h-7' src={Icons.logout} alt="Logout icon" />
-              <p className="text-xs text-gray-400 opacity-100 hover:opacity-75">Logout</p>
+            <button className="flex flex-col items-center justify-center pl-4 border-l border-gray-500">
+              <img src={logoutIcon} alt="Logout" className="w-6 h-6 hover:opacity-75" />
+              <p className="text-xs text-gray-400 hover:opacity-75">Logout</p>
             </button>
           </div>
         </div>
