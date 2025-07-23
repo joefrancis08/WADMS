@@ -6,14 +6,14 @@ import {
   logoutIcon,
   userProfileIcon
 } from '../assets/icons';
-import { LayoutDashboard, Users, X } from 'lucide-react';
+import { LayoutDashboard, Users, UsersRound, X } from 'lucide-react';
 
 const SidebarSM = ({ sideBarOpen, setSideBarOpen }) => {
   const location = useLocation();
 
   const menuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', link: '/admin' },
-    { id: 'users', icon: Users, label: 'Users', link: '/admin/users' }
+    { id: 'users', icon: UsersRound, label: 'Users', link: '/admin/users' }
   ];
 
   return (

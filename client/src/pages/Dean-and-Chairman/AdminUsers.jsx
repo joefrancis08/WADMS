@@ -92,7 +92,7 @@ const AdminUsers = () => {
                     </div>
                   </button>
                   <div className='absolute left-7 top-0'>
-                    <p className='text-[11px] font-bold px-2 text-white bg-red-500 rounded-4xl'>{2}</p>
+                    <p className='text-[11px] font-bold px-2 text-white bg-red-600 rounded-4xl'>{2}</p>
                   </div>
                 </div>
               </Link>
