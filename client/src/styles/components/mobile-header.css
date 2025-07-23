@@ -1,0 +1,15 @@
+.mh-container {
+  @apply max-sm:flex max-md:flex md:hidden items-center justify-start space-x-5 p-4 bg-gray-200 shadow-md sticky top-0 border-b border-gray-300 h-18 z-40;
+}
+
+.mh-menu-button {
+  @apply p-2 hover:bg-gray-300 hover:rounded-full hover:shadow-sm cursor-pointer;
+}
+
+.mh-menu-svg {
+  @apply opacity-100 hover:opacity-75 w-8 h-8;
+}
+
+.mh-logo-and-title-container {
+  @apply flex items-center space-x-2;
+}

@@ -1,0 +1,20 @@
+.notfound-container {
+  @apply min-h-screen flex items-center justify-center bg-gray-100 px-4;
+}
+
+.notfound-card {
+  @apply w-full max-w-md bg-white px-4 py-6 sm:px-6 md:px-8 rounded-lg shadow-md text-center;
+}
+
+.notfound-icon-layout {
+  @apply w-40 sm:w-60 md:w-72 h-auto;
+}
+
+.notfound-title {
+  @apply text-4xl text-[#f36060] font-bold;
+}
+
+.notfound-back-button {
+  @apply inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition;
+}
+

@@ -7,7 +7,7 @@ import { showErrorToast, showSuccessToast } from '../utils/toastNotification.js'
 import SubmitButton from '../components/Auth/SubmitButton.jsx'; // Importing custom SubmitButton component
 import AlertMessage from '../components/Auth/AlertMessage.jsx'; // Importing custom AlertMessage component
 import LoadSpinner from '../components/Loaders/LoadSpinner.jsx'; // Importing custom LoadSpinner component
-import { AtSign, Eye, EyeClosed, EyeOff, Lock, UserRound, UserRoundPen } from 'lucide-react';
+import { AtSign, Eye, EyeOff, Lock, UserRoundPen } from 'lucide-react';
 
 // Base URL for API requests
 // This was set in environment variables (.env) for security and flexibility
@@ -117,21 +117,21 @@ function Register() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-300">
-      <div className="w-full max-w-md max-sm:mx-4 bg-gradient-to-b from-gray-100 to-white gray px-8 pb-8 pt-2 rounded-lg drop-shadow-md">
+    <div className="reg-card-container">
+      <div className="reg-card-content">
         <div className='flex justify-center'>
           <img src="/CGS_Logo.png" alt="Logo" className="h-25 mb-4" />
         </div>
-        <h2 className="font-bold mb-6 text-center text-md text-green-700">
+        <h2 className="reg-card-header-title">
           Document Management System
         </h2>
-        <hr className="opacity-50 text-secondary shadow-lg" />
-        <h2 className="text-2xl font-bold py-4 text-center text-green-700">REGISTER</h2>
+        <hr className="reg-hr-line" />
+        <h2 className="reg-form-title">REGISTER</h2>
 
         <form onSubmit={handleSubmit} className="space-y-2">
           <div className="w-full">
-            <div className="relative flex items-center">
-              <span className="absolute inset-y-7 left-0 flex items-center pl-4">
+            <div className="input-container-layout">
+              <span className="input-icon-layout">
                 <UserRoundPen color='gray' size={24} />
               </span>
               <input
@@ -143,8 +143,9 @@ function Register() {
                 value={values.fullName}
                 onChange={handleChange}
                 className={`${errors.fullName 
-                  ? 'border-red-500 focus:outline-none' 
-                  : 'border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-600'} input-field-style`
+                  ? 'input-invalid' 
+                  : 'input-valid'} 
+                  input-field-style`
                 }
               />
             </div>
@@ -153,9 +154,9 @@ function Register() {
             </div>
           </div>
 
-          <div className="relative w-full">
-            <div className="relative">
-              <span className="absolute inset-y-7 left-0 flex items-center pl-4">
+          <div className="w-full">
+            <div className="input-container-layout">
+              <span className="input-icon-layout">
                 <AtSign color='gray' size={24} />
               </span>
               <input
@@ -167,18 +168,19 @@ function Register() {
                 value={values.email}
                 onChange={handleChange}
                 className={`${errors.email 
-                  ? 'border-red-500 focus:outline-none' 
-                  : 'border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-600'} input-field-style`}
+                  ? 'input-invalid' 
+                  : 'input-valid'} 
+                  input-field-style`
+                }
               />
             </div>
             <div className="min-h-[1.25rem]">
               {errors.email && <AlertMessage message={errors.email} />}
             </div>
           </div>
-
-          <div className="relative w-full">
-            <div className="relative">
-              <span className="absolute inset-y-7 left-0 flex items-center pl-4">
+          <div className="w-full">
+            <div className="input-container-layout">
+              <span className="input-icon-layout">
                 <Lock color='gray' size={24}/>
               </span>
               <input
@@ -189,21 +191,19 @@ function Register() {
                 value={values.password}
                 onChange={handleChange}
                 className={`${errors.password 
-                  ? 'border-red-500 focus:outline-none' 
-                  : 'border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-600'} input-field-style`}
+                  ? 'input-invalid' 
+                  : 'input-valid'} 
+                  input-field-style`
+                }
               />
               <span
                 title={isPasswordVisible ? 'Hide Password' : 'Show Password'}
                 onClick={() => setIsPasswordVisible(!isPasswordVisible)} 
-                className="absolute inset-y-7 right-0 flex items-center pr-4 hover:cursor-pointer hover:text-gray-500">
-                {isPasswordVisible ? <EyeOff color='gray' fill='currentFill'/> : <Eye color='gray'/>}
-                {/* <button 
-                  title={isPasswordVisible ? 'Hide Password' : 'Show Password'}
-                  src={isPasswordVisible ? eyeCloseIcon : eyeOpenIcon} className="w-6 h-6" 
-                /> */}
+                className="password-icon-visibility">
+                {isPasswordVisible ? <EyeOff color='gray' /> : <Eye color='gray'/>}
               </span>
             </div>
-            <div className="transition-all ease-linear duration-700 min-h-[1.25rem]">
+            <div className="min-h-[1.25rem]">
               {errors.password && <AlertMessage message={errors.password} />}
             </div>
           </div>

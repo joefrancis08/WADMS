@@ -1,12 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  closeIcon, 
-  dashboardIcon, 
-  logoutIcon,  
-  menuIconLight, 
-  userProfileIcon, 
-  usersIcon } from '../assets/icons.js';
+import { logoutIcon, userProfileIcon } from '../assets/icons.js';
 import { Users, LayoutDashboard, Menu, X } from 'lucide-react';
 
 const SidebarLG = () => {

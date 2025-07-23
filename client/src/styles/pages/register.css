@@ -1,0 +1,44 @@
+.reg-card-container {
+  @apply min-h-screen flex items-center justify-center bg-gray-300;
+}
+
+.reg-card-content {
+  @apply w-full max-w-md max-sm:mx-4 bg-gradient-to-b from-gray-100 to-white px-8 pb-8 pt-2 rounded-lg drop-shadow-md;
+}
+
+.reg-card-header-title {
+  @apply font-bold mb-6 text-center text-base text-green-700;
+}
+
+.reg-hr-line {
+  @apply opacity-50 text-secondary shadow-lg;
+}
+
+.reg-form-title {
+  @apply text-2xl font-bold py-4 text-center text-green-700
+}
+
+.input-container-layout {
+  @apply relative flex items-center
+}
+
+.input-field-style {
+  @apply pl-12 text-[15px] mt-1 w-full border rounded-lg p-3;
+}
+
+.input-icon-layout {
+  @apply absolute inset-y-7 left-0 flex items-center pl-4;
+}
+
+.input-invalid {
+ @apply border-red-500 focus:outline-none;
+}
+
+.input-valid {
+  @apply border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-600;
+}
+
+.password-icon-visibility {
+  @apply absolute inset-y-7 right-0 flex items-center pr-4 hover:cursor-pointer hover:text-gray-500;
+}
+
