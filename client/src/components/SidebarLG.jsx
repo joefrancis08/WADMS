@@ -7,6 +7,7 @@ import {
   menuIconLight, 
   userProfileIcon, 
   usersIcon } from '../assets/icons.js';
+import { Users, LayoutDashboard, Menu, X } from 'lucide-react';
 
 const SidebarLG = () => {
   const savedState = localStorage.getItem('sidebar-collapsed');
@@ -27,16 +28,16 @@ const SidebarLG = () => {
     localStorage.setItem('sidebar-collapsed', newState.toString());
   };
   const menuItems = [
-    { id: 'dashboard', icon: dashboardIcon, label: 'Dashboard', link: '/admin'},
-    { id: 'users', icon: usersIcon, label: 'Users', link: '/admin/users' },
+    { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', link: '/admin'},
+    { id: 'users', icon: Users, label: 'Users', link: '/admin/users' },
   ];
 
   return (
     <aside className={`sidebar-container ${isCollapsed ? 'w-20' : 'w-64'}`}>
       {/* Header */}
-      <header className="flex items-center justify-between px-4 py-4 border-b-2 border-gray-700  h-20">
+      <header className="flex items-center justify-between px-2 py-2 border-b-1 border-gray-800 bg-gray-900 h-20 shadow-lg">
         {!isCollapsed && (
-          <div className="h-10 flex items-center space-x-2 transition-all duration-300">
+          <div className="h-10 flex items-center space-x- transition-all duration-300">
             <img className="h-14 w-auto" src="/CGS_Logo.png" alt="Logo" />
             <div
               className={`transition-all duration-300 ease-in-out overflow-hidden ${
@@ -53,8 +54,8 @@ const SidebarLG = () => {
           <button onClick={toggleSidebar} className="text-white cursor-pointer pl-1">
             {
               isCollapsed 
-                ? <img className='opacity-100 hover:opacity-85 w-8 h-8 pl-2' src={menuIconLight} alt='Menu icon' />
-                : <img className='opacity-100 hover:opacity-85 w-3 h-auto ' src={closeIcon} alt='Close icon' />
+                ? <Menu className='opacity-100 hover:opacity-85 ml-4'/>
+                : <X className='opacity-100 hover:opacity-85 ml-2'/>
             } 
           </button>
         </div>
@@ -65,6 +66,7 @@ const SidebarLG = () => {
         <div className='flex flex-col space-y-2'>
           {menuItems.map((item) => {
             const isActive = location.pathname === item.link;
+            const Icon = item.icon;
             return (
               <Link key={item.id} to={item.link}>
                 <div
@@ -74,7 +76,14 @@ const SidebarLG = () => {
                       : 'hover:bg-gray-700 rounded-full'}
                   `}
                 >
-                  <img className='brightness-200 w-7 h-7' src={item.icon} alt="" aria-hidden />
+                  <Icon
+                    fill={isActive ? 'white' : 'none'}
+                    className={`flex-shrink-0 ${
+                      isCollapsed ? 'w-6 h-6' 
+                      : 'w-7 h-7'
+                    } transition-all duration-300`}
+                    aria-hidden="true"
+                  />
                   <span
                     className={`text-sm whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out ${
                       isCollapsed ? 'opacity-0 max-w-0' : 'opacity-100 max-w-[200px]'
@@ -90,7 +99,7 @@ const SidebarLG = () => {
       </nav>
 
       {/* User Info & Logout */}
-      <div className="px-5 py-4 border-t border-gray-700">
+      <div className="px-5 py-4 border-t border-gray-700 bg-gray-900">
         <div className="flex items-center justify-between">
           {/* Left: User Icon + Name/Role */}
           <div

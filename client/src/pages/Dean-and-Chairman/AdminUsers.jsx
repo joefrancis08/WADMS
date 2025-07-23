@@ -11,6 +11,7 @@ import {
   unverifiedUserIconDark, 
   verifiedUserIconDark 
 } from '../../assets/icons';
+import { Search, ShieldCheck, ShieldX, Trash, UserRound, UserRoundPlus, Users } from 'lucide-react';
 
 
 const AdminUsers = () => {
@@ -73,19 +74,20 @@ const AdminUsers = () => {
         <div className='flex-1 p-0 space-y-3'>
 
           {/* Main Content Header */}
-          <div className='max-md:pt-2 md:bg-gray-100 pb-2 md:py-3.5 md:shadow-md md:sticky top-0 md:z-1 bg-white'>
+          <div className='max-md:pt-2 md:bg-gray-100 pb-2 md:py-4 md:shadow-md md:sticky top-0 md:z-1 bg-white'>
             <div className='flex justify-between items-center px-3'>
-              <div className='flex items-center'>
-                <img className='h-10 w-auto pr-2' src={verifiedUserIconDark} alt='' />
-                <p className='text-2xl font-bold transition-all ease-in-out duration-300'>
+              <div className='relative flex items-center'>
+                <UserRound size={36} color='green'/>
+                <ShieldCheck className='absolute top-4 left-5' color='green' size={20} fill='white'/>
+                <p className='ml-2 mt-1 text-2xl font-bold transition-all ease-in-out duration-300'>
                   {view === 'verified' ? 'Verified Users' : 'Unverified Users'}
                 </p>
               </div>
               <div className='relative mr-2'>
                 <button className='cursor-pointer hover:bg-transparent hover:drop-shadow-sm p-1 rounded-md' title='Unverified Users'>
-                  <img className='opacity-65 hover:opacity-100 h-auto w-10' src={unverifiedUserIconDark} alt='' />
+                  <UserRound size={36} color='#004030'/>
                   <div className='absolute left-6 top-6'>
-                    <img className='hover:drop-shadow-sm h-auto w-5' src={shieldXIcon} alt='Unverified sign' />
+                    <ShieldX color='red' size={20} fill='white'/>
                   </div>
                 </button>
                 <div className='absolute left-7 top-0'>
@@ -97,10 +99,10 @@ const AdminUsers = () => {
 
           {/* Toggle Buttons */}
           <div className='relative px-4 flex justify-between'>
-            <img className='absolute inset-y-3.5 inset-x-8 h-8 w-8 opacity-50' src={searchIconDark} alt='Search icon' />
+            <Search className='absolute inset-y-4 inset-x-8 opacity-50'/>
             <input
               name='search-bar'
-              className='bg-white pl-14 text-md mt-1 max-sm:w-75 w-1/2 border rounded-full p-3 border-gray-400 focus:outline-none focus:ring-1 focus:ring-green-600 shadow focus:shadow-lg' 
+              className='bg-white pl-14 text-md mt-1 max-sm:w-60 w-1/2 border rounded-full p-3 border-gray-400 focus:outline-none focus:ring-1 focus:ring-green-600 shadow focus:shadow-lg' 
               type='text' 
               placeholder='Search...' 
             />
@@ -108,12 +110,13 @@ const AdminUsers = () => {
               <button 
                 title='Add User'
                 className='opacity-65 hover:opacity-100 hover:drop-shadow-sm mr-2 cursor-pointer hover:bg-green-10'>
-                <img className='h-auto w-10' src={addUserIconDark} alt='Add user icon'/>
+                <UserRoundPlus size={28}/>
               </button>
               <button 
                 title='Delete all users'
-                className='opacity-85 hover:opacity-100 hover:drop-shadow-sm mr-2 cursor-pointer hover:bg-green-10'>
-                <img className='h-auto w-8' src={deleteAllIcon} alt='Add user icon'/>
+                className='relative opacity-65 hover:opacity-100 hover:drop-shadow-sm mr-2 cursor-pointer hover:bg-green-10'>
+                <Trash color='red' size={28}/>
+                <Users className='absolute top-3 left-2' size={12} color='red'/>
               </button>
             </div>
           </div>

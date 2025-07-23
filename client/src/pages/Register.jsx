@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import axios from 'axios'; // Importing axios for HTTP requests
 import { useAuth } from '../contexts/AuthContext.jsx';
 import { Link, useNavigate } from 'react-router-dom'; // Importing Link and useNavigate for navigation
@@ -7,13 +7,7 @@ import { showErrorToast, showSuccessToast } from '../utils/toastNotification.js'
 import SubmitButton from '../components/Auth/SubmitButton.jsx'; // Importing custom SubmitButton component
 import AlertMessage from '../components/Auth/AlertMessage.jsx'; // Importing custom AlertMessage component
 import LoadSpinner from '../components/Loaders/LoadSpinner.jsx'; // Importing custom LoadSpinner component
-import { 
-  emailIcon, 
-  eyeCloseIcon, 
-  eyeOpenIcon, 
-  keyIcon, 
-  userIcon } 
-from '../assets/icons.js';
+import { AtSign, Eye, EyeClosed, EyeOff, Lock, UserRound, UserRoundPen } from 'lucide-react';
 
 // Base URL for API requests
 // This was set in environment variables (.env) for security and flexibility
@@ -123,22 +117,22 @@ function Register() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md bg-white px-8 pb-8 pt-2 rounded-lg shadow-md">
+    <div className="min-h-screen flex items-center justify-center bg-gray-300">
+      <div className="w-full max-w-md max-sm:mx-4 bg-gradient-to-b from-gray-100 to-white gray px-8 pb-8 pt-2 rounded-lg drop-shadow-md">
         <div className='flex justify-center'>
           <img src="/CGS_Logo.png" alt="Logo" className="h-25 mb-4" />
         </div>
-        <h2 className="font-bold mb-6 text-center text-green-700">
-          Web-Based Document Management System
+        <h2 className="font-bold mb-6 text-center text-md text-green-700">
+          Document Management System
         </h2>
-        <hr className="opacity-20" />
+        <hr className="opacity-50 text-secondary shadow-lg" />
         <h2 className="text-2xl font-bold py-4 text-center text-green-700">REGISTER</h2>
 
         <form onSubmit={handleSubmit} className="space-y-2">
           <div className="w-full">
             <div className="relative flex items-center">
               <span className="absolute inset-y-7 left-0 flex items-center pl-4">
-                <img src={userIcon} alt="icon" className="w-7 h-7" />
+                <UserRoundPen color='gray' size={24} />
               </span>
               <input
                 type="text"
@@ -162,7 +156,7 @@ function Register() {
           <div className="relative w-full">
             <div className="relative">
               <span className="absolute inset-y-7 left-0 flex items-center pl-4">
-                <img src={emailIcon} alt="icon" className="w-5 h-5" />
+                <AtSign color='gray' size={24} />
               </span>
               <input
                 type="text"
@@ -185,7 +179,7 @@ function Register() {
           <div className="relative w-full">
             <div className="relative">
               <span className="absolute inset-y-7 left-0 flex items-center pl-4">
-                <img src={keyIcon} alt="lock icon" className="w-5 h-5" />
+                <Lock color='gray' size={24}/>
               </span>
               <input
                 type={isPasswordVisible ? 'text' : 'password'}
@@ -198,11 +192,15 @@ function Register() {
                   ? 'border-red-500 focus:outline-none' 
                   : 'border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-600'} input-field-style`}
               />
-              <span onClick={() => setIsPasswordVisible(!isPasswordVisible)} className="absolute inset-y-7 right-0 flex items-center pr-4 hover:cursor-pointer hover:text-gray-500">
-                <img 
+              <span
+                title={isPasswordVisible ? 'Hide Password' : 'Show Password'}
+                onClick={() => setIsPasswordVisible(!isPasswordVisible)} 
+                className="absolute inset-y-7 right-0 flex items-center pr-4 hover:cursor-pointer hover:text-gray-500">
+                {isPasswordVisible ? <EyeOff color='gray' fill='currentFill'/> : <Eye color='gray'/>}
+                {/* <button 
                   title={isPasswordVisible ? 'Hide Password' : 'Show Password'}
                   src={isPasswordVisible ? eyeCloseIcon : eyeOpenIcon} className="w-6 h-6" 
-                />
+                /> */}
               </span>
             </div>
             <div className="transition-all ease-linear duration-700 min-h-[1.25rem]">
