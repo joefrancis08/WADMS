@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerUser, fetchUserById, fetchUsers, updateUser, deleteUsers, deleteUser, loginUser, checkEmail, userSession, logoutUser } from '../controllers/userController.js';
+import { registerUser, fetchUserById, fetchUsers, updateUser, deleteUsers, deleteUser, loginUser, checkEmail, userSession, logoutUser, fetchUserByRole } from '../controllers/userController.js';
 
 const userRouter = express.Router();
 
@@ -9,6 +9,7 @@ userRouter.post('/login', loginUser);
 userRouter.post('/logout', logoutUser);
 userRouter.get('/session', userSession);
 userRouter.get('/', fetchUsers);
+userRouter.get('/', fetchUserByRole);
 userRouter.get('/:id', fetchUserById);
 userRouter.put('/:id', updateUser);
 userRouter.delete('/', deleteUsers);

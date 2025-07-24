@@ -1,21 +1,11 @@
 import { useState, useEffect} from 'react';
-import SidebarLG from '../../components/SidebarLG';
-import SidebarSM from '../../components/SidebarSM';
-import MobileHeader from '../../components/MobileHeader';
+import AdminLayout from '../../components/Layout/AdminLayout';
 import { Link } from 'react-router-dom';
-import { 
-  addUserIconDark, 
-  deleteAllIcon, 
-  searchIconDark, 
-  shieldXIcon, 
-  unverifiedUserIconDark, 
-  verifiedUserIconDark 
-} from '../../assets/icons';
 import { Search, ShieldCheck, ShieldX, Trash, UserRound, UserRoundPlus, Users } from 'lucide-react';
 
 
 const AdminUsers = () => {
-  const [menuIsClicked, setMenuIsClicked] = useState(false);
+
   const [view, setView] = useState('verified');
 
   const verifiedUsers = [
@@ -37,6 +27,11 @@ const AdminUsers = () => {
     { id: 16, name: 'Bob Smith', role: 'Moderator', emoji: '👨‍💻' },
     { id: 17, name: 'Alice Johnson', role: 'Administrator', emoji: '👩‍💼' },
     { id: 18, name: 'Bob Smith', role: 'Moderator', emoji: '👨‍💻' },
+    { id: 19, name: 'Bob Smith', role: 'Moderator', emoji: '👨‍💻' },
+    { id: 20, name: 'Alice Johnson', role: 'Administrator', emoji: '👩‍💼' },
+    { id: 21, name: 'Bob Smith', role: 'Moderator', emoji: '👨‍💻' },
+    { id: 22, name: 'Alice Johnson', role: 'Administrator', emoji: '👩‍💼' },
+    { id: 23, name: 'Bob Smith', role: 'Moderator', emoji: '👨‍💻' },
   ];
 
   const unverifiedUsers = [
@@ -46,33 +41,10 @@ const AdminUsers = () => {
 
   const usersToDisplay = view === 'verified' ? verifiedUsers : unverifiedUsers;
 
-  useEffect(() => {
-    if (menuIsClicked) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [menuIsClicked]);
-
   return (
     <>
-      <div className='min-h-screen flex flex-col md:flex-row'>
-        <div className='sm:flex max-md:flex md:hidden'>
-          <SidebarSM sideBarOpen={menuIsClicked} setSideBarOpen={setMenuIsClicked} />
-        </div>
-        <div className='hidden md:block'>
-          <SidebarLG />
-        </div>
-
-        {/* Mobile Header */}
-        <MobileHeader onMenuClick={setMenuIsClicked}/>
-
+      <AdminLayout>
         <div className='flex-1 p-0 space-y-3'>
-
           {/* Main Content Header */}
           <div className='max-md:pt-2 md:bg-gradient-to-r from-gray-100 to-gray-200 pb-2 md:py-4 md:shadow-md md:sticky top-0 md:z-1 bg-white'>
             <div className='flex justify-between items-center px-3'>
@@ -125,7 +97,7 @@ const AdminUsers = () => {
 
           {/* User Cards */}
           <div className='px-3 pb-4 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6'>
-            {usersToDisplay.map(user => (
+            {verifiedUsers.map(user => (
               <div key={user.id} className='bg-gray-50 p-4 rounded-xl border border-gray-100 shadow hover:shadow-xl transition cursor-pointer'>
                 <div className='flex flex-col items-center text-center'>
                   <div className='text-5xl mb-3'>{user.emoji}</div>
@@ -136,7 +108,7 @@ const AdminUsers = () => {
             ))}
           </div>
         </div>
-      </div>
+      </AdminLayout>
     </>
   );
 };

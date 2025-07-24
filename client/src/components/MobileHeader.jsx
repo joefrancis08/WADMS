@@ -4,7 +4,7 @@ import { menuIconDark } from '../assets/icons';
 const MobileHeader = ({ onMenuClick }) => {
   return (
     <>
-      <div className='mh-container'>
+      <div className='z-50 mh-container'>
         <button 
           onClick={() => onMenuClick(true)}
           className='mh-menu-button'>
