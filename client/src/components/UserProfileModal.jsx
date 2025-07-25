@@ -1,35 +1,40 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
-import { Navigate, useNavigate } from 'react-router-dom';
 
-const UserProfileModal = ({ onClose, header, body, footer }) => {
-  const navigate = useNavigate();
+const UserProfileModal = ({ modalOpen, onClose, header, body, footer }) => {
+
+  useEffect(() => {
+    console.log(modalOpen);
+    document.body.style.overflow = 'hidden';
+
+    // Re-enable scroll when component unmounts
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+    <div className="h-full fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-lg p-4">
       <div className="relative w-full md:max-w-xl bg-gradient-to-r from-gray-100 to-white rounded-md shadow-2xl px-8 pt-8 animate-fadeIn">
 
         {/* Close Button */}
         <button
           onClick={() => {
-            onClose?.(), 
-            navigate(`/admin/users/unverified/`)
+            onClose?.();
           }}
-          className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition cursor-pointer"
-          aria-label="Close"
         >
-          <X />
         </button>
 
         {/* Header */}
-        <div className="flex justify-center max-md:items-center md:flex-col flex-col items-center text-gray-700 dark:text-gray-300">
+        <div className="flex justify-center border border-gray-300 rounded-md max-md:items-center md:flex-col flex-col items-center text-gray-700 dark:text-gray-300 mt-4">
           {header}
         </div>
 
         {/* Body */}
-        <div className='w-full items-center justify-center border shadow border-gray-200 flex flex-col mt-3 md:mt-8 mb-2'>
+        <div className='w-full items-center justify-center rounded-md shadow border border-gray-300 flex flex-col my-4 md:my-8'>
           {body}
         </div>
-        <hr className='text-gray-200'></hr>
+        <hr className='text-gray-300'></hr>
 
         {/* Footer */}
         <div className='py-4 flex items-center justify-evenly'>

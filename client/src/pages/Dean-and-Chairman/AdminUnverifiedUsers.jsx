@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react';
-import { ArrowLeft, BadgeAlert, Check, ChevronDown, ChevronLeft, ChevronRight, ShieldCheck, Trash, Trash2, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ChevronLeft, ShieldCheck, Trash2, X } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import AdminLayout from '../../components/Layout/AdminLayout';
 import dateFormatter from '../../utils/dateFormatter';
@@ -7,13 +7,12 @@ import { useUsers } from '../../hooks/useUsers';
 import ProfileAvatar from '../../components/ProfileAvatar';
 import UserProfileModal from '../../components/UserProfileModal';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 const AdminUnverifiedUsers = () => {
   const navigate = useNavigate();
   const { users, loading, error} = useUsers();
   const unverifiedUsers = users.data;
   const [selectedUser, setSelectedUser] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const handleVerifyClick = (e) => {
     e.stopPropagation();
@@ -33,8 +32,11 @@ const AdminUnverifiedUsers = () => {
       <>
         {/* Close Button */}
         <button
-          onClick={() => (setSelectedUser(null), navigate(`/admin/users/unverified/`))}
-          className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition cursor-pointer"
+          onClick={() => {
+            setSelectedUser(null);
+            navigate('/admin/users/unverified');
+          }}
+          className="absolute top-5 right-6 text-gray-400 hover:text-gray-600 transition cursor-pointer"
           aria-label="Close"
         >
           <X />
@@ -43,7 +45,7 @@ const AdminUnverifiedUsers = () => {
         {/* Header */}
         <div className='w-full flex flex-col md:flex-row rounded items-center justify-center py-5 border border-gray-200 shadow-md'>
           <div>
-            <ProfileAvatar name={selectedUser.full_name} height={'md:h-36 h-32'} width={'md:w-36 w-32'}/>
+            <ProfileAvatar name={selectedUser.full_name} height={'md:h-36 h-32'} width={'md:w-36 w-32'} border={'rounded-full'}/>
           </div>
           <div className='relative p-4 flex'>
             <p className=" border border-gray-200 rounded-md p-4 text-xl md:text-2xl font-bold text-green-900 mt-2 shadow-sm bg-gray-100">
@@ -59,13 +61,13 @@ const AdminUnverifiedUsers = () => {
     return (
       <>
         <div className='relative p-4 flex'>
-          <span className='text-white text-xs absolute top-3 md:left-1/2 left-1/2 -translate-x-11 md:-translate-x-11 mb-2 bg-green-700 py-1 px-2 rounded-lg'>Email Address</span>
+          <span className='text-white text-xs absolute top-3 md:left-1/2 left-1/2 -translate-x-11 md:-translate-x-11 mb-2 bg-green-700 py-1 px-2 rounded-md'>Email Address</span>
           <p className=" border border-gray-300 rounded-lg p-4 text-md font-bold text-green-900 mt-2 shadow-inner bg-gray-100">
             {selectedUser.email}
           </p>
         </div>
         <div className='relative p-4 flex'>
-          <span className='text-white text-xs text-center absolute top-3 md:left-1/2 left-1/2 -translate-x-22 md:-translate-x-22 mb-2 bg-green-700 py-1 px-4 w-45 rounded-lg'>Registration Date & Time</span>
+          <span className='text-white text-xs text-center absolute top-3 md:left-1/2 left-1/2 -translate-x-22 md:-translate-x-22 mb-2 bg-green-700 py-1 px-4 w-45 rounded-md'>Registration Date & Time</span>
           <p className="flex border border-gray-300 rounded-lg p-4 text-md font-semibold text-green-900 mt-2 shadow-inner bg-gray-100">
             {dateFormatter(selectedUser.created_at)}
           </p>
@@ -93,10 +95,13 @@ const AdminUnverifiedUsers = () => {
     <AdminLayout>
       {selectedUser && 
           <UserProfileModal
-            onClose={() => setSelectedUser(null)}
+            onClose={() => {
+              setSelectedUser(null);
+            }}
             header={<UserProfileHeader />}
             body={<UserProfileDetails />}
             footer={<UserProfileAction />}
+            modalOpen={modalOpen}
           />
         }
       {console.log(unverifiedUsers)}
@@ -130,7 +135,11 @@ const AdminUnverifiedUsers = () => {
                       title={`Click to see profile of ${user.full_name}`} 
                       key={user.id} 
                       className='hover:bg-gray-100 cursor-pointer hover:shadow-inner shadow-sm' 
-                      onClick={() => (setSelectedUser(user), handleRowClick(user.user_uuid))}
+                      onClick={() => {
+                        setSelectedUser(user);
+                        setModalOpen(true);
+                        handleRowClick(user.user_uuid);
+                      }}
                     >
                       <td className="px-6 py-4 font-medium text-gray-800">{user.full_name}</td>
                       <td className="px-6 py-4 text-gray-600">{user.email}</td>

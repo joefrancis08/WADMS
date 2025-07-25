@@ -2,6 +2,7 @@ import { useState, useEffect} from 'react';
 import AdminLayout from '../../components/Layout/AdminLayout';
 import { Link } from 'react-router-dom';
 import { Search, ShieldCheck, ShieldX, Trash, UserRound, UserRoundPlus, Users } from 'lucide-react';
+import ProfileAvatar from '../../components/ProfileAvatar';
 
 
 const AdminUsers = () => {
@@ -100,7 +101,9 @@ const AdminUsers = () => {
             {verifiedUsers.map(user => (
               <div key={user.id} className='bg-gray-50 p-4 rounded-xl border border-gray-100 shadow hover:shadow-xl transition cursor-pointer'>
                 <div className='flex flex-col items-center text-center'>
-                  <div className='text-5xl mb-3'>{user.emoji}</div>
+                  <div className='text-5xl mb-3'>
+                    {<ProfileAvatar name={user.name} height={'h-24'} width={'w-24'} border={'rounded-full'}/>}
+                  </div>
                   <h3 className='text-lg font-semibold'>{user.name}</h3>
                   <p className='text-sm text-gray-500'>{user.role}</p>
                 </div>
