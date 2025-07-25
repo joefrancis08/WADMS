@@ -9,7 +9,7 @@ userRouter.post('/login', loginUser);
 userRouter.post('/logout', logoutUser);
 userRouter.get('/session', userSession);
 userRouter.get('/', fetchUsers);
-userRouter.get('/', fetchUserByRole);
+userRouter.get('/by-role', fetchUserByRole);
 userRouter.get('/:id', fetchUserById);
 userRouter.put('/:id', updateUser);
 userRouter.delete('/', deleteUsers);

@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
-import { insertUser, getAllUsers, getUserById, updateUserInfo, deleteAllUsers, deleteUserById, getUserByEmail, getUserByRole } from '../models/userModel.js';
+import { insertUser, getAllUsers, getUserById, updateUserInfo, deleteAllUsers, deleteUserById, getUserByEmail, getUsersByRole } from '../models/userModel.js';
 import { handleBlankUserInput } from '../utils/handleBlankField.js';
 
 // Create new user
@@ -231,7 +231,7 @@ export const fetchUserByRole = async (req, res) => {
   }
 
   try {
-    const users = await getUserByRole(role);
+    const users = await getUsersByRole(role);
 
     if (users.length === 0) {
       return res.status(404).json({

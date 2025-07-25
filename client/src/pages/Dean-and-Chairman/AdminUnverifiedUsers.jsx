@@ -1,9 +1,11 @@
 import { useState, useRef } from 'react';
-import { ArrowLeft, ChevronLeft, ChevronRight, ShieldCheck, Trash, Trash2 } from 'lucide-react';
+import { ArrowLeft, BadgeAlert, Check, ChevronDown, ChevronLeft, ChevronRight, ShieldCheck, Trash, Trash2, X } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import AdminLayout from '../../components/Layout/AdminLayout';
 import dateFormatter from '../../utils/dateFormatter';
 import { useUsers } from '../../hooks/useUsers';
+import ProfileAvatar from '../../components/ProfileAvatar';
+import UserProfileModal from '../../components/UserProfileModal';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -26,16 +28,77 @@ const AdminUnverifiedUsers = () => {
     navigate(`/admin/users/unverified/${id}`);
   }
 
-  const usersMockup = [
-    { id: 1, profileImage: '👩', name: "Alice Santos", email: "alice.santos@example.com", status: "Active", role: "Admin", createdAt: "2025-07-20 10:27:02" },
-    { id: 2, profileImage: '🧑', name: "Brandon Cruz", email: "brandon.cruz@example.com", status: "Inactive", role: "User", createdAt: "2025-07-20 10:27:02" },
-    { id: 3, profileImage: '👩', name: "Carla Domingo", email: "carla.domingo@example.com", status: "Pending", role: "Moderator", createdAt: "2025-07-20 10:27:02" },
-    { id: 4, profileImage: '🧑', name: "Daniel Reyes", email: "daniel.reyes@example.com", status: "Active", role: "User", createdAt: "2025-07-20 10:27:02" },
-    { id: 5, profileImage: '👩', name: "Erika Mendoza", email: "erika.mendoza@example.com", status: "Suspended", role: "User", createdAt: "2025-07-20 10:27:02" },
-  ];
+  const UserProfileHeader = () => {
+    return (
+      <>
+        {/* Close Button */}
+        <button
+          onClick={() => (setSelectedUser(null), navigate(`/admin/users/unverified/`))}
+          className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition cursor-pointer"
+          aria-label="Close"
+        >
+          <X />
+        </button>
+
+        {/* Header */}
+        <div className='w-full flex flex-col md:flex-row rounded items-center justify-center py-5 border border-gray-200 shadow-md'>
+          <div>
+            <ProfileAvatar name={selectedUser.full_name} height={'md:h-36 h-32'} width={'md:w-36 w-32'}/>
+          </div>
+          <div className='relative p-4 flex'>
+            <p className=" border border-gray-200 rounded-md p-4 text-xl md:text-2xl font-bold text-green-900 mt-2 shadow-sm bg-gray-100">
+              {selectedUser.full_name}
+            </p>
+          </div>
+        </div>
+      </>    
+    )
+  }
+
+  const UserProfileDetails = () => {
+    return (
+      <>
+        <div className='relative p-4 flex'>
+          <span className='text-white text-xs absolute top-3 md:left-1/2 left-1/2 -translate-x-11 md:-translate-x-11 mb-2 bg-green-700 py-1 px-2 rounded-lg'>Email Address</span>
+          <p className=" border border-gray-300 rounded-lg p-4 text-md font-bold text-green-900 mt-2 shadow-inner bg-gray-100">
+            {selectedUser.email}
+          </p>
+        </div>
+        <div className='relative p-4 flex'>
+          <span className='text-white text-xs text-center absolute top-3 md:left-1/2 left-1/2 -translate-x-22 md:-translate-x-22 mb-2 bg-green-700 py-1 px-4 w-45 rounded-lg'>Registration Date & Time</span>
+          <p className="flex border border-gray-300 rounded-lg p-4 text-md font-semibold text-green-900 mt-2 shadow-inner bg-gray-100">
+            {dateFormatter(selectedUser.created_at)}
+          </p>
+        </div>
+      </> 
+    )
+  }
+
+  const UserProfileAction = () => {
+    return (
+      <>
+        <button className='flex items-center justify-center bg-gradient-to-br from-red-800 to-red-500 text-white px-6 md:px-10 py-2 rounded-full text-sm hover:bg-gradient-to-tr hover:from-red-800 hover:to-red-500 hover:shadow-lg active:opacity-50 transition cursor-pointer'>
+          <Trash2 className='mr-1'/>
+          Delete
+        </button>
+        <button className='flex items-center justify-center bg-gradient-to-br from-green-800 to-green-500 text-white px-6 md:px-10 py-2 rounded-full text-sm hover:bg-gradient-to-tr hover:from-green-800 hover:to-green-500 hover:shadow-lg active:opacity-50 transition cursor-pointer'>
+          <ShieldCheck className='mr-1'/>
+          Verify
+        </button>
+      </>
+    )
+  }
 
   return (
     <AdminLayout>
+      {selectedUser && 
+          <UserProfileModal
+            onClose={() => setSelectedUser(null)}
+            header={<UserProfileHeader />}
+            body={<UserProfileDetails />}
+            footer={<UserProfileAction />}
+          />
+        }
       {console.log(unverifiedUsers)}
       <main className="px-4 py-6 md:px-8 w-full max-w-screen-xl mx-auto">
         
@@ -46,50 +109,16 @@ const AdminUnverifiedUsers = () => {
           </Link>
         </div>
 
-        {selectedUser && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-            <div className="relative w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-6 animate-fadeIn">
-              {/* Close Button */}
-              <button
-                onClick={() => setSelectedUser(null)}
-                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition"
-                aria-label="Close"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-
-              {/* Modal Header */}
-              <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4 border-b pb-2">
-                👤 User Info
-              </h2>
-
-              {/* User Info */}
-              <div className="space-y-2 text-gray-700 dark:text-gray-300">
-                <p><span className="font-medium text-gray-600 dark:text-gray-400">Name:</span> {selectedUser.full_name}</p>
-                <p><span className="font-medium text-gray-600 dark:text-gray-400">Email:</span> {selectedUser.email}</p>
-                <p><span className="font-medium text-gray-600 dark:text-gray-400">Status:</span> {selectedUser.status}</p>
-                <p><span className="font-medium text-gray-600 dark:text-gray-400">Role:</span> {selectedUser.role}</p>
-                <p><span className="font-medium text-gray-600 dark:text-gray-400">Registered:</span> {dateFormatter(selectedUser.created_at)}</p>
-              </div>
-            </div>
-          </div>
-
-        )}
-
-
         {/* Scrollable Table */}
-
         <div className="w-full overflow-x-auto rounded-md shadow-lg border border-gray-300">
-          <h1 className="md:text-center p-4 text-2xl font-semibold text-green-900">Unverified Users</h1>
+          <h1 className="md:text-center bg-gray-100 p-4 text-2xl font-bold text-green-900">Unverified Users</h1>
           <table className="min-w-[700px] w-full">
             <thead className="bg-gray-300 text-gray-700 text-sm font-semibold border-b border-gray-300">
               <tr>
                 <th className="px-6 py-3 text-left">Name</th>
                 <th className="px-6 py-3 text-left">Email</th>
                 <th className="px-6 py-3 text-left">Registration Date & Time</th>
-                <th className="px-6 py-3 text-center">Quick Action</th>
+                <th className="px-6 py-3 text-center">Quick Actions</th>
               </tr>
             </thead>
             <tbody className="text-sm">
@@ -97,7 +126,8 @@ const AdminUnverifiedUsers = () => {
                 !unverifiedUsers
                 ? <tr><td>No unverified user yet.</td></tr>
                 : unverifiedUsers.map((user, index) => (
-                    <tr 
+                    <tr
+                      title={`Click to see profile of ${user.full_name}`} 
                       key={user.id} 
                       className='hover:bg-gray-100 cursor-pointer hover:shadow-inner shadow-sm' 
                       onClick={() => (setSelectedUser(user), handleRowClick(user.user_uuid))}
@@ -107,14 +137,18 @@ const AdminUnverifiedUsers = () => {
                       <td className="px-6 py-4 text-gray-500">{dateFormatter(user.created_at)}</td>
                       <td className="px-6 py-4">
                         <div className="flex justify-center items-center gap-4">
-                          <button 
+                          <button
+                            title={`Verify ${user.full_name}?`}
                             onClick={(e) => handleVerifyClick(e)}
-                            className="flex item-center justify-center bg-green-800 text-white px-4 py-2 rounded-full text-sm hover:bg-green-600 hover:shadow-md active:bg-green-500 transition cursor-pointer">
+                            className="flex items-center justify-center bg-gradient-to-br from-green-800 to-green-500 text-white px-6 py-2 rounded-full text-sm hover:bg-gradient-to-tr hover:from-green-800 hover:to-green-500 hover:shadow-lg active:opacity-50 transition cursor-pointer">
                             <ShieldCheck className='mr-1' size={20}/>
                             Verify
                           </button>
-                          <button onClick={(e) => handleDeleteClick(e)}>
-                            <Trash2 className='text-red-600 hover:text-red-500 active:text-red-300 transition hover:drop-shadow-lg cursor-pointer' fill='red' fillOpacity={0.1}/>
+                          <button
+                            title={`Delete ${user.full_name}?`}
+                            onClick={(e) => handleDeleteClick(e)}
+                          >
+                            <Trash2 className='text-red-600 hover:text-red-500 active:opacity-50 transition hover:drop-shadow-lg cursor-pointer' fill='red' fillOpacity={0.1}/>
                           </button>
                         </div>
                       </td>

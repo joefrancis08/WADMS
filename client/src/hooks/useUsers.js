@@ -11,7 +11,7 @@ export const useUsers = () => {
     const fetchUnverifiedUsers = async () => {
       try {
         const role = 'Unverified User';
-        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/users`, {
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/users/by-role`, {
           params: { role },
           signal: controller.signal // Attach signal
         });
