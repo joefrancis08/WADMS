@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
-import { insertUser, getAllUsers, getUserById, updateUserInfo, deleteAllUsers, deleteUserById, getUserByEmail } from '../models/userModel.js';
+import { insertUser, getAllUsers, getUserById, updateUserInfo, deleteAllUsers, deleteUserById, getUserByEmail, getUsersByRole } from '../models/userModel.js';
 import { handleBlankUserInput } from '../utils/handleBlankField.js';
 
 // Create new user
@@ -216,6 +216,41 @@ export const fetchUserById = async (req, res) => {
       success: false,
       message: 'Server error'
     });
+  }
+};
+
+// Fetch users by Role
+export const fetchUserByRole = async (req, res) => {
+  const { role } = req.query;
+
+  if (!role) {
+    return res.status(400).json({
+      success: false,
+      message: 'Role is required as a query parameter.',
+    });
+  }
+
+  try {
+    const users = await getUsersByRole(role);
+
+    if (users.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: `No users found with role: ${role}`,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: users,
+    });
+
+  } catch (error) {
+    console.error('Error fetching users by role:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error.',
+    })
   }
 };
 

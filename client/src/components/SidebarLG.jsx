@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { logoutIcon, userProfileIcon } from '../assets/icons.js';
-import { Users, LayoutDashboard, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Menu, X, UsersRound } from 'lucide-react';
 
 const SidebarLG = () => {
   const savedState = localStorage.getItem('sidebar-collapsed');
@@ -23,7 +23,7 @@ const SidebarLG = () => {
   };
   const menuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', link: '/admin'},
-    { id: 'users', icon: Users, label: 'Users', link: '/admin/users' },
+    { id: 'verified-users', icon: UsersRound, label: 'Users', link: '/admin/users' },
   ];
 
   return (

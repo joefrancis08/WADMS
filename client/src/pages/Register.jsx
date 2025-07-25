@@ -11,7 +11,7 @@ import { AtSign, Eye, EyeOff, Lock, UserRoundPen } from 'lucide-react';
 
 // Base URL for API requests
 // This was set in environment variables (.env) for security and flexibility
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // Register component
 // Handles user registration, form validation, and error handling

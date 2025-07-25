@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   usersIcon,
   dashboardIcon,
@@ -6,14 +6,15 @@ import {
   logoutIcon,
   userProfileIcon
 } from '../assets/icons';
-import { LayoutDashboard, Users, X } from 'lucide-react';
+import { LayoutDashboard, Users, UsersRound, X } from 'lucide-react';
 
 const SidebarSM = ({ sideBarOpen, setSideBarOpen }) => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const menuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', link: '/admin' },
-    { id: 'users', icon: Users, label: 'Users', link: '/admin/users' }
+    { id: 'users', icon: UsersRound, label: 'Users', link: '/admin/users' }
   ];
 
   return (
@@ -55,21 +56,23 @@ const SidebarSM = ({ sideBarOpen, setSideBarOpen }) => {
               const Icon = item.icon;
               return (
                 <li key={item.id}>
-                  <Link to={item.link} onClick={() => setSideBarOpen(false)}>
-                    <div
-                      className={`flex items-center space-x-4 px-4 py-3 rounded-full cursor-pointer transition-all
-                        ${isActive
-                          ? 'bg-gray-600 font-semibold'
-                          : 'hover:bg-gray-700 text-white opacity-85 hover:opacity-100'}`}
-                    >
-                      <Icon
-                        fill={isActive ? 'white' : 'none'}
-                        className={`flex-shrink-0 transition-all duration-300`}
-                        aria-hidden="true"
-                      />
-                      <span className="text-sm ml-2">{item.label}</span>
-                    </div>
-                  </Link>
+                  <div
+                    onClick={() => {
+                      setSideBarOpen(false);
+                      navigate(item.link);
+                    }}
+                    className={`flex items-center space-x-4 px-4 py-3 rounded-full cursor-pointer transition-all
+                      ${isActive
+                        ? 'bg-gray-600 font-semibold'
+                        : 'hover:bg-gray-700 text-white opacity-85 hover:opacity-100'}`}
+                  >
+                    <Icon
+                      fill={isActive ? 'white' : 'none'}
+                      className={`flex-shrink-0 transition-all duration-300`}
+                      aria-hidden="true"
+                    />
+                    <span className="text-sm ml-2">{item.label}</span>
+                  </div>
                 </li>
               );
             })}

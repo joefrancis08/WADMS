@@ -73,6 +73,20 @@ function App() {
           }
         />
 
+        <Route 
+          path="/admin/users/unverified/:id"
+          element={
+            <ProtectedRoute 
+              allowedStatuses={['Verified', 'Pending']} 
+              allowedRoles={['Dean', 'Chairman', 'Unverified User']} 
+              fallbackRoute='/not-found'
+              loader={<div>Loading...</div>} 
+            >
+              <AdminUnverifiedUsers />
+            </ProtectedRoute>
+          }
+        />
+
         <Route path='/register' element={<Register />}/>
         <Route path='/pending-verification' element={<Pending />} />
         <Route path='*' element={<NotFound />} />
