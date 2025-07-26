@@ -10,9 +10,17 @@ import UserProfileModal from '../../components/UserProfileModal';
 const AdminUnverifiedUsers = () => {
   const navigate = useNavigate();
   const { users, loading, error} = useUsers();
-  const unverifiedUsers = users.data;
+  const unverifiedUsers = users?.data ?? [];
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+  // Only run this if users is an array (not loading or error)
+  if (Array.isArray(users?.data)) {
+      const count = users.data.length;
+      localStorage.setItem('userCount', JSON.stringify(count)); // safe, even if 0
+    }
+  }, [users]);
 
   const handleVerifyClick = (e) => {
     e.stopPropagation();
@@ -104,7 +112,6 @@ const AdminUnverifiedUsers = () => {
             modalOpen={modalOpen}
           />
         }
-      {console.log(unverifiedUsers)}
       <main className="px-4 py-6 md:px-8 w-full max-w-screen-xl mx-auto">
         
         {/* Header */}
@@ -128,8 +135,14 @@ const AdminUnverifiedUsers = () => {
             </thead>
             <tbody className="text-sm">
               {
-                !unverifiedUsers
-                ? <tr><td>No unverified user yet.</td></tr>
+                Array.isArray(unverifiedUsers) && unverifiedUsers.length === 0
+                ? (
+                  <tr>
+                    <td colSpan={4} className='text-center py-4'>
+                      <p className='text-lg text-gray-500'>No unverified user yet.</p>
+                    </td>
+                  </tr>
+                )
                 : unverifiedUsers.map((user, index) => (
                     <tr
                       title={`Click to see profile of ${user.full_name}`} 

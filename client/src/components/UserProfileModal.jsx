@@ -1,17 +1,7 @@
 import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 
-const UserProfileModal = ({ modalOpen, onClose, header, body, footer }) => {
-
-  useEffect(() => {
-    console.log(modalOpen);
-    document.body.style.overflow = 'hidden';
-
-    // Re-enable scroll when component unmounts
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, []);
+const UserProfileModal = ({ onClose, header, body, footer }) => {
 
   return (
     <div className="h-full fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-lg p-4">

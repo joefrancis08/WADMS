@@ -233,12 +233,12 @@ export const fetchUserByRole = async (req, res) => {
   try {
     const users = await getUsersByRole(role);
 
-    if (users.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: `No users found with role: ${role}`,
-      });
-    }
+    // if (users.length === 0) {
+    //   return res.status(404).json({
+    //     success: false,
+    //     message: `No users found with role: ${role}`,
+    //   });
+    // }
 
     return res.status(200).json({
       success: true,
