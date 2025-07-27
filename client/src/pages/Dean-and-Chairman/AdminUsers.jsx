@@ -7,6 +7,7 @@ import ProfileAvatar from '../../components/ProfileAvatar';
 
 const AdminUsers = () => {
 
+  const [unverifiedUserCount, setUnverifiedUserCount] = useState(0);
   const [view, setView] = useState('verified');
 
   const verifiedUsers = [
@@ -40,11 +41,33 @@ const AdminUsers = () => {
     { id: 4, name: 'Dana White', role: 'Editor', emoji: '👩‍🏫' },
   ];
 
-  const usersToDisplay = view === 'verified' ? verifiedUsers : unverifiedUsers;
+  useEffect(() => {
+  try {
+    const raw = localStorage.getItem('userCount');
+
+    // Only try to parse if raw is not null
+    if (raw !== null) {
+      const count = JSON.parse(raw);
+
+      if (typeof count === 'number') {
+        setUnverifiedUserCount(count);
+      } else {
+        setUnverifiedUserCount(0); // fallback if not a number
+      }
+    } else {
+      setUnverifiedUserCount(0); // fallback if nothing stored
+    }
+
+    } catch (error) {
+      console.error('Invalid JSON in localStorage for userCount:', error);
+      setUnverifiedUserCount(0); // fallback if parsing fails
+    }
+  }, []);
 
   return (
     <>
       <AdminLayout>
+        {console.log(unverifiedUserCount)}
         <div className='flex-1 p-0 space-y-3'>
           {/* Main Content Header */}
           <div className='max-md:pt-2 md:bg-gradient-to-r from-gray-100 to-gray-200 pb-2 md:py-4 md:shadow-md md:sticky top-0 md:z-1 bg-white'>
@@ -64,9 +87,13 @@ const AdminUsers = () => {
                       <ShieldX color='red' size={20} fill='white'/>
                     </div>
                   </button>
-                  <div className='absolute left-7 top-0'>
-                    <p className='text-[11px] font-bold px-2 text-white bg-red-600 rounded-4xl'>{2}</p>
-                  </div>
+                  {unverifiedUserCount > 0 && (
+                    <div className='absolute left-7 top-0'>
+                      <p className='text-[11px] font-bold px-2 text-white bg-red-600 rounded-4xl'>
+                        {unverifiedUserCount}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </Link>
             </div>
