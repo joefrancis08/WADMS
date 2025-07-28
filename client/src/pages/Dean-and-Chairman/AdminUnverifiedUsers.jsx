@@ -25,14 +25,6 @@ const AdminUnverifiedUsers = () => {
 
   const allowedRoles = ['Dean', 'Chairman', 'Accreditation Task Force', 'Accreditor', 'Clerk'];
 
-  useEffect(() => {
-  // Only run this if users is an array (not loading or error)
-  if (Array.isArray(users?.data)) {
-      const count = users.data.length;
-      localStorage.setItem('userCount', JSON.stringify(count)); // safe, even if 0
-    }
-  }, [users]);
-
   const handleVerifyClick = (e) => {
     e.stopPropagation();
   }

@@ -16,6 +16,7 @@ export const useUsers = () => {
           signal: controller.signal // Attach signal
         });
         setUsers(res.data)
+
       } catch (error) {
         if (axios.isCancel(error)) {
           console.log('Request cancelled:', error.message);
@@ -34,7 +35,7 @@ export const useUsers = () => {
 
     const interval = setInterval(() => {
       fetchUnverifiedUsers();
-    }, 1000);
+    }, 5000);
 
     // Clean up on unmount
     return () => {

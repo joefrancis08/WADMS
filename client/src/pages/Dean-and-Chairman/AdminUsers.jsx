@@ -3,12 +3,12 @@ import AdminLayout from '../../components/Layout/AdminLayout';
 import { Link } from 'react-router-dom';
 import { Search, ShieldCheck, ShieldX, Trash, UserRound, UserRoundPlus, Users } from 'lucide-react';
 import ProfileAvatar from '../../components/ProfileAvatar';
+import { useUsers } from '../../hooks/useUsers';
 
 
 const AdminUsers = () => {
-
+  const {users} = useUsers();
   const [unverifiedUserCount, setUnverifiedUserCount] = useState(0);
-  const [view, setView] = useState('verified');
 
   const verifiedUsers = [
     { id: 1, name: 'Alice Johnson', role: 'Administrator', emoji: '👩‍💼' },
@@ -36,33 +36,13 @@ const AdminUsers = () => {
     { id: 23, name: 'Bob Smith', role: 'Moderator', emoji: '👨‍💻' },
   ];
 
-  const unverifiedUsers = [
-    { id: 3, name: 'Charlie Brown', role: 'Guest', emoji: '👨‍🎓' },
-    { id: 4, name: 'Dana White', role: 'Editor', emoji: '👩‍🏫' },
-  ];
-
   useEffect(() => {
-  try {
-    const raw = localStorage.getItem('userCount');
-
-    // Only try to parse if raw is not null
-    if (raw !== null) {
-      const count = JSON.parse(raw);
-
-      if (typeof count === 'number') {
-        setUnverifiedUserCount(count);
-      } else {
-        setUnverifiedUserCount(0); // fallback if not a number
-      }
-    } else {
-      setUnverifiedUserCount(0); // fallback if nothing stored
+  // Only run this if users is an array (not loading or error)
+  if (Array.isArray(users?.data)) {
+      const count = users.data.length;
+      setUnverifiedUserCount(count);
     }
-
-    } catch (error) {
-      console.error('Invalid JSON in localStorage for userCount:', error);
-      setUnverifiedUserCount(0); // fallback if parsing fails
-    }
-  }, []);
+  }, [users]);
 
   return (
     <>
