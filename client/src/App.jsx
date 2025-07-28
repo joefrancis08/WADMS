@@ -10,6 +10,7 @@ import LandingRedirect from './pages/LandingRedirect';
 import AdminHome from './pages/Dean-and-Chairman/adminHome';
 import AdminUsers from './pages/Dean-and-Chairman/AdminUsers';
 import AdminUnverifiedUsers from './pages/Dean-and-Chairman/AdminUnverifiedUsers';
+import LoadSpinner from './components/Loaders/LoadSpinner';
 
 function App() {
   return (
@@ -38,7 +39,10 @@ function App() {
               allowedStatuses={['Verified', 'Pending']} 
               allowedRoles={['Dean', 'Chairman', 'Unverified User']} 
               fallbackRoute='/not-found'
-              loader={<div>Loading...</div>} 
+              loader={
+                <div className="w-full h-screen flex items-center justify-center">
+                  <LoadSpinner height={'h-16'} width={'w-16'}/>
+                </div>} 
             >
               <AdminHome />
             </ProtectedRoute>
@@ -52,7 +56,10 @@ function App() {
               allowedStatuses={['Verified', 'Pending']} 
               allowedRoles={['Dean', 'Chairman', 'Unverified User']} 
               fallbackRoute='/not-found'
-              loader={<div>Loading...</div>} 
+              loader={
+                <div className="w-full h-screen flex items-center justify-center">
+                  <LoadSpinner height={'h-16'} width={'w-16'}/>
+                </div>} 
             >
               <AdminUsers />
             </ProtectedRoute>
@@ -66,7 +73,10 @@ function App() {
               allowedStatuses={['Verified', 'Pending']} 
               allowedRoles={['Dean', 'Chairman', 'Unverified User']} 
               fallbackRoute='/not-found'
-              loader={<div>Loading...</div>} 
+              loader={
+                <div className="w-full h-screen flex items-center justify-center">
+                  <LoadSpinner height={'h-16'} width={'w-16'}/>
+                </div>} 
             >
               <AdminUnverifiedUsers />
             </ProtectedRoute>
@@ -80,7 +90,11 @@ function App() {
               allowedStatuses={['Verified', 'Pending']} 
               allowedRoles={['Dean', 'Chairman', 'Unverified User']} 
               fallbackRoute='/not-found'
-              loader={<div>Loading...</div>} 
+              loader={
+                <div className="w-full h-screen flex items-center justify-center">
+                  <LoadSpinner height={'h-16'} width={'w-16'}/>
+                </div>
+              } 
             >
               <AdminUnverifiedUsers />
             </ProtectedRoute>
