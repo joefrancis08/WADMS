@@ -32,9 +32,14 @@ export const useUsers = () => {
 
     fetchUnverifiedUsers();
 
+    const interval = setInterval(() => {
+      fetchUnverifiedUsers();
+    }, 1000);
+
     // Clean up on unmount
     return () => {
       controller.abort();
+      clearInterval(interval);
     };
   }, []);
 

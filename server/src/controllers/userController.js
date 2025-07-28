@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
-import { insertUser, getAllUsers, getUserById, updateUserInfo, deleteAllUsers, deleteUserById, getUserByEmail, getUsersByRole } from '../models/userModel.js';
+import { insertUser, getAllUsers, getUserById, updateUserInfo, deleteAllUsers, deleteUserById, getUserByEmail, getUsersByRole, updateUserRole } from '../models/userModel.js';
 import { handleBlankUserInput } from '../utils/handleBlankField.js';
 
 // Create new user
@@ -298,6 +298,36 @@ export const updateUser = async (req, res) => {
     res.status(500).json({
       message: 'Server error.'
     })
+  }
+}
+
+// Update user role
+export const handleUpdateUserRole = async (req, res) => {
+  const { uuid } = req.params;
+  const { role, status } = req.body;
+
+  try {
+    const result = await updateUserRole(uuid, role, status);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        message: 'User not found or role not changed.',
+        success: false
+      });
+    }
+
+    return res.json({
+      message: 'User role updated successfully.',
+      success: true,
+      data: result
+    });
+    
+  } catch (error) {
+    console.error('Error updationg user role:', error);
+    return res.status(500).json({
+      message: 'Server error while updating user role.',
+      success: false
+    });
   }
 }
 

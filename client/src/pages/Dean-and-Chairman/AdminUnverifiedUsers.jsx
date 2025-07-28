@@ -7,6 +7,8 @@ import { useUsers } from '../../hooks/useUsers';
 import UserProfileModal from '../../components/Modals/UserProfileModal';
 import ConfirmationModal from '../../components/Modals/ConfirmationModal';
 import UpdateUserModal from '../../components/Modals/UpdateUserModal';
+import axios from 'axios';
+import { updateUserRole } from '../../api/Users/userAPI';
 
 const AdminUnverifiedUsers = () => {
   const navigate = useNavigate();
@@ -44,8 +46,14 @@ const AdminUnverifiedUsers = () => {
     navigate(`/admin/users/unverified/${id}`);
   }
 
-  const handleUpdateSubmit = () => {
+  const handleUpdateSubmit = async () => {
+    try {
+      const updatedUserRole = await updateUserRole(selectedUser.user_uuid, selectedRole);
+      console.log('Updated user:', updatedUserRole);
 
+    } catch (error) {
+      console.error('Failed to update user:', error)
+    }
   }
 
   return (
@@ -103,6 +111,7 @@ const AdminUnverifiedUsers = () => {
             navigate('/admin/users/unverified');
           }}
           onSaveClick={() => {
+            handleUpdateSubmit();
             setSelectedRole('Unverified User');
             setIsConfirmClicked(false);
             navigate('/admin/users/unverified');
@@ -122,7 +131,7 @@ const AdminUnverifiedUsers = () => {
                       readOnly
                       type='text'
                       name='role'
-                      className='input-field-style border border-gray-400 transition text-gray-700'
+                      className='input-field-style focus:outline-none border border-gray-400 transition text-gray-700'
                       value={selectedRole}
                     />
 
@@ -157,7 +166,7 @@ const AdminUnverifiedUsers = () => {
 
             </>
           }
-          primaryButtonName={'Save Changes'}
+          primaryButtonName={'Save'}
           secondaryButtonName={'Cancel'}
         />
       )}
