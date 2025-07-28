@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { ChevronLeft, ShieldCheck, Trash2 } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ShieldCheck, ShieldUser, Trash2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import AdminLayout from '../../components/Layout/AdminLayout';
 import dateFormatter from '../../utils/dateFormatter';
 import { useUsers } from '../../hooks/useUsers';
-import Modal from '../../components/Layout/ModalLayout';
 import UserProfileModal from '../../components/Modals/UserProfileModal';
 import ConfirmationModal from '../../components/Modals/ConfirmationModal';
+import UpdateUserModal from '../../components/Modals/UpdateUserModal';
 
 const AdminUnverifiedUsers = () => {
   const navigate = useNavigate();
@@ -14,9 +14,14 @@ const AdminUnverifiedUsers = () => {
   
   const [selectedUser, setSelectedUser] = useState(null);
   const [isVerifyClicked, setIsVerifyClicked] = useState(false);
+  const [isConfirmClicked, setIsConfirmClicked] = useState(false);
   const [modalType, setModalType] = useState(null);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedRole, setSelectedRole] = useState('Unverified User');
 
   const unverifiedUsers = users?.data ?? [];
+
+  const allowedRoles = ['Dean', 'Chairman', 'Accreditation Task Force', 'Accreditor', 'Clerk'];
 
   useEffect(() => {
   // Only run this if users is an array (not loading or error)
@@ -39,29 +44,12 @@ const AdminUnverifiedUsers = () => {
     navigate(`/admin/users/unverified/${id}`);
   }
 
+  const handleUpdateSubmit = () => {
+
+  }
+
   return (
     <AdminLayout>
-      {modalType === 'confirmation' && isVerifyClicked && (
-        <ConfirmationModal 
-          selectedUser={selectedUser}
-          onClose={() => {
-            setIsVerifyClicked(false);
-            setModalType(null);
-          }}
-          onCancelClick={() => {
-            setModalType(null);
-            setSelectedUser(null);
-            navigate('/admin/users/unverified');
-          }}
-          onConfirmClick={() => {
-            // Call your verify API here
-            console.log(`Verifying user ${selectedUser?.full_name}`);
-            setIsVerifyClicked(false);
-            navigate('/admin/users/unverified');
-          }}
-        />
-      )}
-
       {selectedUser && modalType === 'user-profile' && 
         <UserProfileModal 
           selectedUser={selectedUser}
@@ -80,6 +68,99 @@ const AdminUnverifiedUsers = () => {
           }}
         />
       }
+
+      {isVerifyClicked && modalType === 'confirmation' &&  (
+        <ConfirmationModal 
+          selectedUser={selectedUser}
+          onClose={() => {
+            setIsVerifyClicked(false);
+            setModalType(null);
+          }}
+          onCancelClick={() => {
+            setModalType(null);
+            setSelectedUser(null);
+            navigate('/admin/users/unverified');
+          }}
+          onConfirmClick={() => {
+            // Call your verify API here
+            console.log(`Verifying user ${selectedUser?.full_name}`);
+            setIsVerifyClicked(false);
+            setIsConfirmClicked(true);
+            setModalType('update-user');
+          }}
+        />
+      )}
+
+      {isConfirmClicked && modalType === 'update-user' && (
+        <UpdateUserModal 
+          onClose={() => {
+            setShowDropdown(false);
+            setIsConfirmClicked(false);
+            setModalType(null);
+          }}
+          onCancelClick={() => {
+            setModalType(null);
+            navigate('/admin/users/unverified');
+          }}
+          onSaveClick={() => {
+            setSelectedRole('Unverified User');
+            setIsConfirmClicked(false);
+            navigate('/admin/users/unverified');
+          }}
+          header={`Assign Role to ${selectedUser?.full_name}`}
+          body={
+            <>
+              <form onSubmit={handleUpdateSubmit}>
+                <div className='relative w-full'>
+                  <div className='input-container-layout relative'>
+                    <span className='input-icon-layout'>
+                      <ShieldUser color='gray' size={24} />
+                    </span>
+
+                    {/* Readonly Input */}
+                    <input
+                      readOnly
+                      type='text'
+                      name='role'
+                      className='input-field-style border border-gray-400 transition text-gray-700'
+                      value={selectedRole}
+                    />
+
+                    {/* Dropdown Icon */}
+                    <ChevronDown
+                      onClick={() => {
+                        showDropdown ? setShowDropdown(false) : setShowDropdown(true)
+                      }}
+                      className={`absolute top-4 right-4 hover:bg-gray-200 rounded-full cursor-pointer text-gray-500 hover:text-gray-600 transition ${showDropdown && 'rotate-180'}`}
+                    />
+
+                    {/* Dropdown content */}
+                    {showDropdown && (
+                      <div className='absolute top-full left-0 w-full border border-gray-400 mt-1 bg-white shadow z-10'>
+                        {allowedRoles.map((role) => (
+                          <p
+                            key={role}
+                            className='px-4 py-2 text-gray-700 hover:bg-gray-200 cursor-pointer'
+                            onClick={() => {
+                              setSelectedRole(role);
+                              setShowDropdown(false);
+                            }}
+                          >
+                            {role}
+                          </p>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </form>
+
+            </>
+          }
+          primaryButtonName={'Save Changes'}
+          secondaryButtonName={'Cancel'}
+        />
+      )}
 
       <main className="px-4 py-6 md:px-8 w-full max-w-screen-xl mx-auto">
         
