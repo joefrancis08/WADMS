@@ -17,9 +17,9 @@ export const getAllUsers = async () => {
   return rows;
 };
 
-// GET User by ID
-export const getUserById = async (id) => {
-  const [rows] = await db.execute('SELECT * FROM user WHERE id = ?', [id]);
+// GET User by UUID
+export const getUserById = async (uuid) => {
+  const [rows] = await db.execute('SELECT * FROM user WHERE user_uuid = ?', [uuid]);
   return rows[0];
 }
 
@@ -43,6 +43,14 @@ export const updateUserInfo = async (fullName, email, password, role, status, id
   return result;
 }
 
+// UPDATE User Role
+export const updateUserRole = async (uuid, role, status) => {
+  const sql = 'UPDATE user SET role = ?, status = ? WHERE user_uuid = ?';
+
+  const [result] = await db.execute(sql, [role, status, uuid]);
+  return result;
+}
+
 // DELETE ALL Users
 export const deleteAllUsers = async() => {
   const [rows] = await db.execute('TRUNCATE TABLE user');
@@ -50,7 +58,7 @@ export const deleteAllUsers = async() => {
 }
 
 // DELETE Users By ID
-export const deleteUserById = async (id) => {
-  const [result] = await db.execute('DELETE FROM user WHERE id = ?', [id]);
+export const deleteUserById = async (uuid) => {
+  const [result] = await db.execute('DELETE FROM user WHERE user_uuid = ?', [uuid]);
   return result;
 };
