@@ -58,7 +58,7 @@ export const deleteAllUsers = async() => {
 }
 
 // DELETE Users By ID
-export const deleteUserById = async (id) => {
-  const [result] = await db.execute('DELETE FROM user WHERE id = ?', [id]);
+export const deleteUserById = async (uuid) => {
+  const [result] = await db.execute('DELETE FROM user WHERE user_uuid = ?', [uuid]);
   return result;
 };

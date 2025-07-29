@@ -362,10 +362,10 @@ export const deleteUsers = async (req, res) => {
 
 // Delete user by ID
 export const deleteUser = async (req, res) => {
-  const { id } = req.params;
+  const { uuid } = req.params;
 
   try {
-    const result = await deleteUserById(id);
+    const result = await deleteUserById(uuid);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({

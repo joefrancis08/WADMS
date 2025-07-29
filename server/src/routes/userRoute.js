@@ -14,6 +14,6 @@ userRouter.get('/:id', fetchUserById);
 userRouter.put('/:id', updateUser);
 userRouter.patch('/:uuid/role', handleUpdateUserRole);
 userRouter.delete('/', deleteUsers);
-userRouter.delete('/:id', deleteUser);
+userRouter.delete('/:uuid', deleteUser);
 
 export default userRouter;
