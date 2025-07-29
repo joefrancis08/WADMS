@@ -1,9 +1,8 @@
-import React from 'react'
 import ModalLayout from '../Layout/ModalLayout';
 import { X } from 'lucide-react';
 
 // Header
-const ConfirmationModalHeader = ({ onClose }) => {
+const ConfirmationModalHeader = ({ onClose, headerContent }) => {
   return (
     <>
       <button
@@ -14,42 +13,48 @@ const ConfirmationModalHeader = ({ onClose }) => {
         <X />
       </button>
 
-      <p className="text-2xl font-bold text-gray-800">
-        Confirm Verification
-      </p>
+      {headerContent}
     </>
   );
 };
-// Body
-// Footer
 
-const ConfirmationModal = ({ selectedUser, onClose, onConfirmClick, onCancelClick }) => {
+// Body
+const ConfirmationModalBody = ({ bodyContent }) => {
+  return (
+    <>
+      {bodyContent}
+    </>
+  );
+};
+
+// Footer
+const ConfirmationModalFooter = ({ onCancelClick, onConfirmClick, primaryButton, secondaryButton }) => {
+  return (
+    <>
+      <button
+        onClick={onCancelClick}
+        className="mr-4 flex items-center justify-center bg-gradient-to-br from-gray-500 to-gray-400 text-white px-6 py-2 rounded-full text-sm hover:bg-gradient-to-tr hover:from-gray-500 hover:to-gray-400 hover:shadow-lg active:opacity-50 transition cursor-pointer"
+      >
+        {secondaryButton}
+      </button>
+      
+      <button
+        onClick={onConfirmClick}
+        className="flex items-center justify-center bg-gradient-to-br from-green-800 to-green-500 text-white px-6 py-2 rounded-full text-sm hover:bg-gradient-to-tr hover:from-green-800 hover:to-green-500 hover:shadow-lg active:opacity-50 transition cursor-pointer"
+      >
+        {primaryButton}
+      </button>
+    </>
+  );
+};
+
+const ConfirmationModal = ({ onClose, headerContent, bodyContent, primaryButton, secondaryButton, onCancelClick, onConfirmClick }) => {
   return (
     <ModalLayout
       onClose={onClose}
-      header={<ConfirmationModalHeader onClose={onClose}/>}
-      body={
-        <p className="mb-4 text-gray-800">
-          Are you sure you want to verify {selectedUser?.full_name}?
-        </p>
-      }
-      footer={
-        <>
-          <button
-            onClick={onCancelClick}
-            className="mr-4 px-4 py-2 rounded-full bg-gray-300 hover:bg-gray-400 text-gray-700 cursor-pointer"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={onConfirmClick}
-            className="px-4 py-2 rounded-full bg-green-600 hover:bg-green-700 text-white cursor-pointer"
-          >
-            Confirm
-          </button>
-        </>
-        
-      }
+      header={<ConfirmationModalHeader onClose={onClose} headerContent={headerContent}/>}
+      body={<ConfirmationModalBody bodyContent={bodyContent}/>}
+      footer={<ConfirmationModalFooter primaryButton={primaryButton} secondaryButton={secondaryButton} onCancelClick={onCancelClick} onConfirmClick={onConfirmClick}/>}
       headerPosition={'justify-start max-md:items-start'}
       headerMargin={'mt-0'}
       bodyPosition={'justify-start'}
