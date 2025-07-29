@@ -7,7 +7,7 @@ import { showErrorToast, showSuccessToast } from "../utils/toastNotification";
 
 export const useAdminUnverifiedUsers = () => {
   const navigate = useNavigate();
-  const { users, loading, error} = useUsers();
+  const { users } = useUsers();
   
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalType, setModalType] = useState(null);
