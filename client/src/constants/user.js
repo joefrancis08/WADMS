@@ -1,5 +1,5 @@
-const USER_ROLES = {
-  DEFAULT: 'Unverified User',
+export const USER_ROLES = {
+  UNVERIFIED_USER: 'Unverified User',
   DEAN: 'Dean',
   CHAIRMAN: 'Chairman',
   CLERK: 'Clerk',
@@ -7,4 +7,7 @@ const USER_ROLES = {
   ACCREDITOR: 'Accreditor'
 };
 
-export default USER_ROLES;
+export const USER_STATUS = {
+  PENDING: 'Pending',
+  VERIFIED: 'Verified'
+};
