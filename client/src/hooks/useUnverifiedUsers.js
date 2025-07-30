@@ -3,7 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { useUsersByRole } from "./useUsers";
 import { deleteUser, updateUserRole } from "../api/Users/userAPI";
 import USER_ROLES from "../constants/userRoles";
+import { TOAST_MESSAGES } from "../constants/messages";
 import { showErrorToast, showSuccessToast } from "../utils/toastNotification";
+
+const { USER_UPDATE, USER_DELETION } = TOAST_MESSAGES;
 
 export const useUnverifiedUsers = () => {
   const navigate = useNavigate();
@@ -20,55 +23,31 @@ export const useUnverifiedUsers = () => {
 
     try {
       await deleteUser(selectedUser?.user_uuid);
-      showSuccessToast(`${selectedUser?.full_name} deleted successfully!`);
+      showSuccessToast(USER_DELETION.SUCCESS);
 
     } catch (error) {
       console.error('Failed to delete user:', error);
-      showErrorToast(`Error deleting ${selectedUser?.full_name}. Try again.`);
+      showErrorToast(USER_DELETION.ERROR);
     }
   }
 
   const handleUpdateSubmit = async () => {
     try {
       await updateUserRole(selectedUser.user_uuid, selectedRole);
-      showSuccessToast(`${selectedUser?.full_name}'s role updated successfully to ${selectedRole}!`);
+      showSuccessToast(USER_UPDATE.SUCCESS);
 
     } catch (error) {
       console.error('Failed to update user:', error);
-      showErrorToast(`Error updating ${selectedUser?.full_name}'s role to ${selectedRole}. Try again.`);
+      showErrorToast(USER_UPDATE.ERROR);
     }
   }
 
   return {
-    navigation: {
-      navigate,
-    },
-
-    user: {
-      selectedUser,
-      setSelectedUser,
-      selectedRole,
-      setSelectedRole,
-    },
-
-    modal: {
-      modalType,
-      setModalType,
-    },
-
-    ui: {
-      showDropdown,
-      setShowDropdown,
-    },
-
-    data: {
-      unverifiedUsers,
-      USER_ROLES,
-    },
-
-    actions: {
-      handleDelete,
-      handleUpdateSubmit,
-    }
+    navigation: {navigate},
+    user: {selectedUser, setSelectedUser, selectedRole, setSelectedRole},
+    modal: {modalType, setModalType},
+    ui: {showDropdown, setShowDropdown},
+    data: {unverifiedUsers, USER_ROLES},
+    actions: {handleDelete, handleUpdateSubmit}
   };
 };

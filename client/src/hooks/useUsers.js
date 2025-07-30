@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
-import USER_ROLES from "../constants/userRoles";
 
 export const useUsersByRole = (role) => {
   const [users, setUsers] = useState([]);

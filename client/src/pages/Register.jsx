@@ -1,120 +1,23 @@
-import { useRef, useState } from 'react';
-import axios from 'axios'; // Importing axios for HTTP requests
-import { useAuth } from '../contexts/AuthContext.jsx';
-import { Link, useNavigate } from 'react-router-dom'; // Importing Link and useNavigate for navigation
-import { validateForm } from '../utils/validateForm.js'; // Importing validateForm for form validation
-import { showErrorToast, showSuccessToast } from '../utils/toastNotification.js'; // Importing utility functions for toast notifications
-import SubmitButton from '../components/Auth/SubmitButton.jsx'; // Importing custom SubmitButton component
-import AlertMessage from '../components/Auth/AlertMessage.jsx'; // Importing custom AlertMessage component
-import LoadSpinner from '../components/Loaders/LoadSpinner.jsx'; // Importing custom LoadSpinner component
+import { Link } from 'react-router-dom';
 import { AtSign, Eye, EyeOff, Lock, UserRoundPen } from 'lucide-react';
+import { useRegister } from '../hooks/useRegister';
+import SubmitButton from '../components/Auth/SubmitButton'; // Importing custom SubmitButton component
+import ValidationMessage from '../components/Auth/ValidationMessage'; // Importing custom ValidationMessage component
+import LoadSpinner from '../components/Loaders/LoadSpinner'; // Importing custom LoadSpinner component
 
-// Base URL for API requests
-// This was set in environment variables (.env) for security and flexibility
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // Register component
 // Handles user registration, form validation, and error handling
 function Register() {
-  // Hook to navigate programmatically
-  const navigate = useNavigate();
-
-  // Context of where to save the user's data, user data will be passed to the register variable
-  const { register } = useAuth();
-
-  // State of form values
-  const [values, setValues] = useState({
-    fullName: '',
-    email: '',
-    password: ''
-  });
-
-  // 
-  const fullNameRef = useRef(null);
-  const emailRef = useRef(null);
-  const passwordRef = useRef(null);
-
-  // 
-  const fieldRefs = {
-    fullName: fullNameRef,
-    email: emailRef,
-    password: passwordRef,
-  };
-
-  // State for form errors
-  const [errors, setErrors] = useState({});
   
-  // State for the visibility of the password
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const { formValues, formErrors, refs, passwordVisibility, loading, handlers } = useRegister();
 
-  // State for loading and error
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Function to handle input changes
-  // Updates the corresponding state based on input field changes
-  const handleChange = (e) => {
-    e.stopPropagation(); // Prevents the event from bubbling up to parent elements
-    const { name, value } = e.target; 
-
-    setValues(prevValues => ({ ...prevValues, [name]: value }));
-    setErrors(prevErrors => ({ ...prevErrors, [name]: '' }));
-  }
-
-  // Function to handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // Step 1: Validate form for common errors (i.e., empty fields, invalid email, weak passwords)
-    const formErrors = validateForm(values);
-    setErrors(formErrors);
-
-    // Step 2: Stop submitting form if there are any form errors
-    if (Object.keys(formErrors).length > 0) {
-      const firstErrorKey = Object.keys(formErrors)[0];
-      const ref = fieldRefs[firstErrorKey];
-      ref?.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      ref?.current?.focus();
-      return;
-    }
-
-    try {
-      // Step 3: Check if email already exists 
-      // Note: This is a server-side validation so I think it's good to keep the code here, still I update the errors if there's any.
-      const res = await axios.post(`${API_BASE_URL}/users/check-email`, {email: values.email});
-      const emailAlreadyExists = res?.data?.alreadyExists;
-      if (emailAlreadyExists) {
-        setErrors(prev => ({ ...prev, email: 'This email was already registered. Try another.'}))
-        return;
-      }
-
-      // Step 4: Register the user if there are no errors
-      setIsLoading(true); // Show loading spinner while waiting to post the data
-      const { data } = await axios.post(`${API_BASE_URL}/users/register`, values, { withCredentials: true });
-      const { email, fullName, role, status } = data.user; // Destructure the data for easy usage
-      setIsLoading(false); // Hide loading spinner after posting the data to the db
-
-      // Step 5: Save the data of the registered user to the context so that it can be used in other components
-      register(email, fullName, role, status); 
-
-      // Step 6: If registration unsuccessful. Let the user know thru toast notification.
-      if (!data.success) {
-        showErrorToast(data?.message || 'Unsuccessful Registration. Try again.');
-        return;
-      }
-
-      // Step 7: Reset field values after successful form submission
-      setValues({ ...values, fullName: '', email: '', password: '' });
-      showSuccessToast('Registration successful.'); // Show success notification
-
-      // Step 9: Redirect to pending verification page
-      navigate('/pending-verification');
-
-    } catch (error) {
-      // Additional Step: Log the error and let the user know thru toast notification
-      console.error(error);
-      showErrorToast('Something went wrong. Please try again later.');
-    }
-  }
+  const { values } = formValues;
+  const { errors } = formErrors;
+  const { fullNameRef, emailRef, passwordRef } = refs;
+  const { isPasswordVisible, setIsPasswordVisible } = passwordVisibility;
+  const { isLoading } = loading;
+  const { handleChange, handleSubmit} = handlers;
 
   return (
     <div className="reg-card-container">
@@ -150,7 +53,7 @@ function Register() {
               />
             </div>
             <div className="min-h-[1.25rem]">
-              {errors.fullName && <AlertMessage message={errors.fullName} />}
+              {errors.fullName && <ValidationMessage message={errors.fullName} />}
             </div>
           </div>
 
@@ -175,7 +78,7 @@ function Register() {
               />
             </div>
             <div className="min-h-[1.25rem]">
-              {errors.email && <AlertMessage message={errors.email} />}
+              {errors.email && <ValidationMessage message={errors.email} />}
             </div>
           </div>
           <div className="w-full">
@@ -204,7 +107,7 @@ function Register() {
               </span>
             </div>
             <div className="min-h-[1.25rem]">
-              {errors.password && <AlertMessage message={errors.password} />}
+              {errors.password && <ValidationMessage message={errors.password} />}
             </div>
           </div>
 

@@ -1,7 +1,6 @@
-import React from 'react';
 import { circleAlertIcon } from '../../assets/icons';
 
-function AlertMessage({ message }) {
+function ValidationMessage({ message }) {
   return (
     <>
       <p className="text-red-500 text-[13px] text-sm flex items-center mt-0.5 ml-1">
@@ -12,4 +11,4 @@ function AlertMessage({ message }) {
   )
 }
 
-export default AlertMessage;
+export default ValidationMessage;

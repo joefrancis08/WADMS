@@ -14,7 +14,7 @@ const UnverifiedUsers = () => {
   const { selectedUser, setSelectedUser, selectedRole, setSelectedRole } = user;
   const { modalType, setModalType } = modal;
   const { showDropdown, setShowDropdown } = ui;
-  const { unverifiedUsers, userRoles } = data;
+  const { unverifiedUsers, USER_ROLES } = data;
   const { handleDelete, handleUpdateSubmit } = actions;
 
   const handleCloseModal = (options = {}) => {
@@ -49,7 +49,7 @@ const UnverifiedUsers = () => {
 
   const handleSaveUpdate = () => {
      handleUpdateSubmit();
-     setSelectedRole(userRoles.DEFAULT);
+     setSelectedRole(USER_ROLES.DEFAULT);
      setModalType(null);
   }
 
@@ -140,8 +140,8 @@ const UnverifiedUsers = () => {
                   {/* Dropdown content */}
                   {showDropdown && (
                     <div className='absolute top-full left-0 w-full border border-gray-400 mt-1 bg-white shadow z-10 transition'>
-                      {Object.entries(userRoles).map(([key, role]) => (
-                        role !== userRoles.DEFAULT &&
+                      {Object.entries(USER_ROLES).map(([key, role]) => (
+                        role !== USER_ROLES.DEFAULT &&
                         <p
                           key={key}
                           className='px-4 py-2 text-gray-700 hover:bg-gray-200 cursor-pointer'
