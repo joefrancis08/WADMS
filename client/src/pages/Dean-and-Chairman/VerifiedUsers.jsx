@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Search, ShieldCheck, ShieldX, Trash, UserRound, UserRoundPlus, Users } from 'lucide-react';
 import { useUsersByRole } from '../../hooks/useUsers';
 import ProfileAvatar from '../../components/ProfileAvatar';
-import USER_ROLES from '../../constants/userRoles';
+import { USER_ROLES } from '../../constants/user';
 import AdminLayout from '../../components/Layout/Dean-and-Chairman/AdminLayout';
 
 

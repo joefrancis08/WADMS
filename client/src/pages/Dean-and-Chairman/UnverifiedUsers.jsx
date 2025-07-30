@@ -7,6 +7,7 @@ import UserProfileModal from '../../components/Modals/UserProfileModal';
 import ConfirmationModal from '../../components/Modals/ConfirmationModal';
 import UpdateUserModal from '../../components/Modals/UpdateUserModal';
 import MODAL_TYPE from '../../constants/modalTypes';
+import Dropdown from '../../components/Dropdown';
 
 const UnverifiedUsers = () => {
 
@@ -139,7 +140,7 @@ const UnverifiedUsers = () => {
 
                   {/* Dropdown content */}
                   {showDropdown && (
-                    <div className='absolute top-full left-0 w-full border border-gray-400 mt-1 bg-white shadow z-10 transition'>
+                    <Dropdown width='w-full'>
                       {Object.entries(USER_ROLES).map(([key, role]) => (
                         role !== USER_ROLES.DEFAULT &&
                         <p
@@ -150,7 +151,7 @@ const UnverifiedUsers = () => {
                           {role}
                         </p>
                       ))}
-                    </div>
+                    </Dropdown>
                   )}
                 </div>
               </div>

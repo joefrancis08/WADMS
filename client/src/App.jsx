@@ -1,6 +1,7 @@
-import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import { USER_ROLES, USER_STATUS } from './constants/user';
+import PATH from './constants/path';
 import ProtectedRoute from './routes/ProtectedRoute';
 import Register from './pages/Register';
 import Pending from './pages/Pending/Pending';
@@ -9,18 +10,20 @@ import PendingSkeleton from './pages/Pending/PendingSkeletonLoader';
 import LandingRedirect from './pages/LandingRedirect';
 import deanChairmanRoutes from './routes/Dean-and-Chairman/DeanChairmanRoute';
 
+const { PUBLIC, UNVERIFIED_USER } = PATH;
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<LandingRedirect />}/>
+        <Route path={PUBLIC.DEFAULT} element={<LandingRedirect />}/>
         <Route 
-          path="/pending-verification"
+          path={UNVERIFIED_USER.PENDING}
           element={
             <ProtectedRoute 
-              allowedStatuses={['Pending']} 
-              allowedRoles={['Unverified User']} 
-              fallbackRoute='/register'
+              allowedStatuses={[USER_STATUS.PENDING]} 
+              allowedRoles={[USER_ROLES.DEFAULT]} 
+              fallbackRoute={PUBLIC.REGISTER}
               loader={<PendingSkeleton />} 
             >
               <Pending />
@@ -28,8 +31,8 @@ function App() {
           }
         />
 
-        <Route path='/register' element={<Register />}/>
-        <Route path='*' element={<NotFound />} />
+        <Route path={PUBLIC.REGISTER} element={<Register />}/>
+        <Route path={PUBLIC.NOT_FOUND} element={<NotFound />} />
 
         {deanChairmanRoutes}
       </Routes>

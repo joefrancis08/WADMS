@@ -25,7 +25,7 @@ function Register() {
   return (
     <div className="reg-card-container">
       <div className="reg-card-content">
-        <div className='flex justify-center'>
+        <div className="flex justify-center">
           <img src="/CGS_Logo.png" alt="Logo" className="h-25 mb-4" />
         </div>
         <h2 className="reg-card-header-title">
