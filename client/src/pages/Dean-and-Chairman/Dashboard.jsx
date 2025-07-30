@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import axios from 'axios';
 import SidebarLG from '../../components/SidebarLG';
 import SidebarSM from '../../components/SidebarSM';
 import MobileHeader from '../../components/MobileHeader';
 
-const AdminHome = () => {
+const Dashboard = () => {
   const [menuIsClicked, setMenuIsClicked] = useState(false);
 
   return (
@@ -28,4 +27,4 @@ const AdminHome = () => {
   );
 };
 
-export default AdminHome;
+export default Dashboard;

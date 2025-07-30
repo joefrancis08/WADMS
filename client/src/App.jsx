@@ -7,10 +7,7 @@ import Pending from './pages/Pending/Pending';
 import NotFound from './pages/NotFound';
 import PendingSkeleton from './pages/Pending/PendingSkeletonLoader';
 import LandingRedirect from './pages/LandingRedirect';
-import AdminHome from './pages/Dean-and-Chairman/adminHome';
-import AdminUsers from './pages/Dean-and-Chairman/AdminUsers';
-import AdminUnverifiedUsers from './pages/Dean-and-Chairman/AdminUnverifiedUsers';
-import LoadSpinner from './components/Loaders/LoadSpinner';
+import deanChairmanRoutes from './routes/Dean-and-Chairman/DeanChairmanRoute';
 
 function App() {
   return (
@@ -31,79 +28,10 @@ function App() {
           }
         />
 
-        {/* Routes for admin */}
-        <Route 
-          path="/admin"
-          element={
-            <ProtectedRoute 
-              allowedStatuses={['Verified', 'Pending']} 
-              allowedRoles={['Dean', 'Chairman', 'Unverified User']} 
-              fallbackRoute='/not-found'
-              loader={
-                <div className="w-full h-screen flex items-center justify-center">
-                  <LoadSpinner height={'h-16'} width={'w-16'}/>
-                </div>} 
-            >
-              <AdminHome />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route 
-          path="/admin/users"
-          element={
-            <ProtectedRoute 
-              allowedStatuses={['Verified', 'Pending']} 
-              allowedRoles={['Dean', 'Chairman', 'Unverified User']} 
-              fallbackRoute='/not-found'
-              loader={
-                <div className="w-full h-screen flex items-center justify-center">
-                  <LoadSpinner height={'h-16'} width={'w-16'}/>
-                </div>} 
-            >
-              <AdminUsers />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route 
-          path="/admin/users/unverified"
-          element={
-            <ProtectedRoute 
-              allowedStatuses={['Verified', 'Pending']} 
-              allowedRoles={['Dean', 'Chairman', 'Unverified User']} 
-              fallbackRoute='/not-found'
-              loader={
-                <div className="w-full h-screen flex items-center justify-center">
-                  <LoadSpinner height={'h-16'} width={'w-16'}/>
-                </div>} 
-            >
-              <AdminUnverifiedUsers />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route 
-          path="/admin/users/unverified/:id"
-          element={
-            <ProtectedRoute 
-              allowedStatuses={['Verified', 'Pending']} 
-              allowedRoles={['Dean', 'Chairman', 'Unverified User']} 
-              fallbackRoute='/not-found'
-              loader={
-                <div className="w-full h-screen flex items-center justify-center">
-                  <LoadSpinner height={'h-16'} width={'w-16'}/>
-                </div>
-              } 
-            >
-              <AdminUnverifiedUsers />
-            </ProtectedRoute>
-          }
-        />
-
         <Route path='/register' element={<Register />}/>
-        <Route path='/pending-verification' element={<Pending />} />
         <Route path='*' element={<NotFound />} />
+
+        {deanChairmanRoutes}
       </Routes>
       <ToastContainer />
     </BrowserRouter>

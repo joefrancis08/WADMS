@@ -1,13 +1,14 @@
 import { useState, useEffect} from 'react';
-import AdminLayout from '../../components/Layout/AdminLayout';
 import { Link } from 'react-router-dom';
 import { Search, ShieldCheck, ShieldX, Trash, UserRound, UserRoundPlus, Users } from 'lucide-react';
+import { useUsersByRole } from '../../hooks/useUsers';
 import ProfileAvatar from '../../components/ProfileAvatar';
-import { useUsers } from '../../hooks/useUsers';
+import USER_ROLES from '../../constants/userRoles';
+import AdminLayout from '../../components/Layout/Dean-and-Chairman/AdminLayout';
 
 
-const AdminUsers = () => {
-  const {users} = useUsers();
+const VerifiedUsers = () => {
+  const { users } = useUsersByRole(USER_ROLES.DEFAULT);
   const [unverifiedUserCount, setUnverifiedUserCount] = useState(0);
 
   const verifiedUsers = [
@@ -47,7 +48,6 @@ const AdminUsers = () => {
   return (
     <>
       <AdminLayout>
-        {console.log(unverifiedUserCount)}
         <div className='flex-1 p-0 space-y-3'>
           {/* Main Content Header */}
           <div className='max-md:pt-2 md:bg-gradient-to-r from-gray-100 to-gray-200 pb-2 md:py-4 md:shadow-md md:sticky top-0 md:z-1 bg-white'>
@@ -59,7 +59,7 @@ const AdminUsers = () => {
                   Verified Users
                 </p>
               </div>
-              <Link to='/admin/users/unverified'>
+              <Link to='/admin/unverified-users'>
                 <div className='relative mr-2'>
                   <button className='cursor-pointer opacity-65 hover:opacity-100 hover:drop-shadow-sm p-1 rounded-md' title='Unverified Users'>
                     <UserRound size={36} color='#004030'/>
@@ -123,4 +123,4 @@ const AdminUsers = () => {
   );
 };
 
-export default AdminUsers;
+export default VerifiedUsers;

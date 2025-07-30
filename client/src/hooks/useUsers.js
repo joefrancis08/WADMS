@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
+import USER_ROLES from "../constants/userRoles";
 
-export const useUsers = () => {
+export const useUsersByRole = (role) => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const controller = new AbortController();
-    const fetchUnverifiedUsers = async () => {
+    
+    const fetchUsers = async () => {
       try {
-        const role = 'Unverified User';
         const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/users/by-role`, {
           params: { role },
           signal: controller.signal // Attach signal
@@ -31,10 +32,10 @@ export const useUsers = () => {
       
     };
 
-    fetchUnverifiedUsers();
+    fetchUsers();
 
     const interval = setInterval(() => {
-      fetchUnverifiedUsers();
+      fetchUsers();
     }, 5000);
 
     // Clean up on unmount

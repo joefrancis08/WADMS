@@ -1,7 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { getUserSession } from '../api/Users/userAPI';
 
 // Create Context
 const AuthContext = createContext();
@@ -27,12 +25,12 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const restoreSession = async () => {
       try {
-        const res = await axios.get(`${API_BASE_URL}/users/session`, { withCredentials: true });
-        const user = res.data.user;
+        const user = await getUserSession();
         const { email, fullName, role, status } = user;
         if (user) setUser({ email, fullName, role, status });
 
       } catch (error) {
+        console.log('Error: ', error);
         setUser(null);
       } finally {
         setIsLoading(false);

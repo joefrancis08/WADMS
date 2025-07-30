@@ -1,11 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import {
-  usersIcon,
-  dashboardIcon,
-  closeIcon,
-  logoutIcon,
-  userProfileIcon
-} from '../assets/icons';
+import { logoutIcon, userProfileIcon } from '../assets/icons';
 import { LayoutDashboard, Users, UsersRound, X } from 'lucide-react';
 
 const SidebarSM = ({ sideBarOpen, setSideBarOpen }) => {
@@ -14,7 +8,7 @@ const SidebarSM = ({ sideBarOpen, setSideBarOpen }) => {
 
   const menuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', link: '/admin' },
-    { id: 'users', icon: UsersRound, label: 'Users', link: '/admin/users' }
+    { id: 'users', icon: UsersRound, label: 'Users', link: '/admin/verified-users' }
   ];
 
   return (
