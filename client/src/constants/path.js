@@ -1,12 +1,12 @@
 const PATH = {
   PUBLIC: {
-    DEFAULT: '/',
+    DEFAULT_PATH: '/',
     REGISTER: '/register',
     NOT_FOUND: '*'
   },
 
   UNVERIFIED_USER: {
-    PENDING: '/pending-verification'
+    PENDING_VERIFICATION: '/pending-verification'
   },
 
   ADMIN: {

@@ -1,5 +1,5 @@
 export const USER_ROLES = {
-  DEFAULT: 'Unverified User',
+  UNVERIFIED_USER: 'Unverified User',
   DEAN: 'Dean',
   CHAIRMAN: 'Chairman',
   CLERK: 'Clerk',

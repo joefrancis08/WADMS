@@ -1,11 +1,11 @@
 import { Route } from 'react-router-dom';
-import { USER_ROLES, USER_STATUS } from '../../constants/user';
-import PATH from '../../constants/path';
-import ProtectedRoute from '../ProtectedRoute';
-import LoadSpinner from '../../components/Loaders/LoadSpinner';
-import Dashboard from '../../pages/Dean-and-Chairman/Dashboard';
-import UnverifiedUsers from '../../pages/Dean-and-Chairman/UnverifiedUsers';
-import VerifiedUsers from '../../pages/Dean-and-Chairman/VerifiedUsers';
+import { USER_ROLES, USER_STATUS } from '../constants/user';
+import PATH from '../constants/path';
+import ProtectedRoute from './ProtectedRoute';
+import LoadSpinner from '../components/Loaders/LoadSpinner';
+import Dashboard from '../pages/Dean-and-Chairman/Dashboard';
+import UnverifiedUsers from '../pages/Dean-and-Chairman/UnverifiedUsers';
+import VerifiedUsers from '../pages/Dean-and-Chairman/VerifiedUsers';
 
 const { 
   DASHBOARD, VERIFIED_USERS, 
@@ -13,7 +13,7 @@ const {
   UNVERIFIED_USERS_ID
 } = PATH.ADMIN;
 const { NOT_FOUND } = PATH.PUBLIC;
-const { DEAN, CHAIRMAN, DEFAULT /* DEFAULT is for test. */ } = USER_ROLES;
+const { DEAN, CHAIRMAN, UNVERIFIED_USER } = USER_ROLES; // UNVERIFIED_USER is for test.
 const { PENDING, VERIFIED } = USER_STATUS;
 
 const protectedRoutes = [
@@ -52,7 +52,7 @@ const deanChairmanRoutes = protectedRoutes.map(({ path, element }) => (
     element={
       <ProtectedRoute 
         allowedStatuses={[VERIFIED, PENDING]} /*PENDING is for test. */
-        allowedRoles={[DEAN, CHAIRMAN, DEFAULT]} /*DEFAULT is for test. */
+        allowedRoles={[DEAN, CHAIRMAN, UNVERIFIED_USER]} /*UNVERIFIED_USER is for test. */
         fallbackRoute={NOT_FOUND}
         loader={Loader} 
       >
