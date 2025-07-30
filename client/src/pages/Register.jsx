@@ -1,10 +1,9 @@
 import { Link } from 'react-router-dom';
-import { AtSign, Eye, EyeOff, Lock, UserRoundPen } from 'lucide-react';
-import { useRegister } from '../hooks/useRegister';
+import { AtSign, UserRoundPen } from 'lucide-react';
+import { useRegister } from '../hooks/useRegister'; // Importing register custom hook
 import SubmitButton from '../components/Auth/SubmitButton'; // Importing custom SubmitButton component
-import ValidationMessage from '../components/Auth/ValidationMessage'; // Importing custom ValidationMessage component
 import LoadSpinner from '../components/Loaders/LoadSpinner'; // Importing custom LoadSpinner component
-
+import Field from '../components/Form/Field'; // Importing fied component
 
 // Register component
 // Handles user registration, form validation, and error handling
@@ -19,6 +18,10 @@ function Register() {
   const { isLoading } = loading;
   const { handleChange, handleSubmit} = handlers;
 
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
+
   return (
     <div className="reg-card-container">
       <div className="reg-card-content">
@@ -32,96 +35,48 @@ function Register() {
         <h2 className="reg-form-title">REGISTER</h2>
 
         <form onSubmit={handleSubmit} className="space-y-2">
-          <div className="w-full">
-            <div className="input-container-layout">
-              <span className="input-icon-layout">
-                <UserRoundPen color='gray' size={24} />
-              </span>
-              <input
-                type="text"
-                ref={fullNameRef}
-                placeholder="Full Name"
-                autoComplete='off'
-                name="fullName"
-                value={values.fullName}
-                onChange={handleChange}
-                className={`${errors.fullName 
-                  ? 'input-invalid' 
-                  : 'input-valid'} 
-                  input-field-style`
-                }
-              />
-            </div>
-            <div className="min-h-[1.25rem]">
-              {errors.fullName && <ValidationMessage message={errors.fullName} />}
-            </div>
-          </div>
+          <Field
+            icon={<UserRoundPen color='gray' size={24} />}
+            ref={fullNameRef}
+            name='fullName'
+            placeholder='Full Name'
+            value={values.fullName}
+            onChange={handleChange}
+            error={errors.fullName}
+          />
+          
+          <Field
+            icon={<AtSign color='gray' size={24} />}
+            ref={emailRef}
+            name='email'
+            placeholder='Email Address'
+            value={values.email}
+            onChange={handleChange}
+            error={errors.email}
+          />
 
-          <div className="w-full">
-            <div className="input-container-layout">
-              <span className="input-icon-layout">
-                <AtSign color='gray' size={24} />
-              </span>
-              <input
-                type="text"
-                ref={emailRef}
-                placeholder="Email Address"
-                autoComplete='off'
-                name="email"
-                value={values.email}
-                onChange={handleChange}
-                className={`${errors.email 
-                  ? 'input-invalid' 
-                  : 'input-valid'} 
-                  input-field-style`
-                }
-              />
-            </div>
-            <div className="min-h-[1.25rem]">
-              {errors.email && <ValidationMessage message={errors.email} />}
-            </div>
-          </div>
-          <div className="w-full">
-            <div className="input-container-layout">
-              <span className="input-icon-layout">
-                <Lock color='gray' size={24}/>
-              </span>
-              <input
-                type={isPasswordVisible ? 'text' : 'password'}
-                ref={passwordRef}
-                placeholder='Password'
-                name="password"
-                value={values.password}
-                onChange={handleChange}
-                className={`${errors.password 
-                  ? 'input-invalid' 
-                  : 'input-valid'} 
-                  input-field-style`
-                }
-              />
-              <span
-                title={isPasswordVisible ? 'Hide Password' : 'Show Password'}
-                onClick={() => setIsPasswordVisible(!isPasswordVisible)} 
-                className="password-icon-visibility">
-                {isPasswordVisible ? <EyeOff color='gray' /> : <Eye color='gray'/>}
-              </span>
-            </div>
-            <div className="min-h-[1.25rem]">
-              {errors.password && <ValidationMessage message={errors.password} />}
-            </div>
-          </div>
-
+          <Field
+            icon={<UserRoundPen color='gray' size={24} />}
+            ref={passwordRef}
+            name='password'
+            placeholder='Password'
+            value={values.password}
+            onChange={handleChange}
+            error={errors.password}
+            isPassword={true}
+            isPasswordVisible={isPasswordVisible}
+            togglePasswordVisibility={togglePasswordVisibility}
+          />
           <div className='flex justify-center'>
             <SubmitButton disabled={isLoading}>
               {isLoading 
                 ? <LoadSpinner height={'h-5'} width={'w-5'}>
                     Registering...
                   </LoadSpinner> 
-                : "Register"
+                : 'Register'
               }
             </SubmitButton>
           </div>
-
           <div>
             <p className="text-center mt-4">
               Already have an account?
