@@ -47,6 +47,7 @@ const Loader = (
 
 const deanChairmanRoutes = protectedRoutes.map(({ path, element }) => (
   <Route 
+    key={path}
     path={path}
     element={
       <ProtectedRoute 
