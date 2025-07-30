@@ -23,7 +23,7 @@ const SidebarLG = () => {
   };
   const menuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', link: '/admin'},
-    { id: 'verified-users', icon: UsersRound, label: 'Users', link: '/admin/users' },
+    { id: 'verified-users', icon: UsersRound, label: 'Users', link: '/admin/verified-users' },
   ];
 
   return (

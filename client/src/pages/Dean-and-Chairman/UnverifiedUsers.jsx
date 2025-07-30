@@ -1,16 +1,16 @@
 import { ChevronDown, ChevronLeft, ShieldCheck, ShieldUser, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useAdminUnverifiedUsers } from '../../hooks/useAdminUnverifiedUsers';
-import AdminLayout from '../../components/Layout/AdminLayout';
+import { useUnverifiedUsers } from '../../hooks/useUnverifiedUsers';
+import AdminLayout from '../../components/Layout/Dean-and-Chairman/AdminLayout';
 import dateFormatter from '../../utils/dateFormatter';
 import UserProfileModal from '../../components/Modals/UserProfileModal';
 import ConfirmationModal from '../../components/Modals/ConfirmationModal';
 import UpdateUserModal from '../../components/Modals/UpdateUserModal';
 import MODAL_TYPE from '../../constants/modalTypes';
 
-const AdminUnverifiedUsers = () => {
+const UnverifiedUsers = () => {
 
-  const { user, modal, ui, data, actions } = useAdminUnverifiedUsers();
+  const { user, modal, ui, data, actions } = useUnverifiedUsers();
   const { selectedUser, setSelectedUser, selectedRole, setSelectedRole } = user;
   const { modalType, setModalType } = modal;
   const { showDropdown, setShowDropdown } = ui;
@@ -168,7 +168,7 @@ const AdminUnverifiedUsers = () => {
       <main className="px-4 py-6 md:px-8 w-full max-w-screen-xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-2 mb-6">
-          <Link to="/admin/users" className="text-gray-700">
+          <Link to="/admin/verified-users" className="text-gray-700">
             <ChevronLeft className='hover:opacity-65 active:opacity-50'/>
           </Link>
         </div>
@@ -237,4 +237,4 @@ const AdminUnverifiedUsers = () => {
   );
 };
 
-export default AdminUnverifiedUsers;
+export default UnverifiedUsers;

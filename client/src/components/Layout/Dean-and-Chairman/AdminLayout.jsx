@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import SidebarLG from '../SidebarLG';
-import SidebarSM from '../SidebarSM';
-import MobileHeader from '../MobileHeader';
+import SidebarLG from '../../SidebarLG';
+import SidebarSM from '../../SidebarSM';
+import MobileHeader from '../../MobileHeader';
 
 const AdminLayout = ({ children }) => {
   const [menuIsClicked, setMenuIsClicked] = useState(false);

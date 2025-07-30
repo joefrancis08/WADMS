@@ -1,18 +1,18 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useUsers } from "./useUsers";
+import { useUsersByRole } from "./useUsers";
 import { deleteUser, updateUserRole } from "../api/Users/userAPI";
-import userRoles from "../constants/userRoles";
+import USER_ROLES from "../constants/userRoles";
 import { showErrorToast, showSuccessToast } from "../utils/toastNotification";
 
-export const useAdminUnverifiedUsers = () => {
+export const useUnverifiedUsers = () => {
   const navigate = useNavigate();
-  const { users } = useUsers();
+  const { users } = useUsersByRole(USER_ROLES.DEFAULT);
   
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalType, setModalType] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedRole, setSelectedRole] = useState('Unverified User');
+  const [selectedRole, setSelectedRole] = useState(USER_ROLES.DEFAULT);
 
   const unverifiedUsers = users?.data ?? [];
 
@@ -63,7 +63,7 @@ export const useAdminUnverifiedUsers = () => {
 
     data: {
       unverifiedUsers,
-      userRoles,
+      USER_ROLES,
     },
 
     actions: {
