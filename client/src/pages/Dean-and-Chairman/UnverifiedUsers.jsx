@@ -12,61 +12,17 @@ import Dropdown from '../../components/Dropdown';
 const UnverifiedUsers = () => {
 
   const { user, modal, ui, data, actions } = useUnverifiedUsers();
-  const { selectedUser, setSelectedUser, selectedRole, setSelectedRole } = user;
-  const { modalType, setModalType } = modal;
-  const { showDropdown, setShowDropdown } = ui;
+  const { selectedUser, selectedRole} = user;
+  const { modalType} = modal;
+  const { showDropdown} = ui;
   const { unverifiedUsers, USER_ROLES } = data;
-  const { handleDelete, handleUpdateSubmit } = actions;
-
-  const handleCloseModal = (options = {}) => {
-    setModalType(null);
-    setSelectedUser(null);
-
-    if (options.clearDropdown) setShowDropdown(false);
-  };
-
-  const handleVerifyClick = (e, options = {}) => {
-    e.stopPropagation();
-    setModalType(MODAL_TYPE.USER_VERIFICATION_CONFIRMATION);
-
-    if (options.selectedUser) setSelectedUser(options.selectedUser);
-  };
-
-  const handleDeleteClick = (e, options = {}) => {
-    e.stopPropagation();
-    setModalType(MODAL_TYPE.USER_DELETION_CONFIRMATION);
-
-    if (options.selectedUser) setSelectedUser(options.selectedUser);
-  };
-
-  const handleVerifyConfirm = () => {
-    setModalType(MODAL_TYPE.UPDATE_USER);
-  };
-
-  const handleDeleteConfirm = () => {
-    handleDelete();
-    setModalType(null);
-  };
-
-  const handleSaveUpdate = () => {
-     handleUpdateSubmit();
-     setSelectedRole(USER_ROLES.DEFAULT);
-     setModalType(null);
-  }
-
-  const handleRoleSelection = (role) => {
-    setSelectedRole(role);
-    setShowDropdown(false);
-  }
-
-  const handleDropdown = () => {
-    showDropdown ? setShowDropdown(false) : setShowDropdown(true);
-  }
-
-  const handleRowClick = (user) => {
-    setModalType(MODAL_TYPE.USER_PROFILE);
-    setSelectedUser(user);
-  }
+  const { handleCloseModal } = actions.closeModal;
+  const { handleRowClick } = actions.row;
+  const { handleVerifyClick, handleVerifyConfirm } = actions.verify;
+  const { handleDropdown } = actions.dropdown;
+  const { handleRoleSelection } = actions.select;
+  const { handleDeleteClick, handleDeleteConfirm } = actions.delete;
+  const { handleSaveUpdate } = actions.update;
 
   const renderModal = () => {
     switch (modalType) {
@@ -178,7 +134,7 @@ const UnverifiedUsers = () => {
           <h1 className="text-center p-2 text-2xl font-bold text-white">Unverified Users</h1>
         </div>
 
-        {/* Scrollable Table */}
+        {/* Table */}
         <div className="w-full overflow-x-auto rounded-b-md shadow-lg border border-gray-300">
           <table className="min-w-[700px] w-full">
             <thead className="bg-gray-300 text-gray-700 text-sm font-semibold border-b border-gray-300">
@@ -203,7 +159,7 @@ const UnverifiedUsers = () => {
                     <tr
                       title={`Click to see profile of ${user.full_name}`} 
                       key={user.id} 
-                      className='hover:bg-gray-100 cursor-pointer hover:shadow-inner shadow-sm' 
+                      className='hover:bg-gray-100 cursor-pointer hover:shadow-inner shadow-sm hover:transition active:opacity-50 active:transition' 
                       onClick={() => handleRowClick(user)}
                     >
                       <td className="px-6 py-4 font-medium text-gray-800">{user.full_name}</td>

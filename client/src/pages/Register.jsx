@@ -9,18 +9,14 @@ import Field from '../components/Form/Field'; // Importing fied component
 // Handles user registration, form validation, and error handling
 function Register() {
   
-  const { formValues, formErrors, refs, passwordVisibility, loading, handlers } = useRegister();
+  const { formValues, formErrors, refs, passwordVisibility, loading, actions } = useRegister();
 
   const { values } = formValues;
   const { errors } = formErrors;
   const { fullNameRef, emailRef, passwordRef } = refs;
-  const { isPasswordVisible, setIsPasswordVisible } = passwordVisibility;
+  const { isPasswordVisible, togglePasswordVisibility } = passwordVisibility;
   const { isLoading } = loading;
-  const { handleChange, handleSubmit} = handlers;
-
-  const togglePasswordVisibility = () => {
-    setIsPasswordVisible(!isPasswordVisible);
-  };
+  const { handleChange, handleSubmit} = actions;
 
   return (
     <div className="reg-card-container">
