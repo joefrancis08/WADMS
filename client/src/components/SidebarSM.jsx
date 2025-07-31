@@ -8,7 +8,7 @@ const SidebarSM = ({ sideBarOpen, setSideBarOpen }) => {
 
   const menuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', link: '/admin' },
-    { id: 'users', icon: UsersRound, label: 'Users', link: '/admin/verified-users' }
+    { id: 'users', icon: UsersRound, label: 'Verified Users', link: '/admin/verified-users' }
   ];
 
   return (

@@ -23,7 +23,7 @@ const SidebarLG = () => {
   };
   const menuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', link: '/admin'},
-    { id: 'verified-users', icon: UsersRound, label: 'Users', link: '/admin/verified-users' },
+    { id: 'verified-users', icon: UsersRound, label: 'Verified Users', link: '/admin/verified-users' },
   ];
 
   return (
@@ -64,22 +64,22 @@ const SidebarLG = () => {
             return (
               <Link key={item.id} to={item.link}>
                 <div
-                  className={`flex items-center space-x-5 px-5 py-3 cursor-pointer transition-opacity duration-200 opacity-85 hover:opacity-100
+                  className={`flex items-center space-x-5 px-5 py-3 cursor-pointer transition opacity-85 hover:opacity-100 hover:transition
                     ${isActive 
-                      ? 'bg-gray-600 text-white font-semibold opacity-100 rounded-full transition-all ease-in-out duration-1000' 
+                      ? 'bg-gray-600 text-white font-semibold opacity-100 rounded-full transition' 
                       : 'hover:bg-gray-700 rounded-full'}
                   `}
                 >
                   <Icon
                     fill={isActive ? 'white' : 'none'}
-                    className={`flex-shrink-0 ${
+                    className={`flex-shrink-0 transition${
                       isCollapsed ? 'w-6 h-6' 
                       : 'w-7 h-7'
-                    } transition-all duration-300`}
+                    }`}
                     aria-hidden="true"
                   />
                   <span
-                    className={`text-sm whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out ${
+                    className={`text-sm whitespace-nowrap overflow-hidden transition ${
                       isCollapsed ? 'opacity-0 max-w-0' : 'opacity-100 max-w-[200px]'
                     }`}
                   >
