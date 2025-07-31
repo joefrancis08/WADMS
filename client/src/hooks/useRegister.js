@@ -43,6 +43,10 @@ export const useRegister = () => {
   // Set state for loading and error
   const [isLoading, setIsLoading] = useState(false);
 
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
+
   // Create function to handle input changes
   // Updates the corresponding state based on the input field changes
   const handleChange = (e) => {
@@ -132,8 +136,8 @@ export const useRegister = () => {
     formValues: {values, setValues},
     formErrors: {errors, setErrors},
     refs: {fullNameRef, emailRef, passwordRef},
-    passwordVisibility: {isPasswordVisible,setIsPasswordVisible},
+    passwordVisibility: {isPasswordVisible, setIsPasswordVisible, togglePasswordVisibility},
     loading: {isLoading, setIsLoading},
-    handlers: {handleChange, handleSubmit}
+    actions: {handleChange, handleSubmit}
   };
 }

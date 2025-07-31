@@ -8,7 +8,7 @@ import AdminLayout from '../../components/Layout/Dean-and-Chairman/AdminLayout';
 
 
 const VerifiedUsers = () => {
-  const { users } = useUsersByRole(USER_ROLES.DEFAULT);
+  const { users } = useUsersByRole(USER_ROLES.UNVERIFIED_USER);
   const [unverifiedUserCount, setUnverifiedUserCount] = useState(0);
 
   const verifiedUsers = [
