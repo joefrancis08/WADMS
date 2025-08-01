@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useUsersByRole } from "./useUsers";
+import { useUsersBy } from "./useUsers";
 import { deleteUser, updateUserRole } from "../api/Users/userAPI";
 import { USER_ROLES } from "../constants/user";
 import { TOAST_MESSAGES } from "../constants/messages";
@@ -12,7 +12,6 @@ export const useUnverifiedUsers = () => {
 
   const { USER_UPDATE, USER_DELETION } = TOAST_MESSAGES;
   const { UNVERIFIED_USER } = USER_ROLES;
-
   const { 
     USER_PROFILE,
     USER_VERIFICATION_CONFIRMATION,
@@ -20,17 +19,17 @@ export const useUnverifiedUsers = () => {
     USER_DELETION_CONFIRMATION,
   } = MODAL_TYPE;
 
-  const { users } = useUsersByRole(USER_ROLES.UNVERIFIED_USER);
-  const unverifiedUsers = users?.data ?? [];
+  const unverifiedUsers = useUsersBy('role', UNVERIFIED_USER).users.data ?? [];
   
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalType, setModalType] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedRole, setSelectedRole] = useState(USER_ROLES.DEFAULT);
+  const [selectedRole, setSelectedRole] = useState(UNVERIFIED_USER);
 
   const handleCloseModal = (options = {}) => {
     setModalType(null);
     setSelectedUser(null);
+    setSelectedRole(UNVERIFIED_USER);
 
     if (options.clearDropdown) setShowDropdown(false);
   };

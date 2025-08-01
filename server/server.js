@@ -1,12 +1,13 @@
 // Import necessary dependencies
 import express from 'express';
-import cors from 'cors';
+import http from 'http';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv-flow';
 import sessionMiddleware from './src/middlewares/session.js';
 import corsMiddleware from './src/middlewares/cors.js';
 import userRouter from './src/routes/userRoute.js';
+import setupWebSocket from './src/config/ws.js';
 
 dotenv.config({ quiet: true });
 const __filename = fileURLToPath(import.meta.url);
@@ -30,7 +31,10 @@ app.get('/', (req, res) => {
 
 app.use('/users', userRouter);
 
+const server = http.createServer(app);
+setupWebSocket(server);
+
 // Start the server to make it ready to response to incoming request
-app.listen(port, () => {
-    console.log(`Server running at Port ${port}`); 
+server.listen(port, () => {
+    console.log(`HTTP and WebSocket server running at Port ${port}.`); 
 })

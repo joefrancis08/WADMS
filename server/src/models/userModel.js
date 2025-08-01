@@ -35,6 +35,12 @@ export const getUsersByRole = async (role) => {
   return rows;
 }
 
+// GET Users by status
+export const getUserByStatus = async (status) => {
+  const [rows] = await db.execute('SELECT * FROM user WHERE status = ?', [status]);
+  return rows;
+}
+
 // UPDATE User
 export const updateUserInfo = async (fullName, email, password, role, status, id) => {
   const sql = 'UPDATE user SET full_name = ?, email = ?, password = ?, role = ?, status = ?  WHERE id = ?';

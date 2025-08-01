@@ -1,50 +1,67 @@
-import { useState, useEffect} from 'react';
+
 import { Link } from 'react-router-dom';
-import { Search, ShieldCheck, ShieldX, Trash, UserRound, UserRoundPlus, Users } from 'lucide-react';
-import { useUsersByRole } from '../../hooks/useUsers';
+import { BookUser, EllipsisVertical, Pen, Search, ShieldCheck, ShieldX, Trash, Trash2, UserRound, UserRoundPlus, Users } from 'lucide-react';
 import ProfileAvatar from '../../components/ProfileAvatar';
-import { USER_ROLES } from '../../constants/user';
 import AdminLayout from '../../components/Layout/Dean-and-Chairman/AdminLayout';
+import { useVerifiedUsers } from '../../hooks/useVerifiedUsers';
+import Dropdown from '../../components/Dropdown';
 
 
 const VerifiedUsers = () => {
-  const { users } = useUsersByRole(USER_ROLES.UNVERIFIED_USER);
-  const [unverifiedUserCount, setUnverifiedUserCount] = useState(0);
+  const { userCount, ellipsis, dropdown, data } = useVerifiedUsers();
 
-  const verifiedUsers = [
-    { id: 1, name: 'Alice Johnson', role: 'Administrator', emoji: '👩‍💼' },
-    { id: 2, name: 'Bob Smith', role: 'Moderator', emoji: '👨‍💻' },
-    { id: 3, name: 'Alice Johnson', role: 'Administrator', emoji: '👩‍💼' },
-    { id: 4, name: 'Bob Smith', role: 'Moderator', emoji: '👨‍💻' },
-    { id: 5, name: 'Alice Johnson', role: 'Administrator', emoji: '👩‍💼' },
-    { id: 6, name: 'Bob Smith', role: 'Moderator', emoji: '👨‍💻' },
-    { id: 7, name: 'Alice Johnson', role: 'Administrator', emoji: '👩‍💼' },
-    { id: 8, name: 'Bob Smith', role: 'Moderator', emoji: '👨‍💻' },
-    { id: 9, name: 'Alice Johnson', role: 'Administrator', emoji: '👩‍💼' },
-    { id: 10, name: 'Bob Smith', role: 'Moderator', emoji: '👨‍💻' },
-    { id: 11, name: 'Alice Johnson', role: 'Administrator', emoji: '👩‍💼' },
-    { id: 12, name: 'Bob Smith', role: 'Moderator', emoji: '👨‍💻' },
-    { id: 13, name: 'Alice Johnson', role: 'Administrator', emoji: '👩‍💼' },
-    { id: 14, name: 'Bob Smith', role: 'Moderator', emoji: '👨‍💻' },
-    { id: 15, name: 'Alice Johnson', role: 'Administrator', emoji: '👩‍💼' },
-    { id: 16, name: 'Bob Smith', role: 'Moderator', emoji: '👨‍💻' },
-    { id: 17, name: 'Alice Johnson', role: 'Administrator', emoji: '👩‍💼' },
-    { id: 18, name: 'Bob Smith', role: 'Moderator', emoji: '👨‍💻' },
-    { id: 19, name: 'Bob Smith', role: 'Moderator', emoji: '👨‍💻' },
-    { id: 20, name: 'Alice Johnson', role: 'Administrator', emoji: '👩‍💼' },
-    { id: 21, name: 'Bob Smith', role: 'Moderator', emoji: '👨‍💻' },
-    { id: 22, name: 'Alice Johnson', role: 'Administrator', emoji: '👩‍💼' },
-    { id: 23, name: 'Bob Smith', role: 'Moderator', emoji: '👨‍💻' },
-  ];
+  const { unverifiedUserCount } = userCount;
+  const { handleEllipsisClick } = ellipsis;
+  const { activeDropdownId, setActiveDropdownId } = dropdown;
+  const { verifiedUsers } = data;
 
-  useEffect(() => {
-  // Only run this if users is an array (not loading or error)
-  if (Array.isArray(users?.data)) {
-      const count = users.data.length;
-      setUnverifiedUserCount(count);
-    }
-  }, [users]);
+  const renderDropdown = (user) => {
+    const dropDownMenu = [
+      {
+        icon: <BookUser size={20} />,
+        label: 'View Details'
+      },
+      {
+        icon: <Pen size={18} />,
+        label: 'Update'
+      },
+      {
+        icon: <Trash2 size={20} color='red'/>,
+        label: 'Delete'
+      }
+    ];
 
+    return (
+      activeDropdownId === user.id && (
+        <div className='absolute top-8 left-24 max-sm:left-10 transition'>
+          <Dropdown 
+            width={'w-35'} 
+            border={'border border-gray-300 rounded-md'}>
+            {dropDownMenu.map((menu, index) => (
+              <div
+                onClick={() => {
+                  if (menu.label === 'Update') console.log('Update');
+                  else if (menu.label === 'View Details') console.log('View Details');
+                  else if (menu.label === 'Delete') console.log('Delete');
+                }}
+                key={index}
+                className={`flex text-gray-700 text-sm p-2 opacity-100 rounded hover:bg-gray-100 hover:font-medium hover:shadow hover:transition active:opacity-50 ${menu.label === 'Delete' && 'border-t border-gray-300 rounded-t-none mt-2'}`}
+
+              >
+                <i className='mr-2'>{menu.icon}</i>
+                <p className={menu.label === 'Delete' ? 'text-red-500' : ''}>
+                  {menu.label}
+                </p>
+              </div>
+            ))}
+          </Dropdown>
+        </div>     
+      )
+    );
+  };
+
+  
+ 
   return (
     <>
       <AdminLayout>
@@ -104,16 +121,26 @@ const VerifiedUsers = () => {
           </div>
 
           {/* User Cards */}
-          <div className='px-3 pb-4 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6'>
+          <div className='px-3 pb-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6'>
             {verifiedUsers.map(user => (
-              <div key={user.id} className='bg-gray-50 p-4 rounded-xl border border-gray-100 shadow hover:shadow-xl transition cursor-pointer'>
+              <div
+                key={user.user_uuid} 
+                className='relative bg-gray-50 p-4 rounded-xl border border-gray-100 shadow hover:shadow-xl transition cursor-pointer'>
+                <div 
+                  onClick={(e) => handleEllipsisClick(e, user)} 
+                  className='absolute top-0 p-2 right-0 text-gray-500 rounded-bl-xl rounded-tr-lg hover:shadow hover:text-gray-600 hover:bg-gray-200 active:opacity-50 transition'>
+                    <EllipsisVertical size={20}/>
+                </div>
+                {renderDropdown(user)}
                 <div className='flex flex-col items-center text-center'>
                   <div className='text-5xl mb-3'>
-                    {<ProfileAvatar name={user.name} height={'h-24'} width={'w-24'} border={'rounded-full'}/>}
+                    {<ProfileAvatar name={user.full_name} height={'h-24'} width={'w-24'} border={'rounded-full'}/>}
                   </div>
-                  <h3 className='text-lg font-semibold'>{user.name}</h3>
+                  <h3 className='text-lg font-semibold'>{user.full_name}</h3>
                   <p className='text-sm text-gray-500'>{user.role}</p>
                 </div>
+                
+                
               </div>
             ))}
           </div>

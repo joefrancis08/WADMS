@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
-import { insertUser, getAllUsers, getUserById, updateUserInfo, deleteAllUsers, deleteUserById, getUserByEmail, getUsersByRole, updateUserRole } from '../models/userModel.js';
+import { insertUser, getAllUsers, getUserById, updateUserInfo, deleteAllUsers, deleteUserById, getUserByEmail, getUsersByRole, updateUserRole, getUserByStatus } from '../models/userModel.js';
 import { handleBlankUserInput } from '../utils/handleBlankField.js';
 
 // Create new user
@@ -233,12 +233,12 @@ export const fetchUserByRole = async (req, res) => {
   try {
     const users = await getUsersByRole(role);
 
-    // if (users.length === 0) {
-    //   return res.status(404).json({
-    //     success: false,
-    //     message: `No users found with role: ${role}`,
-    //   });
-    // }
+    if (users.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: `No users found with role: ${role}`,
+      });
+    }
 
     return res.status(200).json({
       success: true,
@@ -247,6 +247,41 @@ export const fetchUserByRole = async (req, res) => {
 
   } catch (error) {
     console.error('Error fetching users by role:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error.',
+    })
+  }
+};
+
+// Fetch users by status
+export const fetchUserByStatus = async (req, res) => {
+  const { status } = req.query;
+
+  if (!status) {
+    return res.status(400).json({
+      success: false,
+      message: 'Status is required as a query parameter.',
+    });
+  }
+
+  try {
+    const users = await getUserByStatus(status);
+
+    if (users.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: `No users found with status: ${status}`,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: users,
+    });
+
+  } catch (error) {
+    console.error('Error fetching users by status:', error);
     return res.status(500).json({
       success: false,
       message: 'Server error.',
