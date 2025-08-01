@@ -70,6 +70,7 @@ const UnverifiedUsers = () => {
             onSaveClick={handleSaveUpdate}
             headerContent={`Assign Role to ${selectedUser?.full_name}`}
             primaryButton={'Save'}
+            disabled={selectedRole === USER_ROLES.UNVERIFIED_USER}
             secondaryButton={'Cancel'}
             bodyContent={
               <div className='relative w-full'>
@@ -96,9 +97,9 @@ const UnverifiedUsers = () => {
 
                   {/* Dropdown content */}
                   {showDropdown && (
-                    <Dropdown width='w-full'>
+                    <Dropdown width='w-full' position='top-13'>
                       {Object.entries(USER_ROLES).map(([key, role]) => (
-                        role !== USER_ROLES.DEFAULT &&
+                        role !== USER_ROLES.UNVERIFIED_USER &&
                         <p
                           key={key}
                           className='px-4 py-2 text-gray-700 hover:bg-gray-200 cursor-pointer'

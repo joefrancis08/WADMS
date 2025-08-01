@@ -1,21 +1,23 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
+import { connectWebSocket, receiveMessage } from "../services/socket";
 
-export const useUsersByRole = (role) => {
+export const useUsersBy = (key, value) => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const controller = new AbortController();
-    
+    const socket = connectWebSocket();
+
     const fetchUsers = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/users/by-role`, {
-          params: { role },
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/users/by-${key}`, {
+          params: { [key]: value },
           signal: controller.signal // Attach signal
         });
-        setUsers(res.data)
+        setUsers(res.data);
 
       } catch (error) {
         if (axios.isCancel(error)) {
@@ -33,17 +35,21 @@ export const useUsersByRole = (role) => {
 
     fetchUsers();
 
-    const interval = setInterval(() => {
-      fetchUsers();
-    }, 5000);
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+
+      if (data.type === 'user-update' && data.isUpdated) {
+        fetchUsers();
+      }
+    };
 
     // Clean up on unmount
     return () => {
+      console.log('Cleaning up WebSocket Connection.')
+      socket.close();
       controller.abort();
-      clearInterval(interval);
     };
-  }, []);
+  }, [key, value]);
 
   return { users, loading, error };
 };
-
