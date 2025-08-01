@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
-import { connectWebSocket, receiveMessage } from "../services/socket";
+import { connectWebSocket } from "../services/socket";
 
 export const useUsersBy = (key, value) => {
   const [users, setUsers] = useState([]);
