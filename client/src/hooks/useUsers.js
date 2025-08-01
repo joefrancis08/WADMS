@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
-import { connectWebSocket, sendMessage } from "../services/socket";
+import { connectWebSocket, receiveMessage } from "../services/socket";
 
 export const useUsersBy = (key, value) => {
   const [users, setUsers] = useState([]);
@@ -9,10 +9,7 @@ export const useUsersBy = (key, value) => {
 
   useEffect(() => {
     const controller = new AbortController();
-    const socket = connectWebSocket(() => {
-      console.log('Websocket is ready.');
-      sendMessage('This is from client');
-    });
+    const socket = connectWebSocket();
 
     const fetchUsers = async () => {
       try {
@@ -38,16 +35,19 @@ export const useUsersBy = (key, value) => {
 
     fetchUsers();
 
-    const interval = setInterval(() => {
-      fetchUsers();
-    }, 5000);
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+
+      if (data.type === 'user-update' && data.isUpdated) {
+        fetchUsers();
+      }
+    };
 
     // Clean up on unmount
     return () => {
       console.log('Cleaning up WebSocket Connection.')
       socket.close();
       controller.abort();
-      clearInterval(interval);
     };
   }, [key, value]);
 
