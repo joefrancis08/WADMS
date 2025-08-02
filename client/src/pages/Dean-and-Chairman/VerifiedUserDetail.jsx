@@ -44,7 +44,7 @@ const VerifiedUserDetail = () => {
               <Trash2 />
             </button>
           </div>
-          <div className='flex max-lg:flex-col items-center px-5 pb-5 lg:flex-row md:px-20 md:pb-20'>
+          <div className='flex max-lg:flex-col items-center px-5 pb-5 lg:flex-row md:px-20 md:pb-20 justify-evenly'>
             <div className='rounded-full shadow-md'>
               <ProfileAvatar 
                 name={selectedUser?.full_name} 
@@ -54,10 +54,10 @@ const VerifiedUserDetail = () => {
                 border={'rounded-full'}/>
             </div>
             <div className='flex flex-col items-center gap-y-2'>
-              <div className='flex items-center w-auto text-wrap text-center lg:ml-10 h-auto pt-8'>
+              <div className='flex items-center w-auto text-wrap text-center h-auto pt-8'>
                 <p className='max-sm:text-4xl max-lg:text-5xl lg:text-7xl text-gray-900 font-bold'>{selectedUser?.full_name}</p>
               </div>
-              <div className='flex justify-center w-auto lg:ml-10 h-auto pb-4 lg:pb-8'>
+              <div className='flex justify-center w-auto h-auto pb-4 lg:pb-8'>
                 <p className='max-sm:text-xl max-lg:text-2xl lg:text-3xl font-bold text-gray-600'>{selectedUser?.role}</p>
               </div>
             </div>
