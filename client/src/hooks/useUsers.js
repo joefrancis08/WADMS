@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
-import { connectWebSocket, receiveMessage } from "../services/socket";
+import { fetchUserBy } from "../api/Users/userAPI";
+import { messageHandler } from "../services/websocket/messageHandler";
 
 export const useUsersBy = (key, value) => {
   const [users, setUsers] = useState([]);
@@ -9,14 +10,10 @@ export const useUsersBy = (key, value) => {
 
   useEffect(() => {
     const controller = new AbortController();
-    const socket = connectWebSocket();
 
     const fetchUsers = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/users/by-${key}`, {
-          params: { [key]: value },
-          signal: controller.signal // Attach signal
-        });
+        const res = await fetchUserBy(key, value, controller);
         setUsers(res.data);
 
       } catch (error) {
@@ -35,18 +32,12 @@ export const useUsersBy = (key, value) => {
 
     fetchUsers();
 
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-
-      if (data.type === 'user-update' && data.isUpdated) {
-        fetchUsers();
-      }
-    };
+    const { cleanup } = messageHandler(fetchUsers)
 
     // Clean up on unmount
     return () => {
       console.log('Cleaning up WebSocket Connection.')
-      socket.close();
+      cleanup();
       controller.abort();
     };
   }, [key, value]);

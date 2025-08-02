@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { AtSign, UserRoundPen } from 'lucide-react';
+import { AtSign, LockKeyhole, UserRoundPen } from 'lucide-react';
 import { useRegister } from '../hooks/useRegister'; // Importing register custom hook
 import SubmitButton from '../components/Auth/SubmitButton'; // Importing custom SubmitButton component
 import LoadSpinner from '../components/Loaders/LoadSpinner'; // Importing custom LoadSpinner component
@@ -52,7 +52,7 @@ function Register() {
           />
 
           <Field
-            icon={<UserRoundPen color='gray' size={24} />}
+            icon={<LockKeyhole color='gray' size={24} />}
             ref={passwordRef}
             name='password'
             placeholder='Password'

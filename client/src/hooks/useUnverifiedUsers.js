@@ -34,7 +34,8 @@ export const useUnverifiedUsers = () => {
     if (options.clearDropdown) setShowDropdown(false);
   };
 
-  const handleRowClick = (user) => {
+  const handleRowClick = (e, user) => {
+    e.stopPropagation();
     setModalType(USER_PROFILE);
     setSelectedUser(user);
   }
