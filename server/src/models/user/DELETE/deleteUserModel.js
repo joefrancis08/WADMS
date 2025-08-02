@@ -1,4 +1,4 @@
-import db from "../../../config/db";
+import db from "../../../config/db.js";
 
 // DELETE ALL Users
 export const deleteAllUsersModel = async () => {

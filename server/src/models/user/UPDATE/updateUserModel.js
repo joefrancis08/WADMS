@@ -1,4 +1,4 @@
-import db from "../../../config/db";
+import db from "../../../config/db.js";
 
 export const updateUserModel = async (fullName, email, password, role, status, id) => {
   const sql = 'UPDATE user SET full_name = ?, email = ?, password = ?, role = ?, status = ?  WHERE id = ?';

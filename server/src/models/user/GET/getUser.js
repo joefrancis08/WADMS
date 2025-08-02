@@ -17,7 +17,5 @@ export const getUserBy = async (column, value, single = true) => {
   const query = `SELECT * FROM user WHERE ${column} = ?`;
   const [rows] = await db.execute(query, [value]);
 
-  console.log(rows);
-
   return single ? rows[0] : rows;
 }
