@@ -8,6 +8,7 @@ import ConfirmationModal from '../../components/Modals/ConfirmationModal';
 import UpdateUserModal from '../../components/Modals/UpdateUserModal';
 import MODAL_TYPE from '../../constants/modalTypes';
 import Dropdown from '../../components/Dropdown';
+import TimeAgo from '../../components/TimeAgo';
 
 const UnverifiedUsers = () => {
 
@@ -165,7 +166,9 @@ const UnverifiedUsers = () => {
                     >
                       <td className="px-6 py-4 font-medium text-gray-800">{user.full_name}</td>
                       <td className="px-6 py-4 text-gray-600">{user.email}</td>
-                      <td className="px-6 py-4 text-gray-500">{dateFormatter(user.created_at)}</td>
+                      <td className="px-6 py-4 text-gray-500">
+                        <TimeAgo date={user.created_at} />
+                      </td>
                       <td className="px-6 py-4">
                         <div className="flex justify-center items-center gap-4">
                           <button

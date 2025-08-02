@@ -1,10 +1,10 @@
 import React from 'react';
 
-const ProfileAvatar = ({ name, height, width, border }) => {
+const ProfileAvatar = ({ name, height, width, border, textSize = 'text-xl' }) => {
   const initials = getInitials(name);
 
   return (
-    <div className={`${height} ${width} ${border} bg-green-700 text-white flex items-center justify-center text-xl font-bold shadow-md`}>
+    <div className={`bg-green-700 text-white flex items-center justify-center font-bold shadow-md ${height} ${width} ${border} ${textSize}`}>
       {initials}
     </div>
   );

@@ -4,12 +4,13 @@ import PATH from '../constants/path';
 import ProtectedRoute from './ProtectedRoute';
 import LoadSpinner from '../components/Loaders/LoadSpinner';
 import Dashboard from '../pages/Dean-and-Chairman/Dashboard';
-import UnverifiedUsers from '../pages/Dean-and-Chairman/UnverifiedUsers';
+import UnverifiedUsers from '../pages/Dean-and-Chairman/UnverifiedUser';
 import VerifiedUsers from '../pages/Dean-and-Chairman/VerifiedUsers';
+import VerifiedUserDetail from '../pages/Dean-and-Chairman/VerifiedUserDetail';
 
 const { 
   DASHBOARD, VERIFIED_USERS, 
-  VERIFIED_USERS_ID, UNVERIFIED_USERS,
+  VERIFIED_USER_DETAIL_TEMPLATE, UNVERIFIED_USERS,
   UNVERIFIED_USERS_ID
 } = PATH.ADMIN;
 const { NOT_FOUND } = PATH.PUBLIC;
@@ -30,8 +31,8 @@ const protectedRoutes = [
     element: <UnverifiedUsers />,
   },
   {
-    path: VERIFIED_USERS_ID,
-    element: <UnverifiedUsers />,
+    path: VERIFIED_USER_DETAIL_TEMPLATE,
+    element: < VerifiedUserDetail/>,
   },
   {
     path: UNVERIFIED_USERS_ID,

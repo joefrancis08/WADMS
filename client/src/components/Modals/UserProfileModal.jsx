@@ -1,7 +1,7 @@
 import ModalLayout from '../Layout/ModalLayout';
 import ProfileAvatar from '../ProfileAvatar';
-import dateFormatter from '../../utils/dateFormatter';
 import { ShieldCheck, Trash2, X } from 'lucide-react';
+import TimeAgo from '../TimeAgo';
 
 const UserProfileHeader = ({ selectedUser, onClose }) => {
   return (
@@ -42,7 +42,7 @@ const UserProfileDetails = ({ selectedUser }) => {
       <div className='relative p-4 flex'>
         <span className='text-white text-xs text-center absolute top-3 md:left-1/2 left-1/2 -translate-x-22 md:-translate-x-22 mb-2 bg-green-700 py-1 px-4 w-45 rounded-md'>Registration Date & Time</span>
         <p className="flex border border-gray-300 rounded-lg p-4 text-md font-semibold text-green-900 mt-2 shadow-inner bg-gray-100">
-          {dateFormatter(selectedUser?.created_at)}
+          <TimeAgo date={selectedUser?.created_at}/>
         </p>
       </div>
     </> 
