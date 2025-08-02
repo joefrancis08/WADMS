@@ -1,19 +1,53 @@
-function dateFormatter(date) {
-  const utcDate = new Date(date);
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import isYesterday from 'dayjs/plugin/isYesterday';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
 
-  const options = {
-    timeZone: "Asia/Manila",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true
-  };
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.extend(relativeTime);
+dayjs.extend(isYesterday);
+dayjs.extend(localizedFormat);
 
-  const phTime = utcDate.toLocaleString('en-US', options);
+const TIMEZONE = 'Asia/Manila';
 
-  return phTime;
+function dateFormatter(action = '', date) {
+  const now = dayjs().tz(TIMEZONE);
+  const target = dayjs(date).tz(TIMEZONE);
+
+  const diffMinutes = now.diff(target, 'minute');
+  const diffHours = now.diff(target, 'hour');
+
+  if (diffMinutes < 1) {
+    return (
+      action 
+      ? `${action} Just now` 
+      : 'Just now'
+    );
+
+  } else if (target.isYesterday()) {
+    return (
+      action 
+      ? `${action} Yesterday at ${target.format('h:mm A')}`
+      : `Yesterday at ${target.format('h:mm A')}`
+    );
+
+  } else if (diffHours < 24) {
+    return (
+      action 
+      ? `${action} ${target.fromNow()}` 
+      : `${target.fromNow()}`
+    );
+
+  } else {
+    return (
+      action 
+      ? `${action} on ${target.format('MMMM D, YYYY [at] h:mm A')}` 
+      : `${target.format('MMMM D, YYYY [at] h:mm A')}`
+    );
+  }
 }
 
 export default dateFormatter;

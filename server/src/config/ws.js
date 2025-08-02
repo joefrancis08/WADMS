@@ -5,7 +5,7 @@ let wss;
 const setupWebSocket = (server) => {
   wss = new WebSocketServer({ server });
 
-  console.log('WebSocket server is setup.');
+  console.log('WebSocket is setup.');
 
   wss.on('connection', (ws) => {
     console.log('WS Server: Client connected.');

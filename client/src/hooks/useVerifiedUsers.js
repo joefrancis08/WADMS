@@ -1,9 +1,12 @@
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { USER_ROLES, USER_STATUS } from "../constants/user";
 import { useUsersBy } from "./useUsers";
 
 
 export const useVerifiedUsers = () => {
+  const navigate = useNavigate();
+
   const { UNVERIFIED_USER } = USER_ROLES;
   const { VERIFIED } = USER_STATUS;
 
@@ -27,7 +30,10 @@ export const useVerifiedUsers = () => {
   }
 
   return {
-    
+    navigation: {
+      navigate,
+    },
+
     userCount: {
       unverifiedUserCount
     },
