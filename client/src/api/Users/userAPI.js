@@ -35,6 +35,22 @@ export const getUserSession = async () => {
   }
 }
 
+export const fetchUserBy = async (key, value, controller) => {
+  try {
+    const res = await axios.get(`${API_BASE_URL}/users/by-${key}`, {
+      params: { [key]: value },
+      signal: controller.signal // Attach signal
+    });
+
+    return res;
+
+  } catch (error) {
+    console.log(`Error fetching user by ${key}:`, error);
+  }
+}
+
+
+
 export const updateUserRole = async (selectedUserId, newRole) => {
   try {
     const res = await axios.patch(`${API_BASE_URL}/users/${selectedUserId}/role`, {

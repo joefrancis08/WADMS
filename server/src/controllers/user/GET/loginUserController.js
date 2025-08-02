@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { getUserByEmail } from "../../models/userModel.js";
+import { getUserByEmail } from "../../../models/userModel.js";
 
 export const loginUserController = async (req, res) => {
   const { email, password } = req.body;

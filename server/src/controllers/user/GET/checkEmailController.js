@@ -1,4 +1,4 @@
-import { getUserByEmail } from "../../models/userModel.js";
+import { getUserByEmail } from "../../../models/userModel.js";
 
 export const checkEmailController = async (req, res) => {
   const { email } = req.body;

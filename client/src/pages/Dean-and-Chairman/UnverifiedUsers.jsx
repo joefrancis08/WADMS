@@ -161,7 +161,7 @@ const UnverifiedUsers = () => {
                       title={`Click to see profile of ${user.full_name}`} 
                       key={user.id} 
                       className='hover:bg-gray-100 cursor-pointer hover:shadow-inner shadow-sm hover:transition active:opacity-50 active:transition' 
-                      onClick={() => handleRowClick(user)}
+                      onClick={(e) => handleRowClick(e , user)}
                     >
                       <td className="px-6 py-4 font-medium text-gray-800">{user.full_name}</td>
                       <td className="px-6 py-4 text-gray-600">{user.email}</td>

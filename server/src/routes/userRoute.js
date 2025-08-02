@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerUser, fetchUserById, fetchAllUsers, updateUser, deleteUsers, deleteUser, loginUser, checkEmail, userSession, logoutUser, fetchUserByRole, handleUpdateUserRole, fetchUserByStatus } from '../controllers/userController.js';
+import { registerUser, fetchUserById, fetchAllUsers, updateUser, deleteAllUsers, deleteUser, loginUser, checkEmail, userSession, logoutUser, fetchUserByRole, handleUpdateUserRole, fetchUserByStatus } from '../controllers/user/userController.js';
 
 const userRouter = express.Router();
 
@@ -14,7 +14,7 @@ userRouter.get('/by-status', fetchUserByStatus);
 userRouter.get('/:id', fetchUserById);
 userRouter.put('/:id', updateUser);
 userRouter.patch('/:uuid/role', handleUpdateUserRole);
-userRouter.delete('/', deleteUsers);
+userRouter.delete('/', deleteAllUsers);
 userRouter.delete('/:uuid', deleteUser);
 
 export default userRouter;

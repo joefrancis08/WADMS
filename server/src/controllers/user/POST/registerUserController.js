@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
-import { getUserByEmail, insertUser } from "../../models/userModel.js";
-import { handleBlankUserInput } from "../../utils/handleBlankField.js";
+import { getUserByEmail, insertUser } from "../../../models/userModel.js";
+import { handleBlankUserInput } from "../../../utils/handleBlankField.js";
 
 
 export const registerUserController = async (req, res) => {
@@ -35,13 +35,7 @@ export const registerUserController = async (req, res) => {
     await insertUser(userUUID, fullName, email, hashedPassword, role, status);
 
     // Save user to session temporarily after registration
-    req.session.user = {
-      userUUID,
-      email,
-      fullName,
-      role, 
-      status
-    };
+    req.session.user = { userUUID, email, fullName, role, status};
 
     return res.status(201).json({ 
       message: "User created successfully.", 

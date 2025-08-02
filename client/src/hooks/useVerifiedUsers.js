@@ -12,7 +12,6 @@ export const useVerifiedUsers = () => {
   const verifiedUsers = useUsersBy('status', VERIFIED).users.data ?? [];
   
   const [activeDropdownId, setActiveDropdownId] = useState(null);
-  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
   // Only run this if users is an array (not loading or error)
