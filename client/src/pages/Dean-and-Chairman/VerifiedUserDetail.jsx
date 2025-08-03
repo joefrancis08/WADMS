@@ -7,23 +7,15 @@ import { USER_STATUS } from '../../constants/user';
 import { useEffect, useMemo, useState } from 'react';
 import ProfileAvatar from '../../components/ProfileAvatar';
 import TimeAgo from '../../components/TimeAgo';
-import LoadSpinner from '../../components/Loaders/LoadSpinner';
 import VerifiedUserDetailSkeletonLoader from '../../components/Loaders/VerifiedUserDetailSkeletonLoader';
+import useVerifiedUserDetail from '../../hooks/useVerifiedUserDetail';
 
 const VerifiedUserDetail = () => {
-  const { id } = useParams();
-  const { VERIFIED_USERS } = PATH.ADMIN;
-  const { VERIFIED } = USER_STATUS;
-  const { users, loading } = useUsersBy('status', VERIFIED);
-  const verifiedUsers = useMemo(() => users.data ?? [], [users.data]);
-
-  const [selectedUser, setSelectedUser] = useState(null);
-  
-  useEffect(() => {
-    if (!verifiedUsers.length) return;
-    const matchedUser = verifiedUsers.find(user => String(user.user_uuid) === String(id));
-    setSelectedUser(matchedUser);
-  }, [id, verifiedUsers]);
+  const { actions, constant, data, state } = useVerifiedUserDetail();
+  const { handleDelete } = actions;
+  const { VERIFIED_USERS } = constant;
+  const { selectedUser } = data;
+  const { loading } = state;
 
   return (
     <AdminLayout>
@@ -45,11 +37,18 @@ const VerifiedUserDetail = () => {
             )
           : (
             <div className='flex flex-col w-full h-full bg-gray-50 p-4 rounded-xl border border-gray-100 transition-all duration-300 shadow hover:shadow-lg hover:shadow-gray-300 hover:drop-shadow-sm'>
-              <div className='flex justify-end p-2 gap-4 md:p-4'>
-                <button>
+              <div className='flex justify-end p-2 md:p-4'>
+                <button
+                  title='Update Info'
+                  className='text-gray-500 rounded-full p-4 cursor-pointer transition-all duration-300 hover:text-black hover:bg-gray-200 active:opacity-20'
+                >
                   <Pen />
                 </button>
-                <button>
+                <button
+                  title='Delete'
+                  onClick={(e) => handleDelete(e)}
+                  className='text-red-400 rounded-full p-4 cursor-pointer transition-all duration-300 hover:text-red-500 hover:bg-gray-200 active:opacity-20'
+                >
                   <Trash2 />
                 </button>
               </div>
