@@ -9,10 +9,11 @@ export const useVerifiedUsers = () => {
 
   const { UNVERIFIED_USER } = USER_ROLES;
   const { VERIFIED } = USER_STATUS;
-
+  
   const unverifiedUsers = useUsersBy('role', UNVERIFIED_USER).users;
   const [unverifiedUserCount, setUnverifiedUserCount] = useState(0);
-  const verifiedUsers = useUsersBy('status', VERIFIED).users.data ?? [];
+  const { users, loading, error } = useUsersBy('status', VERIFIED);
+  const verifiedUsers = users.data ?? [];
   
   const [activeDropdownId, setActiveDropdownId] = useState(null);
 
@@ -32,6 +33,11 @@ export const useVerifiedUsers = () => {
   return {
     navigation: {
       navigate,
+    },
+
+    state: {
+      loading, 
+      error
     },
 
     userCount: {

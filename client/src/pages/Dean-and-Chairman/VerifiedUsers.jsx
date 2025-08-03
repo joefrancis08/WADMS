@@ -5,13 +5,15 @@ import AdminLayout from '../../components/Layout/Dean-and-Chairman/AdminLayout';
 import { useVerifiedUsers } from '../../hooks/useVerifiedUsers';
 import Dropdown from '../../components/Dropdown';
 import PATH from '../../constants/path';
+import VerifiedUserSkeletonLoader from '../../components/Loaders/VerifiedUserSkeletonLoader';
 
 
 const VerifiedUsers = () => {
   const { UNVERIFIED_USERS, VERIFIED_USERS, VERIFIED_USER_DETAIL } = PATH.ADMIN
-  const { navigation, userCount, ellipsis, dropdown, data } = useVerifiedUsers();
+  const { navigation, state, userCount, ellipsis, dropdown, data } = useVerifiedUsers();
 
   const { navigate } = navigation;
+  const { loading, error } = state;
   const { unverifiedUserCount } = userCount;
   const { handleEllipsisClick } = ellipsis;
   const { activeDropdownId } = dropdown;
@@ -125,28 +127,35 @@ const VerifiedUsers = () => {
           </div>
 
           {/* User Cards */}
-          <div className='px-3 pb-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6'>
-            {verifiedUsers.map(user => (
-              <div
-                onClick={() => navigate(VERIFIED_USER_DETAIL(user.user_uuid))}
-                key={user.user_uuid} 
-                className='relative bg-gray-50 p-4 rounded-xl border border-gray-100 shadow  transition duration-300 hover:shadow-xl active:shadow cursor-pointer'>
-                <div 
-                  onClick={(e) => handleEllipsisClick(e, user)} 
-                  className='absolute top-0 p-2 right-0 text-gray-500 rounded-bl-xl rounded-tr-lg hover:shadow hover:text-gray-600 hover:bg-gray-200 active:opacity-50 transition'>
-                    <EllipsisVertical size={20}/>
+          {loading 
+            ? (
+                <VerifiedUserSkeletonLoader />
+              )
+            : (
+                <div className='px-3 pb-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6'>
+                  {verifiedUsers.map(user => (
+                    <div
+                      onClick={() => navigate(VERIFIED_USER_DETAIL(user.user_uuid))}
+                      key={user.user_uuid} 
+                      className='relative bg-gray-50 p-4 rounded-xl border border-gray-100 shadow transition-all duration-300 hover:shadow-xl active:shadow cursor-pointer'>
+                      <div 
+                        onClick={(e) => handleEllipsisClick(e, user)} 
+                        className='absolute top-0 p-2 right-0 text-gray-500 rounded-bl-xl rounded-tr-lg hover:shadow hover:text-gray-600 hover:bg-gray-200 active:opacity-50 transition'>
+                          <EllipsisVertical size={20}/>
+                      </div>
+                      {renderDropdown(user)}
+                      <div className='flex flex-col items-center text-center'>
+                        <div className='text-5xl mb-3'>
+                          {<ProfileAvatar name={user.full_name} height={'h-24'} width={'w-24'} border={'rounded-full'}/>}
+                        </div>
+                        <h3 className='text-lg font-semibold'>{user.full_name}</h3>
+                        <p className='text-sm text-gray-500'>{user.role}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                {renderDropdown(user)}
-                <div className='flex flex-col items-center text-center'>
-                  <div className='text-5xl mb-3'>
-                    {<ProfileAvatar name={user.full_name} height={'h-24'} width={'w-24'} border={'rounded-full'}/>}
-                  </div>
-                  <h3 className='text-lg font-semibold'>{user.full_name}</h3>
-                  <p className='text-sm text-gray-500'>{user.role}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+              )
+          }
         </div>
       </AdminLayout>
     </>
