@@ -14,9 +14,9 @@ try {
   });
 
 
-  console.log('Connected to MySQL Database.');
+  console.log('Successfully connected to WDMS Database.');
 } catch (error) {
-  console.error('Failed to connect to MySQL database.');
+  console.error('Failed to connect to WDMS database.');
   process.exit(1); // Optional: Exit the app if DB connection fails
 }
 
