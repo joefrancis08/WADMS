@@ -3,7 +3,7 @@ import { AtSign, LockKeyhole, UserRoundPen } from 'lucide-react';
 import { useRegister } from '../hooks/useRegister'; // Importing register custom hook
 import SubmitButton from '../components/Auth/SubmitButton'; // Importing custom SubmitButton component
 import LoadSpinner from '../components/Loaders/LoadSpinner'; // Importing custom LoadSpinner component
-import Field from '../components/Form/Field'; // Importing fied component
+import Field from '../components/Form/Auth/Field'; // Importing fied component
 
 // Register component
 // Handles user registration, form validation, and error handling

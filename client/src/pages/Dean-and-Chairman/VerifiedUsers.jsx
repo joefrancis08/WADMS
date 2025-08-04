@@ -1,23 +1,29 @@
 import PATH from '../../constants/path';
 import MODAL_TYPE from '../../constants/modalTypes';
-import { BookUser, EllipsisVertical, Pen, Search, ShieldCheck, ShieldX, Trash, Trash2, UserRound, UserRoundPlus, Users } from 'lucide-react';
+import { USER_ROLES } from '../../constants/user';
+import { BookUser, ChevronDown, EllipsisVertical, Pen, Search, ShieldCheck, ShieldX, Trash, Trash2, UserRound, UserRoundPlus, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ProfileAvatar from '../../components/ProfileAvatar';
 import AdminLayout from '../../components/Layout/Dean-and-Chairman/AdminLayout';
 import { useVerifiedUsers } from '../../hooks/useVerifiedUsers';
-import Dropdown from '../../components/Dropdown';
+import Dropdown from '../../components/Dropdown/Dropdown';
 import VerifiedUserSkeletonLoader from '../../components/Loaders/VerifiedUserSkeletonLoader';
 import UpdateUserModal from '../../components/Modals/UpdateUserModal';
-import { useState, useEffect } from 'react';
-
+import UpdateField from '../../components/Form/Dean-and-Chairman/UpdateField';
 
 const VerifiedUsers = () => {
-  const { UNVERIFIED_USERS, VERIFIED_USERS, VERIFIED_USER_DETAIL } = PATH.ADMIN
-  const { data, dropdown, ellipsis, modal, navigation, state, user, userUpdate, userCount } = useVerifiedUsers();
+  const { UNVERIFIED_USERS, VERIFIED_USER_DETAIL } = PATH.ADMIN
+ 
+  const { 
+    chevron, data, dropdown, ellipsis, form, modal, 
+    navigation, state, user, userUpdate, userCount 
+  } = useVerifiedUsers();
 
+  const { handleChevronClick } = chevron;
   const { verifiedUsers } = data;
-  const { activeDropdownId, handleDropdownMenu } = dropdown;
+  const { activeDropdownId, handleDropdown, handleDropdownMenuClick, toggleDropdown } = dropdown;
   const { handleEllipsisClick } = ellipsis;
+  const { formValue, handleChange } = form;
   const { modalType, handleCloseModal } = modal;
   const { navigate } = navigation;
   const { loading, error } = state;
@@ -25,22 +31,7 @@ const VerifiedUsers = () => {
   const { handleSaveUpdate } = userUpdate;
   const { unverifiedUserCount } = userCount;
 
-  const [formValue, setFormValue] = useState({
-    fullName: '',
-    email: '',
-    role: ''
-  });
-
-  useEffect(() => {
-    if(selectedUser) {
-      setFormValue({
-        fullName: selectedUser.full_name || '',
-        email: selectedUser.email || '',
-        role: selectedUser.role || ''
-      })
-    }
-  }, [selectedUser])
-
+  
   const renderDropdown = (user) => {
     const dropDownMenu = [
       {
@@ -65,10 +56,9 @@ const VerifiedUsers = () => {
             border={'border border-gray-300 rounded-md'}>
             {dropDownMenu.map((menu, index) => (
               <div
-                onClick={(e) => handleDropdownMenu(e, menu, user)}
+                onClick={(e) => handleDropdown(e, menu, user)}
                 key={index}
                 className={`flex text-gray-700 text-sm p-2 opacity-100 rounded hover:bg-gray-100 hover:font-medium hover:shadow hover:transition active:opacity-50 ${menu.label === 'Delete' && 'border-t border-gray-300 rounded-t-none mt-2'}`}
-
               >
                 <i className='mr-2'>{menu.icon}</i>
                 <p className={menu.label === 'Delete' ? 'text-red-500' : ''}>
@@ -91,65 +81,47 @@ const VerifiedUsers = () => {
             onCancelClick={handleCloseModal}
             onSaveClick={handleSaveUpdate}
             headerContent={`Update ${selectedUser?.full_name}'s Info`}
-            bodyContent={
-              <div className='relative w-full flex-col'>
-                <div className='pb-6'>
-                  <div className='relative flex flex-col items-start'>
-                    <p className='absolute bottom-10 text-gray-700 text-sm left-2 bg-gradient-to-r from-gray-100 to-gray-50 px-2 rounded-md'>Full Name</p>
-                    <input
-                      type='text'
-                      name='fullName'
-                      autoComplete='off'
-                      onChange={(e) => setFormValue(prev => ({...prev, [e.target.name]: e.target.value}))}
-                      className='w-full p-3 rounded-lg border border-gray-400 transition text-gray-800 focus:outline-0 focus:ring-2 focus:ring-green-600 shadow'
-                      value={formValue.fullName}
-                    />
-                  </div>
-                </div>
-                <div className='pb-6'>
-                  <div className='relative flex flex-col items-start'>
-                    <p className='absolute bottom-10 text-gray-700 text-sm left-2 bg-gradient-to-r from-gray-100 to-gray-50 px-2 rounded-md'>Email</p>
-                    <input
-                      type='text'
-                      name='email'
-                      autoComplete='off'
-                      onChange={(e) => setFormValue(prev => ({...prev, [e.target.name]: e.target.value}))}
-                      className='w-full p-3 rounded-lg border border-gray-400 transition text-gray-800 focus:outline-0 focus:ring-2 focus:ring-green-600 shadow'
-                      value={formValue.email}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div className='relative flex flex-col items-start'>
-                    <p className='absolute bottom-10 text-gray-700 text-sm left-2 bg-gradient-to-r from-gray-100 to-gray-50 px-2 rounded-md'>Role</p>
-                    <input
-                      readOnly
-                      type='text'
-                      name='role'
-                      autoComplete='off'
-                      onChange={(e) => setFormValue(prev => ({...prev, [e.target.name]: e.target.value}))}
-                      className='w-full p-3 rounded-lg border border-gray-400 transition text-gray-800 focus:outline-0 focus:ring-2 focus:ring-green-600 shadow'
-                      value={formValue.role}
-                    />
-                  </div>
-                </div>
-                
-                
-                
-              </div>
-            }
             primaryButton={'Save Update'}
             secondaryButton={'Cancel'}
+            bodyContent={
+              <>
+               <UpdateField 
+                  fieldName='Full Name'
+                  type='text'
+                  name='fullName'
+                  formValue={formValue.fullName}
+                  onChange={(e) => handleChange(e)}
+                />
+
+                <UpdateField 
+                  fieldName='Email'
+                  type='text'
+                  name='email'
+                  formValue={formValue.email}
+                  onChange={(e) => handleChange(e)}
+                />
+
+                <UpdateField 
+                  fieldName='Role'
+                  type='text'
+                  name='role'
+                  formValue={formValue.role}
+                  onClick={handleChevronClick}
+                  onChevronClick={handleChevronClick}
+                  onDropdownMenuClick={handleDropdownMenuClick}
+                  toggleDropdown={toggleDropdown}
+                  isReadOnly={true}
+                  isClickable={true}
+                  hasDropdown={true}
+                />
+              </>
+            }
           />
         );
-        
-    
       default:
         break;
     }
   }
-
-  
  
   return (
     <>

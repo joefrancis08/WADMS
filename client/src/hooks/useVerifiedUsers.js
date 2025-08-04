@@ -4,7 +4,7 @@ import { USER_ROLES, USER_STATUS } from "../constants/user";
 import PATH from "../constants/path";
 import { useUsersBy } from "./useUsers";
 import MODAL_TYPES from "../constants/modalTypes";
-
+import Dropdown from "../components/Dropdown/Dropdown";
 
 export const useVerifiedUsers = () => {
   const navigate = useNavigate();
@@ -22,6 +22,22 @@ export const useVerifiedUsers = () => {
   const [activeDropdownId, setActiveDropdownId] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalType, setModalType] = useState(null);
+  const [toggleDropdown, setToggleDropdown] = useState(false);
+  const [formValue, setFormValue] = useState({
+    fullName: '',
+    email: '',
+    role: ''
+  });
+
+  useEffect(() => {
+    if(selectedUser) {
+      setFormValue({
+        fullName: selectedUser.full_name || '',
+        email: selectedUser.email || '',
+        role: selectedUser.role || ''
+      })
+    }
+  }, [selectedUser])
 
   useEffect(() => {
   // Only run this if users is an array (not loading or error)
@@ -31,12 +47,16 @@ export const useVerifiedUsers = () => {
     }
   }, [unverifiedUsers]);
 
+  const handleChange = (e) => {
+    setFormValue(prev => ({...prev, [e.target.name]: e.target.value}));
+  }
+
   const handleEllipsisClick = (e, user) => {
     e.stopPropagation();
     setActiveDropdownId(prev => prev === user.id ? null : user.id);
   }
 
-  const handleDropdownMenu = (e, menu, user) => {
+  const handleDropdown = (e, menu, user) => {
     e.stopPropagation();
 
     if (menu?.label === 'View Details') {
@@ -64,10 +84,20 @@ export const useVerifiedUsers = () => {
     setModalType(null);
   }
 
-  console.log(selectedUser);
-  console.log(modalType);
+  const handleChevronClick = () => {
+    setToggleDropdown(!toggleDropdown);
+  }
+
+  const handleDropdownMenuClick = (role) => {
+    setFormValue(prev => ({...prev, role}));
+    setToggleDropdown(false);
+  }
 
   return {
+    chevron: {
+      handleChevronClick
+    },
+
     data: {
       unverifiedUsers,
       verifiedUsers
@@ -76,11 +106,19 @@ export const useVerifiedUsers = () => {
     dropdown: {
       activeDropdownId,
       setActiveDropdownId,
-      handleDropdownMenu,
+      handleDropdown,
+      handleDropdownMenuClick,
+      toggleDropdown,
+      setToggleDropdown
     },
 
     ellipsis: {
       handleEllipsisClick
+    },
+
+    form: {
+      formValue,
+      handleChange,
     },
 
     modal: {

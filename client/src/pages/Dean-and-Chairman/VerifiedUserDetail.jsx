@@ -36,7 +36,7 @@ const VerifiedUserDetail = () => {
               </div>
             )
           : (
-            <div className='flex flex-col w-full h-full bg-gray-50 p-4 rounded-xl border border-gray-100 transition-all duration-300 shadow hover:shadow-lg hover:shadow-gray-300 hover:drop-shadow-sm'>
+            <div className='flex flex-col w-full h-full bg-gray-50 p-4 rounded-xl border border-gray-100 shadow hover:shadow-lg hover:shadow-gray-300 hover:drop-shadow-sm'>
               <div className='flex justify-end p-2 md:p-4'>
                 <button
                   title='Update Info'
