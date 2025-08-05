@@ -50,7 +50,6 @@ export const fetchUserBy = async (key, value, controller) => {
 }
 
 
-
 export const updateUserRole = async (selectedUserId, newRole) => {
   try {
     const res = await axios.patch(`${API_BASE_URL}/users/${selectedUserId}/role`, {
