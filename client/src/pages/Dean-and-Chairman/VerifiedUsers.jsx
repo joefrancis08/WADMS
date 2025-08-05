@@ -31,7 +31,6 @@ const VerifiedUsers = () => {
   const { handleSaveUpdate } = userUpdate;
   const { unverifiedUserCount } = userCount;
 
-  
   const renderDropdown = (user) => {
     const dropDownMenu = [
       {
@@ -82,6 +81,11 @@ const VerifiedUsers = () => {
             onSaveClick={handleSaveUpdate}
             headerContent={`Update ${selectedUser?.full_name}'s Info`}
             primaryButton={'Save Update'}
+            disabled={
+              (selectedUser.full_name.trim() === formValue.fullName.trim()) && 
+              (selectedUser.email.trim() === formValue.email.trim()) && 
+              (selectedUser.role.trim() === formValue.role.trim()) 
+            }
             secondaryButton={'Cancel'}
             bodyContent={
               <>
