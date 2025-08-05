@@ -56,6 +56,7 @@ const UnverifiedUsers = () => {
             onClose={handleCloseModal}
             headerContent={<p className="text-2xl font-bold text-red-600">Confirm Delete</p>}
             bodyContent={<p className='pb-4'>Are you sure you want to delete {selectedUser?.full_name}?</p>}
+            isDelete={true}
             primaryButton={'Confirm'}
             secondaryButton={'Cancel'}
             onCancelClick={handleCloseModal}

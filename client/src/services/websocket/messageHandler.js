@@ -9,7 +9,6 @@ export const messageHandler = (callback) => {
 
   const userUpdateHandler = (event) => {
     const data = JSON.parse(event.data);
-    console.log('Received WS message:', data);
 
     if (data.isUpdated) {
       callback();

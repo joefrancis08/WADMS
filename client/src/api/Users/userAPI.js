@@ -49,6 +49,21 @@ export const fetchUserBy = async (key, value, controller) => {
   }
 }
 
+export const updateUser = async (newFullName, newEmail, newRole, uuid) => {
+  try {
+    const res = await axios.patch(`${API_BASE_URL}/users/${uuid}`, {
+      fullName: newFullName,
+      email: newEmail,
+      role: newRole
+    }
+  );
+    return res.data;
+
+  } catch (error) {
+    console.log('Error:', error);
+    console.log(error.response.data);
+  }
+}
 
 export const updateUserRole = async (selectedUserId, newRole) => {
   try {

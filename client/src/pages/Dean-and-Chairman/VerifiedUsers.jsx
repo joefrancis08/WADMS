@@ -1,7 +1,7 @@
 import PATH from '../../constants/path';
 import MODAL_TYPE from '../../constants/modalTypes';
 import { USER_ROLES } from '../../constants/user';
-import { BookUser, ChevronDown, EllipsisVertical, Pen, Search, ShieldCheck, ShieldX, Trash, Trash2, UserRound, UserRoundPlus, Users } from 'lucide-react';
+import { BookUser, BookX, ChevronDown, EllipsisVertical, LucideTelescope, Pen, Search, SearchX, ShieldCheck, ShieldX, Telescope, TelescopeIcon, Trash, Trash2, UserRound, UserRoundPlus, UserRoundX, Users, UserX, UserX2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ProfileAvatar from '../../components/ProfileAvatar';
 import AdminLayout from '../../components/Layout/Dean-and-Chairman/AdminLayout';
@@ -10,26 +10,32 @@ import Dropdown from '../../components/Dropdown/Dropdown';
 import VerifiedUserSkeletonLoader from '../../components/Loaders/VerifiedUserSkeletonLoader';
 import UpdateUserModal from '../../components/Modals/UpdateUserModal';
 import UpdateField from '../../components/Form/Dean-and-Chairman/UpdateField';
+import ConfirmationModal from '../../components/Modals/ConfirmationModal';
 
 const VerifiedUsers = () => {
   const { UNVERIFIED_USERS, VERIFIED_USER_DETAIL } = PATH.ADMIN
  
   const { 
-    chevron, data, dropdown, ellipsis, form, modal, 
-    navigation, state, user, userUpdate, userCount 
+    chevron, data, confirmDelete, dropdown, ellipsis, form, modal, 
+    navigation, saveButton, state, user, userCount, userDelete,
+    userUpdate, 
   } = useVerifiedUsers();
 
   const { handleChevronClick } = chevron;
   const { verifiedUsers } = data;
+  const { handleConfirmDelete } = confirmDelete;
   const { activeDropdownId, handleDropdown, handleDropdownMenuClick, toggleDropdown } = dropdown;
   const { handleEllipsisClick } = ellipsis;
   const { formValue, handleChange } = form;
   const { modalType, handleCloseModal } = modal;
   const { navigate } = navigation;
+  const { isDisabled } = saveButton;
   const { loading, error } = state;
   const { selectedUser } = user;
-  const { handleSaveUpdate } = userUpdate;
   const { unverifiedUserCount } = userCount;
+  const { handleDelete } = userDelete;
+  const { handleSaveUpdate } = userUpdate;
+  
 
   const renderDropdown = (user) => {
     const dropDownMenu = [
@@ -76,16 +82,12 @@ const VerifiedUsers = () => {
       case MODAL_TYPE.UPDATE_USER:
         return (
           <UpdateUserModal 
-            onClose={handleCloseModal}
-            onCancelClick={handleCloseModal}
+            onClose={() => handleCloseModal({untoggleDropdown: true})}
+            onCancelClick={() => handleCloseModal({untoggleDropdown: true})}
             onSaveClick={handleSaveUpdate}
             headerContent={`Update ${selectedUser?.full_name}'s Info`}
             primaryButton={'Save Update'}
-            disabled={
-              (selectedUser.full_name.trim() === formValue.fullName.trim()) && 
-              (selectedUser.email.trim() === formValue.email.trim()) && 
-              (selectedUser.role.trim() === formValue.role.trim()) 
-            }
+            disabled={isDisabled}
             secondaryButton={'Cancel'}
             bodyContent={
               <>
@@ -122,6 +124,29 @@ const VerifiedUsers = () => {
             }
           />
         );
+
+      case MODAL_TYPE.USER_DELETION_CONFIRMATION:
+        return (
+          <ConfirmationModal 
+            onClose={() => handleCloseModal({removeActiveDropdownId: true})}
+            headerContent={
+              <p className="text-2xl font-bold text-red-600">
+                Confirm Delete
+              </p>
+            }
+            bodyContent={
+              <p className='pb-4'>
+                Are you sure you want to delete {selectedUser?.full_name}?
+              </p>
+            }
+            isDelete={true}
+            primaryButton={'Confirm'}
+            secondaryButton={'Cancel'}
+            onCancelClick={() => handleCloseModal({removeActiveDropdownId: true})}
+            onConfirmClick={() => handleConfirmDelete(selectedUser?.user_uuid)}
+          />
+        );
+
       default:
         break;
     }
@@ -132,7 +157,7 @@ const VerifiedUsers = () => {
       <AdminLayout>
         <div className='flex-1 p-0 space-y-3'>
           {/* Main Content Header */}
-          <div className='max-md:pt-2 md:bg-gradient-to-r from-gray-100 to-gray-200 pb-2 md:py-4 md:shadow-md md:sticky top-0 md:z-1 bg-white'>
+          <div className='max-md:pt-2 md:bg-gradient-to-r from-slate-100 to-slate-200 pb-2 md:py-4 md:shadow-md md:sticky top-0 md:z-1 bg-white'>
             <div className='flex justify-between items-center px-3'>
               <div className='relative flex items-center'>
                 <UserRound size={36} color='green'/>
@@ -184,7 +209,18 @@ const VerifiedUsers = () => {
               </button>
             </div>
           </div>
-
+          
+          {!verifiedUsers.length && (
+            <div className='flex flex-col items-center justify-end mt-16 text-slate-700'>
+              <UserRoundX className='ml-8 w-40 md:w-60 h-auto' />
+              <p className='text-xl md:text-2xl font-medium text-slate-600'>No verified users at the moment.</p>
+              <button className='flex items-center gap-1 text-md md:text-xl font-medium bg-slate-500 text-slate-100 rounded-lg mt-8 py-2 px-3 md:py-3 md:px-5 shadow cursor-pointer hover:transition-all hover:duration-300 hover:text-slate-800 hover:opacity-90 hover:bg-slate-300 hover:drop-shadow-lg active:opacity-50'>
+                <UserRoundPlus className='w-6 md:w-8 h-auto'/>
+                Add
+              </button>
+            </div>
+            )
+          }
           {/* User Cards */}
           {loading 
             ? (

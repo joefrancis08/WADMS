@@ -1,10 +1,12 @@
-import { getUserById, updateUserInfo } from "../../../models/userModel.js";
-import { handleBlankUserInput } from "../../../utils/handleBlankField.js";
+import { getUserBy } from "../../../../models/user/GET/getUser.js";
+import { updateUserInfo } from "../../../../models/userModel.js";
+import sendUserUpdate from "../../../../services/websocket/sendUserUpdate.js";
+import { handleBlankUserInput } from "../../../../utils/handleBlankField.js";
 
 
 export const updateUserController = async (req, res) => {
-  const userId = req.params.id;
-  const user = await getUserById(userId);
+  const userUUID = req.params.uuid;
+  const user = await getUserBy('user_uuid', userUUID);
 
   if (!user) {
     return res.status(404).json({
@@ -14,19 +16,13 @@ export const updateUserController = async (req, res) => {
   }
 
   const { 
-    userUUID = user.userUUID,
     fullName, 
     email, 
-    password, 
-    role = user.role, 
-    status= user.status
+    role
   } = req.body;
 
-  if (handleBlankUserInput(res, fullName, email, password)) return;
-
   try {
-    const hashedPassword = await bcrypt.hash(password, 10); // Hash password using bcrypt
-    const result = await updateUserInfo(userUUID, fullName, email, hashedPassword, role, status, userId);
+    const result = await updateUserInfo(fullName, email, role, userUUID);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({
@@ -34,6 +30,8 @@ export const updateUserController = async (req, res) => {
         success: false
       });
     }
+
+    sendUserUpdate();
 
     res.json({
       message: 'User updated successfully.',
