@@ -214,7 +214,7 @@ const VerifiedUsers = () => {
             <div className='flex flex-col items-center justify-end mt-16 text-slate-700'>
               <UserRoundX className='ml-8 w-40 md:w-60 h-auto' />
               <p className='text-xl md:text-2xl font-medium text-slate-600'>No verified users at the moment.</p>
-              <button className='flex items-center gap-1 text-md md:text-xl font-medium bg-slate-500 text-slate-100 rounded-lg mt-8 py-2 px-3 md:py-3 md:px-5 shadow cursor-pointer hover:transition-all hover:duration-300 hover:text-slate-800 hover:opacity-90 hover:bg-slate-300 hover:drop-shadow-lg active:opacity-50'>
+              <button className='flex items-center gap-1 text-md md:text-xl font-medium bg-slate-400 text-slate-100 rounded-lg mt-8 py-2 px-3 md:py-3 md:px-5 shadow cursor-pointer hover:transition-all hover:duration-300 hover:text-slate-800 hover:opacity-90 hover:bg-slate-300 hover:drop-shadow-lg active:opacity-50'>
                 <UserRoundPlus className='w-6 md:w-8 h-auto'/>
                 Add
               </button>

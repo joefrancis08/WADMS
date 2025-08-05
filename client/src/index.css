@@ -81,9 +81,6 @@
   }
 }
 
-
-
-
 /* Sidebar */
 .sidebar-container {
   @apply flex z-50 h-screen bg-gradient-to-r from-slate-800 to-slate-900 text-white flex-col justify-between transition-[width] duration-300 ease-in-out
