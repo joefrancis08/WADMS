@@ -1,7 +1,6 @@
 import PATH from '../../constants/path';
 import MODAL_TYPE from '../../constants/modalTypes';
-import { USER_ROLES } from '../../constants/user';
-import { BookUser, BookX, ChevronDown, EllipsisVertical, LucideTelescope, Pen, Search, SearchX, ShieldCheck, ShieldX, Telescope, TelescopeIcon, Trash, Trash2, UserRound, UserRoundPlus, UserRoundX, Users, UserX, UserX2 } from 'lucide-react';
+import { BookUser, EllipsisVertical, Pen, Search, ShieldCheck, ShieldX, Trash, Trash2, UserRound, UserRoundPlus, UserRoundX, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ProfileAvatar from '../../components/ProfileAvatar';
 import AdminLayout from '../../components/Layout/Dean-and-Chairman/AdminLayout';
@@ -17,8 +16,7 @@ const VerifiedUsers = () => {
  
   const { 
     chevron, data, confirmDelete, dropdown, ellipsis, form, modal, 
-    navigation, saveButton, state, user, userCount, userDelete,
-    userUpdate, 
+    navigation, saveButton, state, user, userCount, userUpdate, 
   } = useVerifiedUsers();
 
   const { handleChevronClick } = chevron;
@@ -33,10 +31,8 @@ const VerifiedUsers = () => {
   const { loading, error } = state;
   const { selectedUser } = user;
   const { unverifiedUserCount } = userCount;
-  const { handleDelete } = userDelete;
   const { handleSaveUpdate } = userUpdate;
   
-
   const renderDropdown = (user) => {
     const dropDownMenu = [
       {
