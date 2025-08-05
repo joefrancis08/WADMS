@@ -23,12 +23,12 @@ const SidebarSM = ({ sideBarOpen, setSideBarOpen }) => {
 
       {/* Sidebar */}
       <div
-        className={`fixed z-50 top-0 left-0 h-full w-72 max-w-full bg-gradient-to-r from-gray-800 to-gray-900 text-white transform transition-transform duration-300 ease-in-out
+        className={`fixed z-50 top-0 left-0 h-full w-72 max-w-full bg-gradient-to-r from-slate-800 to-slate-900 text-white transform transition-transform duration-300 ease-in-out
         ${sideBarOpen ? 'translate-x-0' : '-translate-x-full'}
         sm:hidden flex flex-col`}
       >
         {/* Header */}
-        <header className="flex items-center justify-between px-4 py-4 border-b border-gray-700 bg-gray-900">
+        <header className="flex items-center justify-between px-4 py-4 border-b border-gray-700 bg-slate-900">
           <div className="flex items-center space-x-2">
             <img src="/CGS_Logo.png" alt="Logo" className="h-14 w-auto" />
             <div>
@@ -74,7 +74,7 @@ const SidebarSM = ({ sideBarOpen, setSideBarOpen }) => {
         </nav>
 
         {/* User Info Bottom Section */}
-        <div className="px-5 py-4 border-t border-gray-700 bg-gray-900">
+        <div className="px-5 py-4 border-t border-gray-700 bg-slate-900">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <img
