@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import ValidationMessage from '../Auth/ValidationMessage';
+import ValidationMessage from '../../Auth/ValidationMessage';
 import { Eye, EyeOff } from 'lucide-react';
 
 const FieldComponent = ({

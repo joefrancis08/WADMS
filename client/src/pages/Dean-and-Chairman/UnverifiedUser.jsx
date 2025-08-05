@@ -7,7 +7,7 @@ import UserProfileModal from '../../components/Modals/UserProfileModal';
 import ConfirmationModal from '../../components/Modals/ConfirmationModal';
 import UpdateUserModal from '../../components/Modals/UpdateUserModal';
 import MODAL_TYPE from '../../constants/modalTypes';
-import Dropdown from '../../components/Dropdown';
+import Dropdown from '../../components/Dropdown/Dropdown';
 import TimeAgo from '../../components/TimeAgo';
 
 const UnverifiedUsers = () => {
