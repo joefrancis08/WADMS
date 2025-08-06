@@ -1,4 +1,5 @@
-import React from 'react'
+import { X } from 'lucide-react';
+import ModalLayout from '../Layout/ModalLayout';
 
 const Header = ({  onClose, headerContent }) => {
   return (
@@ -10,10 +11,7 @@ const Header = ({  onClose, headerContent }) => {
       >
         <X />
       </button>
-
-      <p className="text-2xl font-bold text-gray-800">
-        {headerContent}
-      </p>
+      {headerContent}
     </>
   );
 };
@@ -26,18 +24,18 @@ const Body = ({ bodyContent }) => {
   );
 };
 
-const Footer = ({ onCancelClick, onAddClick, primaryButton, disabled, secondaryButton }) => {
+const Footer = ({ onCancel, onSaveAdded, primaryButton, disabled, secondaryButton }) => {
   return (
     <>
       <button
-        onClick={onCancelClick}
+        onClick={onCancel}
         className="mr-4 flex items-center justify-center bg-gradient-to-br from-gray-500 to-gray-400 text-white px-6 py-2 rounded-full text-sm hover:bg-gradient-to-tr hover:from-gray-500 hover:to-gray-400 hover:shadow-lg active:opacity-50 transition cursor-pointer"
       >
         {secondaryButton}
       </button>
       <button
         disabled={disabled}
-        onClick={onAddClick}
+        onClick={onSaveAdded}
         className={disabled 
           ? 'flex items-center justify-center bg-gray-500 text-white font-semibold py-2 px-6 rounded-full text-sm opacity-50 cursor-not-allowed transition'
           : 'flex items-center justify-center bg-gradient-to-br from-green-800 to-green-500 text-white px-6 py-2 rounded-full text-sm hover:bg-gradient-to-tr hover:from-green-800 hover:to-green-500 hover:shadow-lg active:opacity-50 transition cursor-pointer'}
@@ -48,11 +46,36 @@ const Footer = ({ onCancelClick, onAddClick, primaryButton, disabled, secondaryB
   );
 };
 
-const AddUserModal = () => {
+const AddUserModal = ({
+  onClose,
+  onCancel,
+  onSaveAdded,
+  headerContent,
+  bodyContent,
+  primaryButton,
+  disabled = false,
+  secondaryButton
+}) => {
   return (
-    <div>
-      
-    </div>
+    <ModalLayout 
+      onClose={onClose}
+        header={<Header onClose={onClose} headerContent={headerContent}/>}
+        headerMargin={'mt-0'}
+        headerPosition={'justify-between'}
+        body={<Body bodyContent={bodyContent} />}
+        bodyMargin={'my-4'}
+        bodyPosition={'justify-start'}
+        footer={
+          <Footer 
+            onCancel={onCancel}
+            onSaveAdded={onSaveAdded}
+            primaryButton={primaryButton}
+            disabled={disabled}
+            secondaryButton={secondaryButton}
+          />
+        }
+        footerPosition={'justify-end'}
+    />
   );
 };
 

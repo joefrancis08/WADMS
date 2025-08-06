@@ -1,6 +1,6 @@
 import PATH from '../../constants/path';
 import MODAL_TYPE from '../../constants/modalTypes';
-import { BookUser, EllipsisVertical, Pen, Search, ShieldCheck, ShieldX, Trash, Trash2, UserRound, UserRoundPlus, UserRoundX, Users } from 'lucide-react';
+import { BookUser, EllipsisVertical, Info, Pen, Search, ShieldCheck, ShieldX, Trash, Trash2, UserRound, UserRoundPlus, UserRoundX, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ProfileAvatar from '../../components/ProfileAvatar';
 import AdminLayout from '../../components/Layout/Dean-and-Chairman/AdminLayout';
@@ -10,13 +10,16 @@ import VerifiedUserSkeletonLoader from '../../components/Loaders/VerifiedUserSke
 import UpdateUserModal from '../../components/Modals/UpdateUserModal';
 import UpdateField from '../../components/Form/Dean-and-Chairman/UpdateField';
 import ConfirmationModal from '../../components/Modals/ConfirmationModal';
+import AddUserModal from '../../components/Modals/AddUserModal';
+import AddField from '../../components/Form/Dean-and-Chairman/AddField';
+import { emailRegex } from '../../utils/regEx';
 
 const VerifiedUsers = () => {
   const { UNVERIFIED_USERS, VERIFIED_USER_DETAIL } = PATH.ADMIN
  
   const { 
-    chevron, data, confirmDelete, dropdown, ellipsis, form, modal, 
-    navigation, saveButton, state, user, userCount, userUpdate, 
+    chevron, data, confirmDelete, dropdown, ellipsis, form, info, modal, 
+    navigation, saveButton, state, user, userAdd, userCount, userUpdate, 
   } = useVerifiedUsers();
 
   const { handleChevronClick } = chevron;
@@ -24,12 +27,14 @@ const VerifiedUsers = () => {
   const { handleConfirmDelete } = confirmDelete;
   const { activeDropdownId, handleDropdown, handleDropdownMenuClick, toggleDropdown } = dropdown;
   const { handleEllipsisClick } = ellipsis;
-  const { formValue, handleChange } = form;
+  const { updatedValue, handleChange } = form;
+  const { infoClick, handleInfoClick } = info;
   const { modalType, handleCloseModal } = modal;
   const { navigate } = navigation;
   const { isDisabled } = saveButton;
   const { loading, error } = state;
   const { selectedUser } = user;
+  const { formValue, handleAddUser, handleAddUserInputChange, handleSaveAdded } = userAdd;
   const { unverifiedUserCount } = userCount;
   const { handleSaveUpdate } = userUpdate;
   
@@ -75,11 +80,81 @@ const VerifiedUsers = () => {
 
    const renderModal = () => {
     switch (modalType) {
+      case MODAL_TYPE.ADD_USER:
+        return (
+          <AddUserModal 
+            onClose={() => handleCloseModal({isForAddUser: true, clearForm: true})}
+            onCancel={() => handleCloseModal({isForAddUser: true, clearForm: true})}
+            onSaveAdded={handleSaveAdded}
+            primaryButton={'Add User'}
+            disabled={
+              formValue.fullName.trim() === '' ||
+              formValue.email.trim() === '' ||
+              formValue.role.trim() === '' ||
+              !emailRegex.test(formValue.email)
+            }
+            secondaryButton={'Cancel'}
+            headerContent={
+              <div className='relative flex items-center transition-all duration-300'>
+                <p className='mr-2 text-2xl font-bold text-gray-800'>
+                  Add User
+                </p>
+                <Info 
+                  onClick={handleInfoClick}
+                  className='text-slate-500 hover:text-slate-600 cursor-pointer' size={20}
+                />
+                {infoClick && (
+                  <div className='w-40 h-auto bg-slate-800 absolute top-3 left-35 rounded z-40 transition-opacity duration-500'>
+                    <p className='text-slate-100 text-xs p-2'>
+                      When you add user, their status will be Verified and their password will be like 'fullname0@wdms'.
+                    </p>
+                  </div>
+                )}
+              </div>
+            }
+            bodyContent={
+              <>
+                <AddField 
+                  fieldName='Full Name'
+                  type='text'
+                  name='fullName'
+                  formValue={formValue.fullName}
+                  onChange={(e) => handleAddUserInputChange(e)}
+                />
+
+                <AddField 
+                  fieldName='Email'
+                  type='text'
+                  name='email'
+                  formValue={formValue.email}
+                  onChange={(e) => handleAddUserInputChange(e)}
+                />
+
+                <AddField 
+                  fieldName='Role'
+                  type='text'
+                  name='role'
+                  formValue={formValue.role}
+                  toggleDropdown={toggleDropdown}
+                  isReadOnly={true}
+                  isDropdown={true}
+                  isClickable={true}
+                  onChevronClick={handleChevronClick}
+                  onClick={handleChevronClick}
+                  onDropdownMenuClick={handleDropdownMenuClick}
+                  onChange={(e) => handleAddUserInputChange(e)}
+                />
+              </>
+              
+            }
+          />
+        );
+
       case MODAL_TYPE.UPDATE_USER:
         return (
           <UpdateUserModal 
-            onClose={() => handleCloseModal({untoggleDropdown: true})}
-            onCancelClick={() => handleCloseModal({untoggleDropdown: true})}
+            onClose={() => handleCloseModal({untoggleDropdown: true, removeSelectedUser: true})}
+            onCancelClick={() => handleCloseModal({untoggleDropdown: true, removeSelectedUser: true})}
             onSaveClick={handleSaveUpdate}
             headerContent={`Update ${selectedUser?.full_name}'s Info`}
             primaryButton={'Save Update'}
@@ -91,7 +166,7 @@ const VerifiedUsers = () => {
                   fieldName='Full Name'
                   type='text'
                   name='fullName'
-                  formValue={formValue.fullName}
+                  formValue={updatedValue.fullName}
                   onChange={(e) => handleChange(e)}
                 />
 
@@ -99,7 +174,7 @@ const VerifiedUsers = () => {
                   fieldName='Email'
                   type='text'
                   name='email'
-                  formValue={formValue.email}
+                  formValue={updatedValue.email}
                   onChange={(e) => handleChange(e)}
                 />
 
@@ -107,7 +182,7 @@ const VerifiedUsers = () => {
                   fieldName='Role'
                   type='text'
                   name='role'
-                  formValue={formValue.role}
+                  formValue={updatedValue.role}
                   onClick={handleChevronClick}
                   onChevronClick={handleChevronClick}
                   onDropdownMenuClick={handleDropdownMenuClick}
@@ -124,7 +199,12 @@ const VerifiedUsers = () => {
       case MODAL_TYPE.USER_DELETION_CONFIRMATION:
         return (
           <ConfirmationModal 
-            onClose={() => handleCloseModal({removeActiveDropdownId: true})}
+            onClose={() => handleCloseModal({removeActiveDropdownId: true, removeSelectedUser: true})}
+            onCancelClick={() => handleCloseModal({removeActiveDropdownId: true, removeSelectedUser: true})}
+            onConfirmClick={() => handleConfirmDelete(selectedUser?.user_uuid)}
+            isDelete={true}
+            primaryButton={'Confirm'}
+            secondaryButton={'Cancel'}
             headerContent={
               <p className="text-2xl font-bold text-red-600">
                 Confirm Delete
@@ -135,11 +215,6 @@ const VerifiedUsers = () => {
                 Are you sure you want to delete {selectedUser?.full_name}?
               </p>
             }
-            isDelete={true}
-            primaryButton={'Confirm'}
-            secondaryButton={'Cancel'}
-            onCancelClick={() => handleCloseModal({removeActiveDropdownId: true})}
-            onConfirmClick={() => handleConfirmDelete(selectedUser?.user_uuid)}
           />
         );
 
@@ -194,6 +269,7 @@ const VerifiedUsers = () => {
             <div className='flex items-center md:gap-5'>
               <button 
                 title='Add User'
+                onClick={handleAddUser}
                 className='opacity-65 hover:opacity-100 hover:drop-shadow-sm mr-2 cursor-pointer hover:bg-green-10'>
                 <UserRoundPlus size={28}/>
               </button>
@@ -210,7 +286,10 @@ const VerifiedUsers = () => {
             <div className='flex flex-col items-center justify-end mt-16 text-slate-700'>
               <UserRoundX className='ml-8 w-40 md:w-60 h-auto' />
               <p className='text-xl md:text-2xl font-medium text-slate-600'>No verified users at the moment.</p>
-              <button className='flex items-center gap-1 text-md md:text-xl font-medium bg-slate-400 text-slate-100 rounded-lg mt-8 py-2 px-3 md:py-3 md:px-5 shadow cursor-pointer hover:transition-all hover:duration-300 hover:text-slate-800 hover:opacity-90 hover:bg-slate-300 hover:drop-shadow-lg active:opacity-50'>
+              <button
+                onClick={handleAddUser}
+                className='flex items-center gap-1 text-md md:text-xl font-medium bg-slate-400 text-slate-100 rounded-lg mt-8 py-2 px-3 md:py-3 md:px-5 shadow cursor-pointer hover:transition-all hover:duration-300 hover:text-slate-800 hover:opacity-90 hover:bg-slate-300 hover:drop-shadow-lg active:opacity-50'
+              >
                 <UserRoundPlus className='w-6 md:w-8 h-auto'/>
                 Add
               </button>

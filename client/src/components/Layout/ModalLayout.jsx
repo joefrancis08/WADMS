@@ -2,8 +2,7 @@ const ModalLayout = ({
   onClose, 
   header, 
   body, 
-  footer, 
-  border,
+  footer,
   headerMargin, 
   headerPosition,
   bodyMargin,
@@ -25,12 +24,12 @@ const ModalLayout = ({
         </button>
 
         {/* Header */}
-        <div className={`flex text-gray-700 ${headerMargin || 'mt-4'} ${border} ${headerPosition || 'justify-center items-center max-md:items-center md:flex-row flex-col'}`}>
+        <div className={`flex text-gray-700 ${headerMargin || 'mt-4'} ${headerPosition || 'justify-center items-center max-md:items-center md:flex-row flex-col'}`}>
           {header}
         </div>
 
         {/* Body */}
-        <div className={`w-full flex flex-col ${bodyMargin || 'my-4 md:my-8'} ${border} ${bodyPosition || 'justify-center items-center'}`}>
+        <div className={`w-full flex flex-col ${bodyMargin || 'my-4 md:my-8'} ${bodyPosition || 'justify-center items-center'}`}>
           {body}
         </div>
         <hr className='text-gray-300'></hr>

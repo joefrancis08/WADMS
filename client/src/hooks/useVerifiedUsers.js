@@ -12,7 +12,7 @@ import { emailRegex } from "../utils/regEx";
 export const useVerifiedUsers = () => {
   const navigate = useNavigate();
 
-  const { UPDATE_USER, USER_DELETION_CONFIRMATION } = MODAL_TYPES;
+  const { ADD_USER, UPDATE_USER, USER_DELETION_CONFIRMATION } = MODAL_TYPES;
   const { VERIFIED_USER_DETAIL } = PATH.ADMIN;
   const { UNVERIFIED_USER } = USER_ROLES;
   const { VERIFIED } = USER_STATUS;
@@ -27,7 +27,13 @@ export const useVerifiedUsers = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalType, setModalType] = useState(null);
   const [toggleDropdown, setToggleDropdown] = useState(false);
+  const [infoClick, setInfoClick] = useState(false);
   const [formValue, setFormValue] = useState({
+    fullName: '',
+    email: '',
+    role: ''
+  });
+  const [updatedValue, setUpdatedValue] = useState({
     fullName: '',
     email: '',
     role: ''
@@ -35,7 +41,7 @@ export const useVerifiedUsers = () => {
 
   useEffect(() => {
     if(selectedUser) {
-      setFormValue({
+      setUpdatedValue({
         fullName: selectedUser.full_name || '',
         email: selectedUser.email || '',
         role: selectedUser.role || ''
@@ -53,21 +59,37 @@ export const useVerifiedUsers = () => {
 
   const isDisabled = useMemo(() => {
     const unchanged = 
-      selectedUser?.full_name.trim() === formValue.fullName.trim() && 
-      selectedUser?.email.trim() === formValue.email.trim() && 
-      selectedUser?.role.trim() === formValue.role.trim();
+      selectedUser?.full_name.trim() === updatedValue.fullName.trim() && 
+      selectedUser?.email.trim() === updatedValue.email.trim() && 
+      selectedUser?.role.trim() === updatedValue.role.trim();
 
     const anyEmpty = 
-      formValue.fullName.trim() === '' ||
-      formValue.email.trim() === '';
+      updatedValue.fullName.trim() === '' ||
+      updatedValue.email.trim() === '';
 
-    const invalidEmail = !emailRegex.test(formValue.email);
+    const invalidEmail = !emailRegex.test(updatedValue.email);
 
     return unchanged || anyEmpty || invalidEmail;
-  }, [selectedUser, formValue]);
+  }, [selectedUser, updatedValue]);
+
+  const handleAddUser = () => {
+    setModalType(ADD_USER);
+  };
+
+  const handleAddUserInputChange = (e) => {
+    setFormValue(prev => ({...prev, [e.target.name]: e.target.value}));
+  };
+
+  const handleInfoClick = () => {
+    setInfoClick(!infoClick);
+  }
+
+  const handleSaveAdded = () => {
+    console.log('Save added user.');
+  };
 
   const handleChange = (e) => {
-    setFormValue(prev => ({...prev, [e.target.name]: e.target.value}));
+    setUpdatedValue(prev => ({...prev, [e.target.name]: e.target.value}));
   };
 
   const handleEllipsisClick = (e, user) => {
@@ -99,7 +121,7 @@ export const useVerifiedUsers = () => {
   };
 
   const handleSaveUpdate = async () => {
-    const { fullName, email, role } = formValue;
+    const { fullName, email, role } = updatedValue;
 
     try {
       const res = await updateUser(fullName, email, role, selectedUser?.user_uuid);
@@ -110,7 +132,7 @@ export const useVerifiedUsers = () => {
       console.log('Error updating user: ', error)
     }
 
-    handleCloseModal();
+    handleCloseModal({removeSelectedUser: true});
   };
 
   const handleDelete = (e, selectedUser) => {
@@ -130,24 +152,32 @@ export const useVerifiedUsers = () => {
       showErrorToast(VERIFIED_USER_DELETION.ERROR);
     }
 
-    handleCloseModal({removeActiveDropdownId: true});
+    handleCloseModal({removeActiveDropdownId: true, removeSelectedUser: true});
   };
 
   const handleCloseModal = (options = {}) => {
-    setSelectedUser(null);
     setModalType(null);
+    setInfoClick(false);
 
-    if (options.untoggleDropdown) setToggleDropdown(false);
-    if (options.removeActiveDropdownId) setActiveDropdownId(null);
+    options.removeSelectedUser && setSelectedUser(null);
+    options.untoggleDropdown && setToggleDropdown(false);
+    options.removeActiveDropdownId && setActiveDropdownId(null);
+    options.clearForm && setFormValue({
+      fullName: '',
+      email: '',
+      role: ''
+    });
   };
 
   const handleChevronClick = () => {
     setToggleDropdown(!toggleDropdown);
   };
 
-  const handleDropdownMenuClick = (role) => {
-    setFormValue(prev => ({...prev, role}));
+  const handleDropdownMenuClick = (role, options = {}) => {
     setToggleDropdown(false);
+
+    options.isForAddUser && setFormValue(prev => ({...prev, role}));
+    options.isForUpdateUser && setUpdatedValue(prev => ({...prev, role}));
   };
 
   return {
@@ -178,8 +208,13 @@ export const useVerifiedUsers = () => {
     },
 
     form: {
-      formValue,
+      updatedValue,
       handleChange,
+    },
+
+    info: {
+      infoClick,
+      handleInfoClick
     },
 
     modal: {
@@ -202,6 +237,13 @@ export const useVerifiedUsers = () => {
 
     user: {
       selectedUser
+    },
+
+    userAdd: {
+      formValue,
+      handleAddUser,
+      handleAddUserInputChange,
+      handleSaveAdded
     },
 
     userDelete: {
