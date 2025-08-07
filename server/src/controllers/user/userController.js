@@ -1,14 +1,14 @@
 import { getUserById, getUsersByRole, getUserByStatus } from '../../models/userModel.js';
-import { registerUserController } from './POST/registerUserController.js';
-import { checkEmailController } from './GET/checkEmailController.js';
-import { loginUserController } from './GET/loginUserController.js';
-import { userSessionController } from './GET/userSessionController.js';
-import { logoutUserController } from './POST/logoutUserController.js';
-import { fetchAllUsersController, fetchUserController } from './GET/fetchUserController.js';
-import { updateUserController } from './UPDATE/updateUserController.js';
-import { updateUserRoleController } from './PATCH/updateUserRoleController.js';
-import { deleteAllUsersController } from './DELETE/deleteAllUsersController.js';
-import { deleteUserByIdController } from './DELETE/deleteUserByIdController.js';
+import { registerUserController } from './Dean-and-Chairman/POST/registerUserController.js';
+import { checkEmailController } from './Dean-and-Chairman/GET/checkEmailController.js';
+import { loginUserController } from './Dean-and-Chairman/GET/loginUserController.js';
+import { userSessionController } from './Dean-and-Chairman/GET/userSessionController.js';
+import { logoutUserController } from './Dean-and-Chairman/POST/logoutUserController.js';
+import { fetchAllUsersController, fetchUserController } from './Dean-and-Chairman/GET/fetchUserController.js';
+import { updateUserController } from './Dean-and-Chairman/PATCH/updateUserController.js';
+import { updateUserRoleController } from './Dean-and-Chairman/PATCH/updateUserRoleController.js';
+import { deleteAllUsersController } from './Dean-and-Chairman/DELETE/deleteAllUsersController.js';
+import { deleteUserByIdController } from './Dean-and-Chairman/DELETE/deleteUserByIdController.js';
 
 
 export const registerUser = (req, res) => registerUserController(req, res); // Create new user

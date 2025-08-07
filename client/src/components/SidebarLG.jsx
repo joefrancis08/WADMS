@@ -29,7 +29,7 @@ const SidebarLG = () => {
   return (
     <aside className={`sidebar-container ${isCollapsed ? 'w-20' : 'w-64'}`}>
       {/* Header */}
-      <header className="flex items-center justify-between px-2 py-2 border-b-1 border-gray-800 bg-gray-900 h-20 shadow-lg">
+      <header className="flex items-center justify-between px-2 py-2 border-b-1 border-gray-800 bg-slate-900 h-20 shadow-lg">
         {!isCollapsed && (
           <div className="h-10 flex items-center space-x- transition-all duration-300">
             <img className="h-14 w-auto" src="/CGS_Logo.png" alt="Logo" />
@@ -93,7 +93,7 @@ const SidebarLG = () => {
       </nav>
 
       {/* User Info & Logout */}
-      <div className="px-5 py-4 border-t border-gray-700 bg-gray-900">
+      <div className="px-5 py-4 border-t border-gray-700 bg-slate-900">
         <div className="flex items-center justify-between">
           {/* Left: User Icon + Name/Role */}
           <div

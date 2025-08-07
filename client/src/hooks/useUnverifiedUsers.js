@@ -10,7 +10,7 @@ import { showErrorToast, showSuccessToast } from "../utils/toastNotification";
 export const useUnverifiedUsers = () => {
   const navigate = useNavigate();
 
-  const { USER_UPDATE, USER_DELETION } = TOAST_MESSAGES;
+  const { UNVERIFIED_USER_UPDATE, UNVERIFIED_USER_DELETION } = TOAST_MESSAGES;
   const { UNVERIFIED_USER } = USER_ROLES;
   const { 
     USER_PROFILE,
@@ -75,23 +75,23 @@ export const useUnverifiedUsers = () => {
   const handleDelete = async () => {
 
     try {
-      await deleteUser(selectedUser?.user_uuid);
-      showSuccessToast(USER_DELETION.SUCCESS);
+      const res = await deleteUser(selectedUser?.user_uuid);
+      res.success && showSuccessToast(UNVERIFIED_USER_DELETION.SUCCESS);
 
     } catch (error) {
       console.error('Failed to delete user:', error);
-      showErrorToast(USER_DELETION.ERROR);
+      showErrorToast(UNVERIFIED_USER_DELETION.ERROR);
     }
   }
 
   const handleUpdateSubmit = async () => {
     try {
-      await updateUserRole(selectedUser.user_uuid, selectedRole);
-      showSuccessToast(USER_UPDATE.SUCCESS);
+      const res = await updateUserRole(selectedUser.user_uuid, selectedRole);
+      res.success && showSuccessToast(UNVERIFIED_USER_UPDATE.SUCCESS);
 
     } catch (error) {
       console.error('Failed to update user:', error);
-      showErrorToast(USER_UPDATE.ERROR);
+      showErrorToast(UNVERIFIED_USER_UPDATE.ERROR);
     }
   }
 

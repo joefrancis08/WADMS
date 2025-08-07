@@ -1,5 +1,5 @@
-import { deleteAllUsers, getAllUsers } from "../../../models/userModel.js";
-import sendUserUpdate from "../../../services/websocket/sendUserUpdate.js";
+import { deleteAllUsers, getAllUsers } from "../../../../models/userModel.js";
+import sendUserUpdate from "../../../../services/websocket/sendUserUpdate.js";
 
 export const deleteAllUsersController = async (req, res) => {
   try {

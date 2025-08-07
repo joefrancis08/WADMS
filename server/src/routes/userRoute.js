@@ -12,7 +12,7 @@ userRouter.get('/', fetchAllUsers);
 userRouter.get('/by-role', fetchUserByRole);
 userRouter.get('/by-status', fetchUserByStatus);
 userRouter.get('/:id', fetchUserById);
-userRouter.put('/:id', updateUser);
+userRouter.patch('/:uuid', updateUser);
 userRouter.patch('/:uuid/role', handleUpdateUserRole);
 userRouter.delete('/', deleteAllUsers);
 userRouter.delete('/:uuid', deleteUser);

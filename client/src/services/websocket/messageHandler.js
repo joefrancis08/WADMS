@@ -3,10 +3,14 @@ import { connectWebSocket } from "./socket";
 export const messageHandler = (callback) => {
   const socket = connectWebSocket();
 
+  socket.open = () => {
+    console.log('Websocket connected!');
+  };
+
   const userUpdateHandler = (event) => {
     const data = JSON.parse(event.data);
 
-    if (data.type === 'user-update' && data.isUpdated) {
+    if (data.isUpdated) {
       callback();
     }
   };

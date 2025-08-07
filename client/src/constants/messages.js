@@ -5,15 +5,25 @@ export const TOAST_MESSAGES = {
     ERROR: 'Something went wrong. Please try again later.'
   },
 
-  USER_UPDATE: {
-    SUCCESS: 'Verification successful.',
+  UNVERIFIED_USER_UPDATE: {
+    SUCCESS: 'Verified successfully.',
     ERROR: 'Something went wrong while verifying user. Try again.'
-  }, 
+  },
 
-  USER_DELETION: {
+  UNVERIFIED_USER_DELETION: {
     SUCCESS: 'User deleted successfully.',
     ERROR: 'Something went wrong. Try again.'
-  }
+  },
+
+  VERIFIED_USER_UPDATE: {
+    SUCCESS: 'Updated successfully.',
+    ERROR: 'Something went wrong while updating user. Try again.'
+  },
+
+  VERIFIED_USER_DELETION: {
+    SUCCESS: 'Deleted successfully.',
+    ERROR: 'Something went wrong. Try again.'
+  },
 }
 
 export const VALIDATION_MESSAGE = () => {

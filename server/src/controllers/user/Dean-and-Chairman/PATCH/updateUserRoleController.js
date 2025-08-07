@@ -1,5 +1,5 @@
-import { updateUserRole } from "../../../models/userModel.js";
-import sendUserUpdate from "../../../services/websocket/sendUserUpdate.js";
+import { updateUserRole } from "../../../../models/userModel.js";
+import sendUserUpdate from "../../../../services/websocket/sendUserUpdate.js";
 
 export const updateUserRoleController = async (req, res) => {
   const { uuid } = req.params;

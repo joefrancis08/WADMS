@@ -1,18 +1,22 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { USER_ROLES, USER_STATUS } from "../constants/user";
 import PATH from "../constants/path";
 import { useUsersBy } from "./useUsers";
 import MODAL_TYPES from "../constants/modalTypes";
-import Dropdown from "../components/Dropdown/Dropdown";
+import { TOAST_MESSAGES } from "../constants/messages";
+import { deleteUser, updateUser } from "../api/Users/userAPI";
+import { showErrorToast, showSuccessToast } from "../utils/toastNotification";
+import { emailRegex } from "../utils/regEx";
 
 export const useVerifiedUsers = () => {
   const navigate = useNavigate();
 
-  const { UPDATE_USER } = MODAL_TYPES;
+  const { ADD_USER, UPDATE_USER, USER_DELETION_CONFIRMATION } = MODAL_TYPES;
   const { VERIFIED_USER_DETAIL } = PATH.ADMIN;
   const { UNVERIFIED_USER } = USER_ROLES;
   const { VERIFIED } = USER_STATUS;
+  const { VERIFIED_USER_UPDATE, VERIFIED_USER_DELETION } = TOAST_MESSAGES;
   
   const unverifiedUsers = useUsersBy('role', UNVERIFIED_USER).users;
   const [unverifiedUserCount, setUnverifiedUserCount] = useState(0);
@@ -23,7 +27,13 @@ export const useVerifiedUsers = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalType, setModalType] = useState(null);
   const [toggleDropdown, setToggleDropdown] = useState(false);
+  const [infoClick, setInfoClick] = useState(false);
   const [formValue, setFormValue] = useState({
+    fullName: '',
+    email: '',
+    role: ''
+  });
+  const [updatedValue, setUpdatedValue] = useState({
     fullName: '',
     email: '',
     role: ''
@@ -31,13 +41,13 @@ export const useVerifiedUsers = () => {
 
   useEffect(() => {
     if(selectedUser) {
-      setFormValue({
+      setUpdatedValue({
         fullName: selectedUser.full_name || '',
         email: selectedUser.email || '',
         role: selectedUser.role || ''
       })
     }
-  }, [selectedUser])
+  }, [selectedUser]);
 
   useEffect(() => {
   // Only run this if users is an array (not loading or error)
@@ -47,14 +57,45 @@ export const useVerifiedUsers = () => {
     }
   }, [unverifiedUsers]);
 
-  const handleChange = (e) => {
+  const isDisabled = useMemo(() => {
+    const unchanged = 
+      selectedUser?.full_name.trim() === updatedValue.fullName.trim() && 
+      selectedUser?.email.trim() === updatedValue.email.trim() && 
+      selectedUser?.role.trim() === updatedValue.role.trim();
+
+    const anyEmpty = 
+      updatedValue.fullName.trim() === '' ||
+      updatedValue.email.trim() === '';
+
+    const invalidEmail = !emailRegex.test(updatedValue.email);
+
+    return unchanged || anyEmpty || invalidEmail;
+  }, [selectedUser, updatedValue]);
+
+  const handleAddUser = () => {
+    setModalType(ADD_USER);
+  };
+
+  const handleAddUserInputChange = (e) => {
     setFormValue(prev => ({...prev, [e.target.name]: e.target.value}));
+  };
+
+  const handleInfoClick = () => {
+    setInfoClick(!infoClick);
   }
+
+  const handleSaveAdded = () => {
+    console.log('Save added user.');
+  };
+
+  const handleChange = (e) => {
+    setUpdatedValue(prev => ({...prev, [e.target.name]: e.target.value}));
+  };
 
   const handleEllipsisClick = (e, user) => {
     e.stopPropagation();
     setActiveDropdownId(prev => prev === user.id ? null : user.id);
-  }
+  };
 
   const handleDropdown = (e, menu, user) => {
     e.stopPropagation();
@@ -62,36 +103,82 @@ export const useVerifiedUsers = () => {
     if (menu?.label === 'View Details') {
       navigate(VERIFIED_USER_DETAIL(user?.user_uuid));
       setActiveDropdownId(null);
+
     } else if (menu?.label === 'Update') {
       handleUpdate(e, user);
       setActiveDropdownId(null);
+
+    } else if (menu?.label === 'Delete') {
+      handleDelete(e, user);
     }
-  }
+  };
 
   const handleUpdate = (e, selectedUser) => {
     e.stopPropagation();
 
     setSelectedUser(selectedUser);
     setModalType(UPDATE_USER);
-  }
+  };
 
-  const handleSaveUpdate = () => {
-    console.log('Update save');
-  }
+  const handleSaveUpdate = async () => {
+    const { fullName, email, role } = updatedValue;
 
-  const handleCloseModal = () => {
-    setSelectedUser(null);
+    try {
+      const res = await updateUser(fullName, email, role, selectedUser?.user_uuid);
+
+      res.success && showSuccessToast(VERIFIED_USER_UPDATE.SUCCESS);
+
+    } catch (error) {
+      console.log('Error updating user: ', error)
+    }
+
+    handleCloseModal({removeSelectedUser: true});
+  };
+
+  const handleDelete = (e, selectedUser) => {
+    e.stopPropagation();
+
+    setSelectedUser(selectedUser);
+    setModalType(USER_DELETION_CONFIRMATION);
+  };
+
+  const handleConfirmDelete = async (selectedUserId) => {
+    try {
+      const res = await deleteUser(selectedUserId);
+      res.success && showSuccessToast(VERIFIED_USER_DELETION.SUCCESS);
+
+    } catch (error) {
+      console.error('Error deleting user: ', error);
+      showErrorToast(VERIFIED_USER_DELETION.ERROR);
+    }
+
+    handleCloseModal({removeActiveDropdownId: true, removeSelectedUser: true});
+  };
+
+  const handleCloseModal = (options = {}) => {
     setModalType(null);
-  }
+    setInfoClick(false);
+
+    options.removeSelectedUser && setSelectedUser(null);
+    options.untoggleDropdown && setToggleDropdown(false);
+    options.removeActiveDropdownId && setActiveDropdownId(null);
+    options.clearForm && setFormValue({
+      fullName: '',
+      email: '',
+      role: ''
+    });
+  };
 
   const handleChevronClick = () => {
     setToggleDropdown(!toggleDropdown);
-  }
+  };
 
-  const handleDropdownMenuClick = (role) => {
-    setFormValue(prev => ({...prev, role}));
+  const handleDropdownMenuClick = (role, options = {}) => {
     setToggleDropdown(false);
-  }
+
+    options.isForAddUser && setFormValue(prev => ({...prev, role}));
+    options.isForUpdateUser && setUpdatedValue(prev => ({...prev, role}));
+  };
 
   return {
     chevron: {
@@ -101,6 +188,10 @@ export const useVerifiedUsers = () => {
     data: {
       unverifiedUsers,
       verifiedUsers
+    },
+
+    confirmDelete: {
+      handleConfirmDelete
     },
 
     dropdown: {
@@ -117,8 +208,13 @@ export const useVerifiedUsers = () => {
     },
 
     form: {
-      formValue,
+      updatedValue,
       handleChange,
+    },
+
+    info: {
+      infoClick,
+      handleInfoClick
     },
 
     modal: {
@@ -130,6 +226,10 @@ export const useVerifiedUsers = () => {
       navigate,
     },
 
+    saveButton: {
+      isDisabled
+    },
+
     state: {
       loading, 
       error
@@ -137,6 +237,17 @@ export const useVerifiedUsers = () => {
 
     user: {
       selectedUser
+    },
+
+    userAdd: {
+      formValue,
+      handleAddUser,
+      handleAddUserInputChange,
+      handleSaveAdded
+    },
+
+    userDelete: {
+      handleDelete
     },
 
     userUpdate: {

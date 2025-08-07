@@ -1,9 +1,9 @@
 import db from "../../../config/db.js";
 
-export const updateUserModel = async (fullName, email, password, role, status, id) => {
-  const sql = 'UPDATE user SET full_name = ?, email = ?, password = ?, role = ?, status = ?  WHERE id = ?';
+export const updateUserModel = async (fullName, email, role, uuid) => {
+  const sql = 'UPDATE user SET full_name = ?, email = ?, role = ?  WHERE user_uuid = ?';
 
-  const [result] = await db.execute(sql, [fullName, email, password, role, status, id])
+  const [result] = await db.execute(sql, [fullName, email, role, uuid])
   return result;
 }
 

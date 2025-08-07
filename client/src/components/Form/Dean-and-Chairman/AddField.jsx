@@ -1,10 +1,11 @@
-import { ChevronDown } from "lucide-react";
-import { USER_ROLES } from "../../../constants/user";
-import Dropdown from "../../Dropdown/Dropdown";
+import React, { useState } from 'react'
+import Dropdown from '../../Dropdown/Dropdown';
+import { USER_ROLES } from '../../../constants/user';
+import { ChevronDown, Info } from 'lucide-react';
 
-const UpdateField = ({
+const AddField = ({
   fieldName,
-  type,
+  type = 'text',
   name,
   formValue,
   onChange,
@@ -14,24 +15,32 @@ const UpdateField = ({
   toggleDropdown,
   isReadOnly = false,
   isClickable = false,
-  hasDropdown = false
+  isDropdown = false
 }) => {
+  const [isFocused, setIsFocused] = useState(false);
+  const isFloating = isFocused && name !== 'role' || (formValue ?? '').trim() !== '';
+
   return (
     <div className='relative w-full flex-col pt-4'>
-      <div className='pb-6'>
+      <div className='pb-4'>
         <div className='relative flex flex-col items-start'>
-          <p className='absolute bottom-10 text-gray-700 text-sm left-2 bg-gradient-to-r from-gray-100 to-gray-50 px-2 rounded-md'>{fieldName}</p>
+          <label className={`absolute left-3 bg-gradient-to-r from-gray-100 to-gray-50 px-2 rounded-md transition-all duration-300 ${isFloating ? '-top-3.5 text-sm text-slate-700': 'top-3 text-md text-slate-600'}`}>
+            {fieldName}
+          </label>
           <input
+            readOnly={isReadOnly}
             type={type}
             name={name}
-            readOnly={isReadOnly}
-            autoComplete='off'
-            onClick={isClickable ? onClick : null}
-            onChange={!hasDropdown ? onChange : null}
-            className={`w-full p-3 rounded-lg border border-gray-400 transition text-gray-800 focus:outline-0 focus:ring-2 focus:ring-green-600 shadow ${isClickable && 'cursor-pointer hover:bg-slate-100'}`}
             value={formValue}
+            autoComplete='off'
+            onChange={!isDropdown ? onChange : null}
+            onClick={isClickable ? onClick : null}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            className={`w-full p-3 rounded-lg border border-gray-400 transition text-gray-800 focus:outline-0 focus:ring-2 focus:ring-green-600 shadow ${isClickable && 'cursor-pointer hover:bg-slate-100'}`}
           />
-          {hasDropdown && (
+
+          {isDropdown && (
             <ChevronDown 
               onClick={onChevronClick}
               className={`absolute top-3.5 right-3.5 text-gray-600 cursor-pointer rounded-full hover:bg-gray-100 hover:text-gray-800 transition duration-300 ${toggleDropdown && 'rotate-180'}`} 
@@ -46,7 +55,7 @@ const UpdateField = ({
                   .map(([roleKey, roleValue]) => (
                     <p 
                       key={roleKey}
-                      onClick={() => onDropdownMenuClick(roleValue, {isForUpdateUser: true})}
+                      onClick={() => onDropdownMenuClick(roleValue, {isForAddUser: true })}
                       className='p-2 text-gray-800 hover:shadow cursor-pointer hover:bg-gray-200 first:rounded-t-md last:rounded-b-md active:opacity-50'>
                       {roleValue}
                     </p>
@@ -57,8 +66,8 @@ const UpdateField = ({
           )}
         </div>
       </div>
-    </div>      
+    </div>
   );
 };
 
-export default UpdateField;
+export default AddField;
