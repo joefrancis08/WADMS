@@ -12,7 +12,7 @@ const ModalLayout = ({
 }) => {
 
   return (
-    <div className="h-full fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-lg p-4">
+    <div className="h-full fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
       <div className="relative w-full md:max-w-xl bg-gradient-to-r from-gray-100 to-white rounded-lg shadow-2xl px-8 pt-4 animate-fadeIn">
 
         {/* Close Button */}

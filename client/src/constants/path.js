@@ -10,12 +10,12 @@ const PATH = {
   },
 
   ADMIN: {
-    DASHBOARD: '/admin',
-    VERIFIED_USERS: '/admin/verified-users',
-    VERIFIED_USER_DETAIL: (id) => `/admin/verified-users/${id}`,
-    VERIFIED_USER_DETAIL_TEMPLATE: '/admin/verified-users/:id',
-    UNVERIFIED_USERS: '/admin/unverified-users',
-    UNVERIFIED_USERS_DETAIL: (id) => `/admin/unverified-users/${id}`
+    DASHBOARD: '/d',
+    VERIFIED_USERS: '/d/verified-users',
+    VERIFIED_USER_DETAIL: (id) => `/d/verified-users/${id}`,
+    VERIFIED_USER_DETAIL_TEMPLATE: '/d/verified-users/:id',
+    UNVERIFIED_USERS: '/d/unverified-users',
+    UNVERIFIED_USERS_DETAIL: (id) => `/d/unverified-users/${id}`
   }
 }
 

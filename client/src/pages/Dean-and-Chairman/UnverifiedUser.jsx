@@ -102,6 +102,8 @@ const UnverifiedUsers = () => {
                     <Dropdown width='w-full' position='top-13'>
                       {Object.entries(USER_ROLES).map(([key, role]) => (
                         role !== USER_ROLES.UNVERIFIED_USER &&
+                        role !== USER_ROLES.DEAN &&
+                        role !== selectedRole &&
                         <p
                           key={key}
                           className='px-4 py-2 text-gray-700 hover:bg-gray-200 cursor-pointer'
@@ -128,7 +130,7 @@ const UnverifiedUsers = () => {
       <main className="px-4 py-6 md:px-8 w-full max-w-screen-xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-2 mb-6">
-          <Link to="/admin/verified-users" className="text-gray-700">
+          <Link to="/d/verified-users" className="text-gray-700">
             <ChevronLeft className='hover:opacity-65 active:opacity-50'/>
           </Link>
         </div>

@@ -21,9 +21,11 @@ const SidebarLG = () => {
     setIsCollapsed(newState);
     localStorage.setItem('sidebar-collapsed', newState.toString());
   };
+
+  // Change if the sidebar becomes full functional component
   const menuItems = [
-    { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', link: '/admin'},
-    { id: 'verified-users', icon: UsersRound, label: 'Verified Users', link: '/admin/verified-users' },
+    { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', link: '/d'},
+    { id: 'verified-users', icon: UsersRound, label: 'Verified Users', link: '/d/verified-users' },
   ];
 
   return (

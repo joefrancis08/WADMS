@@ -104,7 +104,7 @@ const VerifiedUsers = () => {
                   className='text-slate-500 hover:text-slate-600 cursor-pointer' size={20}
                 />
                 {infoClick && (
-                  <div className='w-40 h-auto bg-slate-800 absolute top-3 left-35 rounded z-40 transition-opacity duration-500'>
+                  <div onClick={handleInfoClick} className='w-40 h-auto bg-slate-800 absolute top-3 left-35 rounded z-40 transition-opacity duration-500'>
                     <p className='text-slate-100 text-xs p-2'>
                       When you add user, their status will be Verified and their password will be like 'fullname0@wdms'.
                     </p>
@@ -123,7 +123,7 @@ const VerifiedUsers = () => {
                 />
 
                 <AddField 
-                  fieldName='Email'
+                  fieldName='Email Address'
                   type='text'
                   name='email'
                   formValue={formValue.email}
@@ -171,7 +171,7 @@ const VerifiedUsers = () => {
                 />
 
                 <UpdateField 
-                  fieldName='Email'
+                  fieldName='Email Address'
                   type='text'
                   name='email'
                   formValue={updatedValue.email}
@@ -285,10 +285,12 @@ const VerifiedUsers = () => {
           {!verifiedUsers.length && (
             <div className='flex flex-col items-center justify-end mt-16 text-slate-700'>
               <UserRoundX className='ml-8 w-40 md:w-60 h-auto' />
-              <p className='text-xl md:text-2xl font-medium text-slate-600'>No verified users at the moment.</p>
+              <p className='text-xl md:text-2xl font-medium text-slate-600'>
+                No verified users at the moment.
+              </p>
               <button
                 onClick={handleAddUser}
-                className='flex items-center gap-1 text-md md:text-xl font-medium bg-slate-400 text-slate-100 rounded-lg mt-8 py-2 px-3 md:py-3 md:px-5 shadow cursor-pointer hover:transition-all hover:duration-300 hover:text-slate-800 hover:opacity-90 hover:bg-slate-300 hover:drop-shadow-lg active:opacity-50'
+                className='flex items-center gap-1 text-md md:text-xl font-medium bg-slate-400 text-slate-100 rounded-full mt-8 py-2 px-3 md:py-3 md:px-5 shadow cursor-pointer hover:transition-all hover:duration-300 hover:text-slate-800 hover:opacity-90 hover:bg-slate-300 hover:drop-shadow-lg active:opacity-50'
               >
                 <UserRoundPlus className='w-6 md:w-8 h-auto'/>
                 Add
