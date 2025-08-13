@@ -11,7 +11,22 @@ export const checkUserEmail = async (values) => {
   } catch (error) {
     console.log("There's an error while checking user email: ", error);
   }
-}
+};
+
+export const postUser = async (values) => {
+  try {
+    const res = await axios.post(`${API_BASE_URL}/users/add-user`, {
+      fullName: values?.fullName,
+      email: values?.email,
+      role: values?.role
+    });
+
+    return res;
+
+  } catch (error) {
+    console.log("There's an error while adding user: ", error);
+  }
+};
 
 export const registerUser = async (values) => {
   try {

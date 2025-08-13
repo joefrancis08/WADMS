@@ -1,6 +1,6 @@
 import PATH from '../../constants/path';
 import MODAL_TYPE from '../../constants/modalTypes';
-import { BookUser, EllipsisVertical, Info, Pen, Search, ShieldCheck, ShieldX, Trash, Trash2, UserRound, UserRoundPlus, UserRoundX, Users } from 'lucide-react';
+import { BookUser, CircleQuestionMark, EllipsisVertical, Info, Pen, Search, ShieldCheck, ShieldX, Trash, Trash2, UserRound, UserRoundPlus, UserRoundX, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ProfileAvatar from '../../components/ProfileAvatar';
 import AdminLayout from '../../components/Layout/Dean-and-Chairman/AdminLayout';
@@ -56,7 +56,7 @@ const VerifiedUsers = () => {
 
     return (
       activeDropdownId === user.id && (
-        <div className='absolute top-8 left-24 max-sm:left-10 transition'>
+        <div className='absolute top-8 left-22 max-sm:left-10 transition'>
           <Dropdown 
             width={'w-35'} 
             border={'border border-gray-300 rounded-md'}>
@@ -83,8 +83,8 @@ const VerifiedUsers = () => {
       case MODAL_TYPE.ADD_USER:
         return (
           <AddUserModal 
-            onClose={() => handleCloseModal({isForAddUser: true, clearForm: true})}
-            onCancel={() => handleCloseModal({isForAddUser: true, clearForm: true})}
+            onClose={() => handleCloseModal({isForAddUser: true, untoggleDropdown: true, clearForm: true})}
+            onCancel={() => handleCloseModal({isForAddUser: true, untoggleDropdown: true, clearForm: true})}
             onSaveAdded={handleSaveAdded}
             primaryButton={'Add User'}
             disabled={
@@ -99,7 +99,7 @@ const VerifiedUsers = () => {
                 <p className='mr-2 text-2xl font-bold text-gray-800'>
                   Add User
                 </p>
-                <Info 
+                <CircleQuestionMark 
                   onClick={handleInfoClick}
                   className='text-slate-500 hover:text-slate-600 cursor-pointer' size={20}
                 />
@@ -298,13 +298,14 @@ const VerifiedUsers = () => {
             </div>
             )
           }
+          
           {/* User Cards */}
           {loading 
             ? (
                 <VerifiedUserSkeletonLoader />
               )
             : (
-                <div className='px-3 pb-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6'>
+                <div className='relative px-3 pb-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6'>
                   {verifiedUsers.map(user => (
                     <div
                       onClick={() => navigate(VERIFIED_USER_DETAIL(user.user_uuid))}

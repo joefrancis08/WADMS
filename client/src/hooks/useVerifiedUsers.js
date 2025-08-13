@@ -5,7 +5,7 @@ import PATH from "../constants/path";
 import { useUsersBy } from "./useUsers";
 import MODAL_TYPES from "../constants/modalTypes";
 import { TOAST_MESSAGES } from "../constants/messages";
-import { deleteUser, updateUser } from "../api/Users/userAPI";
+import { deleteUser, postUser, updateUser } from "../api/Users/userAPI";
 import { showErrorToast, showSuccessToast } from "../utils/toastNotification";
 import { emailRegex } from "../utils/regEx";
 
@@ -179,6 +179,17 @@ export const useVerifiedUsers = () => {
     options.isForAddUser && setFormValue(prev => ({...prev, role}));
     options.isForUpdateUser && setUpdatedValue(prev => ({...prev, role}));
   };
+
+  const handleSubmitAddedUser = async (formValue) => {
+    try {
+      const res = await postUser(formValue);
+      const emailAlreadyExists = res?.data?.alreadyExist;
+
+    } catch (error) {
+      console.error(error);
+      showErrorToast(REGISTRATION.ERROR);
+    }
+  }
 
   return {
     chevron: {
