@@ -1,5 +1,5 @@
 import { getUserById, getUsersByRole, getUserByStatus } from '../../models/userModel.js';
-import { registerUserController } from './Dean-and-Chairman/POST/registerUserController.js';
+import { registerUserController } from './registerUserController.js';
 import { checkEmailController } from './Dean-and-Chairman/GET/checkEmailController.js';
 import { loginUserController } from './Dean-and-Chairman/GET/loginUserController.js';
 import { userSessionController } from './Dean-and-Chairman/GET/userSessionController.js';
@@ -9,9 +9,10 @@ import { updateUserController } from './Dean-and-Chairman/PATCH/updateUserContro
 import { updateUserRoleController } from './Dean-and-Chairman/PATCH/updateUserRoleController.js';
 import { deleteAllUsersController } from './Dean-and-Chairman/DELETE/deleteAllUsersController.js';
 import { deleteUserByIdController } from './Dean-and-Chairman/DELETE/deleteUserByIdController.js';
-
+import { addUserController } from './Dean-and-Chairman/POST/addUserController.js';
 
 export const registerUser = (req, res) => registerUserController(req, res); // Create new user
+export const addUser = (req, res) => addUserController(req, res);
 export const checkEmail = (req, res) => checkEmailController(req, res); // Check email
 export const loginUser = (req, res) => loginUserController(req, res); // Login user
 export const userSession = (req, res) => userSessionController(req, res); // Get session info
@@ -19,7 +20,7 @@ export const logoutUser = (req, res) => logoutUserController(req, res); // Logou
 export const fetchAllUsers = (req, res) => fetchAllUsersController(req, res); // Fetch all users
 export const updateUser = (req, res) => updateUserController(req, res); // Update user
 export const handleUpdateUserRole = (req, res) => updateUserRoleController(req, res); // Update user role
-export const deleteAllUsers = async (req, res) => deleteAllUsersController(req, res); // Delete all users
+export const deleteAllUsers = (req, res) => deleteAllUsersController(req, res); // Delete all users
 export const deleteUser = (req, res) => deleteUserByIdController(req, res); // Delete user by ID
 
 // Fetch user by ID

@@ -1,21 +1,107 @@
-import { Link, useParams } from 'react-router-dom';
-import AdminLayout from '../../components/Layout/Dean-and-Chairman/AdminLayout';
+import { Link } from 'react-router-dom';
+import AdminLayout from '../../components/Layout/Dean/DeanLayout';
 import { ChevronLeft, Mail, Pen, ShieldCheck, Trash2 } from 'lucide-react';
-import PATH from '../../constants/path';
-import { useUsersBy } from '../../hooks/useUsers';
-import { USER_STATUS } from '../../constants/user';
-import { useEffect, useMemo, useState } from 'react';
 import ProfileAvatar from '../../components/ProfileAvatar';
 import TimeAgo from '../../components/TimeAgo';
 import VerifiedUserDetailSkeletonLoader from '../../components/Loaders/VerifiedUserDetailSkeletonLoader';
 import useVerifiedUserDetail from '../../hooks/useVerifiedUserDetail';
+import { useVerifiedUsers } from '../../hooks/useVerifiedUsers';
+import MODAL_TYPE from '../../constants/modalTypes';
+import ConfirmationModal from '../../components/Modals/ConfirmationModal';
+import UpdateField from '../../components/Form/Dean-and-Chairman/UpdateField';
+import UpdateUserModal from '../../components/Modals/UpdateUserModal';
 
 const VerifiedUserDetail = () => {
-  const { actions, constant, data, state } = useVerifiedUserDetail();
-  const { handleDelete } = actions;
+  const { chevron, confirmDelete, dropdown, form, modal, saveButton, userDelete, userUpdate } = useVerifiedUsers();
+  const { handleChevronClick } = chevron;
+  const { handleConfirmDelete } = confirmDelete;
+  const { handleDropdownMenuClick, toggleDropdown } = dropdown;
+  const { updatedValue, handleChange } = form;
+  const { modalType, handleCloseModal } = modal;
+  const { isDisabled } = saveButton;
+  const { handleDelete } = userDelete;
+  const { handleUpdate, handleSaveUpdate } = userUpdate;
+
+  const { constant, data, state } = useVerifiedUserDetail();
   const { VERIFIED_USERS } = constant;
   const { selectedUser } = data;
   const { loading } = state;
+  
+  const renderModal = () => {
+    switch (modalType) {
+
+      case MODAL_TYPE.UPDATE_USER:
+        return (
+          <UpdateUserModal 
+            onClose={() => handleCloseModal({untoggleDropdown: true, removeSelectedUser: true})}
+            onCancelClick={() => handleCloseModal({untoggleDropdown: true, removeSelectedUser: true})}
+            onSaveClick={handleSaveUpdate}
+            headerContent={`Update ${selectedUser?.full_name}'s Info`}
+            primaryButton={'Save Update'}
+            disabled={isDisabled}
+            secondaryButton={'Cancel'}
+            bodyContent={
+              <>
+               <UpdateField 
+                  fieldName='Full Name'
+                  type='text'
+                  name='fullName'
+                  formValue={updatedValue.fullName}
+                  onChange={(e) => handleChange(e)}
+                />
+
+                <UpdateField 
+                  fieldName='Email Address'
+                  type='text'
+                  name='email'
+                  formValue={updatedValue.email}
+                  onChange={(e) => handleChange(e)}
+                />
+
+                <UpdateField 
+                  fieldName='Role'
+                  type='text'
+                  name='role'
+                  formValue={updatedValue.role}
+                  onClick={handleChevronClick}
+                  onChevronClick={handleChevronClick}
+                  onDropdownMenuClick={handleDropdownMenuClick}
+                  toggleDropdown={toggleDropdown}
+                  isReadOnly={true}
+                  isClickable={true}
+                  hasDropdown={true}
+                />
+              </>
+            }
+          />
+        );
+
+      case MODAL_TYPE.USER_DELETION_CONFIRMATION:
+        return (
+          <ConfirmationModal 
+            onClose={() => handleCloseModal({removeActiveDropdownId: true, removeSelectedUser: true})}
+            onCancelClick={() => handleCloseModal({removeActiveDropdownId: true, removeSelectedUser: true})}
+            onConfirmClick={() => handleConfirmDelete(selectedUser?.user_uuid, {navigateBack: true})}
+            isDelete={true}
+            primaryButton={'Confirm'}
+            secondaryButton={'Cancel'}
+            headerContent={
+              <p className="text-2xl font-bold text-red-600">
+                Confirm Delete
+              </p>
+            }
+            bodyContent={
+              <p className='pb-4'>
+                Are you sure you want to delete {selectedUser?.full_name}?
+              </p>
+            }
+          />
+        );
+
+      default:
+        break;
+    }
+  }
 
   return (
     <AdminLayout>
@@ -40,13 +126,14 @@ const VerifiedUserDetail = () => {
               <div className='flex justify-end p-2 md:p-4'>
                 <button
                   title='Update Info'
+                  onClick={(e) => handleUpdate(e, selectedUser)}
                   className='text-gray-500 rounded-full p-4 cursor-pointer transition-all duration-300 hover:text-black hover:bg-gray-200 active:opacity-20'
                 >
                   <Pen />
                 </button>
                 <button
                   title='Delete'
-                  onClick={(e) => handleDelete(e)}
+                  onClick={(e) => handleDelete(e, selectedUser)}
                   className='text-red-400 rounded-full p-4 cursor-pointer transition-all duration-300 hover:text-red-500 hover:bg-gray-200 active:opacity-20'
                 >
                   <Trash2 />
@@ -95,6 +182,7 @@ const VerifiedUserDetail = () => {
         }
         
       </main>
+      {renderModal()}
     </AdminLayout>
   );
 };

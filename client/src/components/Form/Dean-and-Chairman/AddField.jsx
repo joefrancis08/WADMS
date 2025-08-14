@@ -5,6 +5,7 @@ import { ChevronDown, Info } from 'lucide-react';
 
 const AddField = ({
   fieldName,
+  placeholder,
   type = 'text',
   name,
   formValue,
@@ -24,10 +25,12 @@ const AddField = ({
     <div className='relative w-full flex-col pt-4'>
       <div className='pb-4'>
         <div className='relative flex flex-col items-start'>
-          <label className={`absolute left-3 bg-gradient-to-r from-gray-100 to-gray-50 px-2 rounded-md transition-all duration-300 ${isFloating ? '-top-3.5 text-sm text-slate-700': 'top-3 text-md text-slate-600'}`}>
+          <label
+            className={`absolute left-3 bg-gradient-to-r from-gray-100 to-gray-50 px-2 rounded-md transition-all duration-300 ${isFloating ? '-top-3.5 text-sm text-slate-700': 'top-3 text-md text-slate-600'}`}>
             {fieldName}
           </label>
           <input
+            placeholder={placeholder}
             readOnly={isReadOnly}
             type={type}
             name={name}
@@ -51,7 +54,10 @@ const AddField = ({
             <Dropdown width='w-full' border='border border-gray-400 rounded-md'>
               <div className='transition-all duration-300'>
                 {Object.entries(USER_ROLES)
-                  .filter(([_, roleValue]) => roleValue !== 'Unverified User' && roleValue !== formValue)  
+                  .filter(([_, roleValue]) => (
+                    roleValue !== 'Unverified User' && 
+                    roleValue !== 'Dean' &&
+                    roleValue !== formValue))  
                   .map(([roleKey, roleValue]) => (
                     <p 
                       key={roleKey}

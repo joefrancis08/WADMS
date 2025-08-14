@@ -31,7 +31,7 @@ const Pending = () => {
             Hello, <strong>{user.fullName}</strong>!
           </p>
           <p className="text-center mt-4 m-2">
-            Your registration is currently awaiting verification by an administrator.
+            Your registration is currently awaiting verification by the College Dean.
           </p>
           <p className="text-center mt-4 m-2">You'll be notified once your account has been reviewed and approved.</p>
           <p className="text-center mt-4 m-2 pb-4">Thank you for your patience!</p>

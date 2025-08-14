@@ -3,18 +3,20 @@ import { USER_ROLES, USER_STATUS } from '../constants/user';
 import PATH from '../constants/path';
 import ProtectedRoute from './ProtectedRoute';
 import LoadSpinner from '../components/Loaders/LoadSpinner';
-import Dashboard from '../pages/Dean-and-Chairman/Dashboard';
-import UnverifiedUsers from '../pages/Dean-and-Chairman/UnverifiedUser';
-import VerifiedUsers from '../pages/Dean-and-Chairman/VerifiedUsers';
-import VerifiedUserDetail from '../pages/Dean-and-Chairman/VerifiedUserDetail';
+import Dashboard from '../pages/Dean/Dashboard';
+import UnverifiedUsers from '../pages/Dean/UnverifiedUser';
+import VerifiedUsers from '../pages/Dean/VerifiedUsers';
+import VerifiedUserDetail from '../pages/Dean/VerifiedUserDetail';
+import TaskForce from '../pages/Dean/TaskForce';
+import Documents from '../pages/Dean/Documents';
 
 const { 
   DASHBOARD, VERIFIED_USERS, 
   VERIFIED_USER_DETAIL_TEMPLATE, UNVERIFIED_USERS,
-  UNVERIFIED_USERS_ID
-} = PATH.ADMIN;
+  UNVERIFIED_USERS_ID, TASK_FORCE, DOCUMENTS
+} = PATH.DEAN;
 const { NOT_FOUND } = PATH.PUBLIC;
-const { DEAN, CHAIRMAN, UNVERIFIED_USER } = USER_ROLES; // UNVERIFIED_USER is for test.
+const { DEAN, UNVERIFIED_USER } = USER_ROLES; // UNVERIFIED_USER is for test.
 const { PENDING, VERIFIED } = USER_STATUS;
 
 const protectedRoutes = [
@@ -37,6 +39,14 @@ const protectedRoutes = [
   {
     path: UNVERIFIED_USERS_ID,
     element: <UnverifiedUsers />,
+  },
+  {
+    path: TASK_FORCE,
+    element: <TaskForce />
+  },
+  {
+    path: DOCUMENTS,
+    element: <Documents />
   }
 ];
 
@@ -46,14 +56,14 @@ const Loader = (
   </div> 
 );
 
-const deanChairmanRoutes = protectedRoutes.map(({ path, element }) => (
+const deanRoutes = protectedRoutes.map(({ path, element }) => (
   <Route 
     key={path}
     path={path}
     element={
       <ProtectedRoute 
         allowedStatuses={[VERIFIED, PENDING]} /*PENDING is for test. */
-        allowedRoles={[DEAN, CHAIRMAN, UNVERIFIED_USER]} /*UNVERIFIED_USER is for test. */
+        allowedRoles={[DEAN, UNVERIFIED_USER]} /*UNVERIFIED_USER is for test. */
         fallbackRoute={NOT_FOUND}
         loader={Loader} 
       >
@@ -63,4 +73,4 @@ const deanChairmanRoutes = protectedRoutes.map(({ path, element }) => (
   />
 ));
 
-export default deanChairmanRoutes;
+export default deanRoutes;

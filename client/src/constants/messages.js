@@ -15,6 +15,11 @@ export const TOAST_MESSAGES = {
     ERROR: 'Something went wrong. Try again.'
   },
 
+  VERIFIED_USER_ADDITION: {
+    SUCCESS: 'User added successfully.',
+    ERROR: 'Something went wrong while adding user. Try again.'
+  },
+
   VERIFIED_USER_UPDATE: {
     SUCCESS: 'Updated successfully.',
     ERROR: 'Something went wrong while updating user. Try again.'

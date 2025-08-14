@@ -42,8 +42,11 @@ const UpdateField = ({
             <Dropdown width='w-full' border='border border-gray-400 rounded-md'>
               <div className='transition-all duration-300'>
                 {Object.entries(USER_ROLES)
-                  .filter(([_, roleValue]) => roleValue !== 'Unverified User' && roleValue !== formValue)  
-                  .map(([roleKey, roleValue]) => (
+                  .filter(([_, roleValue]) => (
+                    roleValue !== 'Unverified User' && 
+                    roleValue !== formValue &&
+                    roleValue !== 'Dean'
+                  )).map(([roleKey, roleValue]) => (
                     <p 
                       key={roleKey}
                       onClick={() => onDropdownMenuClick(roleValue, {isForUpdateUser: true})}
