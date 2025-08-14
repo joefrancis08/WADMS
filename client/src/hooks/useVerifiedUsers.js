@@ -13,10 +13,11 @@ export const useVerifiedUsers = () => {
   const navigate = useNavigate();
 
   const { ADD_USER, UPDATE_USER, USER_DELETION_CONFIRMATION } = MODAL_TYPES;
-  const { VERIFIED_USER_DETAIL } = PATH.ADMIN;
+  const { VERIFIED_USERS, VERIFIED_USER_DETAIL } = PATH.ADMIN;
+  const { VERIFIED_USER_ADDITION, VERIFIED_USER_UPDATE, VERIFIED_USER_DELETION } = TOAST_MESSAGES;
   const { UNVERIFIED_USER } = USER_ROLES;
   const { VERIFIED } = USER_STATUS;
-  const { VERIFIED_USER_UPDATE, VERIFIED_USER_DELETION } = TOAST_MESSAGES;
+  
   
   const unverifiedUsers = useUsersBy('role', UNVERIFIED_USER).users;
   const [unverifiedUserCount, setUnverifiedUserCount] = useState(0);
@@ -84,8 +85,23 @@ export const useVerifiedUsers = () => {
     setInfoClick(!infoClick);
   }
 
-  const handleSaveAdded = () => {
-    console.log('Save added user.');
+  const handleSaveAdded =  async () => {
+    try {
+      const res = await postUser({
+        fullName: formValue.fullName,
+        email: formValue.email,
+        role: formValue.role,
+        password: `${formValue.fullName}0@wdms`
+      });
+      const emailAlreadyExists = res?.data?.alreadyExist;
+      res?.data?.success && showSuccessToast(VERIFIED_USER_ADDITION.SUCCESS);
+
+    } catch (error) {
+      console.error(error);
+      showErrorToast(VERIFIED_USER_ADDITION.ERROR);
+    }
+
+    handleCloseModal({untoggleDropdown: true, clearForm: true});
   };
 
   const handleChange = (e) => {
@@ -110,6 +126,7 @@ export const useVerifiedUsers = () => {
 
     } else if (menu?.label === 'Delete') {
       handleDelete(e, user);
+      setActiveDropdownId(null);
     }
   };
 
@@ -142,7 +159,7 @@ export const useVerifiedUsers = () => {
     setModalType(USER_DELETION_CONFIRMATION);
   };
 
-  const handleConfirmDelete = async (selectedUserId) => {
+  const handleConfirmDelete = async (selectedUserId, options = {}) => {
     try {
       const res = await deleteUser(selectedUserId);
       res.success && showSuccessToast(VERIFIED_USER_DELETION.SUCCESS);
@@ -151,6 +168,8 @@ export const useVerifiedUsers = () => {
       console.error('Error deleting user: ', error);
       showErrorToast(VERIFIED_USER_DELETION.ERROR);
     }
+
+    options.navigateBack && navigate(VERIFIED_USERS);
 
     handleCloseModal({removeActiveDropdownId: true, removeSelectedUser: true});
   };
@@ -179,17 +198,6 @@ export const useVerifiedUsers = () => {
     options.isForAddUser && setFormValue(prev => ({...prev, role}));
     options.isForUpdateUser && setUpdatedValue(prev => ({...prev, role}));
   };
-
-  const handleSubmitAddedUser = async (formValue) => {
-    try {
-      const res = await postUser(formValue);
-      const emailAlreadyExists = res?.data?.alreadyExist;
-
-    } catch (error) {
-      console.error(error);
-      showErrorToast(REGISTRATION.ERROR);
-    }
-  }
 
   return {
     chevron: {
@@ -262,6 +270,7 @@ export const useVerifiedUsers = () => {
     },
 
     userUpdate: {
+      handleUpdate,
       handleSaveUpdate
     },
 

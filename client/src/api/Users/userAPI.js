@@ -13,12 +13,13 @@ export const checkUserEmail = async (values) => {
   }
 };
 
-export const postUser = async (values) => {
+export const postUser = async ({ fullName, email, role, password }) => {
   try {
     const res = await axios.post(`${API_BASE_URL}/users/add-user`, {
-      fullName: values?.fullName,
-      email: values?.email,
-      role: values?.role
+      fullName,
+      email,
+      role,
+      password
     });
 
     return res;

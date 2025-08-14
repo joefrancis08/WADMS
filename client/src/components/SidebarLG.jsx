@@ -109,8 +109,8 @@ const SidebarLG = () => {
                 isCollapsed ? 'opacity-0 max-w-0' : 'opacity-100 max-w-[300px]'
               }`}
             >
-              <p className="text-sm font-semibold">Joe Francis</p>
-              <p className="text-xs text-gray-400">Administrator</p>
+              <p className="text-sm font-semibold">Sample User</p>
+              <p className="text-xs text-gray-400">Dean</p>
             </div>
           </div>
           {/* Right: Logout Icon */}

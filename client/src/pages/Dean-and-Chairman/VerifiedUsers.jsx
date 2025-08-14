@@ -19,7 +19,8 @@ const VerifiedUsers = () => {
  
   const { 
     chevron, data, confirmDelete, dropdown, ellipsis, form, info, modal, 
-    navigation, saveButton, state, user, userAdd, userCount, userUpdate, 
+    navigation, saveButton, state, submit, user, userAdd, userCount, 
+    userUpdate, 
   } = useVerifiedUsers();
 
   const { handleChevronClick } = chevron;
@@ -271,13 +272,7 @@ const VerifiedUsers = () => {
                 title='Add User'
                 onClick={handleAddUser}
                 className='opacity-65 hover:opacity-100 hover:drop-shadow-sm mr-2 cursor-pointer hover:bg-green-10'>
-                <UserRoundPlus size={28}/>
-              </button>
-              <button 
-                title='Delete all users'
-                className='relative opacity-65 hover:opacity-100 hover:drop-shadow-sm mr-2 cursor-pointer hover:bg-green-10 transition duration-300'>
-                <Trash color='red' size={28}/>
-                <Users className='absolute top-3 left-2' size={12} color='red'/>
+                <UserRoundPlus size={32}/>
               </button>
             </div>
           </div>
