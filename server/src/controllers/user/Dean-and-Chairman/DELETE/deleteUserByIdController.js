@@ -8,7 +8,7 @@ export const deleteUserByIdController = async (req, res) => {
     const result = await deleteUserById(uuid);
 
     if (result.affectedRows === 0) {
-      return res.status(200).json({
+      return res.status(404).json({
         success: false,
         message: 'User not found.'
       });
@@ -16,10 +16,30 @@ export const deleteUserByIdController = async (req, res) => {
 
     sendUserUpdate();
 
-    return res.status(200).json({
-      success: true,
-      message: 'User deleted successfully.'
-    });
+    // If the deleted user is the logged-in user
+    if (req.session.user?.uuid === uuid) {
+      req.session.destroy(err => {
+        if (err) {
+          console.error('Error destroying session:', err);
+          return res.status(500).json({
+            message: 'Could not destroy session.',
+            success: false,
+          });
+        }
+
+        res.clearCookie(process.env.SESSION_KEY);
+        return res.status(200).json({
+          success: true,
+          message: 'User deleted and session destroyed successfully.'
+        });
+      });
+    } else {
+      // For admin deleting another user
+      return res.status(200).json({
+        success: true,
+        message: 'User deleted successfully.'
+      });
+    }
 
   } catch (error) {
     console.error('Error deleting user:', error);

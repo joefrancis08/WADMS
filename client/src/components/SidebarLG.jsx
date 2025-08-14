@@ -1,84 +1,87 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { logoutIcon, userProfileIcon } from '../assets/icons.js';
-import { LayoutDashboard, Menu, X, UsersRound } from 'lucide-react';
+import { LayoutDashboard, Menu, X, UsersRound, BookCopy, UserRound, ChevronDown, ChevronUp } from 'lucide-react';
 
-const SidebarLG = () => {
+const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Sidebar collapsed state (stored in localStorage)
   const savedState = localStorage.getItem('sidebar-collapsed');
-  const [isCollapsed, setIsCollapsed] = useState(() => {
-    return savedState === 'true';
-  });
+  const [isCollapsed, setIsCollapsed] = useState(() => savedState === 'true');
+  const savedDropdowns = JSON.parse(localStorage.getItem('sidebar-open-dropdowns') || '{}');
+  const [openDropdowns, setOpenDropdowns] = useState(savedDropdowns);
 
-  // Load collapsed state from localStorage
   useEffect(() => {
-    const savedState = localStorage.getItem('sidebar-collapsed');
-    if (savedState === 'true') setIsCollapsed(true);
-  }, []);
+    localStorage.setItem('sidebar-collapsed', isCollapsed.toString());
+  }, [isCollapsed]);
 
-  // Save to localStorage on toggle
   const toggleSidebar = () => {
     const newState = !isCollapsed;
     setIsCollapsed(newState);
+    
     localStorage.setItem('sidebar-collapsed', newState.toString());
   };
 
-  // Change if the sidebar becomes full functional component
-  const menuItems = [
-    { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', link: '/d'},
-    { id: 'verified-users', icon: UsersRound, label: 'Verified Users', link: '/d/verified-users' },
-  ];
+  const toggleDropdown = (id) => {
+    const newState = {
+      ...openDropdowns,
+      [id]: !openDropdowns[id],
+    };
+    setOpenDropdowns(newState);
+    localStorage.setItem('sidebar-open-dropdowns', JSON.stringify(newState));
+  };
 
   return (
-    <aside className={`sidebar-container ${isCollapsed ? 'w-20' : 'w-64'}`}>
+    <aside className={`sidebar-container ${isCollapsed ? 'w-20' : 'w-64'} bg-slate-900 text-white h-screen flex flex-col shadow-lg`}>
       {/* Header */}
-      <header className="flex items-center justify-between px-2 py-2 border-b-1 border-gray-800 bg-slate-900 h-20 shadow-lg">
+      <header className="flex items-center justify-between px-2 py-2 border-b border-gray-800 h-20 shadow-lg">
         {!isCollapsed && (
-          <div className="h-10 flex items-center space-x- transition-all duration-300">
+          <div className="h-10 flex items-center transition-all duration-300">
             <img className="h-14 w-auto" src="/CGS_Logo.png" alt="Logo" />
-            <div
-              className={`transition-all duration-300 ease-in-out overflow-hidden ${
-                isCollapsed ? 'opacity-0 max-w-0' : 'opacity-100 max-w-[200px]'
-              }`}
-            >
+            <div className="ml-2 overflow-hidden">
               <p className="text-2xl font-bold whitespace-nowrap">DMS</p>
               <p className="text-[8px] leading-none whitespace-nowrap">Document</p>
               <p className="text-[8px] leading-none whitespace-nowrap">Management System</p>
             </div>
           </div>
         )}
-        <div>
-          <button onClick={toggleSidebar} className="text-white cursor-pointer pl-1">
-            {
-              isCollapsed 
-                ? <Menu className='opacity-100 hover:opacity-85 ml-4'/>
-                : <X className='opacity-100 hover:opacity-85 ml-2'/>
-            } 
-          </button>
-        </div>
+        <button onClick={toggleSidebar} className="text-white cursor-pointer pl-1">
+          {isCollapsed ? <Menu className='ml-4' /> : <X className='ml-2' />}
+        </button>
       </header>
 
       {/* Navigation */}
-      <nav className="flex-1 mt-4 px-2">
-        <div className='flex flex-col space-y-2'>
+      <nav className="flex-1 mt-4 px-2 overflow-y-auto">
+        <div className="flex flex-col space-y-3">
           {menuItems.map((item) => {
-            const isActive = location.pathname === item.link;
             const Icon = item.icon;
+            const isActive = item.link && location.pathname === item.link;
+            const hasChildren = !!item.children;
+
             return (
-              <Link key={item.id} to={item.link}>
+              <div key={item.id}>
                 <div
-                  className={`flex items-center space-x-5 px-5 py-3 cursor-pointer transition opacity-85 hover:opacity-100 hover:transition
-                    ${isActive 
-                      ? 'bg-gray-600 text-white font-semibold opacity-100 rounded-full transition' 
-                      : 'hover:bg-gray-700 rounded-full'}
-                  `}
+                  onClick={() => {
+                    if (hasChildren) {
+                      toggleDropdown(item.id);
+
+                      if (isCollapsed) {
+                        setIsCollapsed(false);
+                        localStorage.setItem('sidebar-collapsed', 'false'); // ensure persistence on next mount
+                      }
+                    } else {
+                      navigate(item.link);
+                    }
+                  }}
+                  className={`relative flex items-center space-x-5 px-5 py-3 cursor-pointer transition-all ${
+                    isActive ? 'bg-gray-600 text-white font-semibold rounded-full' : 'hover:bg-gray-700 rounded-full'
+                  }`}
                 >
                   <Icon
                     fill={isActive ? 'white' : 'none'}
-                    className={`flex-shrink-0 transition${
-                      isCollapsed ? 'w-6 h-6' 
-                      : 'w-7 h-7'
-                    }`}
-                    aria-hidden="true"
+                    className={`flex-shrink-0 ${isCollapsed ? 'w-6 h-6' : 'w-7 h-7'}`}
                   />
                   <span
                     className={`text-sm whitespace-nowrap overflow-hidden transition ${
@@ -87,37 +90,63 @@ const SidebarLG = () => {
                   >
                     {item.label}
                   </span>
+                  {hasChildren && !isCollapsed && (
+                    <ChevronDown 
+                      className={`absolute right-5 transition-all ${openDropdowns[item.id] && '-rotate-180'}`} 
+                      size={25} />
+                  )}
                 </div>
-              </Link>
+
+                {/* Dropdown items */}
+                {hasChildren && openDropdowns[item.id] && !isCollapsed && (
+                  <div 
+                    className="ml-8 mt-1 space-y-1 transition-all duration-300">
+                    {item.children.map((child) => {
+                      const ChildIcon = child.icon;
+                      const childActive = location.pathname === child.link;
+                      return (
+                        <Link
+                          key={child.id}
+                          to={child.link}
+                          className={`relative flex items-center space-x-3 px-4 py-2 rounded-full transition ${
+                            childActive ? 'bg-gray-600 text-white' : 'hover:bg-gray-700'
+                          }`}
+                        >
+                          <ChildIcon
+                            fill={childActive ? 'white' : 'none'}
+                            className="w-6 h-6"
+                          />
+                          <span className="text-sm">{child.label}</span>
+                          {child.hasNotif && 
+                            unverifiedUserCount && (
+                              <p className='absolute text-xs font-semibold text-slate-600 top-2 right-3 bg-slate-200 px-2 py-1 rounded-full'>{unverifiedUserCount}</p>
+                            )
+                          }
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             );
           })}
         </div>
       </nav>
 
       {/* User Info & Logout */}
-      <div className="px-5 py-4 border-t border-gray-700 bg-slate-900">
+      <div className="px-5 py-4 border-t border-gray-700">
         <div className="flex items-center justify-between">
-          {/* Left: User Icon + Name/Role */}
-          <div
-            className={`flex items-center overflow-hidden transition-all duration-300 ${
-              isCollapsed ? 'gap-0' : 'gap-3'
-            }`}
-          >
-            <img className='opacity-100 hover:opacity-85 cursor-pointer rounded-b-full rounded-t-full w-8 h-8' src={userProfileIcon} alt="User Profile" />
-            <div
-              className={`transition-all duration-200 ease-in-out overflow-hidden ${
-                isCollapsed ? 'opacity-0 max-w-0' : 'opacity-100 max-w-[300px]'
-              }`}
-            >
+          <div className={`flex items-center overflow-hidden transition-all ${isCollapsed ? 'gap-0' : 'gap-3'}`}>
+            <img className='rounded-full w-8 h-8' src={userProfileIcon} alt="User Profile" />
+            <div className={`${isCollapsed ? 'opacity-0 max-w-0' : 'opacity-100 max-w-[300px]'}`}>
               <p className="text-sm font-semibold">Sample User</p>
               <p className="text-xs text-gray-400">Dean</p>
             </div>
           </div>
-          {/* Right: Logout Icon */}
           {!isCollapsed && (
-            <button className="flex flex-col items-center justify-center transition-colors duration-200 border-l-2 border-gray-400 pl-4 cursor-pointer">
-              <img className='opacity-100 hover:opacity-75 w-7 h-7' src={logoutIcon} alt="Logout icon" />
-              <p className="text-xs text-gray-400 opacity-100 hover:opacity-75">Logout</p>
+            <button className="flex flex-col items-center border-l-2 border-gray-400 pl-4 cursor-pointer">
+              <img className='w-7 h-7' src={logoutIcon} alt="Logout icon" />
+              <p className="text-xs text-gray-400">Logout</p>
             </button>
           )}
         </div>

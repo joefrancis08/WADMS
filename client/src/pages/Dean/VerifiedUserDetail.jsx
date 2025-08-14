@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import AdminLayout from '../../components/Layout/Dean-and-Chairman/AdminLayout';
+import AdminLayout from '../../components/Layout/Dean/DeanLayout';
 import { ChevronLeft, Mail, Pen, ShieldCheck, Trash2 } from 'lucide-react';
 import ProfileAvatar from '../../components/ProfileAvatar';
 import TimeAgo from '../../components/TimeAgo';
@@ -26,7 +26,7 @@ const VerifiedUserDetail = () => {
   const { VERIFIED_USERS } = constant;
   const { selectedUser } = data;
   const { loading } = state;
-
+  
   const renderModal = () => {
     switch (modalType) {
 

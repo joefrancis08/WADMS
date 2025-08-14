@@ -1,10 +1,10 @@
-import { Route } from "react-router-dom";
+import { Route, Navigate, replace } from "react-router-dom";
 import PATH from "../constants/path";
 import LandingRedirect from "../pages/LandingRedirect";
 import Register from "../pages/Register";
 import NotFound from "../pages/NotFound";
 
-const { DEFAULT_PATH, REGISTER, NOT_FOUND } = PATH.PUBLIC;
+const { DEFAULT_PATH, REGISTER, NOT_FOUND_DEFAULT, NOT_FOUND_URL } = PATH.PUBLIC;
 
 const publicRouteArray = [
   {
@@ -16,8 +16,12 @@ const publicRouteArray = [
     element: <Register />
   },
   {
-    path: NOT_FOUND,
+    path: NOT_FOUND_URL,
     element: <NotFound />
+  },
+  {
+    path: NOT_FOUND_DEFAULT,
+    element: <Navigate to={NOT_FOUND_URL} replace />
   }
 ];
 

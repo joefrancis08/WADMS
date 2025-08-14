@@ -7,7 +7,6 @@ const AuthContext = createContext();
 // Create Provider Component
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState();
-  const [isLoading, setIsLoading] = useState(true);
 
   const register = (email, fullName, role, status) => {
     setUser({ email, fullName, role, status });
@@ -32,9 +31,6 @@ export const AuthProvider = ({ children }) => {
       } catch (error) {
         console.log('Error: ', error);
         setUser(null);
-        
-      } finally {
-        setIsLoading(false);
       }
     };
 
@@ -42,7 +38,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, register, login, logout }}>
+    <AuthContext.Provider value={{ user, register, login, logout }}>
       { children }
     </AuthContext.Provider>
   );

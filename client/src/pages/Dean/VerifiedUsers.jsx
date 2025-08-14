@@ -3,7 +3,7 @@ import MODAL_TYPE from '../../constants/modalTypes';
 import { BookUser, CircleQuestionMark, EllipsisVertical, Info, Pen, Search, ShieldCheck, ShieldX, Trash, Trash2, UserRound, UserRoundPlus, UserRoundX, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ProfileAvatar from '../../components/ProfileAvatar';
-import AdminLayout from '../../components/Layout/Dean-and-Chairman/AdminLayout';
+import AdminLayout from '../../components/Layout/Dean/DeanLayout';
 import { useVerifiedUsers } from '../../hooks/useVerifiedUsers';
 import Dropdown from '../../components/Dropdown/Dropdown';
 import VerifiedUserSkeletonLoader from '../../components/Loaders/VerifiedUserSkeletonLoader';
@@ -15,11 +15,11 @@ import AddField from '../../components/Form/Dean-and-Chairman/AddField';
 import { emailRegex } from '../../utils/regEx';
 
 const VerifiedUsers = () => {
-  const { UNVERIFIED_USERS, VERIFIED_USER_DETAIL } = PATH.ADMIN
+  const { UNVERIFIED_USERS, VERIFIED_USER_DETAIL } = PATH.DEAN
  
   const { 
     chevron, data, confirmDelete, dropdown, ellipsis, form, info, modal, 
-    navigation, saveButton, state, submit, user, userAdd, userCount, 
+    navigation, saveButton, state, user, userAdd, userCount, 
     userUpdate, 
   } = useVerifiedUsers();
 
@@ -41,6 +41,10 @@ const VerifiedUsers = () => {
   
   const renderDropdown = (user) => {
     const dropDownMenu = [
+      {
+        icon: <UserRound size={22} />,
+        label: 'Assign as Task Force'
+      },
       {
         icon: <BookUser size={20} />,
         label: 'View Details'
@@ -65,7 +69,7 @@ const VerifiedUsers = () => {
               <div
                 onClick={(e) => handleDropdown(e, menu, user)}
                 key={index}
-                className={`flex text-gray-700 text-sm p-2 opacity-100 rounded hover:bg-gray-100 hover:font-medium hover:shadow hover:transition active:opacity-50 ${menu.label === 'Delete' && 'border-t border-gray-300 rounded-t-none mt-2'}`}
+                className={`flex items-center text-gray-700 text-sm p-2 opacity-100 rounded hover:bg-gray-100 hover:font-medium hover:shadow hover:transition active:opacity-50 ${menu.label === 'Delete' && 'border-t border-gray-300 rounded-t-none mt-2'}`}
               >
                 <i className='mr-2'>{menu.icon}</i>
                 <p className={menu.label === 'Delete' ? 'text-red-500' : ''}>
@@ -234,27 +238,18 @@ const VerifiedUsers = () => {
               <div className='relative flex items-center'>
                 <UserRound size={36} color='green'/>
                 <ShieldCheck className='absolute top-4 left-5' color='green' size={20} fill='white'/>
-                <p className='ml-2 mt-1 text-green-900 text-2xl font-bold transition-all ease-in-out duration-300'>
+                <p className='ml-2 mt-1 text-green-900 text-3xl font-bold transition-all ease-in-out duration-300'>
                   Verified Users
                 </p>
               </div>
-              <Link to={UNVERIFIED_USERS}>
-                <div className='relative mr-2'>
-                  <button className='cursor-pointer opacity-65 hover:opacity-100 hover:drop-shadow-sm p-1 rounded-md transition duration-300' title='Unverified Users'>
-                    <UserRound size={36} color='#004030'/>
-                    <div className='absolute left-6 top-6'>
-                      <ShieldX color='red' size={20} fill='white'/>
-                    </div>
-                  </button>
-                  {unverifiedUserCount > 0 && (
-                    <div className='absolute left-7 top-0'>
-                      <p className='text-[11px] font-bold px-2 text-white bg-red-600 rounded-4xl'>
-                        {unverifiedUserCount}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </Link>
+              <div className='flex items-center md:gap-5'>
+                <button 
+                  title='Add User'
+                  onClick={handleAddUser}
+                  className='opacity-65 hover:opacity-100 hover:drop-shadow-sm mr-2 cursor-pointer hover:bg-green-10'>
+                  <UserRoundPlus size={32}/>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -267,14 +262,7 @@ const VerifiedUsers = () => {
               type='text' 
               placeholder='Search...' 
             />
-            <div className='flex items-center md:gap-5'>
-              <button 
-                title='Add User'
-                onClick={handleAddUser}
-                className='opacity-65 hover:opacity-100 hover:drop-shadow-sm mr-2 cursor-pointer hover:bg-green-10'>
-                <UserRoundPlus size={32}/>
-              </button>
-            </div>
+            
           </div>
           
           {!verifiedUsers.length && (
@@ -285,7 +273,7 @@ const VerifiedUsers = () => {
               </p>
               <button
                 onClick={handleAddUser}
-                className='flex items-center gap-1 text-md md:text-xl font-medium bg-slate-400 text-slate-100 rounded-full mt-8 py-2 px-3 md:py-3 md:px-5 shadow cursor-pointer hover:transition-all hover:duration-300 hover:text-slate-800 hover:opacity-90 hover:bg-slate-300 hover:drop-shadow-lg active:opacity-50'
+                className='flex items-center gap-1 text-md md:text-xl font-medium bg-slate-400 text-slate-100 rounded-full mt-8 py-2 px-3 md:py-2 md:px-6 shadow cursor-pointer hover:transition-all hover:duration-300 hover:text-slate-800 hover:opacity-90 hover:bg-slate-300 hover:drop-shadow-lg active:opacity-50'
               >
                 <UserRoundPlus className='w-6 md:w-8 h-auto'/>
                 Add

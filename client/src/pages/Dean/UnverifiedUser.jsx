@@ -1,7 +1,7 @@
 import { ChevronDown, ChevronLeft, ShieldCheck, ShieldUser, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useUnverifiedUsers } from '../../hooks/useUnverifiedUsers';
-import AdminLayout from '../../components/Layout/Dean-and-Chairman/AdminLayout';
+import AdminLayout from '../../components/Layout/Dean/DeanLayout';
 import dateFormatter from '../../utils/dateFormatter';
 import UserProfileModal from '../../components/Modals/UserProfileModal';
 import ConfirmationModal from '../../components/Modals/ConfirmationModal';
@@ -128,15 +128,8 @@ const UnverifiedUsers = () => {
   return (
     <AdminLayout>
       <main className="px-4 py-6 md:px-8 w-full max-w-screen-xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center gap-2 mb-6">
-          <Link to="/d/verified-users" className="text-gray-700">
-            <ChevronLeft className='hover:opacity-65 active:opacity-50'/>
-          </Link>
-        </div>
-
         <div className='bg-gray-400 rounded-t-md'>
-          <h1 className="text-center p-2 text-2xl font-bold text-white">Unverified Users</h1>
+          <h1 className="text-center p-2 text-3xl font-bold text-white">Unverified Users</h1>
         </div>
 
         {/* Table */}
