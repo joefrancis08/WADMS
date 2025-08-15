@@ -30,6 +30,7 @@ const AddField = ({
             {fieldName}
           </label>
           <input
+            autoFocus={true}
             placeholder={placeholder}
             readOnly={isReadOnly}
             type={type}
