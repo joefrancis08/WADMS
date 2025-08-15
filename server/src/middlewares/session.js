@@ -6,13 +6,16 @@ dotenv.config({ quiet: true });
 
 const MySQLStore = expressMysqlSession(session);
 
+const options = {
+
+};
+
 const sessionStore = new MySQLStore({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME
 });
-
 
 const sessionMiddleware = session({
   key: process.env.SESSION_KEY,

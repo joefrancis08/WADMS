@@ -1,4 +1,4 @@
-import { Route, Navigate, replace } from "react-router-dom";
+import { Route, Navigate } from "react-router-dom";
 import PATH from "../constants/path";
 import LandingRedirect from "../pages/LandingRedirect";
 import Register from "../pages/Register";
@@ -21,7 +21,7 @@ const publicRouteArray = [
   },
   {
     path: NOT_FOUND_DEFAULT,
-    element: <Navigate to={NOT_FOUND_URL} replace />
+    element: <Navigate to={NOT_FOUND_URL} replace/>
   }
 ];
 

@@ -5,14 +5,12 @@ import ProtectedRoute from './ProtectedRoute';
 import LoadSpinner from '../components/Loaders/LoadSpinner';
 import Dashboard from '../pages/Dean/Dashboard';
 import UnverifiedUsers from '../pages/Dean/UnverifiedUser';
-import VerifiedUsers from '../pages/Dean/VerifiedUsers';
-import VerifiedUserDetail from '../pages/Dean/VerifiedUserDetail';
 import TaskForce from '../pages/Dean/TaskForce';
 import Documents from '../pages/Dean/Documents';
+import TaskForceDetail from '../pages/Dean/TaskForceDetail';
 
 const { 
-  DASHBOARD, VERIFIED_USERS, 
-  VERIFIED_USER_DETAIL_TEMPLATE, UNVERIFIED_USERS,
+  DASHBOARD, TASK_FORCE_DETAIL_TEMPLATE, UNVERIFIED_USERS,
   UNVERIFIED_USERS_ID, TASK_FORCE, DOCUMENTS
 } = PATH.DEAN;
 const { NOT_FOUND } = PATH.PUBLIC;
@@ -25,24 +23,20 @@ const protectedRoutes = [
     element: <Dashboard />,
   },
   {
-    path: VERIFIED_USERS,
-    element: <VerifiedUsers />,
+    path: TASK_FORCE,
+    element: <TaskForce />,
   },
   {
     path: UNVERIFIED_USERS,
     element: <UnverifiedUsers />,
   },
   {
-    path: VERIFIED_USER_DETAIL_TEMPLATE,
-    element: < VerifiedUserDetail/>,
+    path: TASK_FORCE_DETAIL_TEMPLATE,
+    element: <TaskForceDetail />,
   },
   {
     path: UNVERIFIED_USERS_ID,
     element: <UnverifiedUsers />,
-  },
-  {
-    path: TASK_FORCE,
-    element: <TaskForce />
   },
   {
     path: DOCUMENTS,
@@ -64,7 +58,6 @@ const deanRoutes = protectedRoutes.map(({ path, element }) => (
       <ProtectedRoute 
         allowedStatuses={[VERIFIED, PENDING]} /*PENDING is for test. */
         allowedRoles={[DEAN, UNVERIFIED_USER]} /*UNVERIFIED_USER is for test. */
-        fallbackRoute={NOT_FOUND}
         loader={Loader} 
       >
         {element}

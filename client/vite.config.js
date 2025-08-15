@@ -10,4 +10,8 @@ export default defineConfig({
     tailwindcss(),
     svgr()
   ],
-})
+  server: {
+    // This ensures unknown routes fallback to index.html
+    historyApiFallback: true, 
+  },
+});

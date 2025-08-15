@@ -13,12 +13,9 @@ const PATH = {
 
   DEAN: {
     DASHBOARD: '/d',
-    VERIFIED_USERS: '/d/verified-users',
-    VERIFIED_USER_DETAIL: (id) => `/d/verified-users/${id}`,
-    VERIFIED_USER_DETAIL_TEMPLATE: '/d/verified-users/:id',
-    UNVERIFIED_USERS: '/d/unverified-users',
-    UNVERIFIED_USERS_DETAIL: (id) => `/d/unverified-users/${id}`,
-    TASK_FORCE: '/d/accreditation/task-force',
+    TASK_FORCE: '/d/task-force',
+    TASK_FORCE_DETAIL: (id) => `/d/task-force/${id}`,
+    TASK_FORCE_DETAIL_TEMPLATE: '/d/task-force/:id',
     DOCUMENTS: '/d/accreditation/documents'
   }
 }

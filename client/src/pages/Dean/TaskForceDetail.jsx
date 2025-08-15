@@ -10,8 +10,9 @@ import MODAL_TYPE from '../../constants/modalTypes';
 import ConfirmationModal from '../../components/Modals/ConfirmationModal';
 import UpdateField from '../../components/Form/Dean-and-Chairman/UpdateField';
 import UpdateUserModal from '../../components/Modals/UpdateUserModal';
+import { useEffect } from 'react';
 
-const VerifiedUserDetail = () => {
+const TaskForceDetail = () => {
   const { chevron, confirmDelete, dropdown, form, modal, saveButton, userDelete, userUpdate } = useVerifiedUsers();
   const { handleChevronClick } = chevron;
   const { handleConfirmDelete } = confirmDelete;
@@ -23,7 +24,7 @@ const VerifiedUserDetail = () => {
   const { handleUpdate, handleSaveUpdate } = userUpdate;
 
   const { constant, data, state } = useVerifiedUserDetail();
-  const { VERIFIED_USERS } = constant;
+  const { TASK_FORCE } = constant;
   const { selectedUser } = data;
   const { loading } = state;
   
@@ -108,7 +109,7 @@ const VerifiedUserDetail = () => {
       <main className="px-4 py-6 md:px-8 w-full max-w-screen-xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-2 mb-6">
-          <Link to={VERIFIED_USERS} className="text-gray-700">
+          <Link to={TASK_FORCE} className="text-gray-700">
             <ChevronLeft className='hover:opacity-65 active:opacity-50' size={32}/>
           </Link>
           <p className='text-lg md:text-2xl transition'>
@@ -123,7 +124,7 @@ const VerifiedUserDetail = () => {
             )
           : (
             <div className='flex flex-col w-full h-full bg-gray-50 p-4 rounded-xl border border-gray-100 shadow hover:shadow-lg hover:shadow-gray-300 hover:drop-shadow-sm'>
-              <div className='flex justify-end p-2 md:p-4'>
+              <div className='flex justify-end p-2 md:p-3'>
                 <button
                   title='Update Info'
                   onClick={(e) => handleUpdate(e, selectedUser)}
@@ -180,11 +181,10 @@ const VerifiedUserDetail = () => {
             </div>
           )
         }
-        
       </main>
       {renderModal()}
     </AdminLayout>
   );
 };
 
-export default VerifiedUserDetail;
+export default TaskForceDetail;

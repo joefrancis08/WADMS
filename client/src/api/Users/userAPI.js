@@ -9,7 +9,7 @@ export const checkUserEmail = async (values) => {
     return res;
 
   } catch (error) {
-    console.log("There's an error while checking user email: ", error);
+    console.log("There's an error while checking user email: ", error.response.data);
   }
 };
 
@@ -47,7 +47,7 @@ export const getUserSession = async () => {
     return res.data.user;
 
   } catch (error) {
-    console.log('Error getting user session:', error);
+    console.error('Error getting user session:', error);
   }
 }
 

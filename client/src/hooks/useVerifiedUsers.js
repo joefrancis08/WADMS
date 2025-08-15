@@ -13,7 +13,7 @@ export const useVerifiedUsers = () => {
   const navigate = useNavigate();
 
   const { ADD_USER, UPDATE_USER, USER_DELETION_CONFIRMATION } = MODAL_TYPES;
-  const { VERIFIED_USERS, VERIFIED_USER_DETAIL } = PATH.DEAN;
+  const { VERIFIED_USERS, TASK_FORCE_DETAIL } = PATH.DEAN;
   const { VERIFIED_USER_ADDITION, VERIFIED_USER_UPDATE, VERIFIED_USER_DELETION } = TOAST_MESSAGES;
   const { UNVERIFIED_USER } = USER_ROLES;
   const { VERIFIED } = USER_STATUS;
@@ -117,7 +117,7 @@ export const useVerifiedUsers = () => {
     e.stopPropagation();
 
     if (menu?.label === 'View Details') {
-      navigate(VERIFIED_USER_DETAIL(user?.user_uuid));
+      navigate(TASK_FORCE_DETAIL(user?.user_uuid));
       setActiveDropdownId(null);
 
     } else if (menu?.label === 'Update') {

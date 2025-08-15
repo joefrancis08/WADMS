@@ -30,12 +30,14 @@ export const registerUserController = async (req, res) => {
       });
     }
 
+  
     // Step 5: Proceed to inserting the user to the database if email does not exist and return the response
     const hashedPassword = await bcrypt.hash(password, 10); // Hash password using bcrypt
     await insertUser(userUUID, fullName, email, hashedPassword, role, status);
 
     // Save user to session temporarily after registration
     req.session.user = { userUUID, email, fullName, role, status};
+    req.session.user_id = userUUID;
 
     return res.status(201).json({ 
       message: "User created successfully.", 

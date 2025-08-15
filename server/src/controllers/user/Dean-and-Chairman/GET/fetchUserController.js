@@ -17,7 +17,6 @@ export const fetchAllUsersController = async (req, res) => {
   }
 };
 
-
 export const fetchUserController = ({
   getParam,
   fetchFunction,
