@@ -47,7 +47,7 @@ const AddField = ({
           {isDropdown && (
             <ChevronDown 
               onClick={onChevronClick}
-              className={`absolute top-3.5 right-3.5 text-gray-600 cursor-pointer rounded-full hover:bg-gray-100 hover:text-gray-800 transition duration-300 ${toggleDropdown && 'rotate-180'}`} 
+              className={`absolute top-3.5 right-3.5 text-gray-600 cursor-pointer rounded-full hover:bg-gray-100 hover:text-gray-800 transition duration-300 ${toggleDropdown && '-rotate-180'}`} 
               size={26}
             />
           )}
@@ -56,8 +56,10 @@ const AddField = ({
               <div className='transition-all duration-300'>
                 {Object.entries(USER_ROLES)
                   .filter(([_, roleValue]) => (
-                    roleValue !== 'Unverified User' && 
-                    roleValue !== 'Dean' &&
+                    roleValue !== USER_ROLES.UNVERIFIED_USER && 
+                    roleValue !== USER_ROLES.DEAN &&
+                    roleValue !== USER_ROLES.IA &&
+                    roleValue !== USER_ROLES.ACCREDITOR &&
                     roleValue !== formValue))  
                   .map(([roleKey, roleValue]) => (
                     <p 

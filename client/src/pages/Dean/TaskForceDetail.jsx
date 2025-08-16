@@ -113,7 +113,7 @@ const TaskForceDetail = () => {
             <ChevronLeft className='hover:opacity-65 active:opacity-50' size={32}/>
           </Link>
           <p className='text-lg md:text-2xl transition'>
-            {selectedUser?.full_name ?? 'User'}'s Details
+            {selectedUser?.full_name ?? 'User'}'s Info
           </p>
         </div>
         {loading 
@@ -123,24 +123,24 @@ const TaskForceDetail = () => {
               </div>
             )
           : (
-            <div className='flex flex-col w-full h-full bg-gray-50 p-4 rounded-xl border border-gray-100 shadow hover:shadow-lg hover:shadow-gray-300 hover:drop-shadow-sm'>
-              <div className='flex justify-end p-2 md:p-3'>
+            <div className='flex flex-col w-full h-full bg-gray-50 px-8 rounded-xl border border-gray-100 shadow hover:shadow-lg hover:shadow-gray-300 hover:drop-shadow-sm'>
+              <div className='flex justify-end px-2 md:p-1'>
                 <button
                   title='Update Info'
                   onClick={(e) => handleUpdate(e, selectedUser)}
-                  className='text-gray-500 rounded-full p-4 cursor-pointer transition-all duration-300 hover:text-black hover:bg-gray-200 active:opacity-20'
+                  className='text-slate-900 rounded-full p-4 cursor-pointer transition-all duration-300 hover:bg-gray-200 active:opacity-20'
                 >
                   <Pen />
                 </button>
                 <button
                   title='Delete'
                   onClick={(e) => handleDelete(e, selectedUser)}
-                  className='text-red-400 rounded-full p-4 cursor-pointer transition-all duration-300 hover:text-red-500 hover:bg-gray-200 active:opacity-20'
+                  className='text-red-500 rounded-full p-4 cursor-pointer transition-all duration-300  hover:bg-gray-200 active:opacity-20'
                 >
                   <Trash2 />
                 </button>
               </div>
-              <div className='flex max-lg:flex-col items-center px-5 pb-5 lg:flex-row md:px-20 md:pb-20 justify-evenly'>
+              <div className='flex max-lg:flex-col items-center px-5 pb-5 pt-8 lg:flex-row md:px-20 md:pb-20 justify-evenly border border-slate-300 rounded-xl shadow'>
                 <div className='rounded-full shadow-md'>
                   <ProfileAvatar 
                     name={selectedUser?.full_name} 
@@ -158,18 +158,17 @@ const TaskForceDetail = () => {
                   </div>
                 </div>
               </div>
-              <hr className='w-[50%] m-auto text-gray-400'></hr>
               <div className='px-5 py-5'>
                 <div className='flex flex-col py-5 justify-center lg:flex-row items-center  max-lg:gap-6 lg:justify-between'>
                   <div className='flex max-md:flex-col items-center text-gray-500'>
                     <Mail size={32}/>
-                    <p className='ml-1 text-sm text-center md:text-xl text-gray-800 font-medium'>
+                    <p className='ml-1 text-md text-center md:text-xl text-gray-800 font-medium'>
                       {selectedUser?.email}
                     </p>
                   </div>
                   <div className='flex max-md:flex-col items-center'>
                     <ShieldCheck color='green' size={34}/>
-                    <p className='text-sm md:text-xl text-center text-gray-800 font-medium '>
+                    <p className='text-md md:text-xl text-center text-gray-800 font-medium '>
                       {selectedUser?.created_at && (
                         <TimeAgo date={selectedUser?.created_at} action='Verified'/>
                       )}

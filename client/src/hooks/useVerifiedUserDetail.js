@@ -31,7 +31,6 @@ const useVerifiedUserDetail = () => {
   const handleDelete = (e) => {
     e.stopPropagation();
     setModalType(USER_DELETION_CONFIRMATION);
-    console.log('You click delete.')
   }
 
   return {
@@ -56,8 +55,6 @@ const useVerifiedUserDetail = () => {
       loading,
       modalType
     }
-
-    
   }
 };
 

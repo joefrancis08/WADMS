@@ -1,7 +1,6 @@
 import PATH from '../../constants/path';
 import MODAL_TYPE from '../../constants/modalTypes';
-import { BookUser, CircleQuestionMark, EllipsisVertical, Info, Pen, Plus, Search, ShieldCheck, ShieldX, Trash, Trash2, UserRound, UserRoundPlus, UserRoundX, Users } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { CircleQuestionMark, ContactRound, EllipsisVertical, FolderTree, Link, Pen, Plus, PlusCircle, Search, ShieldCheck, SquareUserRound, Trash2, UserRound, UserRoundCog, UserRoundPlus, UserRoundX } from 'lucide-react';
 import ProfileAvatar from '../../components/ProfileAvatar';
 import AdminLayout from '../../components/Layout/Dean/DeanLayout';
 import { useVerifiedUsers } from '../../hooks/useVerifiedUsers';
@@ -39,21 +38,22 @@ const TaskForce = () => {
   const { handleSaveUpdate } = userUpdate;
   
   // Separate users by role
-  const chairmanUsers = verifiedUsers.filter(u => u.role === 'Chairman');
-  const memberUsers = verifiedUsers.filter(u => u.role === 'Faculty');
+  const chairmanUsers = verifiedUsers.filter(u => u.role === 'Chair');
+  const memberUsers = verifiedUsers.filter(u => u.role === 'Member');
 
   const renderDropdown = (user) => {
     const dropDownMenu = [
-      { icon: <UserRound size={22} />, label: 'Assign as Task Force' },
-      { icon: <BookUser size={20} />, label: 'View Details' },
-      { icon: <Pen size={18} />, label: 'Update' },
+      { icon: <FolderTree size={20} />, label: 'Assign Program and Area' },
+      { icon: <Link size={20} />, label: 'Generate Access Link' },
+      { icon: <SquareUserRound size={20} />, label: 'View Details' },
+      { icon: <Pen size={20} />, label: 'Update' },
       { icon: <Trash2 size={20} color='red'/>, label: 'Delete' }
     ];
 
     return (
       activeDropdownId === user.id && (
-        <div className='absolute top-8 left-22 max-sm:left-10 transition'>
-          <Dropdown width={'w-35'} border={'border border-gray-300 rounded-md'}>
+        <div className='absolute top-8 left-15 max-sm:left-10 transition'>
+          <Dropdown width={'w-50'} border={'border border-gray-300 rounded-md'}>
             {dropDownMenu.map((menu, index) => (
               <div
                 onClick={(e) => handleDropdown(e, menu, user)}
@@ -152,59 +152,61 @@ const TaskForce = () => {
     <AdminLayout>
       <div className='flex-1 p-0 space-y-3'>
         {/* Main Content Header */}
-        <div className='max-md:pt-2 md:sticky top-0 md:z-1 bg-slate-100 shadow-sm'>
+        <div className='max-md:pt-2 md:sticky top-0 md:z-1 bg-gradient-to-r from-slate-900 to-green-500 shadow-md'>
           <div className='flex justify-between items-center p-3'>
             <div className='relative flex items-center'>
-              <UserRound size={36} color='green'/>
-              <ShieldCheck className='absolute top-4 left-5' color='green' size={20} fill='white'/>
-              <p className='ml-2 mt-1 text-green-900 text-3xl font-bold transition-all ease-in-out duration-300'>
+              <UserRoundCog className='text-slate-100' size={36} color='white'/>
+              <p className='ml-2 mt-1 text-slate-100 text-3xl font-bold transition-all ease-in-out duration-300'>
                 Task Force
               </p>
             </div>
             <div className='flex items-center md:gap-5'>
-              <button title='Add User' onClick={handleAddUser} className='opacity-65 hover:opacity-100 hover:drop-shadow-sm mr-2 cursor-pointer hover:bg-green-10'>
-                <UserRoundPlus size={32}/>
+              <button title='Add Task Force' onClick={handleAddUser} className='p-2 rounded-full mr-2 cursor-pointer hover:bg-green-700 active:opacity-50 '>
+                <UserRoundPlus className='text-white' size={32}/>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Search Bar */}
-        <div className='relative px-4 flex justify-start'>
-          <Search className='absolute inset-y-4 inset-x-8 opacity-50'/>
-          <input
-            name='search-bar'
-            className='bg-white pl-14 text-md mt-1 max-sm:w-60 w-1/2 border rounded-full p-3 border-gray-400 focus:outline-none focus:ring-1 focus:ring-green-600 shadow focus:shadow-lg transition duration-300' 
-            type='text' 
-            placeholder='Search...' 
-          />
-        </div>
-
+        {/* Search Bar (show if chair and member more than 0)*/}
+        {(chairmanUsers.length > 0 || memberUsers.length > 0 ) && (
+          <div className='relative px-4 flex justify-start'>
+            <Search className='absolute inset-y-4 inset-x-8 opacity-50'/>
+            <input
+              name='search-bar'
+              className='bg-white pl-14 text-md mt-1 max-sm:w-60 w-1/2 border rounded-full p-3 border-gray-400 focus:outline-none focus:ring-1 focus:ring-green-600 shadow focus:shadow-lg transition duration-300' 
+              type='text' 
+              placeholder='Search...' 
+            />
+          </div>
+        )}
+        
         {/* Display users grouped by role */}
         {loading ? (
           <VerifiedUserSkeletonLoader />
         ) : (
           <div className='px-3 pb-4 space-y-6'>
-            {/* Chairman Section */}
+            {/* Chair Section */}
             {chairmanUsers.length > 0 && (
               <div>
-                <div className='relative'>
-                  <h2 className='p-2 text-2xl bg-green-600 shadow-md text-slate-100 rounded text-center font-bold mb-3'>{chairmanUsers.length > 1 ? 'Chairs' : 'Chair'}</h2>
-                  <Plus className='absolute top-2.5 right-4 text-slate-100 cursor-pointer opacity-90 hover:opacity-100 hover:bg-slate-100 hover:text-green-700 rounded-full transition-all active:opacity-50' size={26}/>
+                <div className='flex justify-center'>
+                  <h2 className='flex items-center justify-center w-full lg:w-[75%] gap-2 p-2 text-2xl bg-gradient-to-l from-slate-900 to-green-600 shadow-md max-lg:text-center text-slate-50 rounded font-bold mb-3'>
+                    {chairmanUsers.length > 1 ? 'CHAIRS' : 'CHAIR'}
+                  </h2>
                 </div>
-                <div className='flex flex-wrap justify-center gap-10 pb-6'>
+                <div className='flex flex-wrap gap-10 pb-6 justify-center'>
                   {chairmanUsers.map(user => (
                     <div
                       onClick={() => navigate(TASK_FORCE_DETAIL(user.user_uuid))}
                       key={user.user_uuid} 
-                      className='relative w-45 sm:w-50 md:w-55 lg:w-60 xl:w-65 p-4 bg-gray-50 rounded-xl border border-gray-100 shadow hover:shadow-xl cursor-pointer transition'
+                      className='relative w-45 sm:w-50 md:w-55 lg:w-60 xl:w-65 p-4 bg-gray-50 rounded-xl border border-slate-300 shadow hover:shadow-xl cursor-pointer transition'
                     >
                       <div onClick={(e) => handleEllipsisClick(e, user)} className='absolute top-0 p-2 right-0 text-gray-500 rounded-bl-xl rounded-tr-lg hover:shadow hover:text-gray-600 hover:bg-gray-200 active:opacity-50 transition'>
                         <EllipsisVertical size={20}/>
                       </div>
                       {renderDropdown(user)}
                       <div className='flex flex-col items-center text-center'>
-                        <ProfileAvatar name={user.full_name} height='h-24' width='w-24' border='rounded-full' />
+                        <ProfileAvatar name={user.full_name} height='h-28' width='w-28' border='rounded-full' />
                         <h3 className='text-lg font-semibold mt-3'>{user.full_name}</h3>
                         <p className='text-sm text-gray-500'>{user.role}</p>
                       </div>
@@ -214,19 +216,18 @@ const TaskForce = () => {
               </div>
             )}
 
-            {/* Faculty Section */}
+            {/* Member Section */}
             {memberUsers.length > 0 && (
               <div>
-                <div className='relative'>
-                  <h2 className='p-2 text-2xl bg-green-700 shadow-md text-slate-100 rounded text-center font-bold mb-3'>{memberUsers.length > 1 ? 'Members' : 'Member'}</h2>
-                  <Plus className='absolute top-2.5 right-4 text-slate-100 cursor-pointer opacity-90 hover:opacity-100 hover:bg-slate-100 hover:text-green-700 rounded-full transition-all active:opacity-50' size={26}/>
+                <div className='flex justify-center'>
+                  <h2 className='flex justify-center p-2 text-2xl bg-gradient-to-l w-full from-slate-900 to-green-600 shadow-md max-lg:text-center text-slate-50 rounded font-bold mb-3'>{memberUsers.length > 1 ? 'MEMBERS' : 'MEMBER'}</h2>
                 </div>
-                <div className='flex flex-wrap justify-center gap-10 pb-6'>
+                <div className='flex flex-wrap gap-10 pb-6 justify-center'>
                   {memberUsers.map(user => (
                     <div
                       onClick={() => navigate(TASK_FORCE_DETAIL(user.user_uuid))}
                       key={user.user_uuid} 
-                      className='relative w-40 sm:w-44 md:w-48 lg:w-52 xl:w-56 p-4 bg-gray-50 rounded-xl border border-gray-100 shadow hover:shadow-xl cursor-pointer transition'
+                      className='relative w-40 sm:w-44 md:w-48 lg:w-52 xl:w-56 p-4 bg-gray-50 rounded-xl border border-slate-300 shadow hover:shadow-xl cursor-pointer transition'
                     >
                       <div onClick={(e) => handleEllipsisClick(e, user)} className='absolute top-0 p-2 right-0 text-gray-500 rounded-bl-xl rounded-tr-lg hover:shadow hover:text-gray-600 hover:bg-gray-200 active:opacity-50 transition'>
                         <EllipsisVertical size={20}/>
@@ -244,11 +245,13 @@ const TaskForce = () => {
             )}
 
             {!loading && chairmanUsers.length === 0 && memberUsers.length === 0 && (
-              <div className='flex flex-col items-center justify-center mt-16 text-slate-700'>
+              <div className='flex flex-col items-center justify-center mt-20 text-slate-700'>
                 <UserRoundX className='w-40 md:w-60 h-auto' />
-                <p className='text-xl md:text-2xl font-medium text-slate-600'>No Added Task Force.</p>
-                <button onClick={handleAddUser} className='flex items-center gap-1 text-md md:text-xl font-medium bg-slate-400 text-slate-100 rounded-full mt-8 py-2 px-3 md:py-2 md:px-6 shadow cursor-pointer hover:transition-all hover:duration-300 hover:text-slate-800 hover:opacity-90 hover:bg-slate-300 hover:drop-shadow-lg active:opacity-50'>
-                  <UserRoundPlus className='w-6 md:w-8 h-auto'/>
+                <p className='text-xl md:text-2xl font-medium text-slate-600'>
+                  No Task Force added at the moment.
+                </p>
+                <button onClick={handleAddUser} className='bg-slate-700 flex items-center gap-1 md:gap-2 text-md md:text-xl font-medium text-slate-100 rounded-full mt-8 py-2 px-3 pr-5 md:py-2 md:px-4 md:pr-6 shadow cursor-pointer hover:bg-slate-500 hover:transition-all hover:duration-300'>
+                  <Plus className='w-6 md:w-7 h-auto'/>
                   Add
                 </button>
               </div>

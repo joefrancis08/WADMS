@@ -13,7 +13,7 @@ export const useVerifiedUsers = () => {
   const navigate = useNavigate();
 
   const { ADD_USER, UPDATE_USER, USER_DELETION_CONFIRMATION } = MODAL_TYPES;
-  const { VERIFIED_USERS, TASK_FORCE_DETAIL } = PATH.DEAN;
+  const { TASK_FORCE, TASK_FORCE_DETAIL } = PATH.DEAN;
   const { VERIFIED_USER_ADDITION, VERIFIED_USER_UPDATE, VERIFIED_USER_DELETION } = TOAST_MESSAGES;
   const { UNVERIFIED_USER } = USER_ROLES;
   const { VERIFIED } = USER_STATUS;
@@ -169,7 +169,7 @@ export const useVerifiedUsers = () => {
       showErrorToast(VERIFIED_USER_DELETION.ERROR);
     }
 
-    options.navigateBack && navigate(VERIFIED_USERS);
+    options.navigateBack && navigate(-1);
 
     handleCloseModal({removeActiveDropdownId: true, removeSelectedUser: true});
   };
