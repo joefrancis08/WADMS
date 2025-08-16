@@ -58,7 +58,7 @@ const TaskForce = () => {
               <div
                 onClick={(e) => handleDropdown(e, menu, user)}
                 key={index}
-                className={`flex items-center text-gray-700 text-sm p-2 rounded hover:bg-gray-100 hover:font-medium hover:shadow hover:transition ${menu.label === 'Delete' && 'border-t border-gray-300 mt-2'}`}
+                className={`flex items-center text-gray-700 text-sm p-2 hover:first:rounded-t hover:last:rounded-b hover:bg-gray-100 hover:font-medium hover:shadow transition-all ${menu.label === 'Delete' && 'border-t border-gray-300 mt-2'}`}
               >
                 <i className='mr-2'>{menu.icon}</i>
                 <p className={menu.label === 'Delete' ? 'text-red-500' : ''}>{menu.label}</p>
