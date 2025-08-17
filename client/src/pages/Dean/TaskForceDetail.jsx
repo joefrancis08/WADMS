@@ -13,6 +13,8 @@ import UpdateUserModal from '../../components/Modals/UpdateUserModal';
 import { useEffect } from 'react';
 
 const TaskForceDetail = () => {
+  const PROFILE_PIC_PATH = import.meta.env.VITE_PROFILE_PIC_PATH;
+
   const { chevron, confirmDelete, dropdown, form, modal, saveButton, userDelete, userUpdate } = useVerifiedUsers();
   const { handleChevronClick } = chevron;
   const { handleConfirmDelete } = confirmDelete;
@@ -144,10 +146,11 @@ const TaskForceDetail = () => {
                 <div className='rounded-full shadow-md'>
                   <ProfileAvatar 
                     name={selectedUser?.full_name} 
+                    profilePic={`${PROFILE_PIC_PATH}/${selectedUser?.profile_pic_path}`}
                     textSize={'text-5xl'}
                     height={'h-40 md:h-65 lg:h-70'} 
                     width={'w-40 md:w-65 lg:w-70'} 
-                    border={'rounded-full'}/>
+                    border={'rounded-full border-4 border-green-700'}/>
                 </div>
                 <div className='flex flex-col items-center gap-y-2'>
                   <div className='flex items-center w-auto text-wrap text-center h-auto pt-8'>
@@ -170,7 +173,7 @@ const TaskForceDetail = () => {
                     <ShieldCheck color='green' size={34}/>
                     <p className='text-md md:text-xl text-center text-gray-800 font-medium '>
                       {selectedUser?.created_at && (
-                        <TimeAgo date={selectedUser?.created_at} action='Verified'/>
+                        <TimeAgo date={selectedUser?.created_at} action='Created'/>
                       )}
                     </p>
                   </div>

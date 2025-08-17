@@ -1,11 +1,11 @@
 import db from "../../../config/db.js";
 
-export const insertUserModel = async (userUUID, fullName, email, password, role, status) => {
+export const insertUserModel = async (userUUID, profilePicPath, fullName, email, role) => {
   const sql = `
-    INSERT INTO user (user_uuid, full_name, email, password, role, status)
-    VALUES (?, ?, ?, ?, ?, ?)  
+    INSERT INTO user (user_uuid, profile_pic_path, full_name, email, role)
+    VALUES (?, ?, ?, ?, ?)  
   `;
 
-  const [result] = await db.execute(sql, [userUUID, fullName, email, password, role, status]);
+  const [result] = await db.execute(sql, [userUUID, profilePicPath, fullName, email, role]);
   return result;
 };

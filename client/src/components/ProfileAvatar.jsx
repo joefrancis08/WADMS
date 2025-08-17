@@ -1,11 +1,21 @@
 import React from 'react';
 
-const ProfileAvatar = ({ name, height, width, border, textSize = 'text-xl' }) => {
+const ProfileAvatar = ({ name, profilePic, height = 'h-12', width = 'w-12', border = 'rounded-full', textSize = 'text-xl' }) => {
   const initials = getInitials(name);
 
   return (
-    <div className={`bg-green-700 text-white flex items-center justify-center font-bold shadow-md ${height} ${width} ${border} ${textSize}`}>
-      {initials}
+    <div className={`flex items-center justify-center ${height} ${width} ${border} bg-gray-200 overflow-hidden`}>
+      {profilePic ? (
+        <img
+          src={profilePic}
+          alt={name}
+          className={`object-cover w-full h-full`} // fill container
+        />
+      ) : (
+        <div className={`bg-green-700 text-white flex items-center justify-center font-bold ${height} ${width} ${border} ${textSize}`}>
+          {initials}
+        </div>
+      )}
     </div>
   );
 };

@@ -15,24 +15,24 @@ export const useVerifiedUsers = () => {
   const { ADD_USER, UPDATE_USER, USER_DELETION_CONFIRMATION } = MODAL_TYPES;
   const { TASK_FORCE, TASK_FORCE_DETAIL } = PATH.DEAN;
   const { VERIFIED_USER_ADDITION, VERIFIED_USER_UPDATE, VERIFIED_USER_DELETION } = TOAST_MESSAGES;
-  const { UNVERIFIED_USER } = USER_ROLES;
+  const { TASK_FORCE_CHAIR, TASK_FORCE_MEMBER } = USER_ROLES;
   const { VERIFIED } = USER_STATUS;
   
-  
-  const unverifiedUsers = useUsersBy('role', UNVERIFIED_USER).users;
-  const [unverifiedUserCount, setUnverifiedUserCount] = useState(0);
-  const { users, loading, error } = useUsersBy('status', VERIFIED);
-  const verifiedUsers = users.data ?? [];
+  const { users, loading, error } = useUsersBy();
+
+  const taskForceChair = users.filter(u => u.role === TASK_FORCE_CHAIR);
+  const taskForceMember = users.filter(u => u.role === TASK_FORCE_MEMBER);
   
   const [activeDropdownId, setActiveDropdownId] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalType, setModalType] = useState(null);
   const [toggleDropdown, setToggleDropdown] = useState(false);
   const [infoClick, setInfoClick] = useState(false);
+  const [profilePic, setProfilePic] = useState(null);
   const [formValue, setFormValue] = useState({
     fullName: '',
     email: '',
-    role: ''
+    role: '',
   });
   const [updatedValue, setUpdatedValue] = useState({
     fullName: '',
@@ -49,14 +49,6 @@ export const useVerifiedUsers = () => {
       })
     }
   }, [selectedUser]);
-
-  useEffect(() => {
-  // Only run this if users is an array (not loading or error)
-  if (Array.isArray(unverifiedUsers?.data)) {
-      const count = unverifiedUsers.data.length;
-      setUnverifiedUserCount(count);
-    }
-  }, [unverifiedUsers]);
 
   const isDisabled = useMemo(() => {
     const unchanged = 
@@ -81,18 +73,25 @@ export const useVerifiedUsers = () => {
     setFormValue(prev => ({...prev, [e.target.name]: e.target.value}));
   };
 
+  const handleProfilePic = (file) => {
+    file && setProfilePic(file);
+  };
+
   const handleInfoClick = () => {
     setInfoClick(!infoClick);
-  }
+  };
 
-  const handleSaveAdded =  async () => {
+  const handleSaveAdded =  async (e) => {
+    e.preventDefault();
     try {
-      const res = await postUser({
-        fullName: formValue.fullName,
-        email: formValue.email,
-        role: formValue.role,
-        password: `${formValue.fullName}0@wdms`
-      });
+      const data = new FormData();
+      data.append('fullName', formValue.fullName);
+      data.append('email', formValue.email);
+      data.append('role', formValue.role);
+      if (profilePic) data.append('profilePic', profilePic);
+
+      const res = await postUser(data);
+
       const emailAlreadyExists = res?.data?.alreadyExist;
       res?.data?.success && showSuccessToast(VERIFIED_USER_ADDITION.SUCCESS);
 
@@ -205,8 +204,8 @@ export const useVerifiedUsers = () => {
     },
 
     data: {
-      unverifiedUsers,
-      verifiedUsers
+      taskForceChair,
+      taskForceMember
     },
 
     confirmDelete: {
@@ -245,6 +244,11 @@ export const useVerifiedUsers = () => {
       navigate,
     },
 
+    profilePic: {
+      setProfilePic,
+      handleProfilePic
+    },
+
     saveButton: {
       isDisabled
     },
@@ -273,9 +277,5 @@ export const useVerifiedUsers = () => {
       handleUpdate,
       handleSaveUpdate
     },
-
-    userCount: {
-      unverifiedUserCount
-    }
   };
 };

@@ -56,9 +56,9 @@ const deanRoutes = protectedRoutes.map(({ path, element }) => (
     path={path}
     element={
       <ProtectedRoute 
-        allowedStatuses={[VERIFIED, PENDING]} /*PENDING is for test. */
-        allowedRoles={[DEAN, UNVERIFIED_USER]} /*UNVERIFIED_USER is for test. */
+        allowedRoles={[]} // Allowed Role: Dean
         loader={Loader} 
+        fallbackRoute={NOT_FOUND}
       >
         {element}
       </ProtectedRoute>

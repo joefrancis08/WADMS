@@ -1,22 +1,12 @@
-import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
-import { handleBlankUserInput } from "../../../../utils/handleBlankField.js";
 import { getUserByEmail, insertUser } from '../../../../models/userModel.js';
-import { USER_STATUS } from '../../../../../../client/src/constants/user.js';
-import { TOAST_MESSAGES } from '../../../../../../client/src/constants/messages.js';
 import sendUserUpdate from '../../../../services/websocket/sendUserUpdate.js';
 
 export const addUserController = async (req, res) => {
   
   // Step 1: Get the data from the request body (from frontend)
-  const {
-    userUUID = uuidv4(),
-    fullName,
-    email,
-    password,
-    role,
-    status = USER_STATUS.VERIFIED
-  } = req.body;
+  const { fullName, email, role} = req.body;
+  const profilePicPath = req.file ? req.file.filename : null;
 
   // Step 2: Check if there are blank inputs
   // if (handleBlankUserInput(res, fullName, email, password, role)) return;
@@ -34,8 +24,8 @@ export const addUserController = async (req, res) => {
     }
 
     // Step 3.2: Proceed to inserting the user to the database if email does not exist and return the response
-    const hashedPassword = await bcrypt.hash(password, 10); // Hash password using bcrypt
-    await insertUser(userUUID, fullName, email, hashedPassword, role, status);
+    const userUUID = uuidv4();
+    await insertUser(userUUID, profilePicPath, fullName, email, role);
 
     sendUserUpdate();
 
@@ -56,7 +46,7 @@ export const addUserController = async (req, res) => {
     }
     console.error(err);
     return res.status(500).json({ 
-      message: "Something went wrong in our server.", 
+      message: "Something went wrong in our server.", err, 
       success: false 
     });
   }

@@ -1,10 +1,11 @@
 import express from 'express';
 import { registerUser, fetchUserById, fetchAllUsers, updateUser, deleteAllUsers, deleteUser, loginUser, checkEmail, userSession, logoutUser, fetchUserByRole, handleUpdateUserRole, fetchUserByStatus, addUser } from '../controllers/user/userController.js';
+import upload from '../middlewares/upload.js';
 
 const userRouter = express.Router();
 
 userRouter.post('/register', registerUser);
-userRouter.post('/add-user', addUser);
+userRouter.post('/add-user', upload.single('profilePic'), addUser);
 userRouter.post('/check-email', checkEmail);
 userRouter.post('/login', loginUser);
 userRouter.post('/logout', logoutUser);

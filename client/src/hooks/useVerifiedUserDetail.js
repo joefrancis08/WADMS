@@ -10,23 +10,22 @@ const useVerifiedUserDetail = () => {
   const { id } = useParams();
   const { TASK_FORCE } = PATH.DEAN;
   const { NOT_FOUND_URL } = PATH.PUBLIC;
-  const { VERIFIED } = USER_STATUS;
   const { USER_DELETION_CONFIRMATION } = MODAL_TYPES;
-  const { users, loading } = useUsersBy('status', VERIFIED);
-  const verifiedUsers = useMemo(() => users.data ?? [], [users.data]);
+  const { users, loading, error } = useUsersBy();
+  const taskForce = useMemo(() => users, [users]);
 
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalType, setModalType] = useState(null);
   
   useEffect(() => {
     let isMounted = true;
-    if (!loading && verifiedUsers.length > 0) {
-      const matchedUser = verifiedUsers.find(u => String(u.user_uuid) === String(id));
+    if (!loading && taskForce.length > 0) {
+      const matchedUser = taskForce.find(u => String(u.user_uuid) === String(id));
       if (isMounted) setSelectedUser(matchedUser);
       if (!matchedUser && isMounted) navigate(NOT_FOUND_URL);
     }
     return () => { isMounted = false; };
-  }, [id, verifiedUsers, NOT_FOUND_URL, navigate, loading]);
+  }, [id, taskForce, NOT_FOUND_URL, navigate, loading]);
 
   const handleDelete = (e) => {
     e.stopPropagation();
@@ -44,7 +43,7 @@ const useVerifiedUserDetail = () => {
 
     data: {
       selectedUser,
-      verifiedUsers
+      taskForce
     }, 
 
     param: {

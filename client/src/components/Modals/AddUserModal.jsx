@@ -24,7 +24,7 @@ const Body = ({ bodyContent }) => {
   );
 };
 
-const Footer = ({ onCancel, onSaveAdded, primaryButton, disabled, secondaryButton }) => {
+const Footer = ({ onCancel, primaryButton, disabled, secondaryButton }) => {
   return (
     <>
       <button
@@ -34,8 +34,8 @@ const Footer = ({ onCancel, onSaveAdded, primaryButton, disabled, secondaryButto
         {secondaryButton}
       </button>
       <button
+        type='submit'
         disabled={disabled}
-        onClick={onSaveAdded}
         className={disabled 
           ? 'flex items-center justify-center bg-gray-500 text-white font-semibold py-2 px-6 rounded-full text-sm opacity-50 cursor-not-allowed transition'
           : 'flex items-center justify-center bg-gradient-to-br from-green-800 to-green-500 text-white px-6 py-2 rounded-full text-sm hover:bg-gradient-to-tr hover:from-green-800 hover:to-green-500 hover:shadow-lg active:opacity-50 transition cursor-pointer'}
@@ -56,25 +56,41 @@ const AddUserModal = ({
   disabled = false,
   secondaryButton
 }) => {
+  const handleSubmit = (e) => {
+    e.preventDefault(); 
+    if (!disabled) {
+      onSaveAdded(e);
+    }
+  };
+
   return (
     <ModalLayout 
       onClose={onClose}
         header={<Header onClose={onClose} headerContent={headerContent}/>}
         headerMargin={'mt-0'}
         headerPosition={'justify-between'}
-        body={<Body bodyContent={bodyContent} />}
         bodyMargin={'my-4'}
         bodyPosition={'justify-start'}
-        footer={
-          <Footer 
-            onCancel={onCancel}
-            onSaveAdded={onSaveAdded}
-            primaryButton={primaryButton}
-            disabled={disabled}
-            secondaryButton={secondaryButton}
-          />
+        body={
+          <form 
+          onSubmit={handleSubmit} 
+          className="w-full" 
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') handleSubmit(e);
+          }}>
+            <Body bodyContent={bodyContent} />
+
+            {/* Footer inside the form so the submit button works */}
+            <div className="flex justify-end mt-6">
+              <Footer 
+                onCancel={onCancel}
+                primaryButton={primaryButton}
+                disabled={disabled}
+                secondaryButton={secondaryButton}
+              />
+            </div>
+          </form>
         }
-        footerPosition={'justify-end'}
     />
   );
 };

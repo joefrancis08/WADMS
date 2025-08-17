@@ -15,16 +15,17 @@ import { emailRegex } from '../../utils/regEx';
 import ImageUpload from '../../components/Form/Upload/ImageUpload';
 
 const TaskForce = () => {
-  const { TASK_FORCE_DETAIL } = PATH.DEAN
- 
+  const PROFILE_PIC_PATH = import.meta.env.VITE_PROFILE_PIC_PATH;
+  const { TASK_FORCE_DETAIL } = PATH.DEAN;
+
   const { 
     chevron, data, confirmDelete, dropdown, ellipsis, form, info, modal, 
-    navigation, saveButton, state, user, userAdd, 
+    navigation, profilePic, saveButton, state, user, userAdd, 
     userUpdate, 
   } = useVerifiedUsers();
 
   const { handleChevronClick } = chevron;
-  const { verifiedUsers } = data;
+  const { taskForceChair, taskForceMember } = data;
   const { handleConfirmDelete } = confirmDelete;
   const { activeDropdownId, handleDropdown, handleDropdownMenuClick, toggleDropdown } = dropdown;
   const { handleEllipsisClick } = ellipsis;
@@ -32,6 +33,7 @@ const TaskForce = () => {
   const { infoClick, handleInfoClick } = info;
   const { modalType, handleCloseModal } = modal;
   const { navigate } = navigation;
+  const { setProfilePic, handleProfilePic } = profilePic;
   const { isDisabled } = saveButton;
   const { loading, error } = state;
   const { selectedUser } = user;
@@ -39,8 +41,6 @@ const TaskForce = () => {
   const { handleSaveUpdate } = userUpdate;
   
   // Separate users by role
-  const chairmanUsers = verifiedUsers.filter(u => u.role === 'Chair');
-  const memberUsers = verifiedUsers.filter(u => u.role === 'Member');
 
   const renderDropdown = (user) => {
     const dropDownMenu = [
@@ -89,7 +89,7 @@ const TaskForce = () => {
             secondaryButton={'Cancel'}
             headerContent={
               <div className='relative flex items-center transition-all duration-300'>
-                <p className='mr-2 text-2xl font-bold text-gray-800'>Add Task Force</p>
+                <p className='mr-2 text-2xl font-bold text-slate-700'>Add Task Force</p>
                 <CircleQuestionMark 
                   onClick={handleInfoClick}
                   className='text-slate-500 hover:text-slate-600 cursor-pointer' size={20}
@@ -105,7 +105,7 @@ const TaskForce = () => {
             }
             bodyContent={
               <>
-                <ImageUpload />
+                <ImageUpload onChange={handleProfilePic} setProfilePic={setProfilePic}/>
                 <AddField fieldName='Full Name' type='text' name='fullName' formValue={formValue.fullName} onChange={handleAddUserInputChange} />
                 <AddField fieldName='Email Address' type='text' name='email' formValue={formValue.email} onChange={handleAddUserInputChange} />
                 <AddField fieldName='Role' type='text' name='role' formValue={formValue.role} toggleDropdown={toggleDropdown} isReadOnly={true} isDropdown={true} isClickable={true} onChevronClick={handleChevronClick} onClick={handleChevronClick} onDropdownMenuClick={handleDropdownMenuClick} onChange={handleAddUserInputChange} />
@@ -171,7 +171,7 @@ const TaskForce = () => {
         </div>
 
         {/* Search Bar (show if chair and member more than 0)*/}
-        {(chairmanUsers.length > 0 || memberUsers.length > 0 ) && (
+        {(taskForceChair.length > 0 || taskForceMember.length > 0 ) && (
           <div className='relative px-4 flex justify-start'>
             <Search className='absolute inset-y-4 inset-x-8 opacity-50'/>
             <input
@@ -189,15 +189,15 @@ const TaskForce = () => {
         ) : (
           <div className='px-3 pb-4 space-y-6'>
             {/* Chair Section */}
-            {chairmanUsers.length > 0 && (
+            {taskForceChair.length > 0 && (
               <div>
                 <div className='flex justify-center'>
                   <h2 className='flex items-center justify-center w-full lg:w-[75%] gap-2 p-2 text-2xl bg-gradient-to-l from-slate-900 to-green-600 shadow-md max-lg:text-center text-slate-50 rounded font-bold mb-3'>
-                    {chairmanUsers.length > 1 ? 'CHAIRS' : 'CHAIR'}
+                    {taskForceChair.length > 1 ? 'CHAIRS' : 'CHAIR'}
                   </h2>
                 </div>
                 <div className='flex flex-wrap gap-10 pb-6 justify-center'>
-                  {chairmanUsers.map(user => (
+                  {taskForceChair.map(user => (
                     <div
                       onClick={() => navigate(TASK_FORCE_DETAIL(user.user_uuid))}
                       key={user.user_uuid} 
@@ -208,7 +208,11 @@ const TaskForce = () => {
                       </div>
                       {renderDropdown(user)}
                       <div className='flex flex-col items-center text-center'>
-                        <ProfileAvatar name={user.full_name} height='h-28' width='w-28' border='rounded-full' />
+                        <ProfileAvatar 
+                          name={user.full_name} 
+                          profilePic={`${PROFILE_PIC_PATH}/${user.profile_pic_path}`}
+                          height='h-36' width='w-36' 
+                          border='rounded-full border-3 border-green-700' />
                         <h3 className='text-lg font-semibold mt-3'>{user.full_name}</h3>
                         <p className='text-sm text-gray-500'>{user.role}</p>
                       </div>
@@ -219,13 +223,15 @@ const TaskForce = () => {
             )}
 
             {/* Member Section */}
-            {memberUsers.length > 0 && (
+            {taskForceMember.length > 0 && (
               <div>
                 <div className='flex justify-center'>
-                  <h2 className='flex justify-center p-2 text-2xl bg-gradient-to-l w-full from-slate-900 to-green-600 shadow-md max-lg:text-center text-slate-50 rounded font-bold mb-3'>{memberUsers.length > 1 ? 'MEMBERS' : 'MEMBER'}</h2>
+                  <h2 className='flex justify-center p-2 text-2xl bg-gradient-to-l w-full from-slate-900 to-green-600 shadow-md max-lg:text-center text-slate-50 rounded font-bold mb-3'>
+                    {taskForceMember.length > 1 ? 'MEMBERS' : 'MEMBER'}
+                  </h2>
                 </div>
                 <div className='flex flex-wrap gap-10 pb-6 justify-center'>
-                  {memberUsers.map(user => (
+                  {taskForceMember.map(user => (
                     <div
                       onClick={() => navigate(TASK_FORCE_DETAIL(user.user_uuid))}
                       key={user.user_uuid} 
@@ -236,7 +242,11 @@ const TaskForce = () => {
                       </div>
                       {renderDropdown(user)}
                       <div className='flex flex-col items-center text-center'>
-                        <ProfileAvatar name={user.full_name} height='h-24' width='w-24' border='rounded-full' />
+                        <ProfileAvatar 
+                          name={user.full_name} 
+                          profilePic={`${PROFILE_PIC_PATH}/${user.profile_pic_path}`}
+                          height='h-28' width='w-28' 
+                          border='rounded-full border-2 border-green-700' />
                         <h3 className='text-lg font-semibold mt-3'>{user.full_name}</h3>
                         <p className='text-sm text-gray-500'>{user.role}</p>
                       </div>
@@ -246,7 +256,7 @@ const TaskForce = () => {
               </div>
             )}
 
-            {!loading && chairmanUsers.length === 0 && memberUsers.length === 0 && (
+            {!loading && taskForceChair.length === 0 && taskForceMember.length === 0 && (
               <div className='flex flex-col items-center justify-center mt-20 text-slate-700'>
                 <UserRoundX className='w-40 md:w-60 h-auto' />
                 <p className='text-xl md:text-2xl font-medium text-slate-600'>

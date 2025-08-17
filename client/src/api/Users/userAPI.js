@@ -13,15 +13,13 @@ export const checkUserEmail = async (values) => {
   }
 };
 
-export const postUser = async ({ fullName, email, role, password }) => {
+export const postUser = async (data) => {
   try {
-    const res = await axios.post(`${API_BASE_URL}/users/add-user`, {
-      fullName,
-      email,
-      role,
-      password
+    const res = await axios.post(`${API_BASE_URL}/users/add-user`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      }
     });
-
     return res;
 
   } catch (error) {
@@ -51,14 +49,23 @@ export const getUserSession = async () => {
   }
 }
 
+export const fetchAllUsers = async (controller) => {
+  try {
+    return await axios.get(`${API_BASE_URL}/users`, {
+      signal: controller.signal
+    });
+
+  } catch(error) {
+    console.error('Error getting all users:', error);
+  }
+}
+
 export const fetchUserBy = async (key, value, controller) => {
   try {
-    const res = await axios.get(`${API_BASE_URL}/users/by-${key}`, {
+    return await axios.get(`${API_BASE_URL}/users/by-${key}`, {
       params: { [key]: value },
       signal: controller.signal // Attach signal
     });
-
-    return res;
 
   } catch (error) {
     console.log(`Error fetching user by ${key}:`, error);
@@ -67,13 +74,12 @@ export const fetchUserBy = async (key, value, controller) => {
 
 export const updateUser = async (newFullName, newEmail, newRole, uuid) => {
   try {
-    const res = await axios.patch(`${API_BASE_URL}/users/${uuid}`, {
+    return await axios.patch(`${API_BASE_URL}/users/${uuid}`, {
       fullName: newFullName,
       email: newEmail,
       role: newRole
     }
   );
-    return res.data;
 
   } catch (error) {
     console.log('Error:', error);

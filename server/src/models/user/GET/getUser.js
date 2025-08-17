@@ -8,7 +8,7 @@ export const getAllUsersModel = async () => {
 
 // GET User(s) By
 export const getUserBy = async (column, value, single = true) => {
-  const allowedColumns = ['user_uuid', 'email', 'role', 'status'];
+  const allowedColumns = ['user_uuid', 'email', 'role', 'is_active'];
 
   if (!allowedColumns.includes(column)) {
     throw new Error('Invalid column specified');

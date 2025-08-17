@@ -44,9 +44,7 @@ const VerifiedUserSkeletonLoader = () => {
       {/* Chair Section */}
       <div>
         <div className="flex justify-center">
-          <h2 className="flex items-center justify-center w-full lg:w-[75%] gap-2 p-2 text-2xl bg-gradient-to-l from-slate-900 to-green-600 shadow-md max-lg:text-center text-slate-50 rounded font-bold mb-3">
-            CHAIRS
-          </h2>
+          <div className="w-full lg:w-[75%] p-6 bg-gray-300 rounded-md mb-3 animate-pulse"></div>
         </div>
         <div className="flex flex-wrap gap-10 pb-6 justify-center">
           {chairSkeletons}
@@ -56,9 +54,7 @@ const VerifiedUserSkeletonLoader = () => {
       {/* Member Section */}
       <div>
         <div className="flex justify-center">
-          <h2 className="flex justify-center p-2 text-2xl bg-gradient-to-l w-full from-slate-900 to-green-600 shadow-md max-lg:text-center text-slate-50 rounded font-bold mb-3">
-            MEMBERS
-          </h2>
+          <div className="w-full p-6 bg-gray-300 rounded-md mb-3 animate-pulse"></div>
         </div>
         <div className="flex flex-wrap gap-10 pb-6 justify-center">
           {memberSkeletons}

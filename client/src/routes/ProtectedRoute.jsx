@@ -3,8 +3,8 @@ import { useAuth } from '../contexts/AuthContext';
 
 const ProtectedRoute = ({ 
   children, 
-  allowedStatuses = [], 
   allowedRoles = [],
+  fallbackRoute,
   loader
 }) => {
   const { user, isLoading } = useAuth();
@@ -20,10 +20,9 @@ const ProtectedRoute = ({
   }
 
   // 3. Safe to read status and role
-  const isStatusAllowed = allowedStatuses.length === 0 || allowedStatuses.includes(user.status);
   const isRoleAllowed = allowedRoles.length === 0 || allowedRoles.includes(user.role);
 
-  if (!isStatusAllowed || !isRoleAllowed) {
+  if (!isRoleAllowed) {
     return <Navigate to={fallbackRoute} replace />;
   }
 
