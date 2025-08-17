@@ -1,8 +1,6 @@
 import { getUserBy } from "../../../../models/user/GET/getUser.js";
 import { updateUserInfo } from "../../../../models/userModel.js";
 import sendUserUpdate from "../../../../services/websocket/sendUserUpdate.js";
-import { handleBlankUserInput } from "../../../../utils/handleBlankField.js";
-
 
 export const updateUserController = async (req, res) => {
   const userUUID = req.params.uuid;

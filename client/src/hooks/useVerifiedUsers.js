@@ -142,7 +142,7 @@ export const useVerifiedUsers = () => {
     try {
       const res = await updateUser(fullName, email, role, selectedUser?.user_uuid);
 
-      res.success && showSuccessToast(VERIFIED_USER_UPDATE.SUCCESS);
+      res.data.success && showSuccessToast(VERIFIED_USER_UPDATE.SUCCESS);
 
     } catch (error) {
       console.log('Error updating user: ', error)
