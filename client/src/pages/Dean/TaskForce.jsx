@@ -1,6 +1,6 @@
 import PATH from '../../constants/path';
 import MODAL_TYPE from '../../constants/modalTypes';
-import { CircleQuestionMark, ContactRound, EllipsisVertical, FolderTree, Link, Pen, Plus, PlusCircle, Search, ShieldCheck, SquareUserRound, Trash2, UserRound, UserRoundCog, UserRoundPlus, UserRoundX } from 'lucide-react';
+import { CircleQuestionMark, ContactRound, EllipsisVertical, FolderTree, Link, Pen, Plus, PlusCircle, Search, ShieldCheck, SquareUserRound, Trash2, UserRound, UserRoundCog, UserRoundPen, UserRoundPlus, UserRoundX } from 'lucide-react';
 import ProfileAvatar from '../../components/ProfileAvatar';
 import AdminLayout from '../../components/Layout/Dean/DeanLayout';
 import { useVerifiedUsers } from '../../hooks/useVerifiedUsers';
@@ -47,7 +47,7 @@ const TaskForce = () => {
       { icon: <FolderTree size={20} />, label: 'Assign Program and Area' },
       { icon: <Link size={20} />, label: 'Generate Access Link' },
       { icon: <SquareUserRound size={20} />, label: 'View Details' },
-      { icon: <Pen size={20} />, label: 'Update' },
+      { icon: <UserRoundPen size={20} />, label: 'Update' },
       { icon: <Trash2 size={20} color='red'/>, label: 'Delete' }
     ];
 
@@ -97,7 +97,7 @@ const TaskForce = () => {
                 {infoClick && (
                   <div onClick={handleInfoClick} className='w-40 h-auto bg-slate-800 absolute top-3 left-52 rounded z-40 transition-opacity duration-500'>
                     <p className='text-slate-100 text-xs p-2'>
-                      When you add user, their status will be Verified and their password will be like 'fullname0@wdms'.
+                      The "Add" button is enabled only if all mandatory fields (excluding the profile picture) are completed and the email is correctly formatted.
                     </p>
                   </div>
                 )}
