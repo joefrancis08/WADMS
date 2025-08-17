@@ -12,6 +12,7 @@ import ConfirmationModal from '../../components/Modals/ConfirmationModal';
 import AddUserModal from '../../components/Modals/AddUserModal';
 import AddField from '../../components/Form/Dean-and-Chairman/AddField';
 import { emailRegex } from '../../utils/regEx';
+import ImageUpload from '../../components/Form/Upload/ImageUpload';
 
 const TaskForce = () => {
   const { TASK_FORCE_DETAIL } = PATH.DEAN
@@ -104,6 +105,7 @@ const TaskForce = () => {
             }
             bodyContent={
               <>
+                <ImageUpload />
                 <AddField fieldName='Full Name' type='text' name='fullName' formValue={formValue.fullName} onChange={handleAddUserInputChange} />
                 <AddField fieldName='Email Address' type='text' name='email' formValue={formValue.email} onChange={handleAddUserInputChange} />
                 <AddField fieldName='Role' type='text' name='role' formValue={formValue.role} toggleDropdown={toggleDropdown} isReadOnly={true} isDropdown={true} isClickable={true} onChevronClick={handleChevronClick} onClick={handleChevronClick} onDropdownMenuClick={handleDropdownMenuClick} onChange={handleAddUserInputChange} />

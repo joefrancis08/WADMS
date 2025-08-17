@@ -1,24 +1,71 @@
 const VerifiedUserSkeletonLoader = () => {
-  const skeletonCards = [];
-  for (let i = 0; i < 20; i++) {
-    skeletonCards.push(
-      <div className='relative bg-gray-50 p-4 rounded-xl border border-gray-100 shadow  transition duration-300 hover:shadow-xl active:shadow cursor-pointer animate-pulse'>
-        <div className='flex flex-col items-center text-center'>
-          <div className='w-24 h-24 bg-gray-400 rounded-full mb-2'></div>
-          <div className='w-40 h-5 bg-gray-400 rounded-full mb-2'></div>
-          <div className='w-30 h-5 bg-gray-400 rounded-full mb-2'></div>
-        </div>
+  // create chair skeletons
+  const chairSkeletons = Array.from({ length: 2 }).map((_, i) => (
+    <div
+      key={`chair-${i}`}
+      className="relative w-45 sm:w-50 md:w-55 lg:w-60 xl:w-65 p-4 bg-gray-50 rounded-xl border border-slate-200 shadow animate-pulse"
+    >
+      {/* Ellipsis placeholder */}
+      <div className="absolute top-0 right-0 p-2 w-6 h-6 bg-gray-300 rounded-bl-xl rounded-tr-lg"></div>
+
+      <div className="flex flex-col items-center text-center">
+        {/* Avatar */}
+        <div className="w-28 h-28 bg-gray-300 rounded-full mb-3"></div>
+        {/* Name */}
+        <div className="w-36 h-5 bg-gray-300 rounded-full mb-2"></div>
+        {/* Role */}
+        <div className="w-28 h-4 bg-gray-300 rounded-full"></div>
       </div>
-    );
-  }
+    </div>
+  ));
+
+  // create member skeletons
+  const memberSkeletons = Array.from({ length: 6 }).map((_, i) => (
+    <div
+      key={`member-${i}`}
+      className="relative w-40 sm:w-44 md:w-48 lg:w-52 xl:w-56 p-4 bg-gray-50 rounded-xl border border-slate-200 shadow animate-pulse"
+    >
+      {/* Ellipsis placeholder */}
+      <div className="absolute top-0 right-0 p-2 w-6 h-6 bg-gray-300 rounded-bl-xl rounded-tr-lg"></div>
+
+      <div className="flex flex-col items-center text-center">
+        {/* Avatar */}
+        <div className="w-24 h-24 bg-gray-300 rounded-full mb-3"></div>
+        {/* Name */}
+        <div className="w-32 h-5 bg-gray-300 rounded-full mb-2"></div>
+        {/* Role */}
+        <div className="w-24 h-4 bg-gray-300 rounded-full"></div>
+      </div>
+    </div>
+  ));
 
   return (
-    <div className='px-3 pb-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6'>
-      {skeletonCards.map((card, index) => (
-        <div key={index}>{card}</div>
-      ))}
+    <div className="px-3 pb-4 space-y-6">
+      {/* Chair Section */}
+      <div>
+        <div className="flex justify-center">
+          <h2 className="flex items-center justify-center w-full lg:w-[75%] gap-2 p-2 text-2xl bg-gradient-to-l from-slate-900 to-green-600 shadow-md max-lg:text-center text-slate-50 rounded font-bold mb-3">
+            CHAIRS
+          </h2>
+        </div>
+        <div className="flex flex-wrap gap-10 pb-6 justify-center">
+          {chairSkeletons}
+        </div>
+      </div>
+
+      {/* Member Section */}
+      <div>
+        <div className="flex justify-center">
+          <h2 className="flex justify-center p-2 text-2xl bg-gradient-to-l w-full from-slate-900 to-green-600 shadow-md max-lg:text-center text-slate-50 rounded font-bold mb-3">
+            MEMBERS
+          </h2>
+        </div>
+        <div className="flex flex-wrap gap-10 pb-6 justify-center">
+          {memberSkeletons}
+        </div>
+      </div>
     </div>
-  )
-}
+  );
+};
 
 export default VerifiedUserSkeletonLoader;
