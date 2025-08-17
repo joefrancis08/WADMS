@@ -71,6 +71,7 @@ const AddUserModal = ({
         headerPosition={'justify-between'}
         bodyMargin={'my-4'}
         bodyPosition={'justify-start'}
+        hasHR={false}
         body={
           <form 
           onSubmit={handleSubmit} 

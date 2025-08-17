@@ -2,6 +2,7 @@ const ModalLayout = ({
   onClose, 
   header, 
   body, 
+  hasHR = true,
   footer,
   headerMargin, 
   headerPosition,
@@ -32,7 +33,7 @@ const ModalLayout = ({
         <div className={`w-full flex flex-col ${bodyMargin || 'my-4 md:my-8'} ${bodyPosition || 'justify-center items-center'}`}>
           {body}
         </div>
-        <hr className='text-gray-300'></hr>
+        {hasHR && (<hr className='text-gray-300'></hr>)}
 
         {/* Footer */}
         <div className={`py-4 flex items-center ${footerMargin} ${footerPosition || 'justify-evenly'}`}>
