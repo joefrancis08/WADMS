@@ -14,8 +14,8 @@ const PATH = {
   DEAN: {
     DASHBOARD: '/d',
     TASK_FORCE: '/d/task-force',
-    TASK_FORCE_DETAIL: (role, id) => `/d/task-force/${role}/${id}`,
-    TASK_FORCE_DETAIL_TEMPLATE: '/d/task-force/:role/:id',
+    TASK_FORCE_DETAIL: (id) => `/d/task-force/${id}`,
+    TASK_FORCE_DETAIL_TEMPLATE: '/d/task-force/:id',
     DOCUMENTS: '/d/accreditation/documents'
   }
 }

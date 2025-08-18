@@ -201,7 +201,7 @@ const TaskForce = () => {
                 <div className='flex flex-wrap gap-10 pb-6 justify-center'>
                   {taskForceChair.map(user => (
                     <div
-                      onClick={() => navigate(TASK_FORCE_DETAIL(user.role.toLowerCase(), user.user_uuid))}
+                      onClick={() => navigate(TASK_FORCE_DETAIL(user.user_uuid))}
                       key={user.user_uuid} 
                       className='relative w-45 sm:w-50 md:w-55 lg:w-60 xl:w-65 p-4 bg-gray-50 rounded-xl border border-slate-300 shadow hover:shadow-xl cursor-pointer transition'
                     >
@@ -235,7 +235,7 @@ const TaskForce = () => {
                 <div className='flex flex-wrap gap-10 pb-6 justify-center'>
                   {taskForceMember.map(user => (
                     <div
-                      onClick={() => navigate(TASK_FORCE_DETAIL(user.role.toLowerCase(), user.user_uuid))}
+                      onClick={() => navigate(TASK_FORCE_DETAIL(user.user_uuid))}
                       key={user.user_uuid} 
                       className='relative w-40 sm:w-44 md:w-48 lg:w-52 xl:w-56 p-4 bg-gray-50 rounded-xl border border-slate-300 shadow hover:shadow-xl cursor-pointer transition'
                     >
