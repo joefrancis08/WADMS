@@ -1,7 +1,6 @@
 import PATH from '../../constants/path';
 import MODAL_TYPE from '../../constants/modalTypes';
 import { CircleQuestionMark, ContactRound, EllipsisVertical, FolderTree, Link, Pen, Plus, PlusCircle, Search, ShieldCheck, SquareUserRound, Trash2, UserRound, UserRoundCog, UserRoundPen, UserRoundPlus, UserRoundX } from 'lucide-react';
-import ProfileAvatar from '../../components/ProfileAvatar';
 import AdminLayout from '../../components/Layout/Dean/DeanLayout';
 import { useVerifiedUsers } from '../../hooks/useVerifiedUsers';
 import Dropdown from '../../components/Dropdown/Dropdown';
@@ -13,6 +12,8 @@ import AddUserModal from '../../components/Modals/AddUserModal';
 import AddField from '../../components/Form/Dean-and-Chairman/AddField';
 import { emailRegex } from '../../utils/regEx';
 import ImageUpload from '../../components/Form/Upload/ImageUpload';
+import ProfilePicture from '../../components/ProfilePicture';
+import getProfilePicPath from '../../utils/getProfilePicPath';
 
 const TaskForce = () => {
   const PROFILE_PIC_PATH = import.meta.env.VITE_PROFILE_PIC_PATH;
@@ -209,9 +210,9 @@ const TaskForce = () => {
                       </div>
                       {renderDropdown(user)}
                       <div className='flex flex-col items-center text-center'>
-                        <ProfileAvatar 
+                        <ProfilePicture
                           name={user.full_name} 
-                          profilePic={`${PROFILE_PIC_PATH}/${user.profile_pic_path}`}
+                          profilePic={getProfilePicPath(user.profile_pic_path)}
                           height='h-36' width='w-36' 
                           border='rounded-full border-3 border-green-700' />
                         <h3 className='text-lg font-semibold mt-3'>{user.full_name}</h3>
@@ -243,9 +244,9 @@ const TaskForce = () => {
                       </div>
                       {renderDropdown(user)}
                       <div className='flex flex-col items-center text-center'>
-                        <ProfileAvatar 
+                        <ProfilePicture
                           name={user.full_name} 
-                          profilePic={`${PROFILE_PIC_PATH}/${user.profile_pic_path}`}
+                          profilePic={getProfilePicPath(user.profile_pic_path)}
                           height='h-28' width='w-28' 
                           border='rounded-full border-2 border-green-700' />
                         <h3 className='text-lg font-semibold mt-3'>{user.full_name}</h3>

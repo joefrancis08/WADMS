@@ -13,7 +13,7 @@ const {
   DASHBOARD, TASK_FORCE_DETAIL_TEMPLATE, UNVERIFIED_USERS,
   UNVERIFIED_USERS_ID, TASK_FORCE, DOCUMENTS
 } = PATH.DEAN;
-const { NOT_FOUND } = PATH.PUBLIC;
+const { NOT_FOUND_URL } = PATH.PUBLIC;
 const { DEAN, UNVERIFIED_USER } = USER_ROLES; // UNVERIFIED_USER is for test.
 const { PENDING, VERIFIED } = USER_STATUS;
 
@@ -58,7 +58,7 @@ const deanRoutes = protectedRoutes.map(({ path, element }) => (
       <ProtectedRoute 
         allowedRoles={[]} // Allowed Role: Dean
         loader={Loader} 
-        fallbackRoute={NOT_FOUND}
+        fallbackRoute={NOT_FOUND_URL}
       >
         {element}
       </ProtectedRoute>
