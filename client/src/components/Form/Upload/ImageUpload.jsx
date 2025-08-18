@@ -1,15 +1,28 @@
 import { Pen, Upload, X } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { showErrorToast } from "../../../utils/toastNotification";
 
-const ImageUpload = ({ onChange, setProfilePic }) => {
+const ImageUpload = (
+  { 
+    onChange = () => {}, 
+    setProfilePic = () => {}, 
+    setUpdatedProfilePic,
+    imageValue 
+  }
+) => {
   const fileRef = useRef();
+  const profile_pic_path = import.meta.env.VITE_PROFILE_PIC_PATH;
 
   const [preview, setPreview] = useState(null);
 
-  const MAX_MB = 5; // 5 MB limit
+  useEffect(() => {
+    if (imageValue) {
+      setPreview(`${profile_pic_path}/${imageValue}`); // show existing image from props
+    }
+  }, [imageValue, profile_pic_path]);
 
   const handleFileChange = (e) => {
+    const MAX_MB = 5; // 5 MB limit
     const file = e.target.files[0];
     if (!file) return;
 
@@ -34,6 +47,7 @@ const ImageUpload = ({ onChange, setProfilePic }) => {
   const handleRemove = () => {
     setPreview(null);
     setProfilePic(null);
+    setUpdatedProfilePic(null);
     if (fileRef.current) fileRef.current.value = null; // reset input
   }
 
@@ -45,18 +59,18 @@ const ImageUpload = ({ onChange, setProfilePic }) => {
           <img
             src={preview}
             alt="Preview"
-            className="w-40 h-40 object-cover rounded-full border-4 border-green-600 shadow-lg transition-all"
+            className="w-32 h-32 object-cover rounded-full border-4 border-green-600 shadow-lg transition-all"
           />
           <button
             title="Remove"
             onClick={handleRemove}
-            className="absolute top-0 right-2 bg-white rounded-full p-1 shadow hover:bg-white cursor-pointer"
+            className="absolute top-0 right-0 bg-slate-100 border border-slate-600/20 rounded-full p-1 shadow hover:bg-slate-50 cursor-pointer transition-all"
           >
-            <X className="text-slate-800 w-5 h-5 opacity-70 hover:opacity-100" />
+            <X className="text-slate-800 w-4 h-4 opacity-80 hover:opacity-100" />
           </button>
         </div>
       ) : (
-        <div className="w-40 h-40 flex items-center justify-center rounded-full border border-dashed text-gray-400">
+        <div className="w-32 h-32 flex items-center justify-center rounded-full border border-dashed text-gray-400">
           Profile Picture
         </div>
       )}

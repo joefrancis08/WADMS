@@ -72,17 +72,17 @@ export const fetchUserBy = async (key, value, controller) => {
   }
 }
 
-export const updateUser = async (newFullName, newEmail, newRole, uuid) => {
+export const updateUser = async (updatedData, uuid) => {
   try {
-    return await axios.patch(`${API_BASE_URL}/users/${uuid}`, {
-      fullName: newFullName,
-      email: newEmail,
-      role: newRole
+    return await axios.patch(`${API_BASE_URL}/users/${uuid}`, updatedData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
     }
   );
 
   } catch (error) {
-    console.log('Error:', error);
+    console.log('Error updating data:', error);
     console.log(error.response.data);
   }
 }

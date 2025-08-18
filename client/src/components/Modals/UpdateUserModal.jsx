@@ -5,17 +5,16 @@ import ModalLayout from "../Layout/ModalLayout";
 const UpdateUserModalHeader = ({ onClose, headerContent }) => {
   return (
     <>
+      <p className="text-2xl font-bold text-gray-800">
+        {headerContent}
+      </p>
       <button
         onClick={onClose}
-        className="absolute top-5 right-6 text-gray-400 hover:text-gray-600 transition cursor-pointer"
+        className="text-slate-400 hover:text-slate-600 transition cursor-pointer"
         aria-label="Close"
       >
         <X />
       </button>
-
-      <p className="text-2xl font-bold text-gray-800">
-        {headerContent}
-      </p>
     </>
   );
 };
@@ -45,6 +44,7 @@ const UpdateUserModalFooter = ({
         {secondaryButton}
       </button>
       <button
+        type='submit'
         disabled={disabled}
         onClick={onSaveClick}
         className={disabled 
@@ -67,6 +67,11 @@ const UpdateUserModal = ({
   disabled = false,
   secondaryButton 
 }) => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    !disabled && onSaveClick(e);
+  }
+
   return (
     <>
       <ModalLayout 
@@ -74,19 +79,28 @@ const UpdateUserModal = ({
         header={<UpdateUserModalHeader onClose={onClose} headerContent={headerContent}/>}
         headerMargin={'mt-0'}
         headerPosition={'justify-start'}
-        body={<UpdateUserModalBody bodyContent={bodyContent}/>}
-        bodyMargin={'my-4'}
+        bodyMargin={'mt-2 mb-3'}
         bodyPosition={'justify-start'}
-        footer={
-          <UpdateUserModalFooter 
-            onCancelClick={onCancelClick} 
-            onSaveClick={onSaveClick} 
-            primaryButton={primaryButton}
-            disabled={disabled}
-            secondaryButton={secondaryButton}
-          />
+        body={
+          <form 
+            onSubmit={handleSubmit} 
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleSubmit(e);
+            }
+          }>
+            <UpdateUserModalBody bodyContent={bodyContent}/>
+
+            <div className='flex justify-end mt-6'>
+              <UpdateUserModalFooter 
+                onCancelClick={onCancelClick} 
+                primaryButton={primaryButton}
+                disabled={disabled}
+                secondaryButton={secondaryButton}
+              />
+            </div>
+            
+          </form>
         }
-        footerPosition={'justify-end'}
       />
     </>
   );

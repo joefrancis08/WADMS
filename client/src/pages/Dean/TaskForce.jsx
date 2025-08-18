@@ -34,7 +34,7 @@ const TaskForce = () => {
   const { infoClick, handleInfoClick } = info;
   const { modalType, handleCloseModal } = modal;
   const { navigate } = navigation;
-  const { setProfilePic, handleProfilePic } = profilePic;
+  const { setProfilePic, handleProfilePic, setUpdatedProfilePic, handleProfilePicUpdate } = profilePic;
   const { isDisabled } = saveButton;
   const { loading, error } = state;
   const { selectedUser } = user;
@@ -81,12 +81,7 @@ const TaskForce = () => {
             onCancel={() => handleCloseModal({isForAddUser: true, untoggleDropdown: true, clearForm: true})}
             onSaveAdded={handleSaveAdded}
             primaryButton={'Add'}
-            disabled={
-              formValue.fullName.trim() === '' ||
-              formValue.email.trim() === '' ||
-              formValue.role.trim() === '' ||
-              !emailRegex.test(formValue.email)
-            }
+            disabled={isDisabled}
             secondaryButton={'Cancel'}
             headerContent={
               <div className='relative flex items-center transition-all duration-300'>
@@ -121,15 +116,21 @@ const TaskForce = () => {
             onClose={() => handleCloseModal({untoggleDropdown: true, removeSelectedUser: true})}
             onCancelClick={() => handleCloseModal({untoggleDropdown: true, removeSelectedUser: true})}
             onSaveClick={handleSaveUpdate}
-            headerContent={`Update ${selectedUser?.full_name}'s Info`}
+            headerContent={`Update ${selectedUser.full_name}'s Info`}
             primaryButton={'Save Update'}
             disabled={isDisabled}
             secondaryButton={'Cancel'}
             bodyContent={
               <>
+                <ImageUpload 
+                  onChange={handleProfilePicUpdate}
+                  setUpdatedProfilePic={setUpdatedProfilePic} 
+                  imageValue={selectedUser?.profile_pic_path} 
+                />
                 <UpdateField fieldName='Full Name' type='text' name='fullName' formValue={updatedValue.fullName} onChange={handleChange} />
                 <UpdateField fieldName='Email Address' type='text' name='email' formValue={updatedValue.email} onChange={handleChange} />
                 <UpdateField fieldName='Role' type='text' name='role' formValue={updatedValue.role} onClick={handleChevronClick} onChevronClick={handleChevronClick} onDropdownMenuClick={handleDropdownMenuClick} toggleDropdown={toggleDropdown} isReadOnly={true} isClickable={true} hasDropdown={true} />
+                <hr className='text-gray-300'></hr>
               </>
             }
           />
@@ -141,10 +142,29 @@ const TaskForce = () => {
             onCancelClick={() => handleCloseModal({removeActiveDropdownId: true, removeSelectedUser: true})}
             onConfirmClick={() => handleConfirmDelete(selectedUser?.user_uuid)}
             isDelete={true}
-            primaryButton={'Confirm'}
+            primaryButton={'Delete'}
             secondaryButton={'Cancel'}
-            headerContent={<p className="text-2xl font-bold text-red-600">Confirm Delete</p>}
-            bodyContent={<p className='pb-4'>Are you sure you want to delete {selectedUser?.full_name}?</p>}
+            bodyContent={
+              <>
+                <div className='flex flex-col justify-center'>
+                  <div className='flex justify-center px-4'>
+                    <div className='p-4 bg-red-400/20 rounded-full'>
+                      <Trash2 className='text-red-500/80' size={24}/>
+                    </div>
+                  </div>
+                  <div className='pb-6 pt-1'>
+                    <p className='text-center text-xl text-red-500 font-medium'>
+                      Delete
+                    </p>
+                  </div>
+                  <div>
+                    <p className='pb-6 text-lg text-slate-800 text-center'>
+                      Are you sure you want to delete <span className='font-medium text-slate-900'>{selectedUser?.full_name}</span>?
+                    </p>
+                  </div>
+                </div>
+              </>
+            }
           />
         );
       default:

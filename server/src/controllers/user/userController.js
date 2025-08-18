@@ -6,7 +6,6 @@ import { userSessionController } from './Dean-and-Chairman/GET/userSessionContro
 import { logoutUserController } from './Dean-and-Chairman/POST/logoutUserController.js';
 import { fetchAllUsersController, fetchUserController } from './Dean-and-Chairman/GET/fetchUserController.js';
 import { updateUserController } from './Dean-and-Chairman/PATCH/updateUserController.js';
-import { updateUserRoleController } from './Dean-and-Chairman/PATCH/updateUserRoleController.js';
 import { deleteAllUsersController } from './Dean-and-Chairman/DELETE/deleteAllUsersController.js';
 import { deleteUserByIdController } from './Dean-and-Chairman/DELETE/deleteUserByIdController.js';
 import { addUserController } from './Dean-and-Chairman/POST/addUserController.js';
@@ -19,7 +18,6 @@ export const userSession = (req, res) => userSessionController(req, res); // Get
 export const logoutUser = (req, res) => logoutUserController(req, res); // Logout user
 export const fetchAllUsers = (req, res) => fetchAllUsersController(req, res); // Fetch all users
 export const updateUser = (req, res) => updateUserController(req, res); // Update user
-export const handleUpdateUserRole = (req, res) => updateUserRoleController(req, res); // Update user role
 export const deleteAllUsers = (req, res) => deleteAllUsersController(req, res); // Delete all users
 export const deleteUser = (req, res) => deleteUserByIdController(req, res); // Delete user by ID
 

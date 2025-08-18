@@ -4,14 +4,14 @@ import ModalLayout from '../Layout/ModalLayout';
 const Header = ({  onClose, headerContent }) => {
   return (
     <>
+      {headerContent}
       <button
         onClick={onClose}
-        className="absolute top-5 right-6 text-gray-400 hover:text-gray-600 transition cursor-pointer"
+        className="text-gray-400 hover:text-gray-600 transition cursor-pointer"
         aria-label="Close"
       >
         <X />
       </button>
-      {headerContent}
     </>
   );
 };

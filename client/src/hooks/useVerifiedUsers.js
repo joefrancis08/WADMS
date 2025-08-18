@@ -14,7 +14,7 @@ export const useVerifiedUsers = () => {
 
   const { ADD_USER, UPDATE_USER, USER_DELETION_CONFIRMATION } = MODAL_TYPES;
   const { TASK_FORCE, TASK_FORCE_DETAIL } = PATH.DEAN;
-  const { VERIFIED_USER_ADDITION, VERIFIED_USER_UPDATE, VERIFIED_USER_DELETION } = TOAST_MESSAGES;
+  const { TASK_FORCE_ADDITION, TASK_FORCE_UPDATE, TASK_FORCE_DELETION } = TOAST_MESSAGES;
   const { TASK_FORCE_CHAIR, TASK_FORCE_MEMBER } = USER_ROLES;
   const { VERIFIED } = USER_STATUS;
   
@@ -29,6 +29,7 @@ export const useVerifiedUsers = () => {
   const [toggleDropdown, setToggleDropdown] = useState(false);
   const [infoClick, setInfoClick] = useState(false);
   const [profilePic, setProfilePic] = useState(null);
+  const [updatedProfilePic, setUpdatedProfilePic] = useState(null);
   const [formValue, setFormValue] = useState({
     fullName: '',
     email: '',
@@ -52,18 +53,20 @@ export const useVerifiedUsers = () => {
 
   const isDisabled = useMemo(() => {
     const unchanged = 
-      selectedUser?.full_name.trim() === updatedValue.fullName.trim() && 
-      selectedUser?.email.trim() === updatedValue.email.trim() && 
+      selectedUser?.full_name.trim() === updatedValue.fullName.trim() &&
+      selectedUser?.email.trim() === updatedValue.email.trim() &&
       selectedUser?.role.trim() === updatedValue.role.trim();
 
-    const anyEmpty = 
-      updatedValue.fullName.trim() === '' ||
-      updatedValue.email.trim() === '';
-
+    const anyEmpty = updatedValue.fullName.trim() === '' || updatedValue.email.trim() === '';
     const invalidEmail = !emailRegex.test(updatedValue.email);
 
-    return unchanged || anyEmpty || invalidEmail;
-  }, [selectedUser, updatedValue]);
+    // check if profile pic changed (added, updated, or removed)
+    const profilePicChanged = updatedProfilePic !== null;
+
+    // enable save if fields changed OR profile pic changed
+    return (unchanged && !profilePicChanged) || anyEmpty || invalidEmail;
+  }, [selectedUser, updatedValue, updatedProfilePic]);
+
 
   const handleAddUser = () => {
     setModalType(ADD_USER);
@@ -93,11 +96,11 @@ export const useVerifiedUsers = () => {
       const res = await postUser(data);
 
       const emailAlreadyExists = res?.data?.alreadyExist;
-      res?.data?.success && showSuccessToast(VERIFIED_USER_ADDITION.SUCCESS);
+      res?.data?.success && showSuccessToast(TASK_FORCE_ADDITION.SUCCESS);
 
     } catch (error) {
       console.error(error);
-      showErrorToast(VERIFIED_USER_ADDITION.ERROR);
+      showErrorToast(TASK_FORCE_ADDITION.ERROR);
     }
 
     handleCloseModal({untoggleDropdown: true, clearForm: true});
@@ -136,16 +139,26 @@ export const useVerifiedUsers = () => {
     setModalType(UPDATE_USER);
   };
 
+  const handleProfilePicUpdate = (newFile) => {
+    newFile && setUpdatedProfilePic(newFile);
+  }
+
   const handleSaveUpdate = async () => {
     const { fullName, email, role } = updatedValue;
 
     try {
-      const res = await updateUser(fullName, email, role, selectedUser?.user_uuid);
+      const updatedData = new FormData();
+      if (updatedProfilePic) updatedData.append('newProfilePic', updatedProfilePic);
+      updatedData.append('newFullName', fullName);
+      updatedData.append('newEmail', email);
+      updatedData.append('newRole', role);
+      const res = await updateUser(updatedData, selectedUser?.user_uuid);
 
-      res.data.success && showSuccessToast(VERIFIED_USER_UPDATE.SUCCESS);
+      res.data.success && showSuccessToast(TASK_FORCE_UPDATE.SUCCESS);
 
     } catch (error) {
-      console.log('Error updating user: ', error)
+      console.log('Error updating user: ', error);
+      showErrorToast(TASK_FORCE_UPDATE.ERROR);
     }
 
     handleCloseModal({removeSelectedUser: true});
@@ -161,11 +174,11 @@ export const useVerifiedUsers = () => {
   const handleConfirmDelete = async (selectedUserId, options = {}) => {
     try {
       const res = await deleteUser(selectedUserId);
-      res.success && showSuccessToast(VERIFIED_USER_DELETION.SUCCESS);
+      res.success && showSuccessToast(TASK_FORCE_DELETION.SUCCESS);
 
     } catch (error) {
       console.error('Error deleting user: ', error);
-      showErrorToast(VERIFIED_USER_DELETION.ERROR);
+      showErrorToast(TASK_FORCE_DELETION.ERROR);
     }
 
     options.navigateBack && navigate(-1);
@@ -246,6 +259,9 @@ export const useVerifiedUsers = () => {
 
     profilePic: {
       setProfilePic,
+      updatedProfilePic,
+      setUpdatedProfilePic,
+      handleProfilePicUpdate,
       handleProfilePic
     },
 
