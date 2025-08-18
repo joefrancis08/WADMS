@@ -1,8 +1,7 @@
 export const USER_ROLES = {
-  UNVERIFIED_USER: 'Unverified User',
   DEAN: 'Dean',
-  CHAIRMAN: 'Chairman',
-  FACULTY: 'Faculty',
+  TASK_FORCE_CHAIR: 'Chair',
+  TASK_FORCE_MEMBER: 'Member',
   IA: 'Internal Assessor',
   ACCREDITOR: 'Accreditor'
 };

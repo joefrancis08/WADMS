@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { logoutIcon, userProfileIcon } from '../assets/icons.js';
-import { LayoutDashboard, Menu, X, UsersRound, BookCopy, UserRound, ChevronDown, ChevronUp } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
 
 const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
   const navigate = useNavigate();
@@ -34,9 +34,9 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
   };
 
   return (
-    <aside className={`sidebar-container ${isCollapsed ? 'w-20' : 'w-64'} bg-slate-900 text-white h-screen flex flex-col shadow-lg`}>
+    <aside className={`sidebar-container ${isCollapsed ? 'w-20' : 'w-64'} bg-slate-900 text-white h-screen flex flex-col shadow-lg border-r border-slate-600`}>
       {/* Header */}
-      <header className="flex items-center justify-between px-2 py-2 border-b border-gray-800 h-20 shadow-lg">
+      <header className="relative flex items-center justify-between px-2 py-2 border-b border-gray-600 h-20 shadow-lg">
         {!isCollapsed && (
           <div className="h-10 flex items-center transition-all duration-300">
             <img className="h-14 w-auto" src="/CGS_Logo.png" alt="Logo" />
@@ -47,8 +47,8 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
             </div>
           </div>
         )}
-        <button onClick={toggleSidebar} className="text-white cursor-pointer pl-1">
-          {isCollapsed ? <Menu className='ml-4' /> : <X className='ml-2' />}
+        <button onClick={toggleSidebar} className="text-white hover:text-slate-100 hover:opacity-90 active:opacity:90 cursor-pointer bg-slate-700">
+          {isCollapsed ? <Menu className='absolute top-8 left-7' /> : <X className='absolute top-2 right-2' />}
         </button>
       </header>
 

@@ -5,7 +5,7 @@ export const fetchAllUsersController = async (req, res) => {
     const users = await getAllUsers();
     res.status(200).json({
       success: true,
-      data: users.length ? users : 'No users yet.'
+      data: users || []
     });
 
   } catch (error) {
@@ -16,7 +16,6 @@ export const fetchAllUsersController = async (req, res) => {
     });
   }
 };
-
 
 export const fetchUserController = ({
   getParam,

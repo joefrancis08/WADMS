@@ -7,6 +7,7 @@ const AuthContext = createContext();
 // Create Provider Component
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState();
+  const [isLoading, setIsLoading] = useState(true);
 
   const register = (email, fullName, role, status) => {
     setUser({ email, fullName, role, status });
@@ -25,12 +26,14 @@ export const AuthProvider = ({ children }) => {
     const restoreSession = async () => {
       try {
         const user = await getUserSession();
-        const { email, fullName, role, status } = user;
+        const { email, fullName, role, status } = user ?? {};
         if (user) setUser({ email, fullName, role, status });
 
       } catch (error) {
-        console.log('Error: ', error);
-        setUser(null);
+        console.error('Error: ', error);
+        
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -38,7 +41,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, register, login, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, register, login, logout }}>
       { children }
     </AuthContext.Provider>
   );

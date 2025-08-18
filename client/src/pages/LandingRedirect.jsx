@@ -5,7 +5,7 @@ import { USER_ROLES, USER_STATUS } from '../constants/user';
 import PATH from '../constants/path';
 import LoadSpinner from '../components/Loaders/LoadSpinner';
 
-const { REGISTER, NOT_FOUND } = PATH.PUBLIC;
+const { REGISTER, NOT_FOUND_URL } = PATH.PUBLIC;
 const { PENDING_VERIFICATION } = PATH.UNVERIFIED_USER;
 const { UNVERIFIED_USER } = USER_ROLES;
 const { PENDING } = USER_STATUS;
@@ -22,7 +22,7 @@ const LandingRedirect = () => {
     } else if (user.status === PENDING && user.role === UNVERIFIED_USER) {
       navigate(PENDING_VERIFICATION);
     } else {
-      navigate(NOT_FOUND);
+      navigate(NOT_FOUND_URL);
     }
   }, [user, isLoading, navigate]);
 

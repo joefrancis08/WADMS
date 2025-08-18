@@ -17,7 +17,7 @@ try {
   console.log('Successfully connected to WDMS Database.');
 } catch (error) {
   console.error('Failed to connect to WDMS database.');
-  process.exit(1); // Optional: Exit the app if DB connection fails
+  process.exit(1); // Exit the app if DB connection fails
 }
 
 export default db;

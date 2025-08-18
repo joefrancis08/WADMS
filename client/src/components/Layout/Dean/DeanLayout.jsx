@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { USER_ROLES } from '../../../constants/user';
+import PATH from '../../../constants/path';
 import SidebarLG from '../../SidebarLG';
 import SidebarSM from '../../SidebarSM';
 import MobileHeader from '../../MobileHeader';
@@ -8,6 +9,7 @@ import { useUsersBy } from '../../../hooks/useUsers';
 
 const AdminLayout = ({ children }) => {
   const { UNVERIFIED_USER } = USER_ROLES;
+  const { TASK_FORCE } = PATH.DEAN;
   const unverifiedUsers = useUsersBy('role', UNVERIFIED_USER).users;
   const [menuIsClicked, setMenuIsClicked] = useState(false);
   const [unverifiedUserCount, setUnverifiedUserCount] = useState(null);
@@ -30,23 +32,10 @@ const AdminLayout = ({ children }) => {
   const menuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', link: '/d' },
     { 
-      id: 'user-management', 
+      id: 'task-force', 
       icon: UsersRound, 
-      label: 'User Management',
-      children: [
-        { 
-          id: 'verified-users', 
-          icon: UserCheck, 
-          label: 'Verified Users', 
-          link: '/d/verified-users' },
-        { 
-          id: 'unverified-users', 
-          icon: UserX, 
-          label: 'Unverified Users', 
-          link: '/d/unverified-users', 
-          hasNotif: true 
-        }
-      ]
+      label: 'Task Force',
+      link: TASK_FORCE
     },
     {
       id: 'accreditation',

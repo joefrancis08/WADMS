@@ -1,6 +1,6 @@
 import { Bounce, toast } from 'react-toastify';
 
-export function showSuccessToast(message, position = "top-right") {
+export function showSuccessToast(message, position = "bottom-right") {
   const toastOptions = {
     position,
     autoClose: 3000,

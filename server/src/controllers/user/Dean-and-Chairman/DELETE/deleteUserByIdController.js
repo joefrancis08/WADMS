@@ -1,11 +1,26 @@
+import { deleteUserSession } from "../../../../models/user/DELETE/deleteUserSession.js";
+import { getUserBy } from "../../../../models/user/GET/getUser.js";
 import { deleteUserById } from "../../../../models/userModel.js";
+import path from "path";
+import fs from "fs";
 import sendUserUpdate from "../../../../services/websocket/sendUserUpdate.js";
 
 export const deleteUserByIdController = async (req, res) => {
   const { uuid } = req.params;
+  const PROFILE_PIC_PATH = process.env.PROFILE_PIC_PATH;
 
   try {
+    const user = await getUserBy('user_uuid', uuid, true);
+
+    if (!user) return res.status(404).json({
+      message: 'User not found'
+    });
+
+    const profilePic = user.profile_pic_path;
+
     const result = await deleteUserById(uuid);
+
+    deleteUserSession(uuid);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({
@@ -16,30 +31,20 @@ export const deleteUserByIdController = async (req, res) => {
 
     sendUserUpdate();
 
-    // If the deleted user is the logged-in user
-    if (req.session.user?.uuid === uuid) {
-      req.session.destroy(err => {
-        if (err) {
-          console.error('Error destroying session:', err);
-          return res.status(500).json({
-            message: 'Could not destroy session.',
-            success: false,
-          });
-        }
-
-        res.clearCookie(process.env.SESSION_KEY);
-        return res.status(200).json({
-          success: true,
-          message: 'User deleted and session destroyed successfully.'
-        });
-      });
-    } else {
-      // For admin deleting another user
-      return res.status(200).json({
-        success: true,
-        message: 'User deleted successfully.'
-      });
+    if (profilePic) {
+      const fullPath = path.join(PROFILE_PIC_PATH, profilePic);
+      try {
+        await fs.promises.unlink(fullPath);
+        console.log('Profile picture deleted:', fullPath);
+      } catch (err) {
+        console.error('Failed to delete profile picture:', err);
+      }
     }
+
+    return res.status(200).json({
+      success: true,
+      message: 'User deleted successfully.'
+    });
 
   } catch (error) {
     console.error('Error deleting user:', error);

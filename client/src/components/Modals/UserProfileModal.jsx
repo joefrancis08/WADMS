@@ -1,7 +1,7 @@
 import ModalLayout from '../Layout/ModalLayout';
-import ProfileAvatar from '../ProfileAvatar';
 import { ShieldCheck, Trash2, X } from 'lucide-react';
 import TimeAgo from '../TimeAgo';
+import ProfilePicture from '../ProfilePicture';
 
 const UserProfileHeader = ({ selectedUser, onClose }) => {
   return (
@@ -18,7 +18,7 @@ const UserProfileHeader = ({ selectedUser, onClose }) => {
       {/* Header */}
       <div className='w-full flex flex-col md:flex-row rounded items-center justify-center py-5 border border-gray-200 shadow-md'>
         <div>
-          <ProfileAvatar name={selectedUser?.full_name} height={'md:h-36 h-32'} width={'md:w-36 w-32'} border={'rounded-full'}/>
+          <ProfilePicture name={selectedUser?.full_name} height={'md:h-36 h-32'} width={'md:w-36 w-32'} border={'rounded-full'}/>
         </div>
         <div className='relative p-4 flex'>
           <p className=" border border-gray-200 rounded-md p-4 text-xl md:text-2xl font-bold text-green-900 mt-2 shadow-sm bg-gray-100">
