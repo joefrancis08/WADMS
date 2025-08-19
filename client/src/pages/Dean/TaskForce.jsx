@@ -35,7 +35,7 @@ const TaskForce = () => {
   const { modalType, handleCloseModal } = modal;
   const { navigate } = navigation;
   const { setProfilePic, handleProfilePic, setUpdatedProfilePic, handleProfilePicUpdate } = profilePic;
-  const { isDisabled } = saveButton;
+  const { isUpdateBtnDisabled } = saveButton;
   const { loading, error } = state;
   const { selectedUser } = user;
   const { formValue, handleAddUser, handleAddUserInputChange, handleSaveAdded } = userAdd;
@@ -80,8 +80,12 @@ const TaskForce = () => {
             onClose={() => handleCloseModal({isForAddUser: true, untoggleDropdown: true, clearForm: true})}
             onCancel={() => handleCloseModal({isForAddUser: true, untoggleDropdown: true, clearForm: true})}
             onSaveAdded={handleSaveAdded}
+            disabled={
+              formValue.fullName.trim() === '' ||
+              formValue.email.trim() === '' ||
+              formValue.role.trim() === ''
+            }
             primaryButton={'Add'}
-            disabled={isDisabled}
             secondaryButton={'Cancel'}
             headerContent={
               <div className='relative flex items-center transition-all duration-300'>
@@ -118,7 +122,7 @@ const TaskForce = () => {
             onSaveClick={handleSaveUpdate}
             headerContent={`Update ${selectedUser.full_name}'s Info`}
             primaryButton={'Save Update'}
-            disabled={isDisabled}
+            disabled={isUpdateBtnDisabled}
             secondaryButton={'Cancel'}
             bodyContent={
               <>

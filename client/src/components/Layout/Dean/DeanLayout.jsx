@@ -4,7 +4,7 @@ import PATH from '../../../constants/path';
 import SidebarLG from '../../SidebarLG';
 import SidebarSM from '../../SidebarSM';
 import MobileHeader from '../../MobileHeader';
-import { BookCopy, FileStack, FileText, LayoutDashboard, UserCheck, UserRound, UsersRound, UserX } from 'lucide-react';
+import { BookCopy, BookTextIcon, BookUp2, FileStack, FileText, LayoutDashboard, UserCheck, UserRound, UsersRound, UserX } from 'lucide-react';
 import { useUsersBy } from '../../../hooks/useUsers';
 
 const AdminLayout = ({ children }) => {
@@ -42,8 +42,7 @@ const AdminLayout = ({ children }) => {
       icon: BookCopy,
       label: 'Accreditation',
       children: [
-        { id: 'task-force', icon: UserRound, label: 'Task Force', link: '/d/accreditation/task-force' },
-        { id: 'documents', icon: FileStack, label: 'Documents', link: '/d/accreditation/documents' }
+        { id: 'program-to-accredit', icon: BookTextIcon, label: 'Programs to be Accredited', link: '/d/accreditation/program-to-accredit' },
       ]
     }
   ];

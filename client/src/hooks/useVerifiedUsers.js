@@ -51,7 +51,7 @@ export const useVerifiedUsers = () => {
     }
   }, [selectedUser]);
 
-  const isDisabled = useMemo(() => {
+  const isUpdateBtnDisabled = useMemo(() => {
     const unchanged = 
       selectedUser?.full_name.trim() === updatedValue.fullName.trim() &&
       selectedUser?.email.trim() === updatedValue.email.trim() &&
@@ -266,7 +266,7 @@ export const useVerifiedUsers = () => {
     },
 
     saveButton: {
-      isDisabled
+      isUpdateBtnDisabled
     },
 
     state: {
