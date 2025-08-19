@@ -16,7 +16,7 @@ const ModalLayout = ({
           {header}
           <button className='hidden' onClick={() => { onClose?.() }}></button>
         </div>
-        <hr className='text-gray-300 mt-2'></hr>
+        <hr className='text-gray-300 mt-2 w-[50%] mx-auto'></hr>
 
         <div className={`w-full flex flex-col ${bodyMargin || 'my-4'} ${bodyPosition || 'justify-center items-center'}`}>
           {body}

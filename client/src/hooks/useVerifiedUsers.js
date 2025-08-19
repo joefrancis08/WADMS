@@ -57,11 +57,13 @@ export const useVerifiedUsers = () => {
       selectedUser?.email.trim() === updatedValue.email.trim() &&
       selectedUser?.role.trim() === updatedValue.role.trim();
 
+    const profilePicChanged =
+      (selectedUser?.profile_pic && updatedProfilePic === null) || // removed
+      (!selectedUser?.profile_pic && updatedProfilePic !== null) || // added
+      (selectedUser?.profile_pic && updatedProfilePic !== null); // replaced
+
     const anyEmpty = updatedValue.fullName.trim() === '' || updatedValue.email.trim() === '';
     const invalidEmail = !emailRegex.test(updatedValue.email);
-
-    // check if profile pic changed (added, updated, or removed)
-    const profilePicChanged = updatedProfilePic !== null;
 
     // enable save if fields changed OR profile pic changed
     return (unchanged && !profilePicChanged) || anyEmpty || invalidEmail;
@@ -69,6 +71,7 @@ export const useVerifiedUsers = () => {
 
 
   const handleAddUser = () => {
+    activeDropdownId && setActiveDropdownId(null);
     setModalType(ADD_USER);
   };
 
@@ -134,7 +137,6 @@ export const useVerifiedUsers = () => {
 
   const handleUpdate = (e, selectedUser) => {
     e.stopPropagation();
-
     setSelectedUser(selectedUser);
     setModalType(UPDATE_USER);
   };
