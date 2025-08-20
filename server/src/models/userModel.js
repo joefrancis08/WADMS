@@ -4,8 +4,8 @@ import { insertUserModel } from "./user/POST/postUser.js";
 import { updateUserModel, updateUserRoleModel } from "./user/UPDATE/updateUserModel.js";
 
 // POST/INSERT
-export const insertUser = (userUUID, fullName, email, password, role, status) => (
-  insertUserModel(userUUID, fullName, email, password, role, status)
+export const insertUser = (userUUID, profilePicPath, fullName, email, role) => (
+  insertUserModel(userUUID, profilePicPath, fullName, email, role)
 );
 
 // GET
@@ -15,12 +15,10 @@ export const getUserByEmail = (email) => getUserBy('email', email); // GET User 
 export const getUsersByRole = (role) => getUserBy('role', role, false); // GET Users by role
 export const getUserByStatus = (status) => getUserBy('status', status, false); // GET Users by status
 
-
 // UPDATE
-export const updateUserInfo = (fullName, email, password, role, status, id) => (
-  updateUserModel(fullName, email, password, role, status, id)
+export const updateUserInfo = (profilePicPath, fullName, email, role, uuid) => (
+  updateUserModel(profilePicPath, fullName, email, role, uuid)
 );
-export const updateUserRole = (uuid, role, status) => updateUserRoleModel(uuid, role, status);
 
 // DELETE
 export const deleteAllUsers = () => deleteAllUsersModel(); 

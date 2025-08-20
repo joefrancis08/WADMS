@@ -10,24 +10,19 @@ export const TOAST_MESSAGES = {
     ERROR: 'Something went wrong while verifying user. Try again.'
   },
 
-  UNVERIFIED_USER_DELETION: {
-    SUCCESS: 'User deleted successfully.',
+  TASK_FORCE_DELETION: {
+    SUCCESS: 'Deleted successfully.',
     ERROR: 'Something went wrong. Try again.'
   },
 
-  VERIFIED_USER_ADDITION: {
-    SUCCESS: 'User added successfully.',
+  TASK_FORCE_ADDITION: {
+    SUCCESS: 'Added successfully.',
     ERROR: 'Something went wrong while adding user. Try again.'
   },
 
-  VERIFIED_USER_UPDATE: {
+  TASK_FORCE_UPDATE: {
     SUCCESS: 'Updated successfully.',
     ERROR: 'Something went wrong while updating user. Try again.'
-  },
-
-  VERIFIED_USER_DELETION: {
-    SUCCESS: 'Deleted successfully.',
-    ERROR: 'Something went wrong. Try again.'
   },
 }
 

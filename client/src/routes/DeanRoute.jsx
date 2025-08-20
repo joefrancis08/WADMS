@@ -1,5 +1,4 @@
 import { Route } from 'react-router-dom';
-import { USER_ROLES, USER_STATUS } from '../constants/user';
 import PATH from '../constants/path';
 import ProtectedRoute from './ProtectedRoute';
 import LoadSpinner from '../components/Loaders/LoadSpinner';
@@ -8,40 +7,23 @@ import UnverifiedUsers from '../pages/Dean/UnverifiedUser';
 import TaskForce from '../pages/Dean/TaskForce';
 import Documents from '../pages/Dean/Documents';
 import TaskForceDetail from '../pages/Dean/TaskForceDetail';
+import ProgramsToAccredit from '../pages/Dean/ProgramsToAccredit';
 
 const { 
   DASHBOARD, TASK_FORCE_DETAIL_TEMPLATE, UNVERIFIED_USERS,
-  UNVERIFIED_USERS_ID, TASK_FORCE, DOCUMENTS
+  UNVERIFIED_USERS_ID, TASK_FORCE, PROGRAMS_TO_ACCREDIT, 
+  DOCUMENTS
 } = PATH.DEAN;
 const { NOT_FOUND_URL } = PATH.PUBLIC;
-const { DEAN, UNVERIFIED_USER } = USER_ROLES; // UNVERIFIED_USER is for test.
-const { PENDING, VERIFIED } = USER_STATUS;
 
 const protectedRoutes = [
-  {
-    path: DASHBOARD,
-    element: <Dashboard />,
-  },
-  {
-    path: TASK_FORCE,
-    element: <TaskForce />,
-  },
-  {
-    path: UNVERIFIED_USERS,
-    element: <UnverifiedUsers />,
-  },
-  {
-    path: TASK_FORCE_DETAIL_TEMPLATE,
-    element: <TaskForceDetail />,
-  },
-  {
-    path: UNVERIFIED_USERS_ID,
-    element: <UnverifiedUsers />,
-  },
-  {
-    path: DOCUMENTS,
-    element: <Documents />
-  }
+  { path: DASHBOARD, element: <Dashboard /> },
+  { path: TASK_FORCE, element: <TaskForce /> },
+  { path: UNVERIFIED_USERS, element: <UnverifiedUsers /> },
+  { path: TASK_FORCE_DETAIL_TEMPLATE, element: <TaskForceDetail /> },
+  { path: UNVERIFIED_USERS_ID, element: <UnverifiedUsers /> },
+  { path: PROGRAMS_TO_ACCREDIT, element: <ProgramsToAccredit /> },
+  { path: DOCUMENTS, element: <Documents /> }
 ];
 
 const Loader = (

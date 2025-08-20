@@ -35,7 +35,7 @@ export const deleteUserByIdController = async (req, res) => {
       const fullPath = path.join(PROFILE_PIC_PATH, profilePic);
       try {
         await fs.promises.unlink(fullPath);
-        console.log('Profile picture deleted:', fullPath);
+        
       } catch (err) {
         console.error('Failed to delete profile picture:', err);
       }

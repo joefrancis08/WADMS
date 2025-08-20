@@ -6,7 +6,6 @@ import PATH from '../constants/path';
 import LoadSpinner from '../components/Loaders/LoadSpinner';
 
 const { REGISTER, NOT_FOUND_URL } = PATH.PUBLIC;
-const { PENDING_VERIFICATION } = PATH.UNVERIFIED_USER;
 const { UNVERIFIED_USER } = USER_ROLES;
 const { PENDING } = USER_STATUS;
 
