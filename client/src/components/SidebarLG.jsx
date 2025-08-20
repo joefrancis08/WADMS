@@ -47,14 +47,16 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
             </div>
           </div>
         )}
-        <button onClick={toggleSidebar} className="text-white hover:text-slate-100 hover:opacity-90 active:opacity:90 cursor-pointer bg-slate-700">
-          {isCollapsed ? <Menu className='absolute top-8 left-7' /> : <X className='absolute top-2 right-2' />}
+        <button onClick={toggleSidebar} className="text-white hover:text-slate-100 hover:opacity-90 active:opacity:90 cursor-pointer bg-slate-700 transition-all duration-1000">
+          {isCollapsed 
+            ? <Menu className='absolute top-8 left-7' /> 
+            : <X className='absolute top-2 right-2 transition-all' />}
         </button>
       </header>
 
       {/* Navigation */}
       <nav className="flex-1 mt-4 px-2 overflow-y-auto">
-        <div className="flex flex-col space-y-3">
+        <div className="flex flex-col space-y-0.5">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = item.link && location.pathname === item.link;
@@ -76,15 +78,15 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
                     }
                   }}
                   className={`relative flex items-center space-x-5 px-5 py-3 cursor-pointer transition-all ${
-                    isActive ? 'bg-gray-600 text-white font-semibold rounded-full' : 'hover:bg-gray-700 rounded-full'
+                    isActive ? 'bg-slate-700 text-white font-semibold rounded-md' : 'hover:bg-slate-800 rounded-md'
                   }`}
                 >
                   <Icon
-                    fill={isActive ? 'white' : 'none'}
+                    fill={isActive ? '#64748b' : 'none'}
                     className={`flex-shrink-0 ${isCollapsed ? 'w-6 h-6' : 'w-7 h-7'}`}
                   />
                   <span
-                    className={`text-sm whitespace-nowrap overflow-hidden transition ${
+                    className={`text-sm whitespace-nowrap overflow-hidden transition-all duration-1000${
                       isCollapsed ? 'opacity-0 max-w-0' : 'opacity-100 max-w-[200px]'
                     }`}
                   >
@@ -92,7 +94,7 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
                   </span>
                   {hasChildren && !isCollapsed && (
                     <ChevronDown 
-                      className={`absolute right-5 transition-all ${openDropdowns[item.id] && '-rotate-180'}`} 
+                      className={`absolute right-2 transition-all duration-200 ${openDropdowns[item.id] && '-rotate-180'}`} 
                       size={25} />
                   )}
                 </div>
@@ -100,29 +102,32 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
                 {/* Dropdown items */}
                 {hasChildren && openDropdowns[item.id] && !isCollapsed && (
                   <div 
-                    className="ml-8 mt-1 space-y-1 transition-all duration-300">
+                    className="ml-8 mt-1 space-y-1">
                     {item.children.map((child) => {
                       const ChildIcon = child.icon;
                       const childActive = location.pathname === child.link;
                       return (
-                        <Link
-                          key={child.id}
-                          to={child.link}
-                          className={`relative flex items-center space-x-3 px-4 py-2 rounded-full transition ${
-                            childActive ? 'bg-gray-600 text-white' : 'hover:bg-gray-700'
-                          }`}
-                        >
-                          <ChildIcon
-                            fill={childActive ? 'white' : 'none'}
-                            className="w-6 h-6"
-                          />
-                          <span className="text-sm">{child.label}</span>
-                          {child.hasNotif && 
-                            unverifiedUserCount && (
-                              <p className='absolute text-xs font-semibold text-slate-600 top-2 right-3 bg-slate-200 px-2 py-1 rounded-full'>{unverifiedUserCount}</p>
-                            )
-                          }
-                        </Link>
+                        <>
+                          {child.hasHR && <hr className='mt-5 mb-2 text-slate-600'></hr>}
+                          <Link
+                            key={child.id}
+                            to={child.link}
+                            className={`relative flex items-center space-x-3 px-4 py-2 rounded-md transition ${
+                              childActive ? 'bg-slate-700 text-white' : 'hover:bg-slate-800'
+                            }`}
+                          >
+                            <ChildIcon
+                              fill={childActive ? '#64748b' : 'none'}
+                              className="w-6 h-6"
+                            />
+                            <span className="text-sm">{child.label}</span>
+                            {child.hasNotif && 
+                              unverifiedUserCount && (
+                                <p className='absolute text-xs font-semibold text-slate-600 top-2 right-3 bg-slate-200 px-2 py-1 rounded-full'>{unverifiedUserCount}</p>
+                              )
+                            }
+                          </Link>
+                        </>
                       );
                     })}
                   </div>
@@ -133,22 +138,16 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
         </div>
       </nav>
 
-      {/* User Info & Logout */}
-      <div className="px-5 py-4 border-t border-gray-700">
-        <div className="flex items-center justify-between">
+      {/* Logged-in User Info */}
+      <div className="px-5 py-4 border-t border-gray-700 cursor-pointer">
+        <div className="flex items-center justify-between hover:opacity-80">
           <div className={`flex items-center overflow-hidden transition-all ${isCollapsed ? 'gap-0' : 'gap-3'}`}>
-            <img className='rounded-full w-8 h-8' src={userProfileIcon} alt="User Profile" />
+            <img className='rounded-full w-8 h-8' src={'/sample-profile-picture.webp'} alt="User Profile" />
             <div className={`${isCollapsed ? 'opacity-0 max-w-0' : 'opacity-100 max-w-[300px]'}`}>
               <p className="text-sm font-semibold">Sample User</p>
               <p className="text-xs text-gray-400">Dean</p>
             </div>
           </div>
-          {!isCollapsed && (
-            <button className="flex flex-col items-center border-l-2 border-gray-400 pl-4 cursor-pointer">
-              <img className='w-7 h-7' src={logoutIcon} alt="Logout icon" />
-              <p className="text-xs text-gray-400">Logout</p>
-            </button>
-          )}
         </div>
       </div>
     </aside>

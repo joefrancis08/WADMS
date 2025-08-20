@@ -1,5 +1,5 @@
 import PATH from '../../constants/path';
-import { Plus, Search, UserRoundCog, UserRoundPlus, UserRoundX } from 'lucide-react';
+import { Link2, Plus, Search, UserRoundCog, UserRoundPlus, UserRoundX } from 'lucide-react';
 import AdminLayout from '../../components/Layout/Dean/DeanLayout';
 import { useVerifiedUsers } from '../../hooks/useVerifiedUsers';
 import VerifiedUserSkeletonLoader from '../../components/Loaders/VerifiedUserSkeletonLoader';
@@ -42,17 +42,23 @@ const TaskForce = () => {
       <div className='flex-1 p-0 space-y-3'>
         {/* Main Content Header */}
         <div className='max-md:pt-2 md:sticky top-0 md:z-1 bg-gradient-to-r from-slate-900 to-green-500 shadow-md'>
-          <div className='flex justify-between items-center p-3'>
+          <div className='flex justify-between items-center p-4'>
             <div className='relative flex items-center'>
               <UserRoundCog className='text-slate-100' size={36} color='white'/>
               <p className='ml-2 mt-1 text-slate-100 text-3xl font-bold transition-all ease-in-out duration-300'>
                 Task Force
               </p>
             </div>
-            <div className='flex items-center md:gap-5'>
+            <div className='flex items-center'>
+              <button
+                title='Generate Access Link' 
+                className='p-2 rounded-full mr-2 cursor-pointer hover:bg-green-700 active:opacity-50'>
+                <Link2 className='text-white' size={32}/>
+              </button>
               <button title='Add Task Force' onClick={handleAddUser} className='p-2 rounded-full mr-2 cursor-pointer hover:bg-green-700 active:opacity-50 '>
                 <UserRoundPlus className='text-white' size={32}/>
               </button>
+              
             </div>
           </div>
         </div>
@@ -81,6 +87,7 @@ const TaskForce = () => {
                 <TaskForceCard
                   key={label}
                   activeDropdownId={activeDropdownId}
+                  label={label}
                   taskForce={data}
                   navigation={(user) => navigate(TASK_FORCE_DETAIL(user.user_uuid))}
                   profilePic={(user) => getProfilePicPath(user.profile_pic_path)}

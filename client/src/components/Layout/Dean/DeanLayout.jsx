@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react';
 import { USER_ROLES } from '../../../constants/user';
+
 import PATH from '../../../constants/path';
 import SidebarLG from '../../SidebarLG';
 import SidebarSM from '../../SidebarSM';
 import MobileHeader from '../../MobileHeader';
-import { BookCopy, BookTextIcon, BookUp2, FileStack, FileText, LayoutDashboard, UserCheck, UserRound, UsersRound, UserX } from 'lucide-react';
+import { Archive, ArchiveRestore, BookCopy, BookTextIcon, Calendar, CalendarDays, FolderArchive, Group, LayoutDashboard, ShieldUser, SquareUserRound, UserRoundCog, UserRoundCogIcon, UsersRound } from 'lucide-react';
 import { useUsersBy } from '../../../hooks/useUsers';
 
 const AdminLayout = ({ children }) => {
   const { UNVERIFIED_USER } = USER_ROLES;
-  const { TASK_FORCE } = PATH.DEAN;
+  const { DASHBOARD, TASK_FORCE, PROGRAMS_TO_ACCREDIT } = PATH.DEAN;
   const unverifiedUsers = useUsersBy('role', UNVERIFIED_USER).users;
   const [menuIsClicked, setMenuIsClicked] = useState(false);
   const [unverifiedUserCount, setUnverifiedUserCount] = useState(null);
@@ -30,19 +31,57 @@ const AdminLayout = ({ children }) => {
   }, [menuIsClicked]);
 
   const menuItems = [
-    { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', link: '/d' },
-    { 
-      id: 'task-force', 
-      icon: UsersRound, 
-      label: 'Task Force',
-      link: TASK_FORCE
+    { id: 'dashboard', 
+      icon: LayoutDashboard, 
+      label: 'Dashboard', 
+      link: DASHBOARD 
+    },
+    {
+      id: 'user-management',
+      icon: UsersRound,
+      label: 'User Management',
+      children: [
+        { 
+          id: 'task-force', 
+          icon: UserRoundCog, 
+          label: 'Task Force',
+          link: TASK_FORCE
+        },
+        { 
+          id: 'internal-assessor', 
+          icon: SquareUserRound, 
+          label: 'Internal Assessor',
+          link: ''
+        },
+        { 
+          id: 'accreditor', 
+          icon: ShieldUser, 
+          label: 'Accreditor',
+          link: ''
+        }
+      ]
     },
     {
       id: 'accreditation',
       icon: BookCopy,
       label: 'Accreditation',
       children: [
-        { id: 'program-to-accredit', icon: BookTextIcon, label: 'Programs to be Accredited', link: '/d/accreditation/program-to-accredit' },
+        { id: 'period', 
+          icon: CalendarDays, 
+          label: 'Period', 
+          link: '' 
+        },
+        { id: 'program-to-accredit', 
+          icon: BookTextIcon, 
+          label: 'Programs', 
+          link: PROGRAMS_TO_ACCREDIT 
+        },
+        { id: 'archive', 
+          icon: FolderArchive, 
+          label: 'Archive', 
+          link: '',
+          hasHR: true
+        },
       ]
     }
   ];

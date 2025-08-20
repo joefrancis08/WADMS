@@ -115,7 +115,7 @@ export const useVerifiedUsers = () => {
 
   const handleEllipsisClick = (e, user) => {
     e.stopPropagation();
-    setActiveDropdownId(prev => prev === user.id ? null : user.id);
+    setActiveDropdownId(prev => prev === user.user_uuid ? null : user.user_uuid);
   };
 
   const handleDropdown = (e, menu, user) => {
