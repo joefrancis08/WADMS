@@ -1,13 +1,13 @@
 import { Link } from 'react-router-dom';
 import AdminLayout from '../../components/Layout/Dean/DeanLayout';
-import { CalendarDays, ChevronLeft, Mail, Pen, Trash2 } from 'lucide-react';
+import { ArrowLeft, CalendarDays, ChevronLeft, Mail, Pen, Trash2 } from 'lucide-react';
 import TimeAgo from '../../components/TimeAgo';
 import VerifiedUserDetailSkeletonLoader from '../../components/Loaders/VerifiedUserDetailSkeletonLoader';
 import useVerifiedUserDetail from '../../hooks/useVerifiedUserDetail';
 import { useVerifiedUsers } from '../../hooks/useVerifiedUsers';
 import ProfilePicture from '../../components/ProfilePicture';
 import getProfilePicPath from '../../utils/getProfilePicPath';
-import TaskForceModal from '../../components/Form/Dean/TaskForceModal';
+import TaskForceModal from '../../components/Dean/TaskForceModal';
 
 const TaskForceDetail = () => {
   
@@ -34,13 +34,13 @@ const TaskForceDetail = () => {
     <AdminLayout>
       <main className="px-4 py-6 md:px-8 w-full max-w-screen-xl mx-auto">
         {/* Header */}
-        <div className="flex items-center gap-2 mb-6">
-          <Link to={TASK_FORCE} className="text-gray-700">
-            <ChevronLeft className='hover:opacity-65 active:opacity-50' size={32}/>
+        <div className="flex items-center gap-2 mb-3">
+          <Link to={TASK_FORCE} className="flex items-center gap-4 text-slate-700">
+            <ArrowLeft className='hover:opacity-75 active:opacity-50' size={32}/>
+            <p className='text-lg md:text-2xl'>
+              {selectedUser?.full_name ?? 'User'}'s Info
+            </p>
           </Link>
-          <p className='text-lg md:text-2xl transition'>
-            {selectedUser?.full_name ?? 'User'}'s Info
-          </p>
         </div>
         {loading 
           ? (

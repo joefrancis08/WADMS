@@ -2,7 +2,7 @@ const PATH = {
   PUBLIC: {
     DEFAULT_PATH: '/',
     REGISTER: '/register',
-    LOGIN: '/login',
+    EMAIL_CONFIRMATION: '/email-confirmation',
     NOT_FOUND_DEFAULT: '*',
     NOT_FOUND_URL: '/page-not-found'
   },

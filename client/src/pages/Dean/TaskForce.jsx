@@ -4,8 +4,8 @@ import AdminLayout from '../../components/Layout/Dean/DeanLayout';
 import { useVerifiedUsers } from '../../hooks/useVerifiedUsers';
 import VerifiedUserSkeletonLoader from '../../components/Loaders/VerifiedUserSkeletonLoader';
 import getProfilePicPath from '../../utils/getProfilePicPath';
-import TaskForceCard from '../../components/Form/Dean/TaskForceCard';
-import TaskForceModal from '../../components/Form/Dean/TaskForceModal';
+import TaskForceCard from '../../components/Dean/TaskForceCard';
+import TaskForceModal from '../../components/Dean/TaskForceModal';
 
 const TaskForce = () => {
   const { TASK_FORCE_DETAIL } = PATH.DEAN;

@@ -1,6 +1,6 @@
 import { EllipsisVertical, FolderTree, Link, SquareUserRound, Trash2, UserRoundPen } from 'lucide-react';
-import Dropdown from '../../Dropdown/Dropdown';
-import ProfilePicture from '../../ProfilePicture';
+import Dropdown from '../Dropdown/Dropdown';
+import ProfilePicture from '../ProfilePicture';
 
 const TaskForceCard = ({ 
   activeDropdownId, 
@@ -31,9 +31,9 @@ const TaskForceCard = ({
                   handleDropdown(e, menu, user)
                 }}
                 key={index}
-                className={`flex items-center text-gray-700 text-sm p-2 hover:first:rounded-t hover:last:rounded-b hover:bg-slate-200 hover:font-medium hover:shadow transition-all ${menu.label === 'Delete' && 'border-t border-gray-300 mt-2'}`}
+                className={`flex items-center gap-2 text-gray-700 text-sm p-2 hover:first:rounded-t hover:last:rounded-b hover:font-medium hover:shadow transition-all ${menu.label === 'Delete' ? 'border-t border-gray-300 hover:bg-red-300/50' : 'hover:bg-slate-300'}`}
               >
-                <i className='mr-2'>{menu.icon}</i>
+                <i>{menu.icon}</i>
                 <p className={menu.label === 'Delete' ? 'text-red-500' : ''}>{menu.label}</p>
               </div>
             ))}

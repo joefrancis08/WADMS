@@ -3,8 +3,9 @@ import PATH from "../constants/path";
 import LandingRedirect from "../pages/LandingRedirect";
 import Register from "../pages/Register";
 import NotFound from "../pages/NotFound";
+import EmailConfirmation from "../pages/EmailConfirmation";
 
-const { DEFAULT_PATH, REGISTER, NOT_FOUND_DEFAULT, NOT_FOUND_URL } = PATH.PUBLIC;
+const { DEFAULT_PATH, REGISTER, EMAIL_CONFIRMATION, NOT_FOUND_DEFAULT, NOT_FOUND_URL } = PATH.PUBLIC;
 
 const publicRouteArray = [
   {
@@ -14,6 +15,10 @@ const publicRouteArray = [
   {
     path: REGISTER,
     element: <Register />
+  },
+  {
+    path: EMAIL_CONFIRMATION,
+    element: <EmailConfirmation />
   },
   {
     path: NOT_FOUND_URL,

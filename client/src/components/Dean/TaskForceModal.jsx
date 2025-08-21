@@ -1,13 +1,14 @@
-import MODAL_TYPE from '../../../constants/modalTypes';
+import MODAL_TYPE from '../../constants/modalTypes';
 
 import { CircleQuestionMark, Trash2 } from 'lucide-react';
-import ImageUpload from '../Upload/ImageUpload';
-import AddUserModal from '../../Modals/AddUserModal';
-import UpdateUserModal from '../../Modals/UpdateUserModal';
-import UpdateField from './UpdateField';
-import ConfirmationModal from '../../Modals/ConfirmationModal';
-import AddField from './AddField';
-import { emailRegex } from '../../../utils/regEx';
+import ImageUpload from '../Form/Upload/ImageUpload';
+import AddUserModal from '../Modals/AddUserModal';
+import UpdateUserModal from '../Modals/UpdateUserModal';
+import UpdateField from '../Form/Dean/UpdateField';
+import ConfirmationModal from '../Modals/ConfirmationModal';
+import AddField from '../Form/Dean/AddField';
+import { emailRegex } from '../../utils/regEx';
+import Tooltip from '../Popover';
 
 const TaskForceModal = ({
   modalType,
@@ -58,12 +59,16 @@ const TaskForceModal = ({
                 className='text-slate-500 hover:text-slate-600 cursor-pointer' size={20}
               />
               {infoClick && (
-                <div onClick={handleInfoClick} className='w-40 h-auto bg-slate-800 absolute top-3 left-52 rounded z-40 transition-opacity duration-500'>
-                  <p className='text-slate-100 text-xs p-2'>
-                    The "Add" button is enabled only if all mandatory fields (excluding the profile picture) are completed and the email is correctly formatted.
-                  </p>
-                </div>
-              )}
+                <Tooltip 
+                  handleInfoClick={handleInfoClick}
+                  position='top-3 left-52'
+                  content={
+                    <p className='text-slate-100 text-xs p-2'>
+                      The "Add" button is enabled only if all mandatory fields (excluding the profile picture) are completed and the email is correctly formatted.
+                    </p>
+                  }
+                />
+              ) }
             </div>
           }
           bodyContent={

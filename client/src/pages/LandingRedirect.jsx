@@ -5,7 +5,7 @@ import { USER_ROLES, USER_STATUS } from '../constants/user';
 import PATH from '../constants/path';
 import LoadSpinner from '../components/Loaders/LoadSpinner';
 
-const { REGISTER, NOT_FOUND_URL } = PATH.PUBLIC;
+const { EMAIL_CONFIRMATION, NOT_FOUND_URL } = PATH.PUBLIC;
 const { UNVERIFIED_USER } = USER_ROLES;
 const { PENDING } = USER_STATUS;
 
@@ -14,12 +14,9 @@ const LandingRedirect = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isLoading) return;
 
     if (!user) {
-      navigate(REGISTER); // user not logged in
-    } else if (user.status === PENDING && user.role === UNVERIFIED_USER) {
-      navigate(PENDING_VERIFICATION);
+      navigate(EMAIL_CONFIRMATION); // If user not logged in
     } else {
       navigate(NOT_FOUND_URL);
     }
