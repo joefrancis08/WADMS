@@ -10,7 +10,7 @@ const UpdateUserModalHeader = ({ onClose, headerContent }) => {
       </p>
       <button
         onClick={onClose}
-        className="text-slate-400 hover:text-slate-600 transition cursor-pointer"
+        className="text-gray-600 p-3 rounded-full transition cursor-pointer hover:bg-slate-200 active:opacity-75"
         aria-label="Close"
       >
         <X />

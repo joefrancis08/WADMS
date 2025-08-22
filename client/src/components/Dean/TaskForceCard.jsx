@@ -59,7 +59,7 @@ const TaskForceCard = ({
               onClick={(e) => {
                 handleEllipsisClick(e, user);
               }} 
-              className='absolute top-0 p-2 right-0 text-slate-900 rounded-bl-xl rounded-tr-lg hover:shadow hover:text-slate-600 hover:bg-gray-200 active:opacity-50 transition'>
+              className='absolute top-0 p-2 right-0 text-slate-900 rounded-bl-xl rounded-tr-lg hover:shadow hover:text-slate-600 hover:bg-slate-300 active:opacity-50 transition'>
               <EllipsisVertical size={20}/>
             </div>
             {renderDropdown(user)}

@@ -10,7 +10,7 @@ const SearchModal = ({ placeholder, onClose }) => {
       <div onClick={handleContentClick} className="w-full h-auto max-w-md m-10 bg-slate-100 rounded shadow-2xl py-6 animate-fadeIn">
         <div className="flex flex-col px-2">
           <div className="flex justify-between mb-6">
-            <button onClick={onClose} className="hover:rounded-full hover:bg-slate-200 p-3 cursor-pointer">
+            <button onClick={onClose} className="hover:rounded-full hover:bg-slate-200 p-3 cursor-pointer active:opacity-50">
               <ArrowLeft className="h-7 w-7 text-gray-700" />
             </button>
             <div className="relative flex items-center w-full">

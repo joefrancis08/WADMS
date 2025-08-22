@@ -20,7 +20,7 @@ const SearchComponent = ({ placeholder, title, searchClick, condition, onClick, 
         <button
           title={title}
           onClick={onClick}
-          className='flex items-center justify-center cursor-pointer hover:opacity-80 active:opacity-50'
+          className='flex p-2 rounded-full hover:bg-green-600 items-center justify-center cursor-pointer active:opacity-50'
         >
           <Search 
             className='text-slate-100 h-8 w-8 max-md:h-7 max-md:w-7' 
