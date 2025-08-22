@@ -29,6 +29,7 @@ export const useVerifiedUsers = () => {
   const [modalType, setModalType] = useState(null);
   const [toggleDropdown, setToggleDropdown] = useState(false);
   const [infoClick, setInfoClick] = useState(false);
+  const [searchClick, setSearchClick] = useState(false);
   const [profilePic, setProfilePic] = useState(null);
   const [updatedProfilePic, setUpdatedProfilePic] = useState(null);
   const [formValue, setFormValue] = useState({
@@ -89,10 +90,13 @@ export const useVerifiedUsers = () => {
     const anyEmpty = updatedValue.fullName.trim() === '' || updatedValue.email.trim() === '';
     const invalidEmail = !emailRegex.test(updatedValue.email);
 
-    // enable save if fields changed OR profile pic changed
+    // Enable save if fields changed OR profile pic changed
     return (unchanged && !profilePicChanged) || anyEmpty || invalidEmail;
   }, [selectedUser, updatedValue, updatedProfilePic]);
 
+  const handleSearchClick = () => {
+    setSearchClick(!searchClick);
+  }
 
   const handleAddUser = () => {
     activeDropdownId && setActiveDropdownId(null);
@@ -295,6 +299,11 @@ export const useVerifiedUsers = () => {
 
     saveButton: {
       isUpdateBtnDisabled
+    },
+
+    search: {
+      handleSearchClick,
+      searchClick
     },
 
     state: {

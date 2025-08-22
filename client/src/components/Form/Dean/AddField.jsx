@@ -62,14 +62,19 @@ const AddField = ({
               <CircleAlert 
                 onMouseEnter={handleMouseEnter} 
                 onMouseLeave={handleMouseLeave}
-                className='absolute top-3.5 right-2 text-red-500' 
+                className='absolute top-3.5 right-3 text-red-500' 
                 size={22}
               />
               {alertHover && (
                 <Popover 
                   handleMouseEnter={handleMouseEnter}
                   handleMouseLeave={handleMouseLeave}
-                  content={'Hello'}
+                  position='top-2 right-10'
+                  content={
+                    <p className='text-slate-100 bg-slate-800 p-2 rounded-md text-sm'>
+                      Email was already taken. Provide a unique one.
+                    </p>
+                  }
                 />
               )}
             </>

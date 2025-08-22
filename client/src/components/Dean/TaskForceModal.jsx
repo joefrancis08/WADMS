@@ -66,7 +66,7 @@ const TaskForceModal = ({
                   position='top-3 left-52'
                   content={
                     <p className='text-slate-100 text-xs p-2'>
-                      The "Add" button is enabled only if all mandatory fields (excluding the profile picture) are completed and the email is correctly formatted.
+                      The "Add" button is enabled only if all mandatory fields (excluding the profile picture) are completed and the email is correctly formatted and not already taken.
                     </p>
                   }
                 />

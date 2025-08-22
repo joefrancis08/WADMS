@@ -45,15 +45,6 @@ const TaskForceCard = ({
 
   return (
     <div>
-      <div className='flex justify-center'>
-        <h2 className={`flex items-center justify-center w-full gap-2 p-2 text-2xl bg-gradient-to-l from-slate-900 to-green-600 shadow-md max-lg:text-center text-slate-50 rounded font-bold mb-3
-          ${label === 'Chair' && 'lg:w-[75%]'}`}>
-          {label 
-            ? (taskForce?.length > 1 ? `${String(label).toUpperCase()}S` : String(label).toUpperCase()) 
-            : ''
-          }
-        </h2>
-      </div>
       <div className='flex flex-wrap gap-10 pb-6 justify-center'>
         {taskForce?.map(user => (
           <div
