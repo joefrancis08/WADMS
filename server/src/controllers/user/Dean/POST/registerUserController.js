@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
-import { getUserByEmail, insertUser } from "../../models/userModel.js";
-import { handleBlankUserInput } from "../../utils/handleBlankField.js";
+import { getUserByEmail, insertUser } from "../../../../models/userModel.js";
+import { handleBlankUserInput } from "../../../../utils/handleBlankField.js";
 
 
 export const registerUserController = async (req, res) => {

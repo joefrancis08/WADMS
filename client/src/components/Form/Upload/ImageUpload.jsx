@@ -19,7 +19,8 @@ const ImageUpload = (
   useEffect(() => {
     if (imageValue) {
       setPreview(`${profile_pic_path}/${imageValue}`); // show existing image from props
-    }
+    } 
+    
   }, [imageValue, profile_pic_path]);
 
   const handleFileChange = (e) => {

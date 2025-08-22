@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { logoutIcon, userProfileIcon } from '../assets/icons.js';
 import { Menu, X, ChevronDown } from 'lucide-react';
 
 const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
@@ -107,10 +106,9 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
                       const ChildIcon = child.icon;
                       const childActive = location.pathname === child.link;
                       return (
-                        <>
+                        <React.Fragment key={child.id}>
                           {child.hasHR && <hr className='mt-5 mb-2 text-slate-600'></hr>}
                           <Link
-                            key={child.id}
                             to={child.link}
                             className={`relative flex items-center space-x-3 px-4 py-2 rounded-md transition ${
                               childActive ? 'bg-slate-700 text-white' : 'hover:bg-slate-800'
@@ -127,7 +125,7 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
                               )
                             }
                           </Link>
-                        </>
+                        </React.Fragment>
                       );
                     })}
                   </div>

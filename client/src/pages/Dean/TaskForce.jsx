@@ -21,7 +21,7 @@ const TaskForce = () => {
   const { handleConfirmDelete } = confirmDelete;
   const { activeDropdownId, handleDropdown, handleDropdownMenuClick, toggleDropdown } = dropdown;
   const { handleEllipsisClick } = ellipsis;
-  const { updatedValue, handleChange } = form;
+  const { emailAlreadyExist, updatedValue, handleChange } = form;
   const { infoClick, handleInfoClick } = info;
   const { modalType, handleCloseModal } = modal;
   const { navigate } = navigation;
@@ -115,6 +115,7 @@ const TaskForce = () => {
       <TaskForceModal
         modalType={modalType}
         formValue={formValue}
+        emailAlreadyExist={emailAlreadyExist}
         updatedValue={updatedValue}
         selectedUser={selectedUser}
         infoClick={infoClick}

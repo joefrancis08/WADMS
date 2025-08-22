@@ -13,6 +13,7 @@ import Tooltip from '../Popover';
 const TaskForceModal = ({
   modalType,
   formValue,
+  emailAlreadyExist,
   updatedValue,
   selectedUser,
   infoClick,
@@ -46,8 +47,9 @@ const TaskForceModal = ({
           disabled={
             formValue.fullName.trim() === '' ||
             formValue.email.trim() === '' ||
-            !emailRegex.test(formValue.email) ||
-            formValue.role.trim() === '' 
+            formValue.role.trim() === '' ||
+            emailAlreadyExist ||
+            !emailRegex.test(formValue.email)
           }
           primaryButton="Add"
           secondaryButton="Cancel"

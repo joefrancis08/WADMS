@@ -5,11 +5,13 @@ import PATH from "../constants/path";
 import { useUsersBy } from "./useUsers";
 import MODAL_TYPES from "../constants/modalTypes";
 import { TOAST_MESSAGES } from "../constants/messages";
-import { deleteUser, postUser, updateUser } from "../api/Users/userAPI";
+import { checkUserEmail, deleteUser, postUser, updateUser } from "../api/Users/userAPI";
 import { showErrorToast, showSuccessToast } from "../utils/toastNotification";
 import { emailRegex } from "../utils/regEx";
 
 export const useVerifiedUsers = () => {
+  const { users, loading, error } = useUsersBy();
+
   const navigate = useNavigate();
 
   const { ADD_USER, UPDATE_USER, USER_DELETION_CONFIRMATION } = MODAL_TYPES;
@@ -17,14 +19,13 @@ export const useVerifiedUsers = () => {
   const { TASK_FORCE_ADDITION, TASK_FORCE_UPDATE, TASK_FORCE_DELETION } = TOAST_MESSAGES;
   const { TASK_FORCE_CHAIR, TASK_FORCE_MEMBER } = USER_ROLES;
   const { VERIFIED } = USER_STATUS;
-  
-  const { users, loading, error } = useUsersBy();
 
   const taskForceChair = users.filter(u => u.role === TASK_FORCE_CHAIR);
   const taskForceMember = users.filter(u => u.role === TASK_FORCE_MEMBER);
   
   const [activeDropdownId, setActiveDropdownId] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [emailAlreadyExist, setEmailAlreadyExist] = useState(false);
   const [modalType, setModalType] = useState(null);
   const [toggleDropdown, setToggleDropdown] = useState(false);
   const [infoClick, setInfoClick] = useState(false);
@@ -50,6 +51,29 @@ export const useVerifiedUsers = () => {
       })
     }
   }, [selectedUser]);
+
+  // Check real-time if email already exist
+  useEffect(() => {
+    if (!formValue.email) {
+      setEmailAlreadyExist(false);
+      return;
+    }
+
+    const delayDebounce = setTimeout(async () => {
+      try {
+        const res = await checkUserEmail(formValue.email);
+        setEmailAlreadyExist(res.data.alreadyExist); 
+
+        console.log(res);
+
+        console.log(res.data.alreadyExist);
+      } catch (err) {
+        console.error("Error checking email:", err);
+      }
+    }, 500);
+
+    return () => clearTimeout(delayDebounce);
+  }, [formValue.email])
 
   const isUpdateBtnDisabled = useMemo(() => {
     const unchanged = 
@@ -98,7 +122,6 @@ export const useVerifiedUsers = () => {
 
       const res = await postUser(data);
 
-      const emailAlreadyExists = res?.data?.alreadyExist;
       res?.data?.success && showSuccessToast(TASK_FORCE_ADDITION.SUCCESS);
 
     } catch (error) {
@@ -155,6 +178,8 @@ export const useVerifiedUsers = () => {
       updatedData.append('newEmail', email);
       updatedData.append('newRole', role);
       const res = await updateUser(updatedData, selectedUser?.user_uuid);
+
+      console.log(res);
 
       res.data.success && showSuccessToast(TASK_FORCE_UPDATE.SUCCESS);
 
@@ -242,7 +267,8 @@ export const useVerifiedUsers = () => {
 
     form: {
       updatedValue,
-      handleChange,
+      emailAlreadyExist,
+      handleChange
     },
 
     info: {

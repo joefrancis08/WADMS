@@ -1,24 +1,25 @@
-import { getUserByEmail } from "../../../../models/userModel.js";
+import { checkUserEmail } from "../../../../models/user/GET/getUser.js";
 
 export const checkEmailController = async (req, res) => {
-  const { email } = req.body;
+  const { email } = req.query;
 
   try {
-    const user = await getUserByEmail(email);
+    const user = await checkUserEmail(email);
+
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required' });
+    }
 
     if (user) {
       return res.status(200).json({
-        message: 'Email already exists.',
-        success: false,
-        alreadyExists: true,
-        data: user
+        message: 'Email already exist.',
+        alreadyExist: user,
       });
     }
 
     return res.status(200).json({
       message: 'Email is available.',
-      success: true,
-      alreadyExists: false,
+      alreadyExist: user,
     });
 
   } catch (error) {
