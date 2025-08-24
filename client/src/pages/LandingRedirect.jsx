@@ -10,21 +10,25 @@ const { UNVERIFIED_USER } = USER_ROLES;
 const { PENDING } = USER_STATUS;
 
 const LandingRedirect = () => {
-  const { user, isLoading } = useAuth();
+  // 
+  const user = { email: "test@test.com", role: "Dean" }; // mock data
+  const isLoading = false;
   const navigate = useNavigate();
 
   useEffect(() => {
-
+  if (!isLoading) {
     if (!user) {
-      navigate(EMAIL_CONFIRMATION); // If user not logged in
+      navigate(EMAIL_CONFIRMATION);
     } else {
       navigate(NOT_FOUND_URL);
     }
-  }, [user, isLoading, navigate]);
+  }
+}, [user, isLoading, navigate]);
 
   return (
     <div className="w-full h-screen flex items-center justify-center">
-      <LoadSpinner height={'h-16'} width={'w-16'}/>
+      {/* <LoadSpinner height={'h-16'} width={'w-16'}/> */}
+      <div>Testing Landing Redirect...</div>
     </div>
   );
 };

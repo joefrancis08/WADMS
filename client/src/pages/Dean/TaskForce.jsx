@@ -48,6 +48,7 @@ const TaskForce = () => {
           headerIcon={UserRoundCog}
           headerTitle='Task Force'
           searchClick={searchClick}
+          placeholder='Search Task Force...'
           condition={taskForceChair.length > 0 || taskForceMember.length > 0}
           onClick={handleSearchClick}
         />
@@ -55,10 +56,10 @@ const TaskForce = () => {
           <div className='flex items-center'>
             <button
               title='Generate Access Link' 
-              className='p-2 rounded-full mr-2 cursor-pointer hover:bg-slate-200 active:opacity-50'>
+              className='p-2 rounded-full mr-2 cursor-pointer transition-all shadow bg-slate-300 hover:opacity-80 active:opacity-50'>
               <Link2 className='text-slate-700' size={32}/>
             </button>
-            <button title='Add Task Force' onClick={handleAddUser} className='p-2 rounded-full mr-2 cursor-pointer hover:bg-slate-200 active:opacity-50 '>
+            <button title='Add Task Force' onClick={handleAddUser} className='p-2 rounded-full mr-2 cursor-pointer transition-all shadow bg-slate-300 hover:opacity-80 active:opacity-50'>
               <UserRoundPlus className='text-slate-700' size={32}/>
             </button>
           </div>
@@ -75,14 +76,14 @@ const TaskForce = () => {
                 data.length > 0 && (
                   <React.Fragment key={label}>
                     <div className='flex justify-center'>
-                      <h2 className={`flex items-center justify-center w-1/2 p-2 text-2xl bg-gradient-to-l from-slate-900 via-green-700 to-slate-900 shadow-md max-lg:text-center text-slate-50 rounded font-bold`}>
+                      <h2 className={`flex items-center justify-center w-1/2 p-2 text-2xl bg-gradient-to-l from-slate-900 via-green-600 to-slate-900 shadow-md max-lg:text-center text-slate-50 rounded font-bold`}>
                         {label 
                           ? (taskForceChair.length > 1 && taskForceMember.length > 1 ? `${String(label).toUpperCase()}S` : String(label).toUpperCase()) 
                           : ''
                         }
                       </h2>
                     </div>
-                    <div className='p-4 space-y-6 mb-15 border bg-slate-300 shadow-md border-slate-300 rounded-md mx-4'>
+                    <div className='p-4 space-y-6 mb-15 border bg-slate-200 shadow-md border-slate-300 rounded-md mx-4'>
                       <TaskForceCard
                         key={label}
                         activeDropdownId={activeDropdownId}

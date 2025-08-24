@@ -12,7 +12,7 @@ const ContentHeader = ({ headerIcon, headerTitle, searchClick, placeholder, cond
   const handleCloseModal = () => setIsSearchModalOpen(false);
 
   return (
-    <header className='relative md:sticky top-0 md:z-10 h-18 md:h-20 bg-gradient-to-r from-slate-900 to-green-700 shadow-md'>
+    <header className='relative md:sticky top-0 md:z-50 h-18 md:h-20 bg-gradient-to-r from-slate-900 to-green-700 shadow-md'>
       <div className='flex justify-between items-center p-4'>
         
         {/* Title + Icon */}

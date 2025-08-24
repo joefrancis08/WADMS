@@ -50,7 +50,7 @@ const TaskForceCard = ({
           <div
             onClick={() => navigation(user)}
             key={user.user_uuid} 
-            className={`relative p-4 bg-gradient-to-r from-slate-200 to-slate-100 rounded-xl border border-slate-300 shadow hover:shadow-xl cursor-pointer transition
+            className={`relative p-4 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl shadow hover:shadow-xl cursor-pointer transition
               ${label === 'Chair' && 'w-45 sm:w-50 md:w-55 lg:w-60 xl:w-65'}
               ${label === 'Member' && 'w-36 sm:w-40 md:w-44 lg:w-48 xl:w-52'}
             `}
@@ -59,7 +59,7 @@ const TaskForceCard = ({
               onClick={(e) => {
                 handleEllipsisClick(e, user);
               }} 
-              className='absolute top-0 p-2 right-0 text-slate-900 rounded-bl-xl rounded-tr-lg hover:shadow hover:text-slate-600 hover:bg-slate-300 active:opacity-50 transition'>
+              className='absolute top-0 p-2 right-0 text-slate-100 rounded-bl-xl rounded-tr-lg hover:shadow hover:text-slate-200 hover:bg-slate-100/20 active:opacity-50 transition'>
               <EllipsisVertical size={20}/>
             </div>
             {renderDropdown(user)}
@@ -69,7 +69,7 @@ const TaskForceCard = ({
                   name={user.full_name} 
                   profilePic={profilePic(user)}
                   height='h-36' width='w-36' 
-                  border='rounded-full border-3 border-green-700' 
+                  border='rounded-full border-3 border-green-800' 
                 />
               )}
 
@@ -82,10 +82,10 @@ const TaskForceCard = ({
                 />
               )}
               
-              <p className='bg-gradient-to-r from-green-800 to-green-600 w-full text-sm max-md:text-md md:text-lg text-slate-100 shadow font-semibold mt-3 py-0.5'>
+              <p className='bg-gradient-to-b from-green-800 to-green-600 w-full text-sm max-md:text-md md:text-lg text-slate-100 shadow font-semibold mt-3 py-0.5'>
                 {user.full_name}
               </p>
-              <p className='border-l border-r border-b border-slate-300 w-[50%] shadow text-slate-800 max-md:text-xs md:text-sm'>
+              <p className='w-1/2 text-neutral-900 shadow max-md:text-xs md:text-sm'>
                 {user.role}
               </p>
             </div>
