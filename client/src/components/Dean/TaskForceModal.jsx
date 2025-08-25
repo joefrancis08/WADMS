@@ -1,17 +1,18 @@
-import MODAL_TYPE from '../../../constants/modalTypes';
-
+import MODAL_TYPE from '../../constants/modalTypes';
 import { CircleQuestionMark, Trash2 } from 'lucide-react';
-import ImageUpload from '../Upload/ImageUpload';
-import AddUserModal from '../../Modals/AddUserModal';
-import UpdateUserModal from '../../Modals/UpdateUserModal';
-import UpdateField from './UpdateField';
-import ConfirmationModal from '../../Modals/ConfirmationModal';
-import AddField from './AddField';
-import { emailRegex } from '../../../utils/regEx';
+import ImageUpload from '../Form/Upload/ImageUpload';
+import AddUserModal from '../Modals/user/AddUserModal';
+import UpdateUserModal from '../Modals/user/UpdateUserModal';
+import UpdateField from '../Form/Dean/UpdateField';
+import ConfirmationModal from '../Modals/ConfirmationModal';
+import AddField from '../Form/Dean/AddField';
+import { emailRegex } from '../../utils/regEx';
+import Tooltip from '../Popover';
 
 const TaskForceModal = ({
   modalType,
   formValue,
+  emailAlreadyExist,
   updatedValue,
   selectedUser,
   infoClick,
@@ -45,8 +46,9 @@ const TaskForceModal = ({
           disabled={
             formValue.fullName.trim() === '' ||
             formValue.email.trim() === '' ||
-            !emailRegex.test(formValue.email) ||
-            formValue.role.trim() === '' 
+            formValue.role.trim() === '' ||
+            emailAlreadyExist ||
+            !emailRegex.test(formValue.email)
           }
           primaryButton="Add"
           secondaryButton="Cancel"
@@ -58,19 +60,23 @@ const TaskForceModal = ({
                 className='text-slate-500 hover:text-slate-600 cursor-pointer' size={20}
               />
               {infoClick && (
-                <div onClick={handleInfoClick} className='w-40 h-auto bg-slate-800 absolute top-3 left-52 rounded z-40 transition-opacity duration-500'>
-                  <p className='text-slate-100 text-xs p-2'>
-                    The "Add" button is enabled only if all mandatory fields (excluding the profile picture) are completed and the email is correctly formatted.
-                  </p>
-                </div>
-              )}
+                <Tooltip 
+                  handleInfoClick={handleInfoClick}
+                  position='top-3 left-52'
+                  content={
+                    <p className='text-slate-100 text-xs p-2'>
+                      The "Add" button is enabled only if all mandatory fields (excluding the profile picture) are completed and the email is correctly formatted and not already taken.
+                    </p>
+                  }
+                />
+              ) }
             </div>
           }
           bodyContent={
             <>
               <ImageUpload onChange={handleProfilePic} setProfilePic={setProfilePic}/>
               <AddField fieldName='Full Name' type='text' name='fullName' formValue={formValue.fullName} onChange={handleAddUserInputChange} />
-              <AddField fieldName='Email Address' type='text' name='email' formValue={formValue.email} onChange={handleAddUserInputChange} />
+              <AddField fieldName='Email Address' type='text' name='email' formValue={formValue.email} onChange={handleAddUserInputChange} invalid={emailAlreadyExist}/>
               <AddField fieldName='Role' type='text' name='role' formValue={formValue.role} toggleDropdown={toggleDropdown} isReadOnly={true} isDropdown={true} isClickable={true} onChevronClick={handleChevronClick} onClick={handleChevronClick} onDropdownMenuClick={handleDropdownMenuClick} onChange={handleAddUserInputChange} />
               <hr className='text-gray-300 mt-2'></hr>
             </>

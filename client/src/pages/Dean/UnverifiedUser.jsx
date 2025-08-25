@@ -1,11 +1,9 @@
 import { ChevronDown, ChevronLeft, ShieldCheck, ShieldUser, Trash2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { useUnverifiedUsers } from '../../hooks/useUnverifiedUsers';
 import AdminLayout from '../../components/Layout/Dean/DeanLayout';
-import dateFormatter from '../../utils/dateFormatter';
 import UserProfileModal from '../../components/Modals/UserProfileModal';
 import ConfirmationModal from '../../components/Modals/ConfirmationModal';
-import UpdateUserModal from '../../components/Modals/UpdateUserModal';
+import UpdateUserModal from '../../components/Modals/user/UpdateUserModal';
 import MODAL_TYPE from '../../constants/modalTypes';
 import Dropdown from '../../components/Dropdown/Dropdown';
 import TimeAgo from '../../components/TimeAgo';

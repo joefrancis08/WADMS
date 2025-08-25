@@ -14,8 +14,16 @@ export const getUserBy = async (column, value, single = true) => {
     throw new Error('Invalid column specified');
   }
 
-  const query = `SELECT * FROM user WHERE ${column} = ? ORDER BY created_at DESC`;
+  const query = `
+    SELECT user_uuid, profile_pic_path, full_name, email, role, created_at FROM user WHERE ${column} = ? 
+    ORDER BY created_at DESC
+  `;
   const [rows] = await db.execute(query, [value]);
 
   return single ? rows[0] : rows;
-}
+};
+
+export const checkUserEmail = async (email) => {
+  const user = await getUserBy('email', email);
+  return !!user;
+};

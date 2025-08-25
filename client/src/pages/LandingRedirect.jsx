@@ -5,29 +5,30 @@ import { USER_ROLES, USER_STATUS } from '../constants/user';
 import PATH from '../constants/path';
 import LoadSpinner from '../components/Loaders/LoadSpinner';
 
-const { REGISTER, NOT_FOUND_URL } = PATH.PUBLIC;
+const { EMAIL_CONFIRMATION, NOT_FOUND_URL } = PATH.PUBLIC;
 const { UNVERIFIED_USER } = USER_ROLES;
 const { PENDING } = USER_STATUS;
 
 const LandingRedirect = () => {
-  const { user, isLoading } = useAuth();
+  // 
+  const user = { email: "test@test.com", role: "Dean" }; // mock data
+  const isLoading = false;
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isLoading) return;
-
+  if (!isLoading) {
     if (!user) {
-      navigate(REGISTER); // user not logged in
-    } else if (user.status === PENDING && user.role === UNVERIFIED_USER) {
-      navigate(PENDING_VERIFICATION);
+      navigate(EMAIL_CONFIRMATION);
     } else {
       navigate(NOT_FOUND_URL);
     }
-  }, [user, isLoading, navigate]);
+  }
+}, [user, isLoading, navigate]);
 
   return (
     <div className="w-full h-screen flex items-center justify-center">
-      <LoadSpinner height={'h-16'} width={'w-16'}/>
+      {/* <LoadSpinner height={'h-16'} width={'w-16'}/> */}
+      <div>Testing Landing Redirect...</div>
     </div>
   );
 };

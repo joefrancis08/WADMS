@@ -19,7 +19,7 @@ const UpdateField = ({
   return (
     <div className='relative w-full flex-col pt-4'>
       <div className='pb-6'>
-        <div className='relative flex flex-col items-start'>
+        <div className='relative flex flex-col items-center justify-center'>
           <p className='absolute bottom-10 text-gray-700 text-sm left-2 bg-gradient-to-r from-gray-100 to-gray-50 px-2 rounded-md'>{fieldName}</p>
           <input
             type={type}

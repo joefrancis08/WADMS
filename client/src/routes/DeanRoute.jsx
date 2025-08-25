@@ -8,12 +8,18 @@ import TaskForce from '../pages/Dean/TaskForce';
 import Documents from '../pages/Dean/Documents';
 import TaskForceDetail from '../pages/Dean/TaskForceDetail';
 import ProgramsToAccredit from '../pages/Dean/ProgramsToAccredit';
+import EmailConfirmation from '../pages/EmailConfirmation';
 
 const { 
-  DASHBOARD, TASK_FORCE_DETAIL_TEMPLATE, UNVERIFIED_USERS,
-  UNVERIFIED_USERS_ID, TASK_FORCE, PROGRAMS_TO_ACCREDIT, 
+  DASHBOARD, 
+  TASK_FORCE_DETAIL_TEMPLATE, 
+  UNVERIFIED_USERS,
+  UNVERIFIED_USERS_ID, 
+  TASK_FORCE, 
+  PROGRAMS_TO_ACCREDIT, 
   DOCUMENTS
 } = PATH.DEAN;
+
 const { NOT_FOUND_URL } = PATH.PUBLIC;
 
 const protectedRoutes = [
@@ -40,7 +46,7 @@ const deanRoutes = protectedRoutes.map(({ path, element }) => (
       <ProtectedRoute 
         allowedRoles={[]} // Allowed Role: Dean
         loader={Loader} 
-        fallbackRoute={NOT_FOUND_URL}
+        fallbackRoute={<EmailConfirmation />}
       >
         {element}
       </ProtectedRoute>

@@ -15,7 +15,10 @@ export const updateUserController = async (req, res) => {
       });
     }
 
-    const result = await updateUserInfo(newProfilePicPath, newFullName, newEmail, newRole, userUUID);
+    // If no new file, keep the old profile picture
+    const profilePicToSave = newProfilePicPath || user.profile_pic_path;
+
+    const result = await updateUserInfo(profilePicToSave, newFullName, newEmail, newRole, userUUID);
     if (result.affectedRows === 0) {
       return res.status(404).json({
         message: 'User not found.',

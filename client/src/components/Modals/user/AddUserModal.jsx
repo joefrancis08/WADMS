@@ -1,5 +1,5 @@
 import { X } from 'lucide-react';
-import ModalLayout from '../Layout/ModalLayout';
+import ModalLayout from '../../Layout/ModalLayout';
 
 const Header = ({  onClose, headerContent }) => {
   return (
@@ -7,7 +7,7 @@ const Header = ({  onClose, headerContent }) => {
       {headerContent}
       <button
         onClick={onClose}
-        className="text-gray-400 hover:text-gray-600 transition cursor-pointer"
+        className="text-gray-600 p-3 rounded-full transition cursor-pointer hover:bg-slate-200 active:opacity-75"
         aria-label="Close"
       >
         <X />

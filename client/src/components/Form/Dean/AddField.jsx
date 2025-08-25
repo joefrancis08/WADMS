@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import Dropdown from '../../Dropdown/Dropdown';
 import { USER_ROLES } from '../../../constants/user';
-import { ChevronDown, Info } from 'lucide-react';
+import { Check, ChevronDown, CircleAlert, Info } from 'lucide-react';
+import Popover from '../../Popover';
 
 const AddField = ({
   fieldName,
@@ -14,13 +15,23 @@ const AddField = ({
   onChevronClick,
   onDropdownMenuClick,
   toggleDropdown,
+  invalid = false,
   isReadOnly = false,
   isClickable = false,
   isDropdown = false
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const isFloating = isFocused && name !== 'role' || (formValue ?? '').trim() !== '';
+  const [alertHover, setAlertHover] = useState(false);
 
+  const handleMouseEnter = () => {
+    setAlertHover(true);
+  };
+
+  const handleMouseLeave = () => {
+    setAlertHover(false);
+  };
+ 
   return (
     <div className='relative w-full flex-col pt-4'>
       <div className='pb-4'>
@@ -40,9 +51,35 @@ const AddField = ({
             onClick={isClickable ? onClick : null}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            className={`w-full p-3 rounded-lg border border-gray-400 transition text-gray-800 focus:outline-0 focus:ring-2 focus:ring-green-600 shadow ${isClickable && 'cursor-pointer hover:bg-slate-100'}`}
+            className={`w-full p-3 rounded-lg border shadow transition
+              ${isClickable && 'cursor-pointer hover:bg-slate-100'}
+              ${!invalid 
+                ? 'border-gray-400 text-gray-800 focus:outline-0 focus:ring-2 focus:ring-green-600' 
+                : 'border-red-500 text-red-500 focus:outline-0 focus:ring-1 focus:ring-red-500'  }`}
           />
-
+          {invalid && (
+            <>
+              <CircleAlert 
+                onMouseEnter={handleMouseEnter} 
+                onMouseLeave={handleMouseLeave}
+                className='absolute top-3.5 right-3 text-red-500' 
+                size={22}
+              />
+              {alertHover && (
+                <Popover 
+                  handleMouseEnter={handleMouseEnter}
+                  handleMouseLeave={handleMouseLeave}
+                  position='top-2 right-10'
+                  content={
+                    <p className='text-slate-100 bg-slate-800 p-2 rounded-md text-sm'>
+                      Email was already taken. Provide a unique one.
+                    </p>
+                  }
+                />
+              )}
+            </>
+          )}
+          
           {isDropdown && (
             <ChevronDown 
               onClick={onChevronClick}

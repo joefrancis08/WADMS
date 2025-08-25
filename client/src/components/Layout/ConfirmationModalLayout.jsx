@@ -8,10 +8,13 @@ const ConfirmationModalLayout = ({
   footerMargin,
   footerPosition 
 }) => {
+  const handleContentClick = (e) => {
+    e.stopPropagation();
+  };
 
   return (
-    <div className="h-full fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs">
-      <div className="w-[90%] md:max-w-xl bg-gradient-to-r from-gray-100 to-white rounded-lg shadow-2xl px-6 pt-4 animate-fadeIn">
+    <div onClick={() => { onClose?.() }} className="h-full fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs">
+      <div onClick={handleContentClick} className="w-[90%] md:max-w-xl bg-gradient-to-r from-gray-100 to-white rounded-lg shadow-2xl px-6 pt-4 animate-fadeIn">
         <div className='flex text-gray-700 justify-end items-center max-md:items-center'>
           {header}
           <button className='hidden' onClick={() => { onClose?.() }}></button>

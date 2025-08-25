@@ -2,15 +2,14 @@ import axios from "axios";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export const checkUserEmail = async (values) => {
-  try {
-    const res = await axios.post(`${API_BASE_URL}/users/check-email`, {email: values?.email});
+export const confirmEmail = (email) => {
+  return axios.post(`${API_BASE_URL}/users/confirm-email`, { email });
+}
 
-    return res;
-
-  } catch (error) {
-    console.log("There's an error while checking user email: ", error.response.data);
-  }
+export const checkUserEmail = async (email) => {
+  return await axios.get(`${API_BASE_URL}/users/check-email`, {
+    params: { email }
+  });
 };
 
 export const postUser = async (data) => {

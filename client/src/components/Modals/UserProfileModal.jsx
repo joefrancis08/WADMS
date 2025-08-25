@@ -9,7 +9,7 @@ const UserProfileHeader = ({ selectedUser, onClose }) => {
       {/* Close Button */}
       <button
         onClick={onClose}
-        className="absolute top-5 right-6 text-gray-400 hover:text-gray-600 transition cursor-pointer"
+        className="absolute top-5 right-6 text-gray-600 p-3 rounded-full transition cursor-pointer hover:bg-slate-200 active:opacity-75"
         aria-label="Close"
       >
         <X />

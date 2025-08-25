@@ -1,18 +1,20 @@
 import { getUserById, getUsersByRole, getUserByStatus } from '../../models/userModel.js';
-import { registerUserController } from './registerUserController.js';
-import { checkEmailController } from './Dean-and-Chairman/GET/checkEmailController.js';
-import { loginUserController } from './Dean-and-Chairman/GET/loginUserController.js';
-import { userSessionController } from './Dean-and-Chairman/GET/userSessionController.js';
-import { logoutUserController } from './Dean-and-Chairman/POST/logoutUserController.js';
-import { fetchAllUsersController, fetchUserController } from './Dean-and-Chairman/GET/fetchUserController.js';
-import { updateUserController } from './Dean-and-Chairman/PATCH/updateUserController.js';
-import { deleteAllUsersController } from './Dean-and-Chairman/DELETE/deleteAllUsersController.js';
-import { deleteUserByIdController } from './Dean-and-Chairman/DELETE/deleteUserByIdController.js';
-import { addUserController } from './Dean-and-Chairman/POST/addUserController.js';
+import { registerUserController } from './Dean/POST/registerUserController.js';
+import { checkEmailController } from './Dean/GET/checkEmailController.js';
+import { loginUserController } from './Dean/GET/loginUserController.js';
+import { userSessionController } from './Dean/GET/userSessionController.js';
+import { logoutUserController } from './Dean/POST/logoutUserController.js';
+import { fetchAllUsersController, fetchUserController } from './Dean/GET/fetchUserController.js';
+import { updateUserController } from './Dean/PATCH/updateUserController.js';
+import { deleteAllUsersController } from './Dean/DELETE/deleteAllUsersController.js';
+import { deleteUserByIdController } from './Dean/DELETE/deleteUserByIdController.js';
+import { addUserController } from './Dean/POST/addUserController.js';
+import { confirmEmailController } from './Dean/POST/confirmEmailController.js';
 
 export const registerUser = (req, res) => registerUserController(req, res); // Create new user
 export const addUser = (req, res) => addUserController(req, res);
 export const checkEmail = (req, res) => checkEmailController(req, res); // Check email
+export const confirmEmail = (req, res) => confirmEmailController(req, res);
 export const loginUser = (req, res) => loginUserController(req, res); // Login user
 export const userSession = (req, res) => userSessionController(req, res); // Get session info
 export const logoutUser = (req, res) => logoutUserController(req, res); // Logout user

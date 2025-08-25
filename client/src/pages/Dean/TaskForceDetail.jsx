@@ -1,13 +1,13 @@
 import { Link } from 'react-router-dom';
 import AdminLayout from '../../components/Layout/Dean/DeanLayout';
-import { CalendarDays, ChevronLeft, Mail, Pen, Trash2 } from 'lucide-react';
+import { ArrowLeft, CalendarDays, ChevronLeft, Mail, Pen, Trash2 } from 'lucide-react';
 import TimeAgo from '../../components/TimeAgo';
 import VerifiedUserDetailSkeletonLoader from '../../components/Loaders/VerifiedUserDetailSkeletonLoader';
 import useVerifiedUserDetail from '../../hooks/useVerifiedUserDetail';
 import { useVerifiedUsers } from '../../hooks/useVerifiedUsers';
 import ProfilePicture from '../../components/ProfilePicture';
 import getProfilePicPath from '../../utils/getProfilePicPath';
-import TaskForceModal from '../../components/Form/Dean/TaskForceModal';
+import TaskForceModal from '../../components/Dean/TaskForceModal';
 
 const TaskForceDetail = () => {
   
@@ -34,13 +34,13 @@ const TaskForceDetail = () => {
     <AdminLayout>
       <main className="px-4 py-6 md:px-8 w-full max-w-screen-xl mx-auto">
         {/* Header */}
-        <div className="flex items-center gap-2 mb-6">
-          <Link to={TASK_FORCE} className="text-gray-700">
-            <ChevronLeft className='hover:opacity-65 active:opacity-50' size={32}/>
+        <div className="flex items-center gap-2 mb-3">
+          <Link to={TASK_FORCE} className="flex items-center gap-4 text-slate-700">
+            <ArrowLeft className='hover:opacity-75 active:opacity-50' size={32}/>
+            <p className='text-lg md:text-2xl'>
+              {selectedUser?.full_name ?? 'User'}'s Info
+            </p>
           </Link>
-          <p className='text-lg md:text-2xl transition'>
-            {selectedUser?.full_name ?? 'User'}'s Info
-          </p>
         </div>
         {loading 
           ? (
@@ -66,7 +66,7 @@ const TaskForceDetail = () => {
                   <Trash2 />
                 </button>
               </div>
-              <div className='border bg-slate-200 border-slate-300 rounded-xl shadow-md mb-8'>
+              <div className='border bg-gradient-to-b from-green-700 to-amber-300 border-slate-300 rounded-xl shadow-md mb-8'>
                 <div className='flex max-lg:flex-col items-center px-5 pb-5 pt-8 lg:flex-row md:px-20 md:pb-5 justify-evenly'>
                   <div className='rounded-full shadow-md'>
                     <ProfilePicture
@@ -75,14 +75,14 @@ const TaskForceDetail = () => {
                       textSize={'text-5xl'}
                       height={'h-40 md:h-65 lg:h-70'} 
                       width={'w-40 md:w-65 lg:w-70'} 
-                      border={'rounded-full border-4 border-green-700'}/>
+                      border={'rounded-full border-4 border-green-800'}/>
                   </div>
                   <div className='flex flex-col items-center gap-y-5'>
                     <div className='flex items-center w-auto text-wrap text-center h-auto pt-8'>
-                      <p className='max-sm:text-4xl max-lg:text-5xl lg:text-7xl text-gray-900 font-bold'>{selectedUser?.full_name}</p>
+                      <p className='max-sm:text-4xl max-lg:text-5xl lg:text-7xl text-white font-bold'>{selectedUser?.full_name}</p>
                     </div>
                     <div className='flex justify-center w-auto h-auto pb-4'>
-                      <p className='max-sm:text-xl max-lg:text-2xl lg:text-3xl font-bold text-gray-600'>{selectedUser?.role}</p>
+                      <p className='max-sm:text-xl max-lg:text-2xl lg:text-3xl font-bold text-slate-100'>{selectedUser?.role}</p>
                     </div>
                   </div>
                 </div>

@@ -6,7 +6,7 @@ const AuthContext = createContext();
 
 // Create Provider Component
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const register = (email, fullName, role, status) => {

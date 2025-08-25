@@ -17,7 +17,7 @@ export const addUserController = async (req, res) => {
     const user = await getUserByEmail(email);
 
     if (user && user.email === email) {
-      return res.status(409).json({
+      return res.status(200).json({
         message: 'Email already exists.',
         alreadyExist: true, 
       });
