@@ -61,7 +61,7 @@ const ImageUpload = (
             <img
               src={preview}
               alt="Preview"
-              className="w-32 h-32 object-cover rounded-full border-4 border-green-600 shadow-lg transition-all"
+              className="w-32 h-32 object-cover rounded-full border-4 border-green-600 shadow transition-all"
             />
             {allowRemove && ( // Show remove button only if allowed
               <button

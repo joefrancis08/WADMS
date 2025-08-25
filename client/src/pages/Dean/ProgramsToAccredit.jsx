@@ -1,20 +1,40 @@
 import AdminLayout from '../../components/Layout/Dean/DeanLayout';
-import { BookPlus, ClipboardList, EllipsisVertical, Link2, NotepadText, UserRoundPlus } from 'lucide-react';
-import SearchComponent from '../../components/SearchComponent';
+import { BookPlus, NotepadText } from 'lucide-react';
 import { useState } from 'react';
 import ContentHeader from '../../components/Dean/ContentHeader';
+import MODAL_TYPE from '../../constants/modalTypes';
+import ProgramToAccreditModal from '../../components/Modals/accreditation/ProgramToAccreditModal';
 
 const ProgramsToAccredit = () => {
-
-  const [searchClick, setSearchClick] = useState(false);
   const [hoverProgramOptions, setHoverProgramOptions] = useState(false);
+  const [modalType, setModalType] = useState(null);
 
-  const handleSearchClick = () => {
-    setSearchClick(!searchClick);
-  }
-  const dummyData = {
-    programName: 'PhD-TM'
+  const handleAddClick = () => {
+    setModalType(MODAL_TYPE.ADD_PROGRAM_TO_ACCREDIT);
   };
+
+  const handleCloseClick = () => {
+    setModalType(null);
+  };
+
+  const renderModal = () => {
+    switch (modalType) {
+      case MODAL_TYPE.ADD_PROGRAM_TO_ACCREDIT:
+        return (
+          <ProgramToAccreditModal
+            onClose={handleCloseClick}
+            headerContent={
+              <p className='text-2xl font-medium text-slate-900'>
+                Add Program to Accredit
+              </p>
+            }
+          />
+        );
+    
+      default:
+        return null;
+    }
+  }
 
   return (
     <AdminLayout>
@@ -23,18 +43,18 @@ const ProgramsToAccredit = () => {
         <ContentHeader 
           headerIcon={NotepadText}
           headerTitle='Programs Under Accreditation'
-          searchClick={searchClick}
-          placeholder='Search program...'
+          searchTitle='Search Program to Accredit'
+          placeholder='Search program to accredit...'
           condition={true}
         />
         <div className='relative px-4 flex justify-end'>
           <div className='flex items-center'>
-            <button title='Add Program to Accredit' onClick={''} className='p-3 rounded-full mr-2 cursor-pointer transition-all shadow bg-slate-300 hover:opacity-80 active:opacity-50'>
+            <button title='Add Program to Accredit' onClick={handleAddClick} className='p-3 rounded-full mr-2 cursor-pointer transition-all shadow bg-slate-300 hover:opacity-80 active:opacity-50'>
               <BookPlus className='text-slate-700' size={28}/>
             </button>
           </div>
         </div>
-        <div className='relative bg-slate-300 p-4 mx-4 mb-4 mt-6'>
+        <div className='relative bg-slate-300 rounded-md p-4 mx-4 mb-4 mt-6'>
           <div className='absolute -top-5 left-1/2 -translate-x-1/2 flex items-center justify-center w-1/2 lg:w-1/3 p-2 bg-gradient-to-l from-slate-900 via-green-600 to-slate-900 shadow-md max-lg:text-center text-white rounded font-bold'>
             <p className='max-sm:text-sm md:text-md lg:text-lg text-center'>
               2025-2026
@@ -183,6 +203,7 @@ const ProgramsToAccredit = () => {
           </div>
         </div>
       </div>
+      {renderModal()}
     </AdminLayout>
   );
 };

@@ -1,9 +1,8 @@
 import MODAL_TYPE from '../../constants/modalTypes';
-
 import { CircleQuestionMark, Trash2 } from 'lucide-react';
 import ImageUpload from '../Form/Upload/ImageUpload';
-import AddUserModal from '../Modals/AddUserModal';
-import UpdateUserModal from '../Modals/UpdateUserModal';
+import AddUserModal from '../Modals/user/AddUserModal';
+import UpdateUserModal from '../Modals/user/UpdateUserModal';
 import UpdateField from '../Form/Dean/UpdateField';
 import ConfirmationModal from '../Modals/ConfirmationModal';
 import AddField from '../Form/Dean/AddField';

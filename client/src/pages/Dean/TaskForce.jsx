@@ -47,7 +47,7 @@ const TaskForce = () => {
         <ContentHeader 
           headerIcon={UserRoundCog}
           headerTitle='Task Force'
-          searchClick={searchClick}
+          searchTitle='Search Task Force'
           placeholder='Search Task Force...'
           condition={taskForceChair.length > 0 || taskForceMember.length > 0}
           onClick={handleSearchClick}

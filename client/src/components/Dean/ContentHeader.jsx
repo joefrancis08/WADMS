@@ -2,7 +2,7 @@ import { useState } from 'react';
 import SearchModal from '../Modals/SearchModal';
 import SearchComponent from '../SearchComponent';
 
-const ContentHeader = ({ headerIcon, headerTitle, searchClick, placeholder, condition, onClick }) => {
+const ContentHeader = ({ headerIcon, headerTitle, searchTitle, placeholder, condition }) => {
   const Icon = headerIcon;
 
   // State to control modal visibility
@@ -26,9 +26,7 @@ const ContentHeader = ({ headerIcon, headerTitle, searchClick, placeholder, cond
         {/* Search Button */}
         <div className='flex items-center gap-x-2'>
           <SearchComponent
-            placeholder='Search Task Force...'
-            title='Search Task Force'
-            searchClick={searchClick}
+            title={searchTitle}
             condition={condition}
             onClick={handleOpenModal}  // Open modal when clicking search
           />

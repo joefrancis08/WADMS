@@ -1,10 +1,13 @@
 import db from "../../../config/db.js";
 import getLevelBy from "../GET/getLevelBy.js";
+import getPeriodBy from "../GET/getPeriodBy.js";
 import getProgramBy from "../GET/getProgramBy.js";
 import { insertLevel } from "./insertLevel.js";
+import insertPeriod from "./insertPeriod.js";
 import { insertProgram } from "./insertProgram.js";
 
-const insertProgramtoAccredit = async (period, level, program) => {
+const insertProgramtoAccredit = async (startDate, endDate, level, program) => {
+  console.log()
   /* 
     Get a connection from the database pool
     so we can manually control transaction behavior
@@ -46,16 +49,31 @@ const insertProgramtoAccredit = async (period, level, program) => {
       levelId = newLevel.insertId;
     }
 
+    // Logic here is the same as program and level
+    const periodResult = await getPeriodBy('start_date', startDate, connection);
+
+    let periodId;
+    if (periodResult.length > 0) {
+      periodId = periodResult[0].id;
+
+    } else {
+      const newPeriod = await insertPeriod(startDate, endDate, connection);
+      periodId = newPeriod.insertId;
+    }
+
     // Insert program and level Id into Program Level Mapping Table
-    const query = 'INSERT INTO program_level_mapping (program_id, level_id) VALUES (?, ?)';
-    await connection.execute(query, [programId, levelId])
+    const query = `
+      INSERT INTO program_level_mapping (program_id, level_id, period_id) 
+      VALUES (?, ?, ?)
+    `;
+    await connection.execute(query, [programId, levelId, periodId])
 
     /* 
       If everything is successful, commit the transaction
       which means saving all the changes permanently in the database.
     */
     await connection.commit();
-    return { levelId, programId }; // Return Level and Program Id (in case of use in the future)
+    return { periodId, levelId, programId }; // Return Level, Program, and Period Id (in case of use in the future)
 
   } catch (error) {
     /* 
@@ -64,7 +82,12 @@ const insertProgramtoAccredit = async (period, level, program) => {
       to keep database consistent
     */
     await connection.rollback();
+
+    if (error.code === 'ER_DUP_ENTRY') {
+      throw new Error('DUPLICATE_ENTRY');
+    }
     console.error(error);
+
     throw error;
 
   } finally {

@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import ModalLayout from "../Layout/ModalLayout";
+import ModalLayout from "../../Layout/ModalLayout";
 
 // Header
 const UpdateUserModalHeader = ({ onClose, headerContent }) => {

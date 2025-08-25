@@ -1,6 +1,6 @@
 import db from "../../../config/db.js";
 
-const getLevelBy = async (column, value, single = true, connection = db) => {
+const getLevelBy = async (column, value, connection = db) => {
   const allowedColumns = ['id', 'level_name'];
 
   if (!allowedColumns.includes(column)) {

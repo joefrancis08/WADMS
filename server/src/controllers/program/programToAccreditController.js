@@ -1,13 +1,41 @@
 import insertProgramtoAccredit from "../../models/program-to-accredit/POST/insertProgramtoAccredit.js";
+import isValidDateFormat from "../../utils/isValidDateFormat.js";
 
 // Controller function to add one or multiple programs to accredit
 export const addProgramtoAccredit = async (req, res) => {
   try {
     /* 
       Destructure the incoming data from the request body
-      Expected format: { levelName: "Level I", programNames: ["BSIT", "BSBA"] }
+      Expected format: {
+        startDate: "2025-08-25",
+        endDate: "2025-08-30",
+        levelName: "Level I", 
+        programNames: ["BSIT", "BSBA"] 
+      }
     */
-    const { accreditationPeriod, levelName, programNames } = req.body;
+    const { startDate, endDate, levelName, programNames } = req.body;
+
+    // Validate if date is not empty and in valid format (e.g., 2025-08-25)
+    if (!startDate || !endDate) {
+      return res.status(400).json({
+        success: false,
+        message: 'Start and end date must not be empty.'
+      });
+
+    } else if (!isValidDateFormat(startDate) || !isValidDateFormat(endDate)) {
+      return res.status(400).json({
+        success:false,
+        message: 'Invalid date format. Expected format: YYYY-MM-DD'
+      });
+    }
+
+    // Validate if levelName is not empty
+    if (!levelName || typeof levelName !== 'string') {
+      return res.status(400).json({
+        success: false,
+        message: 'Level name must not be empty.'
+      });
+    }
 
     /* 
       Ensure programNames is always treated as an array
@@ -19,10 +47,10 @@ export const addProgramtoAccredit = async (req, res) => {
       : [programNames];
 
     // Validate if program names array is not empty
-    if (programs.length === 0) {
+    if (programs.length === 0 || !programNames) {
       return res.status(400).json({
-        message: 'Program names must not be empty',
-        success: false
+        success: false,
+        message: 'Program names must not be empty.',
       });
     }
 
@@ -30,23 +58,31 @@ export const addProgramtoAccredit = async (req, res) => {
     const results = [];
     for (const programName of programs) {
       // Insert each program into the database with its associated levelName
-      const response = await insertProgramtoAccredit(levelName, programName);
+      const response = await insertProgramtoAccredit(startDate, endDate, levelName, programName);
       results.push(response); // Collect the response for reporting back to client
     }
 
     // Send success response back to the client with all inserted results
     res.status(200).json({
-      message: 'Program to accredit added successfully.',
       success: true,
+      message: 'Program to accredit added successfully.',
       results
     });
     
   } catch (error) {
-    // Catch any unexpected errors and log them
-    console.error('Error adding program to accredit: ', error);
+    // Catch duplicate entry
+    if (error.message === 'DUPLICATE_ENTRY') {
+      return res.status(409).json({
+        success: false,
+        message: 'Duplicate entry.'
+      });
+    }
+
+    // Return other server errors
     res.status(500).json({
-      message: 'Internal server error',
       success: false,
-    })
+      message: 'Internal server error.',
+      error: error
+    });
   }
 };

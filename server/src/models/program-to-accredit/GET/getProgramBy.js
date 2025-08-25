@@ -1,6 +1,6 @@
 import db from "../../../config/db.js";
 
-const getProgramBy = async (column, value, single = true, connection = db) => {
+const getProgramBy = async (column, value, connection = db) => {
   const allowedColumns = ['id', 'program_name'];
 
   if (!allowedColumns.includes(column)) {
