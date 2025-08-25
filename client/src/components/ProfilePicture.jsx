@@ -1,9 +1,6 @@
-import { useState } from 'react';
-
 const PROFILE_PIC_PATH = import.meta.env.VITE_PROFILE_PIC_PATH;
 
 const ProfilePicture = ({
-  name,
   profilePic,
   height = 'h-12',
   width = 'w-12',

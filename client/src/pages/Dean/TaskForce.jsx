@@ -75,15 +75,13 @@ const TaskForce = () => {
               {taskForceData.map(({ data, label }) => (
                 data.length > 0 && (
                   <React.Fragment key={label}>
-                    <div className='flex justify-center'>
-                      <h2 className={`flex items-center justify-center w-1/2 p-2 text-2xl bg-gradient-to-l from-slate-900 via-green-600 to-slate-900 shadow-md max-lg:text-center text-slate-50 rounded font-bold`}>
+                    <div className='relative p-4 pt-15 space-y-6 mb-15 border bg-slate-200 shadow-md border-slate-300 rounded-md mx-4 mt-8'>
+                      <h2 className={`absolute -top-6 left-1/2 -translate-x-1/2 flex items-center justify-center w-1/2 p-2 text-2xl bg-gradient-to-l from-slate-900 via-green-600 to-slate-900 shadow-md max-lg:text-center text-slate-50 rounded font-bold`}>
                         {label 
                           ? (taskForceChair.length > 1 && taskForceMember.length > 1 ? `${String(label).toUpperCase()}S` : String(label).toUpperCase()) 
                           : ''
                         }
                       </h2>
-                    </div>
-                    <div className='p-4 space-y-6 mb-15 border bg-slate-200 shadow-md border-slate-300 rounded-md mx-4'>
                       <TaskForceCard
                         key={label}
                         activeDropdownId={activeDropdownId}

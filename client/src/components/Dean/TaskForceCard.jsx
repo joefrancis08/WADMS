@@ -1,4 +1,4 @@
-import { EllipsisVertical, FolderTree, Link, SquareUserRound, Trash2, UserRoundPen } from 'lucide-react';
+import { CirclePlus, EllipsisVertical, FolderTree, Link, SquareUserRound, Trash2, UserRoundPen } from 'lucide-react';
 import Dropdown from '../Dropdown/Dropdown';
 import ProfilePicture from '../ProfilePicture';
 
@@ -91,7 +91,21 @@ const TaskForceCard = ({
             </div>
           </div>
         ))}
+        <div className={`flex items-center justify-center bg-slate-50 p-4 rounded-xl shadow hover:shadow-xl cursor-pointer transition active:shadow
+        ${label === 'Chair' && 'w-45 sm:w-50 md:w-55 lg:w-60 xl:w-65'}
+        ${label === 'Member' && 'w-36 sm:w-40 md:w-44 lg:w-48 xl:w-52'}`}>
+          <div className='flex flex-col items-center justify-center gap-2'>
+            <CirclePlus className='text-slate-500' size={80}/>
+            <p className='text-slate-500 font-medium text-xl text-center'>
+              Add
+              {
+                label === 'Chair' ? ' Chair' : ' Member'
+              }
+            </p>
+          </div>
+        </div>
       </div>
+      
     </div>
   );
 };

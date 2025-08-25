@@ -9,6 +9,7 @@ import corsMiddleware from './src/middlewares/cors.js';
 import userRouter from './src/routes/userRoute.js';
 import setupWebSocket from './src/config/ws.js';
 import programRouter from './src/routes/programRoute.js';
+import accreditationRouter from './src/routes/accreditationRoute.js';
 
 dotenv.config({ quiet: true });
 const __filename = fileURLToPath(import.meta.url);
@@ -32,6 +33,7 @@ app.get('/', (req, res) => {
 
 app.use('/users', userRouter);
 app.use('/programs', programRouter);
+app.use('/accreditation', accreditationRouter);
 
 const server = http.createServer(app);
 setupWebSocket(server);
