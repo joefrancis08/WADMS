@@ -1,4 +1,8 @@
+import { CircleQuestionMark } from 'lucide-react';
 import MODAL_TYPE from '../../constants/modalTypes';
+import AddField from '../Form/Dean/AddField';
+import ProgramToAccreditModal from '../Modals/accreditation/ProgramToAccreditModal';
+import Popover from '../Popover';
 
 const ProgramToBeAccreditedModal = ({
   infoHover,
@@ -39,7 +43,7 @@ const ProgramToBeAccreditedModal = ({
               <div className='w-[90%]'>
                 <p className='text-center text-lg text-slate-800'>Accreditation Period</p>
                 <div className='flex flex-row items-center gap-x-2'>
-                  <AddField 
+                  <AddField
                     fieldName='Start Date'
                     placeholder='Select start date'
                     type='date'
@@ -48,7 +52,7 @@ const ProgramToBeAccreditedModal = ({
                     minDate={new Date()}
                     onChange={handleInputChange}
                   />
-                  <p>-</p>
+                  <p>&ndash;</p>
                   <AddField 
                     fieldName='End Date'
                     placeholder='Select end date'
