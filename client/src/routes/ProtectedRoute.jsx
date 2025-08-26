@@ -7,12 +7,12 @@ const ProtectedRoute = ({
   fallbackRoute,
   loader
 }) => {
-  const { user, isLoading } = useAuth();
+  // const { user, isLoading } = useAuth();
 
   // 1. Wait for loading
-  if (isLoading) {
-    return <div>{loader}</div>;
-  }
+  // if (isLoading) {
+  //   return <div>{loader}</div>;
+  // }
 
   // 2. Redirect if no user
   // if (!user) {

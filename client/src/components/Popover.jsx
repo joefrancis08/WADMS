@@ -6,7 +6,7 @@ const Popover = ({ handleInfoClick, handleMouseEnter, handleMouseLeave, content,
       onClick={handleInfoClick}
       onMouseEnter={handleMouseEnter} 
       onMouseLeave={handleMouseLeave}
-      className={`w-40 h-auto bg-slate-800 absolute rounded z-40 transition-opacity duration-500
+      className={`w-60 h-auto bg-slate-800 absolute rounded z-40 transition-opacity duration-500
         ${position}
       `}>
       {content}

@@ -5,7 +5,7 @@ import PATH from '../../../constants/path';
 import SidebarLG from '../../SidebarLG';
 import SidebarSM from '../../SidebarSM';
 import MobileHeader from '../../MobileHeader';
-import { Archive, ArchiveRestore, BookCopy, BookTextIcon, Calendar, CalendarDays, FolderArchive, Group, LayoutDashboard, ShieldUser, SquareUserRound, UserRoundCog, UserRoundCogIcon, UsersRound } from 'lucide-react';
+import { Archive, ArchiveRestore, BookCopy, BookTextIcon, Calendar, CalendarDays, FolderArchive, Group, LayoutDashboard, NotepadText, ShieldUser, SquareUserRound, UserRoundCog, UserRoundCogIcon, UsersRound } from 'lucide-react';
 import { useUsersBy } from '../../../hooks/useUsers';
 
 const AdminLayout = ({ children }) => {
@@ -66,14 +66,14 @@ const AdminLayout = ({ children }) => {
       icon: BookCopy,
       label: 'Accreditation',
       children: [
-        { id: 'period', 
+        { id: 'period-and-level', 
           icon: CalendarDays, 
-          label: 'Period', 
+          label: 'Period & Level', 
           link: '' 
         },
-        { id: 'program-to-accredit', 
-          icon: BookTextIcon, 
-          label: 'Programs', 
+        { id: 'program-to-be-accredited', 
+          icon: NotepadText, 
+          label: 'Programs to be Accredited', 
           link: PROGRAMS_TO_ACCREDIT 
         },
         { id: 'archive', 

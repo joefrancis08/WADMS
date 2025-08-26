@@ -1,40 +1,28 @@
 import AdminLayout from '../../components/Layout/Dean/DeanLayout';
-import { BookPlus, NotepadText } from 'lucide-react';
-import { useState } from 'react';
+import { BookPlus, NotebookPen, NotepadText } from 'lucide-react';
 import ContentHeader from '../../components/Dean/ContentHeader';
-import MODAL_TYPE from '../../constants/modalTypes';
-import ProgramToAccreditModal from '../../components/Modals/accreditation/ProgramToAccreditModal';
+import { useProgramToAccredit } from '../../hooks/useProgramToAccredit';
+import ProgramToBeAccreditedModal from '../../components/Dean/ProgramToBeAccreditedModal';
 
 const ProgramsToAccredit = () => {
-  const [hoverProgramOptions, setHoverProgramOptions] = useState(false);
-  const [modalType, setModalType] = useState(null);
+  const { addButton, close, form, hovers, inputs, modal, program, saveHandler } = useProgramToAccredit();
 
-  const handleAddClick = () => {
-    setModalType(MODAL_TYPE.ADD_PROGRAM_TO_ACCREDIT);
-  };
-
-  const handleCloseClick = () => {
-    setModalType(null);
-  };
-
-  const renderModal = () => {
-    switch (modalType) {
-      case MODAL_TYPE.ADD_PROGRAM_TO_ACCREDIT:
-        return (
-          <ProgramToAccreditModal
-            onClose={handleCloseClick}
-            headerContent={
-              <p className='text-2xl font-medium text-slate-900'>
-                Add Program to Accredit
-              </p>
-            }
-          />
-        );
-    
-      default:
-        return null;
-    }
-  }
+  const { disableAddButton, handleAddClick } = addButton;
+  const { handleCloseClick } = close;
+  const { formValue } = form;
+  const { infoHover, handleInfoHover } = hovers;
+  const { handleInputChange } = inputs;
+  const { modalType } = modal;
+  const { handleSave } = saveHandler;
+  const { 
+    programInput,
+    programs, 
+    hoverProgramOptions, 
+    handleProgramChange,
+    handleAddProgramValue,
+    handleRemoveProgramValue,
+    handleHoverProgramOptions 
+  } = program;
 
   return (
     <AdminLayout>
@@ -42,15 +30,15 @@ const ProgramsToAccredit = () => {
         {/* Header */}
         <ContentHeader 
           headerIcon={NotepadText}
-          headerTitle='Programs Under Accreditation'
-          searchTitle='Search Program to Accredit'
-          placeholder='Search program to accredit...'
+          headerTitle='Programs to be Accredited'
+          searchTitle='Search Program to be Accredited'
+          placeholder='Search program to be accredited...'
           condition={true}
         />
         <div className='relative px-4 flex justify-end'>
           <div className='flex items-center'>
             <button title='Add Program to Accredit' onClick={handleAddClick} className='p-3 rounded-full mr-2 cursor-pointer transition-all shadow bg-slate-300 hover:opacity-80 active:opacity-50'>
-              <BookPlus className='text-slate-700' size={28}/>
+              <NotebookPen className='text-slate-700' size={28}/>
             </button>
           </div>
         </div>
@@ -68,8 +56,8 @@ const ProgramsToAccredit = () => {
             </h2>
             <div className='relative flex flex-wrap gap-10 justify-center pb-4 pt-8'>
               <div
-                onMouseEnter={() => setHoverProgramOptions(true)}
-                onMouseLeave={() => setHoverProgramOptions(false)}
+                onMouseEnter={handleHoverProgramOptions}
+                onMouseLeave={handleHoverProgramOptions}
                 className={`relative flex items-center justify-center h-60 p-4 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl border border-slate-300 shadow hover:shadow-md cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80`}
               >
                 <p className='bg-gradient-to-b from-yellow-300 to-amber-400 w-full text-2xl text-white text-center shadow font-bold mt-3 p-4'>
@@ -90,8 +78,8 @@ const ProgramsToAccredit = () => {
                 )}
               </div>
               <div
-                onMouseEnter={() => setHoverProgramOptions(true)}
-                onMouseLeave={() => setHoverProgramOptions(false)}
+                onMouseEnter={handleHoverProgramOptions}
+                onMouseLeave={handleHoverProgramOptions}
                 className={`relative flex items-center justify-center h-60 p-4 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl border border-slate-300 shadow hover:shadow-md cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80`}
               >
                 <p className='bg-gradient-to-b from-yellow-300 to-amber-400 w-full text-2xl text-white text-center shadow font-bold mt-3 p-4'>
@@ -112,8 +100,8 @@ const ProgramsToAccredit = () => {
                 )}
               </div>
               <div
-                onMouseEnter={() => setHoverProgramOptions(true)}
-                onMouseLeave={() => setHoverProgramOptions(false)}
+                onMouseEnter={handleHoverProgramOptions}
+                onMouseLeave={handleHoverProgramOptions}
                 className={`relative flex items-center justify-center h-60 p-4 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl border border-slate-300 shadow hover:shadow-md cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80`}
               >
                 <p className='bg-gradient-to-b from-yellow-300 to-amber-400 w-full text-2xl text-white text-center shadow font-bold mt-3 p-4'>
@@ -134,8 +122,8 @@ const ProgramsToAccredit = () => {
                 )}
               </div>
               <div
-                onMouseEnter={() => setHoverProgramOptions(true)}
-                onMouseLeave={() => setHoverProgramOptions(false)}
+                onMouseEnter={handleHoverProgramOptions}
+                onMouseLeave={handleHoverProgramOptions}
                 className={`relative flex items-center justify-center h-60 p-4 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl border border-slate-300 shadow hover:shadow-md cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80`}
               >
                 <p className='bg-gradient-to-b from-yellow-300 to-amber-400 w-full text-2xl text-white text-center shadow font-bold mt-3 p-4'>
@@ -156,8 +144,8 @@ const ProgramsToAccredit = () => {
                 )}
               </div>
               <div
-                onMouseEnter={() => setHoverProgramOptions(true)}
-                onMouseLeave={() => setHoverProgramOptions(false)}
+                onMouseEnter={handleHoverProgramOptions}
+                onMouseLeave={handleHoverProgramOptions}
                 className={`relative flex items-center justify-center h-60 p-4 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl border border-slate-300 shadow hover:shadow-md cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80`}
               >
                 <p className='bg-gradient-to-b from-yellow-300 to-amber-400 w-full text-2xl text-white text-center shadow font-bold mt-3 p-4'>
@@ -178,8 +166,8 @@ const ProgramsToAccredit = () => {
                 )}
               </div>
               <div
-                onMouseEnter={() => setHoverProgramOptions(true)}
-                onMouseLeave={() => setHoverProgramOptions(false)}
+                onMouseEnter={handleHoverProgramOptions}
+                onMouseLeave={handleHoverProgramOptions}
                 className={`relative flex items-center justify-center h-60 p-4 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl border border-slate-300 shadow hover:shadow-md cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80`}
               >
                 <p className='bg-gradient-to-b from-yellow-300 to-amber-400 w-full text-2xl text-white text-center shadow font-bold mt-3 p-4'>
@@ -203,7 +191,23 @@ const ProgramsToAccredit = () => {
           </div>
         </div>
       </div>
-      {renderModal()}
+      <ProgramToBeAccreditedModal 
+        infoHover={infoHover}
+        modalType={modalType}
+        formValue={formValue}
+        programs={programs}
+        programInput={programInput}
+        disableAddButton={disableAddButton}
+        handlers={{
+          handleCloseClick,
+          handleSave,
+          handleInputChange,
+          handleAddProgramValue,
+          handleRemoveProgramValue,
+          handleProgramChange,
+          handleInfoHover,
+        }}
+      />
     </AdminLayout>
   );
 };
