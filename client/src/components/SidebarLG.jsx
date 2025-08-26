@@ -116,7 +116,7 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
                           >
                             <ChildIcon
                               fill={childActive ? '#64748b' : 'none'}
-                              className="w-6 h-6"
+                              className="flex-shrink-0 w-6 h-6"
                             />
                             <span className="text-sm">{child.label}</span>
                             {child.hasNotif && 

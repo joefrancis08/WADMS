@@ -39,6 +39,7 @@ const TaskForce = () => {
     { data: taskForceChair, label: "Chair" },
     { data: taskForceMember, label: "Member" }
   ];
+  
 
   return (
     <AdminLayout>
@@ -87,7 +88,7 @@ const TaskForce = () => {
                         activeDropdownId={activeDropdownId}
                         label={label}
                         taskForce={data}
-                        navigation={(user) => navigate(TASK_FORCE_DETAIL(user.user_uuid))}
+                        navigation={(user) => navigate(TASK_FORCE_DETAIL(user.user_uuid), { state: { fromSection: label } })}
                         profilePic={(user) => getProfilePicPath(user.profile_pic_path)}
                         handleDropdown={handleDropdown}
                         handleEllipsisClick={handleEllipsisClick}

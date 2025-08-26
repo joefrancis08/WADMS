@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import Dropdown from '../../Dropdown/Dropdown';
 import { USER_ROLES } from '../../../constants/user';
-import { Check, ChevronDown, CircleAlert, Info } from 'lucide-react';
+import { ChevronDown, CircleAlert, X } from 'lucide-react';
 import Popover from '../../Popover';
+import DatePickerComponent from '../../DatePickerComponent';
 
 const AddField = ({
   fieldName,
@@ -10,6 +11,12 @@ const AddField = ({
   type = 'text',
   name,
   formValue,
+  multiValue = false, // Enable multi-value mode (for textarea)
+  multiValues = [], // Array of existing values (for textarea)
+  onAddValue, // Callback when a value is added (for textarea)
+  onRemoveValue, // Callback when a value is removed (for textarea)
+  minDate,
+  datePickerDisabled = false,
   onChange,
   onClick,
   onChevronClick,
@@ -21,7 +28,15 @@ const AddField = ({
   isDropdown = false
 }) => {
   const [isFocused, setIsFocused] = useState(false);
-  const isFloating = isFocused && name !== 'role' || (formValue ?? '').trim() !== '';
+  const isFloating = isFocused && name !== 'role' || 
+    (type === 'date'
+      ? (formValue !== null)
+      : multiValue
+        ? multiValues.length > 0 || (formValue ?? '').trim() !== ''
+        : (formValue ?? '').trim() !== ''
+    );
+
+
   const [alertHover, setAlertHover] = useState(false);
 
   const handleMouseEnter = () => {
@@ -37,26 +52,96 @@ const AddField = ({
       <div className='pb-4'>
         <div className='relative flex flex-col items-start'>
           <label
-            className={`absolute left-3 bg-gradient-to-r from-gray-100 to-gray-50 px-2 rounded-md transition-all duration-300 ${isFloating ? '-top-3.5 text-sm text-slate-700': 'top-3 text-md text-slate-600'}`}>
+            onClick={() => (!datePickerDisabled || multiValues.length > 0) && setIsFocused(true)}
+            className={`absolute left-3 bg-gradient-to-r from-gray-100 to-gray-50 px-2 rounded-md transition-all duration-300
+            ${datePickerDisabled && 'cursor-not-allowed'}
+            ${isFloating ? '-top-3.5 text-sm text-slate-700': 'top-3 text-md text-slate-600'}
+            ${type === 'date' && 'z-10'}`}>
             {fieldName}
           </label>
-          <input
-            placeholder={placeholder}
-            readOnly={isReadOnly}
-            type={type}
-            name={name}
-            value={formValue}
-            autoComplete='off'
-            onChange={!isDropdown ? onChange : null}
-            onClick={isClickable ? onClick : null}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            className={`w-full p-3 rounded-lg border shadow transition
-              ${isClickable && 'cursor-pointer hover:bg-slate-100'}
-              ${!invalid 
-                ? 'border-gray-400 text-gray-800 focus:outline-0 focus:ring-2 focus:ring-green-600' 
-                : 'border-red-500 text-red-500 focus:outline-0 focus:ring-1 focus:ring-red-500'  }`}
-          />
+          {type === 'date' ? (
+            <DatePickerComponent 
+              selected={formValue}
+              onChange={(date) => onChange(date, name)}
+              placeholder={isFloating ? placeholder : ''}
+              className={`w-full p-3 rounded-lg border shadow transition max-sm:text-xs max-md:text-sm
+                ${datePickerDisabled && 'cursor-not-allowed'}
+                ${isClickable && 'cursor-pointer hover:bg-slate-100'}
+                ${!invalid
+                  ? 'border-gray-400 text-gray-800 focus:outline-0 focus:ring-2 focus:ring-green-600' 
+                  : 'border-red-500 text-red-500 focus:outline-0 focus:ring-1 focus:ring-red-500'  }`}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              dateFormat='MMMM d, yyyy'
+              minDate={minDate}
+              disabled={datePickerDisabled}
+            />
+          ) : type === 'textarea'  && multiValue ? (
+              <div
+                className={`w-full min-h-[60px] flex flex-wrap items-center gap-2 p-3 rounded-lg border shadow transition
+                  ${!invalid 
+                    ? 'border-gray-400 text-gray-800 focus-within:ring-2 focus-within:ring-green-600' 
+                    : 'border-red-500 text-red-500 focus-within:ring-1 focus-within:ring-red-500'}`}
+              >
+                {multiValues.map((val, index) => (
+                  <div key={index} className='flex items-center justify-center text-slate-800 px-2 py-1 rounded border border-slate-300'>
+                    <button 
+                      title='Remove'
+                      type="button"
+                      onClick={() => onRemoveValue(index)}
+                      className='hover:rounded-full hover:bg-slate-200 p-0.5 font-bold hover:text-red-600 transition mr-1 cursor-pointer'
+                    >
+                      <X size={16}/>
+                    </button>
+                    {val}
+                  </div>
+                ))}
+                <textarea
+                  placeholder={isFloating ? placeholder : ''}
+                  readOnly={isReadOnly}
+                  name={name}
+                  value={formValue}
+                  autoComplete='off'
+                  onChange={(e) => onChange(e)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && formValue.trim() !== "") {
+                      e.preventDefault();
+                      onAddValue(formValue.trim());
+                      onChange({ target: { name, value: '' } }); // Clear the value
+                    }
+                  }}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
+                  rows={2}
+                  className={`flex resize-y overflow-hidden text-wrap w-full py-2 m-0 focus:outline-none 
+                  ${multiValues.length > 0 && 'border-t border-slate-300 bg-slate-100'}`}
+                  onInput={(e) => {
+                    e.target.style.height = "auto";
+                    e.target.style.height = e.target.scrollHeight + "px";
+                  }}
+                />
+              </div>
+          ) : (
+            <input
+              placeholder={isFloating ? placeholder : ''}
+              readOnly={isReadOnly}
+              type={type}
+              name={name}
+              value={formValue}
+              autoComplete='off'
+              onChange={(e) => !isDropdown ? onChange(e) : null}
+              onClick={isClickable ? onClick : null}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              className={`bg-slate-100 text-wrap w-full p-3 rounded-lg border shadow transition
+                ${isClickable && 'cursor-pointer hover:bg-slate-100'}
+                ${!invalid 
+                  ? 'border-gray-400 text-gray-800 focus:outline-0 focus:ring-2 focus:ring-green-600' 
+                  : 'border-red-500 text-red-500 focus:outline-0 focus:ring-1 focus:ring-red-500'  }`}
+            />
+          )}
+
+
           {invalid && (
             <>
               <CircleAlert 

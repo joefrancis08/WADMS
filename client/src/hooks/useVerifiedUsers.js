@@ -5,7 +5,7 @@ import PATH from "../constants/path";
 import { useUsersBy } from "./useUsers";
 import MODAL_TYPES from "../constants/modalTypes";
 import { TOAST_MESSAGES } from "../constants/messages";
-import { checkUserEmail, deleteUser, postUser, updateUser } from "../api/Users/userAPI";
+import { checkUserEmail, deleteUser, postUser, updateUser } from "../api/users/userAPI";
 import { showErrorToast, showSuccessToast } from "../utils/toastNotification";
 import { emailRegex } from "../utils/regEx";
 
