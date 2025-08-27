@@ -1,4 +1,4 @@
-import { getProgramsToBeAccredited } from "../../../models/program-to-accredit/GET/getProgramToBeAccredited.js";
+import { getProgramsToBeAccredited } from "../../../../models/accreditation/program-to-be-accredited/GET/getProgramToBeAccredited.js";
 
 const fetchProgramsToBeAccredited = async (req, res) => {
   try {

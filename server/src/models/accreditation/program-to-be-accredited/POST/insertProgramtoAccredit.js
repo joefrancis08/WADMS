@@ -1,4 +1,4 @@
-import db from "../../../config/db.js";
+import db from "../../../../config/db.js";
 import getLevelBy from "../GET/getLevelBy.js";
 import getPeriodBy from "../GET/getPeriodBy.js";
 import getProgramBy from "../GET/getProgramBy.js";

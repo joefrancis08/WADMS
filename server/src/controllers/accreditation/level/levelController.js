@@ -1,5 +1,5 @@
-import db from "../../config/db.js";
-import { insertLevel } from "../../models/program-to-accredit/POST/insertLevel.js";
+import db from "../../../config/db.js";
+import { insertLevel } from "../../../models/accreditation/program-to-be-accredited/POST/insertLevel.js";
 
 // Get the request body from frontend and try to insert in program table
 export const addLevel = async (req, res) => {

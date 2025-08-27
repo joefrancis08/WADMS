@@ -1,5 +1,5 @@
 import db from "../../config/db.js";
-import { insertProgram } from "../../models/program-to-accredit/POST/insertProgram.js";
+import { insertProgram } from "../../models/accreditation/program-to-be-accredited/POST/insertProgram.js";
 
 // Get the request body from frontend and try to insert in program table
 export const addProgram = async (req, res) => {

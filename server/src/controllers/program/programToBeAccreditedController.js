@@ -1,4 +1,4 @@
-import insertProgramtoAccredit from "../../models/program-to-accredit/POST/insertProgramtoAccredit.js";
+import insertProgramtoAccredit from "../../models/accreditation/program-to-be-accredited/POST/insertProgramtoAccredit.js";
 import isValidDateFormat from "../../utils/isValidDateFormat.js";
 
 // Controller function to add one or multiple programs to accredit
