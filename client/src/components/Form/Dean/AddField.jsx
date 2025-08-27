@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Dropdown from '../../Dropdown/Dropdown';
 import { USER_ROLES } from '../../../constants/user';
 import { ChevronDown, CircleAlert, X } from 'lucide-react';
 import Popover from '../../Popover';
 import DatePickerComponent from '../../DatePickerComponent';
+import { getUserRolesDropdown } from '../../../utils/dropdownOptions';
 
 const AddField = ({
   fieldName,
@@ -11,6 +12,7 @@ const AddField = ({
   type = 'text',
   name,
   formValue,
+  dropdownItems = [],
   multiValue = false, // Enable multi-value mode (for textarea)
   multiValues = [], // Array of existing values (for textarea)
   onAddValue, // Callback when a value is added (for textarea)
@@ -25,9 +27,28 @@ const AddField = ({
   invalid = false,
   isReadOnly = false,
   isClickable = false,
+  showDropdownOnFocus = false,
   isDropdown = false
 }) => {
+  const containerRef = useRef();
   const [isFocused, setIsFocused] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [alertHover, setAlertHover] = useState(false);
+
+  // Close when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+
+
   const isFloating = isFocused && name !== 'role' || 
     (type === 'date'
       ? (formValue !== null)
@@ -36,9 +57,6 @@ const AddField = ({
         : (formValue ?? '').trim() !== ''
     );
 
-
-  const [alertHover, setAlertHover] = useState(false);
-
   const handleMouseEnter = () => {
     setAlertHover(true);
   };
@@ -46,9 +64,50 @@ const AddField = ({
   const handleMouseLeave = () => {
     setAlertHover(false);
   };
+
+  const handleFocus = (options = {}) => {
+    setIsFocused(true);
+    options.showDropdown && setShowDropdown(true);
+  };
+
+  const handleBlur = (options = {}) => {
+    setIsFocused(false);
+    if (options.showDropdown) {
+      setTimeout(() => setShowDropdown(false), 300); // Small delay so onClick fires
+    }
+  };
+
+  const roleDropdownItems = getUserRolesDropdown(formValue).map((roleValue) => (
+    <p 
+      key={roleValue}
+      onClick={() => onDropdownMenuClick(roleValue, {isForAddUser: true })}
+      className='p-2 text-gray-800 hover:shadow cursor-pointer hover:bg-gray-200 first:rounded-t-md last:rounded-b-md active:opacity-50'>
+      {roleValue}
+    </p>
+  ));
+
+  const levelDropdownItems = dropdownItems.map(level => (
+    <p 
+      key={level}
+      onClick={() => {
+        onDropdownMenuClick(level, {isForAddLevel: true });
+        setShowDropdown(false);
+      }}
+      className='p-2 text-gray-800 hover:shadow cursor-pointer hover:bg-gray-200 first:rounded-t-md last:rounded-b-md active:opacity-50'>
+      {level}
+    </p>
+  ));
+
+  let dropdownContent = null;
+  if (isDropdown && toggleDropdown) {
+    dropdownContent = roleDropdownItems;
+
+  } else if (showDropdownOnFocus && showDropdown) {
+    dropdownContent = levelDropdownItems;
+  }
  
   return (
-    <div className='relative w-full flex-col pt-4'>
+    <div ref={containerRef} className='relative w-full flex-col pt-4'>
       <div className='pb-4'>
         <div className='relative flex flex-col items-start'>
           <label
@@ -70,8 +129,8 @@ const AddField = ({
                 ${!invalid
                   ? 'border-gray-400 text-gray-800 focus:outline-0 focus:ring-2 focus:ring-green-600' 
                   : 'border-red-500 text-red-500 focus:outline-0 focus:ring-1 focus:ring-red-500'  }`}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
               dateFormat='MMMM d, yyyy'
               minDate={minDate}
               disabled={datePickerDisabled}
@@ -110,8 +169,8 @@ const AddField = ({
                       onChange({ target: { name, value: '' } }); // Clear the value
                     }
                   }}
-                  onFocus={() => setIsFocused(true)}
-                  onBlur={() => setIsFocused(false)}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
                   rows={2}
                   className={`flex resize-y overflow-hidden text-wrap w-full py-2 m-0 focus:outline-none 
                   ${multiValues.length > 0 && 'border-t border-slate-300 bg-slate-100'}`}
@@ -131,8 +190,7 @@ const AddField = ({
               autoComplete='off'
               onChange={(e) => !isDropdown ? onChange(e) : null}
               onClick={isClickable ? onClick : null}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
+              onFocus={() => handleFocus({ showDropdown: true })}
               className={`text-wrap w-full p-3 rounded-lg border shadow transition
                 ${isClickable && 'cursor-pointer hover:bg-slate-100'}
                 ${!invalid 
@@ -172,25 +230,10 @@ const AddField = ({
               size={26}
             />
           )}
-          {toggleDropdown && (
+          {dropdownContent && (
             <Dropdown width='w-full' border='border border-gray-400 rounded-md'>
               <div className='transition-all duration-300'>
-                {Object.entries(USER_ROLES)
-                  .filter(([_, roleValue]) => (
-                    roleValue !== USER_ROLES.UNVERIFIED_USER && 
-                    roleValue !== USER_ROLES.DEAN &&
-                    roleValue !== USER_ROLES.IA &&
-                    roleValue !== USER_ROLES.ACCREDITOR &&
-                    roleValue !== formValue))  
-                  .map(([roleKey, roleValue]) => (
-                    <p 
-                      key={roleKey}
-                      onClick={() => onDropdownMenuClick(roleValue, {isForAddUser: true })}
-                      className='p-2 text-gray-800 hover:shadow cursor-pointer hover:bg-gray-200 first:rounded-t-md last:rounded-b-md active:opacity-50'>
-                      {roleValue}
-                    </p>
-                  ))
-                }
+                {dropdownContent}
               </div>
             </Dropdown>
           )}

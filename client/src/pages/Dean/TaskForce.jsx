@@ -1,7 +1,7 @@
 import React from 'react';
 import PATH from '../../constants/path';
 import { Link2, Plus, UserRoundCog, UserRoundPlus, UserRoundX } from 'lucide-react';
-import AdminLayout from '../../components/Layout/Dean/DeanLayout';
+import DeanLayout from '../../components/Layout/Dean/DeanLayout';
 import { useTaskForce } from '../../hooks/Dean/useTaskForce';
 import VerifiedUserSkeletonLoader from '../../components/Loaders/VerifiedUserSkeletonLoader';
 import getProfilePicPath from '../../utils/getProfilePicPath';
@@ -14,7 +14,7 @@ const TaskForce = () => {
 
   const { 
     chevron, data, confirmDelete, dropdown, ellipsis, form, info, modal, 
-    navigation, profilePic, saveButton, search, state, user, userAdd, 
+    navigation, profilePic, ref, saveButton, search, state, user, userAdd, 
     userUpdate, 
   } = useTaskForce();
 
@@ -28,6 +28,7 @@ const TaskForce = () => {
   const { modalType, handleCloseModal } = modal;
   const { navigate } = navigation;
   const { setProfilePic, handleProfilePic, setUpdatedProfilePic, handleProfilePicUpdate } = profilePic;
+  const { containerRef } = ref;
   const { isUpdateBtnDisabled } = saveButton;
   const { searchClick, handleSearchClick} = search;
   const { loading, error } = state;
@@ -40,10 +41,9 @@ const TaskForce = () => {
     { data: taskForceMember, label: "Member" }
   ];
   
-
   return (
-    <AdminLayout>
-      <div className='flex-1 p-0 space-y-3'>
+    <DeanLayout>
+      <div ref={containerRef} className='flex-1 p-0 space-y-3'>
         {/* Main Content Header */}
         <ContentHeader 
           headerIcon={UserRoundCog}
@@ -99,15 +99,11 @@ const TaskForce = () => {
               ))}
             </>
             {!loading && taskForceChair.length === 0 && taskForceMember.length === 0 && (
-              <div className='flex flex-col items-center justify-center text-slate-700'>
-                <UserRoundX className='w-40 md:w-60 h-auto' />
-                <p className='text-xl md:text-2xl font-medium text-slate-600'>
-                  No Task Force added at the moment.
+              <div className='flex flex-col items-center justify-center h-100'>
+                <UserRoundX className='text-slate-500 w-40 md:w-60 h-auto' />
+                <p className='text-lg md:text-xl font-medium text-slate-700'>
+                  No task force added at the moment.
                 </p>
-                <button onClick={handleAddUser} className='bg-slate-700 flex items-center gap-1 md:gap-2 text-md md:text-xl font-medium text-slate-100 rounded-full mt-8 py-2 px-3 pr-5 md:py-2 md:px-4 md:pr-6 shadow cursor-pointer hover:bg-slate-500 hover:transition-all hover:duration-300'>
-                  <Plus className='w-6 md:w-7 h-auto'/>
-                  Add
-                </button>
               </div>
             )}
           </>
@@ -138,7 +134,7 @@ const TaskForce = () => {
           handleConfirmDelete,
         }}
       />
-    </AdminLayout>
+    </DeanLayout>
   );
 };
 

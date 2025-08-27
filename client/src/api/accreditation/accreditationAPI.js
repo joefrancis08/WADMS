@@ -16,3 +16,9 @@ export const fetchProgramsToBeAccredited = (controller) => {
     signal: controller.signal
   });
 };
+
+export const fetchAccreditationLevels = (controller) => {
+  return axios.get(`${API_BASE_URL}/accreditation/fetch-accreditation-levels`, {
+    signal: controller.signal
+  });
+};

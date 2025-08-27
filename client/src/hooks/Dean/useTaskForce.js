@@ -8,11 +8,13 @@ import { TOAST_MESSAGES } from "../../constants/messages";
 import { checkUserEmail, deleteUser, postUser, updateUser } from "../../api/users/userAPI";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
 import { emailRegex } from "../../utils/regEx";
+import { useRef } from "react";
 
 export const useTaskForce = () => {
   const { users, loading, error } = useUsersBy();
 
   const navigate = useNavigate();
+  const containerRef = useRef();
 
   const { ADD_USER, UPDATE_USER, USER_DELETION_CONFIRMATION } = MODAL_TYPES;
   const { TASK_FORCE, TASK_FORCE_DETAIL } = PATH.DEAN;
@@ -52,6 +54,18 @@ export const useTaskForce = () => {
       })
     }
   }, [selectedUser]);
+
+  // Close when clicking outside of the user card dropdwon
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        setActiveDropdownId(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Check real-time if email already exist
   useEffect(() => {
@@ -295,6 +309,10 @@ export const useTaskForce = () => {
       setUpdatedProfilePic,
       handleProfilePicUpdate,
       handleProfilePic
+    },
+
+    ref: {
+      containerRef
     },
 
     saveButton: {

@@ -3,6 +3,7 @@ import Dropdown from '../Dropdown/Dropdown';
 import ProfilePicture from '../ProfilePicture';
 
 const TaskForceCard = ({ 
+  containerRef,
   activeDropdownId, 
   label,
   taskForce, 

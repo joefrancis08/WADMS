@@ -2,12 +2,14 @@ import { format } from "date-fns";
 import { useState } from "react";
 import { addProgramToBeAccredited } from "../../api/accreditation/accreditationAPI";
 import { useFetchProgramsToBeAccredited } from "../fetch/useFetchProgramsToBeAccredited";
-import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
+import { showSuccessToast } from "../../utils/toastNotification";
 import { TOAST_MESSAGES } from "../../constants/messages";
 import MODAL_TYPE from "../../constants/modalTypes";
+import useAccreditationLevel from "../fetch/useAccreditationLevel";
 
 export const useProgramsToBeAccredited = () => {
   const { programsToBeAccredited, loading, error } = useFetchProgramsToBeAccredited();
+  const { levels, loadingAL, errorAL } = useAccreditationLevel();
 
   const { PROGRAMS_TO_BE_ACCREDITED_ADDITION } = TOAST_MESSAGES;
 
@@ -69,6 +71,13 @@ export const useProgramsToBeAccredited = () => {
     }
   };
 
+  const handleOptionSelection = (level, options = {}) => {
+    
+
+    options.isForAddLevel && setFormValue(prev => ({...prev, level}));
+    
+  };
+
   const handleProgramChange = (e) => {
     setProgramInput(e.target.value);
   };
@@ -118,6 +127,10 @@ export const useProgramsToBeAccredited = () => {
 
     close: {
       handleCloseClick
+    },
+
+    dropdown: {
+      handleOptionSelection
     },
 
     programsToBeAccreditedData: {

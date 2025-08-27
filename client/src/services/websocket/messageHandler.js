@@ -23,6 +23,10 @@ export const messageHandler = (callback) => {
             console.log('User update received');
             callback(); // Trigger the callback (e.g., refetch data in React Query)
             break;
+
+          case 'accreditation-levels-update':
+            callback();
+            break;
           
           case 'programs-to-be-accredited-update':
             console.log('Programs-to-be-accredited update received.');

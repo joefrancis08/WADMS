@@ -3,6 +3,8 @@ import MODAL_TYPE from '../../constants/modalTypes';
 import AddField from '../Form/Dean/AddField';
 import ProgramToAccreditModal from '../Modals/accreditation/ProgramToAccreditModal';
 import Popover from '../Popover';
+import Dropdown from '../Dropdown/Dropdown';
+import useAccreditationLevel from '../../hooks/fetch/useAccreditationLevel';
 
 const ProgramToBeAccreditedModal = ({
   infoHover,
@@ -13,10 +15,15 @@ const ProgramToBeAccreditedModal = ({
   disableAddButton,
   handlers,
 }) => {
+  const { levels, loadingAL, errorAL } = useAccreditationLevel();
+  const data = levels?.data ?? []; // Fallback to [] if levels.data is null or undefined
+  const levelsArray = data?.map(item => item.level); // Map over data to extract only the "level" values
+  console.log(levelsArray);
   const {
     handleCloseClick,
     handleSave,
     handleInputChange,
+    handleOptionSelection,
     handleAddProgramValue,
     handleRemoveProgramValue,
     handleProgramChange,
@@ -52,7 +59,7 @@ const ProgramToBeAccreditedModal = ({
                     minDate={new Date()}
                     onChange={handleInputChange}
                   />
-                  <p>&ndash;</p>
+                  <p className='text-gray-500'>&ndash;</p>
                   <AddField 
                     fieldName='End Date'
                     placeholder='Select end date'
@@ -63,9 +70,8 @@ const ProgramToBeAccreditedModal = ({
                     minDate={formValue.startDate}
                     onChange={handleInputChange}
                   />
-                  
                 </div>
-                <hr className='w-[60%] my-4 mx-auto text-slate-300'></hr>
+                <hr className='w-[60%] mx-auto text-slate-300'></hr>
                 <AddField 
                   fieldName='Level'
                   placeholder='e.g., Preliminary, Level I, Level II, etc.'
@@ -73,6 +79,9 @@ const ProgramToBeAccreditedModal = ({
                   name='level'
                   formValue={formValue.level}
                   onChange={handleInputChange}
+                  showDropdownOnFocus={true}
+                  dropdownItems={levelsArray}
+                  onDropdownMenuClick={handleOptionSelection}
                 />
                 <div className='relative'>
                   <AddField 
