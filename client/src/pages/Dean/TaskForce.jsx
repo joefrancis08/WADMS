@@ -2,7 +2,7 @@ import React from 'react';
 import PATH from '../../constants/path';
 import { Link2, Plus, UserRoundCog, UserRoundPlus, UserRoundX } from 'lucide-react';
 import AdminLayout from '../../components/Layout/Dean/DeanLayout';
-import { useVerifiedUsers } from '../../hooks/useVerifiedUsers';
+import { useTaskForce } from '../../hooks/Dean/useTaskForce';
 import VerifiedUserSkeletonLoader from '../../components/Loaders/VerifiedUserSkeletonLoader';
 import getProfilePicPath from '../../utils/getProfilePicPath';
 import TaskForceCard from '../../components/Dean/TaskForceCard';
@@ -16,7 +16,7 @@ const TaskForce = () => {
     chevron, data, confirmDelete, dropdown, ellipsis, form, info, modal, 
     navigation, profilePic, saveButton, search, state, user, userAdd, 
     userUpdate, 
-  } = useVerifiedUsers();
+  } = useTaskForce();
 
   const { handleChevronClick } = chevron;
   const { taskForceChair, taskForceMember } = data;

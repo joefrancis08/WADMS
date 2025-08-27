@@ -3,7 +3,7 @@ import { getUserBy } from "../../../../models/user/GET/getUser.js";
 import { deleteUserById } from "../../../../models/userModel.js";
 import path from "path";
 import fs from "fs";
-import sendUserUpdate from "../../../../services/websocket/sendUserUpdate.js";
+import sendUpdate from "../../../../services/websocket/sendUpdate.js";
 
 export const deleteUserByIdController = async (req, res) => {
   const { uuid } = req.params;
@@ -29,7 +29,7 @@ export const deleteUserByIdController = async (req, res) => {
       });
     }
 
-    sendUserUpdate();
+    sendUpdate('user-update');
 
     if (profilePic) {
       const fullPath = path.join(PROFILE_PIC_PATH, profilePic);

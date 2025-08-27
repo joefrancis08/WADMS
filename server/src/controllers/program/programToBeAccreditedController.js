@@ -1,8 +1,9 @@
 import insertProgramtoAccredit from "../../models/accreditation/program-to-be-accredited/POST/insertProgramtoAccredit.js";
+import sendUpdate from "../../services/websocket/sendUpdate.js";
 import isValidDateFormat from "../../utils/isValidDateFormat.js";
 
 // Controller function to add one or multiple programs to accredit
-export const addProgramtoAccredit = async (req, res) => {
+export const addProgramToBeAccredited = async (req, res) => {
   try {
     /* 
       Destructure the incoming data from the request body
@@ -68,12 +69,15 @@ export const addProgramtoAccredit = async (req, res) => {
       message: 'Program to accredit added successfully.',
       results
     });
+
+    sendUpdate('programs-to-be-accredited-update');
     
   } catch (error) {
     // Catch duplicate entry
     if (error.message === 'DUPLICATE_ENTRY') {
       return res.status(409).json({
         success: false,
+        isDuplicate: true,
         message: 'Duplicate entry.'
       });
     }

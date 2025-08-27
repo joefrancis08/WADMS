@@ -133,7 +133,7 @@ const AddField = ({
               onClick={isClickable ? onClick : null}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
-              className={`bg-slate-100 text-wrap w-full p-3 rounded-lg border shadow transition
+              className={`text-wrap w-full p-3 rounded-lg border shadow transition
                 ${isClickable && 'cursor-pointer hover:bg-slate-100'}
                 ${!invalid 
                   ? 'border-gray-400 text-gray-800 focus:outline-0 focus:ring-2 focus:ring-green-600' 

@@ -1,12 +1,22 @@
 import AdminLayout from '../../components/Layout/Dean/DeanLayout';
 import { BookPlus, NotebookPen, NotepadText } from 'lucide-react';
 import ContentHeader from '../../components/Dean/ContentHeader';
-import { useProgramToAccredit } from '../../hooks/useProgramToAccredit';
+import { useProgramsToBeAccredited } from '../../hooks/Dean/useProgramsToBeAccredited';
 import ProgramToBeAccreditedModal from '../../components/Dean/ProgramToBeAccreditedModal';
 import formatAccreditationPeriod from '../../utils/formatAccreditationPeriod';
 
 const ProgramsToAccredit = () => {
-  const { addButton, close, form, hovers, inputs, modal, program, saveHandler } = useProgramToAccredit();
+  const { 
+    addButton, 
+    close, 
+    form, 
+    hovers, 
+    inputs, 
+    modal, 
+    program, 
+    programsToBeAccreditedData,
+    saveHandler 
+  } = useProgramsToBeAccredited();
 
   const { disableAddButton, handleAddClick } = addButton;
   const { handleCloseClick } = close;
@@ -15,6 +25,8 @@ const ProgramsToAccredit = () => {
   const { handleInputChange } = inputs;
   const { modalType } = modal;
   const { handleSave } = saveHandler;
+  
+  const { programsToBeAccredited, loading, error } = programsToBeAccreditedData;
   const { 
     programInput,
     programs, 
@@ -24,46 +36,9 @@ const ProgramsToAccredit = () => {
     handleRemoveProgramValue,
     handleHoverProgramOptions 
   } = program;
-
-  // Sample data
-  const data = [
-    {
-      period_start: "2025-08-26T16:00:00.000Z",
-      period_end: "2025-08-29T16:00:00.000Z",
-      level: "Preliminary",
-      program: "Doctor of Philosophy"
-    },
-    {
-      period_start: "2025-08-26T16:00:00.000Z",
-      period_end: "2025-08-29T16:00:00.000Z",
-      level: "Preliminary",
-      program: "Master of Management"
-    },
-    {
-      period_start: "2025-08-24T16:00:00.000Z",
-      period_end: "2025-08-29T16:00:00.000Z",
-      level: "Level IV",
-      program: "PhD-TM"
-    },
-    {
-      period_start: null,
-      period_end: "2025-08-29T16:00:00.000Z",
-      level: "Level IV",
-      program: "PhD-TM"
-    },
-    {
-      period_start: "2025-10-31T16:00:00.000Z",
-      period_end: "2025-11-03T16:00:00.000Z",
-      level: "Level 3",
-      program: "Master of Management"
-    },
-    {
-      period_start: "2025-10-31T16:00:00.000Z",
-      period_end: "2025-11-03T16:00:00.000Z",
-      level: "Level 3",
-      program: "Doctor of Philosophy in Education in Educational Management"
-    }
-  ];
+  
+  // Array of Programs To Be Accredited, fallback to empty array if fetch is loading
+  const data = programsToBeAccredited.data || [];
 
   // Group the data into nested structure: Period → Level → Programs
   const grouped = data.reduce((acc, item) => {
@@ -92,8 +67,6 @@ const ProgramsToAccredit = () => {
     // Always return the accumulator so reduce can keep building it.
     return acc;
   }, {}); // Start with an empty object {}
-
-  console.log(grouped);
 
   return (
     <AdminLayout>

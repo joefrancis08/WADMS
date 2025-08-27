@@ -1,5 +1,5 @@
 import { updateUserRole } from "../../../../models/userModel.js";
-import sendUserUpdate from "../../../../services/websocket/sendUserUpdate.js";
+import sendUpdate from "../../../../services/websocket/sendUpdate.js";
 
 export const updateUserRoleController = async (req, res) => {
   const { uuid } = req.params;
@@ -15,7 +15,7 @@ export const updateUserRoleController = async (req, res) => {
       });
     }
 
-    sendUserUpdate();
+    sendUpdate('user-update');
 
     return res.json({
       message: 'User role updated successfully.',

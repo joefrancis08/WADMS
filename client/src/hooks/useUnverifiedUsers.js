@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useUsersBy } from "./useUsers";
+import { useUsersBy } from "./fetch/useUsers";
 import { deleteUser, updateUserRole } from "../api/Users/userAPI";
 import { USER_ROLES } from "../constants/user";
 import { TOAST_MESSAGES } from "../constants/messages";

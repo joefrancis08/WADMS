@@ -6,7 +6,7 @@ import SidebarLG from '../../SidebarLG';
 import SidebarSM from '../../SidebarSM';
 import MobileHeader from '../../MobileHeader';
 import { Archive, ArchiveRestore, BookCopy, BookTextIcon, Calendar, CalendarDays, FolderArchive, Group, LayoutDashboard, NotepadText, ShieldUser, SquareUserRound, UserRoundCog, UserRoundCogIcon, UsersRound } from 'lucide-react';
-import { useUsersBy } from '../../../hooks/useUsers';
+import { useUsersBy } from '../../../hooks/fetch/useUsers';
 
 const AdminLayout = ({ children }) => {
   const { UNVERIFIED_USER } = USER_ROLES;

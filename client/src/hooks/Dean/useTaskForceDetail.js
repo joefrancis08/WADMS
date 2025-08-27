@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo} from 'react';
 import { useNavigate, useParams } from "react-router-dom";
-import PATH from "../constants/path";
-import { USER_STATUS } from "../constants/user";
-import MODAL_TYPES from '../constants/modalTypes';
-import { useUsersBy } from "./useUsers";
+import PATH from "../../constants/path";
+import { USER_STATUS } from "../../constants/user";
+import MODAL_TYPES from '../../constants/modalTypes';
+import { useUsersBy } from "../fetch/useUsers";
 
 const useVerifiedUserDetail = () => {
   const navigate = useNavigate();

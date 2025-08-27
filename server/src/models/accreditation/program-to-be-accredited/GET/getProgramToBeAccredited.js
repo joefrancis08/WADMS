@@ -16,7 +16,11 @@ export const getProgramsToBeAccredited = async (connection = db) => {
     FROM program_level_mapping plm                          -- mapping table
     JOIN accreditation_period ap ON plm.period_id = ap.id   -- join with accreditation_period
     JOIN accreditation_level l ON plm.level_id = l.id       -- join with level
-    JOIN program p ON plm.program_id = p.id;                -- join with program
+    JOIN program p ON plm.program_id = p.id                 -- join with program
+    ORDER BY 
+        ap.start_date DESC,                                                                 -- Latest period first
+        FIELD(l.level_name, 'Preliminary', 'Level I', 'Level II', 'Level III', 'Level IV'), -- Custom level order
+        plm.id DESC;                                                                        -- Latest program added first
   `;
 
   try {

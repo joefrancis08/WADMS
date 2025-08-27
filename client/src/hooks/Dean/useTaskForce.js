@@ -1,15 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
-import { USER_ROLES, USER_STATUS } from "../constants/user";
-import PATH from "../constants/path";
-import { useUsersBy } from "./useUsers";
-import MODAL_TYPES from "../constants/modalTypes";
-import { TOAST_MESSAGES } from "../constants/messages";
-import { checkUserEmail, deleteUser, postUser, updateUser } from "../api/users/userAPI";
-import { showErrorToast, showSuccessToast } from "../utils/toastNotification";
-import { emailRegex } from "../utils/regEx";
+import { USER_ROLES, USER_STATUS } from "../../constants/user";
+import PATH from "../../constants/path";
+import { useUsersBy } from "../fetch/useUsers";
+import MODAL_TYPES from "../../constants/modalTypes";
+import { TOAST_MESSAGES } from "../../constants/messages";
+import { checkUserEmail, deleteUser, postUser, updateUser } from "../../api/users/userAPI";
+import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
+import { emailRegex } from "../../utils/regEx";
 
-export const useVerifiedUsers = () => {
+export const useTaskForce = () => {
   const { users, loading, error } = useUsersBy();
 
   const navigate = useNavigate();

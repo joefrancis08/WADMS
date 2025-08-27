@@ -1,6 +1,6 @@
 import { getUserBy } from "../../../../models/user/GET/getUser.js";
 import { updateUserInfo } from "../../../../models/userModel.js";
-import sendUserUpdate from "../../../../services/websocket/sendUserUpdate.js";
+import sendUpdate from "../../../../services/websocket/sendUpdate.js";
 
 export const updateUserController = async (req, res) => {
   const userUUID = req.params.uuid;
@@ -26,7 +26,7 @@ export const updateUserController = async (req, res) => {
       });
     }
 
-    sendUserUpdate();
+    sendUpdate('user-update');
 
     res.json({
       message: 'User updated successfully.',

@@ -7,7 +7,7 @@ import UnverifiedUsers from '../pages/Dean/UnverifiedUser';
 import TaskForce from '../pages/Dean/TaskForce';
 import Documents from '../pages/Dean/Documents';
 import TaskForceDetail from '../pages/Dean/TaskForceDetail';
-import ProgramsToAccredit from '../pages/Dean/ProgramsToAccredit';
+import ProgramsToBeAccredited from '../pages/Dean/ProgramsToBeAccredited';
 import EmailConfirmation from '../pages/EmailConfirmation';
 
 const { 
@@ -28,7 +28,7 @@ const protectedRoutes = [
   { path: UNVERIFIED_USERS, element: <UnverifiedUsers /> },
   { path: TASK_FORCE_DETAIL_TEMPLATE, element: <TaskForceDetail /> },
   { path: UNVERIFIED_USERS_ID, element: <UnverifiedUsers /> },
-  { path: PROGRAMS_TO_ACCREDIT, element: <ProgramsToAccredit /> },
+  { path: PROGRAMS_TO_ACCREDIT, element: <ProgramsToBeAccredited/> },
   { path: DOCUMENTS, element: <Documents /> }
 ];
 

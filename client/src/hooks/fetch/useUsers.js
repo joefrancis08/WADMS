@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { fetchAllUsers, fetchUserBy } from '../api/users/userAPI';
-import { messageHandler } from '../services/websocket/messageHandler';
+import { fetchAllUsers, fetchUserBy } from '../../api/users/userAPI';
+import { messageHandler } from '../../services/websocket/messageHandler';
 import { useEffect, useMemo } from 'react';
 
 export const useUsersBy = (key, value) => {
@@ -21,7 +21,7 @@ export const useUsersBy = (key, value) => {
       return users;
     } catch (err) {
       console.error('Error fetching users:', err);
-      return []; // fallback to empty array
+      return []; // Fallback to empty array
     }
   };
 

@@ -1,9 +1,16 @@
 import { format } from "date-fns";
-import { useEffect, useState } from "react";
-import { addProgramToBeAccredited } from "../api/accreditation/accreditationAPI";
-import MODAL_TYPE from "../constants/modalTypes";
+import { useState } from "react";
+import { addProgramToBeAccredited } from "../../api/accreditation/accreditationAPI";
+import { useFetchProgramsToBeAccredited } from "../fetch/useFetchProgramsToBeAccredited";
+import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
+import { TOAST_MESSAGES } from "../../constants/messages";
+import MODAL_TYPE from "../../constants/modalTypes";
 
-export const useProgramToAccredit = () => {
+export const useProgramsToBeAccredited = () => {
+  const { programsToBeAccredited, loading, error } = useFetchProgramsToBeAccredited();
+
+  const { PROGRAMS_TO_BE_ACCREDITED_ADDITION } = TOAST_MESSAGES;
+
   const [modalType, setModalType] = useState(null);
   const [hoverProgramOptions, setHoverProgramOptions] = useState(false);
   const [infoHover, setInfoHover] = useState(false);
@@ -87,8 +94,8 @@ export const useProgramToAccredit = () => {
           programs
         );
 
-        console.log(res);
         handleCloseClick();
+        res.data.success && showSuccessToast(PROGRAMS_TO_BE_ACCREDITED_ADDITION.SUCCESS);
       }
     } catch (error) {
       console.error('Error adding program to be accredited: ', error);
@@ -111,6 +118,12 @@ export const useProgramToAccredit = () => {
 
     close: {
       handleCloseClick
+    },
+
+    programsToBeAccreditedData: {
+      programsToBeAccredited,
+      loading,
+      error
     },
 
     form: {
