@@ -1,5 +1,5 @@
 import { deleteAllUsers, getAllUsers } from "../../../../models/userModel.js";
-import sendUserUpdate from "../../../../services/websocket/sendUserUpdate.js";
+import sendUpdate from "../../../../services/websocket/sendUpdate.js";
 
 export const deleteAllUsersController = async (req, res) => {
   try {
@@ -14,7 +14,7 @@ export const deleteAllUsersController = async (req, res) => {
 
     await deleteAllUsers(); // Delete all if users exist
 
-    sendUserUpdate();
+    sendUpdate('user-update');
 
     return res.status(200).json({
       message: 'All users deleted successfully.',

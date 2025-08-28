@@ -3,8 +3,8 @@ import AdminLayout from '../../components/Layout/Dean/DeanLayout';
 import { ArrowLeft, CalendarDays, ChevronLeft, Mail, Pen, Trash2 } from 'lucide-react';
 import TimeAgo from '../../components/TimeAgo';
 import VerifiedUserDetailSkeletonLoader from '../../components/Loaders/VerifiedUserDetailSkeletonLoader';
-import useVerifiedUserDetail from '../../hooks/useVerifiedUserDetail';
-import { useVerifiedUsers } from '../../hooks/useVerifiedUsers';
+import useTaskForceDetail from '../../hooks/Dean/useTaskForceDetail';
+import { useTaskForce } from '../../hooks/Dean/useTaskForce';
 import ProfilePicture from '../../components/ProfilePicture';
 import getProfilePicPath from '../../utils/getProfilePicPath';
 import TaskForceModal from '../../components/Dean/TaskForceModal';
@@ -12,7 +12,7 @@ import TaskForceModal from '../../components/Dean/TaskForceModal';
 const TaskForceDetail = () => {
   
   const { chevron, confirmDelete, dropdown, form, modal, profilePic, 
-    saveButton, userDelete, userUpdate } = useVerifiedUsers();
+    saveButton, userDelete, userUpdate } = useTaskForce();
   const { handleChevronClick } = chevron;
   const { handleConfirmDelete } = confirmDelete;
   const { handleDropdownMenuClick, toggleDropdown } = dropdown;
@@ -23,7 +23,7 @@ const TaskForceDetail = () => {
   const { handleDelete } = userDelete;
   const { handleUpdate, handleSaveUpdate } = userUpdate;
 
-  const { constant, data, state } = useVerifiedUserDetail();
+  const { constant, data, state } = useTaskForceDetail();
   const { TASK_FORCE } = constant;
   const { selectedUser } = data;
   const { loading } = state;

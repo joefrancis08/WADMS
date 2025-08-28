@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { getUserByEmail, insertUser } from '../../../../models/userModel.js';
-import sendUserUpdate from '../../../../services/websocket/sendUserUpdate.js';
+import sendUpdate from '../../../../services/websocket/sendUpdate.js';
 
 export const addUserController = async (req, res) => {
   
@@ -27,7 +27,7 @@ export const addUserController = async (req, res) => {
     const userUUID = uuidv4();
     await insertUser(userUUID, profilePicPath, fullName, email, role);
 
-    sendUserUpdate();
+    sendUpdate('user-update');
 
     return res.status(201).json({
       message: 'User added successfully.',

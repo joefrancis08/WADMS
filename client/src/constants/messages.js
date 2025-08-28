@@ -24,6 +24,11 @@ export const TOAST_MESSAGES = {
     SUCCESS: 'Updated successfully.',
     ERROR: 'Something went wrong while updating user. Try again.'
   },
+
+  PROGRAMS_TO_BE_ACCREDITED_ADDITION: {
+    SUCCESS: 'Added successfully.',
+    ERROR: 'Something went wrong while adding programs to be accredited.'
+  }
 }
 
 export const VALIDATION_MESSAGE = () => {

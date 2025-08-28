@@ -1,0 +1,175 @@
+import { format } from "date-fns";
+import { useState } from "react";
+import { addProgramToBeAccredited } from "../../api/accreditation/accreditationAPI";
+import { useFetchProgramsToBeAccredited } from "../fetch-react-query/useFetchProgramsToBeAccredited";
+import { showSuccessToast } from "../../utils/toastNotification";
+import { TOAST_MESSAGES } from "../../constants/messages";
+import MODAL_TYPE from "../../constants/modalTypes";
+import useAccreditationLevel from "../fetch-react-query/useAccreditationLevel";
+
+export const useProgramsToBeAccredited = () => {
+  const { programsToBeAccredited, loading, error } = useFetchProgramsToBeAccredited();
+  const { levels, loadingAL, errorAL } = useAccreditationLevel();
+
+  const { PROGRAMS_TO_BE_ACCREDITED_ADDITION } = TOAST_MESSAGES;
+
+  const [modalType, setModalType] = useState(null);
+  const [infoHover, setInfoHover] = useState(false);
+  
+  const [programs, setPrograms] = useState([]); // Save here the program inputted
+  const [programInput, setProgramInput] = useState(''); // Temporaty input for text area
+  const [formValue, setFormValue] = useState({
+    startDate: null,
+    endDate: null,
+    level: '',
+  });
+
+  const disableAddButton = !formValue.startDate || !formValue.endDate || 
+    !formValue.level.trim() || programs.length === 0;
+
+  const handleAddClick = (options = {}) => {
+    setModalType(MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED);
+    
+    if (options.isFromCard) {
+      setModalType(MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED_CARD);
+    }
+  };
+
+  // isFromMain and isFromCard is the options (don't forget), add more if necessary
+  const handleCloseClick = (options = {}) => {
+    setModalType(null);
+    
+    if (options.isFromMain) {
+      setPrograms([]);
+      setFormValue({
+        startDate: null,
+        endDate: null,
+        level: '',
+      });
+    }
+  };
+
+  const handleInputChange = (eOrDate, fieldName) => {
+    // Check if the input is a normal DOM event (like typing in a text field)
+    if (eOrDate && eOrDate.target) {
+      const { name, value } = eOrDate.target; // Destructure the field name and value
+      setFormValue(prev => ({ ...prev, [name]: value })); // Update the form value for that field
+    } else {
+      // Input is a Date (from a date picker)
+      if (fieldName === "startDate") {
+        if (eOrDate) {
+          // Start date selected
+          const newStartDate = eOrDate; // Store selected start date
+          const newEndDate = new Date(newStartDate); // Copy start date
+          newEndDate.setDate(newEndDate.getDate() + 3); // Automatically set end date to 3 days after start date
+          setFormValue(prev => ({ ...prev, startDate: newStartDate, endDate: newEndDate }));
+          // Update both startDate and endDate in form state
+
+        } else {
+          // Start date cleared
+          setFormValue(prev => ({ ...prev, startDate: null, endDate: null }));
+           // If start date is cleared, also clear end date to prevent illogical state
+        }
+
+      } else {
+        // For other date fields (like endDate)
+        setFormValue(prev => ({ ...prev, [fieldName]: eOrDate })); // Just update the respective field
+      }
+    }
+  };
+
+  const handleOptionSelection = (level, program, options = {}) => {
+    if (options.isForAddLevel) {
+      setFormValue(prev => ({...prev, level}));
+    } else if (options.isForAddProgram) {
+      setPrograms(prev => [...prev, program]);
+    }
+  };
+
+  const handleProgramChange = (e) => {
+    setProgramInput(e.target.value);
+  };
+
+  const handleAddProgramValue = (val) => {
+    setPrograms([...programs, val])
+  };
+
+  const handleRemoveProgramValue = (index) => {
+    setPrograms(programs.filter((_, i) => i !== index))
+  };
+
+  const handleSave = async () => {
+    try {
+      if (formValue.startDate && formValue.endDate && formValue.level && programs.length > 0) {
+        const formattedStartDate = format(formValue.startDate, "yyyy-MM-dd");
+        const formattedEndDate = format(formValue.endDate, 'yyyy-MM-dd');
+
+        const res = await addProgramToBeAccredited(
+          formattedStartDate, 
+          formattedEndDate, 
+          formValue.level, 
+          programs
+        );
+
+        handleCloseClick({ isFromMain: true });
+        res.data.success && showSuccessToast(PROGRAMS_TO_BE_ACCREDITED_ADDITION.SUCCESS);
+      }
+    } catch (error) {
+      console.error('Error adding program to be accredited: ', error);
+    }
+  };
+
+  const handleInfoHover = () => {
+    setInfoHover(!infoHover);
+  };
+
+  return {
+    addButton: {
+      disableAddButton,
+      handleAddClick
+    },
+
+    close: {
+      handleCloseClick
+    },
+
+    dropdown: {
+      handleOptionSelection
+    },
+
+    programsToBeAccreditedData: {
+      programsToBeAccredited,
+      loading,
+      error
+    },
+
+    form: {
+      formValue
+    },
+
+    hovers: {
+      infoHover,
+      handleInfoHover
+    },
+
+    inputs: {
+      handleInputChange
+    },
+
+    modal: {
+      modalType
+    },
+
+    program: {
+      programInput,
+      programs,
+      handleProgramChange,
+      handleAddProgramValue,
+      handleRemoveProgramValue,
+    },
+
+    saveHandler: {
+      handleSave
+    }
+  };
+};
