@@ -141,9 +141,9 @@ const ProgramsToAccredit = () => {
                       {programs.map((programName, idx) => (
                         <div
                           key={idx}
-                          className='relative flex items-center justify-center h-60 p-4 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl border border-slate-300 shadow hover:shadow-md cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80'
+                          className='relative flex items-center justify-center h-60 p-8 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl border border-slate-300 shadow hover:shadow-md cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80'
                         >
-                          <p className='text-wrap bg-gradient-to-b from-yellow-300 to-amber-400 w-full text-lg md:text-xl text-white text-center shadow font-bold p-4'>
+                          <p className='flex items-center justify-center text-wrap bg-gradient-to-b from-yellow-300 to-amber-400 w-full text-lg md:text-xl text-white text-center shadow h-40 font-bold p-4'>
                             {programName}
                           </p>
 
