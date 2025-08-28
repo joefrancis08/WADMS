@@ -55,17 +55,7 @@ export const useTaskForce = () => {
     }
   }, [selectedUser]);
 
-  // Close when clicking outside of the user card dropdwon
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (containerRef.current && !containerRef.current.contains(event.target)) {
-        setActiveDropdownId(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  
 
   // Check real-time if email already exist
   useEffect(() => {

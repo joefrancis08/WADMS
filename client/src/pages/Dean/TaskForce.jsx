@@ -43,7 +43,7 @@ const TaskForce = () => {
   
   return (
     <DeanLayout>
-      <div ref={containerRef} className='flex-1 p-0 space-y-3'>
+      <div className='flex-1 p-0 space-y-3'>
         {/* Main Content Header */}
         <ContentHeader 
           headerIcon={UserRoundCog}
@@ -84,6 +84,7 @@ const TaskForce = () => {
                         }
                       </h2>
                       <TaskForceCard
+                        containerRef={containerRef}
                         key={label}
                         activeDropdownId={activeDropdownId}
                         label={label}

@@ -13,6 +13,7 @@ const TaskForceCard = ({
   handleEllipsisClick 
 }) => {
   const renderDropdown = (user) => {
+    
     const dropDownMenu = [
       { icon: <FolderTree size={20} />, label: 'Assign Program, Area, & Parameter' },
       { icon: <Link size={20} />, label: 'Generate Access Link' },
@@ -23,7 +24,7 @@ const TaskForceCard = ({
 
     return (
       activeDropdownId === user.user_uuid && (
-        <div className='absolute top-8 left-15 max-sm:left-10 transition'>
+        <div ref={containerRef} className='absolute top-8 left-15 max-sm:left-10 transition'>
           <Dropdown width={'w-50'} border={'border border-gray-300 rounded-md'}>
             {dropDownMenu.map((menu, index) => (
               <div
