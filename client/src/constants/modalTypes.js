@@ -5,7 +5,8 @@ const MODAL_TYPES = {
   ADD_USER: 'add-user',
   UPDATE_USER: 'update-user',
 
-  ADD_PROGRAM_TO_ACCREDIT: 'add-program-to-accredit',
+  ADD_PROGRAM_TO_BE_ACCREDITED_CARD: 'add-program-to-be-accredited-card',
+  ADD_PROGRAM_TO_BE_ACCREDITED: 'add-program-to-be-accredited',
   UPDATE_PROGRAM_TO_ACCREDIT: 'update-program-to-accredit'
 };
 

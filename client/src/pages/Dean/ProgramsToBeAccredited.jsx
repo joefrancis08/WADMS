@@ -1,13 +1,15 @@
+import React from 'react';
 import DeanLayout from '../../components/Layout/Dean/DeanLayout';
-import { BookPlus, EllipsisVertical, NotebookPen, NotepadText, Plus, Scroll } from 'lucide-react';
+import { BookPlus, CirclePlus, EllipsisVertical, NotebookPen, NotepadText, Plus, Scroll } from 'lucide-react';
 import ContentHeader from '../../components/Dean/ContentHeader';
 import { useProgramsToBeAccredited } from '../../hooks/Dean/useProgramsToBeAccredited';
 import ProgramToBeAccreditedModal from '../../components/Dean/ProgramToBeAccreditedModal';
 import formatAccreditationPeriod from '../../utils/formatAccreditationPeriod';
+import ProgramsToBeAccreditedSL from '../../components/Loaders/ProgramsToBeAccreditedSL';
 
 const ProgramsToAccredit = () => {
   const { 
-    addButton, 
+    addButton,
     close,
     dropdown, 
     form, 
@@ -84,7 +86,7 @@ const ProgramsToAccredit = () => {
         <div className='relative px-4 flex justify-end'>
           <div className='flex items-center'>
             <button 
-              title='Add program to be accredited' 
+              title='Add period, level, and program' 
               onClick={handleAddClick} 
               className='p-3 rounded-full mr-2 cursor-pointer transition-all shadow bg-slate-300 hover:opacity-80 active:opacity-50'
             >
@@ -94,7 +96,9 @@ const ProgramsToAccredit = () => {
         </div>
         
         {/* Render fallback UI if data is empty */}
-        {Object.entries(grouped).length === 0 ? (
+        {loading ? (
+          <ProgramsToBeAccreditedSL /> 
+        ) : Object.entries(grouped).length === 0 ? (
           <div className='flex flex-col items-center justify-center h-100'>
             <Scroll className='text-slate-500 h-40 w-40 md:h-60 md:w-60'/>
             <p className='text-center font-medium text-slate-600 text-lg md:text-xl'>
@@ -114,39 +118,57 @@ const ProgramsToAccredit = () => {
                   {periodKey}
                 </p>
               </div>
+              <button 
+                title='Options'
+                className='absolute top-2 p-2 right-2 text-slate-800 rounded-bl-xl rounded-tr-lg hover:shadow hover:text-slate-700 hover:bg-slate-200 active:opacity-50 transition cursor-pointer'>
+                <EllipsisVertical size={24}/>
+              </button>
               
               {/* Loop through levels inside each period */}
               {Object.entries(levels).map(([level, programs]) => (
-                <div 
-                  key={level} 
-                  className='relative p-4 space-y-6 mb-4 border bg-slate-200 shadow-md border-slate-300 rounded-md mx-4 mt-12'
-                >
+                <React.Fragment key={level} >
+                  <div 
+                    className='relative p-4 space-y-6 mb-4 border bg-slate-200 shadow-md border-slate-300 rounded-md mx-4 mt-12'
+                  >
 
-                  {/* Level label (ex: Level II, Preliminary, etc.) */}
-                  <h2 className='absolute -top-6 left-1/2 -translate-x-1/2 flex items-center justify-center w-[80%] md:w-[70%] lg:w-1/2 p-2 text-2xl bg-gradient-to-l from-green-700 via-yellow-400 to-green-700 shadow-md text-white rounded font-bold'>
-                    {level}
-                  </h2>
+                    {/* Level label (ex: Level II, Preliminary, etc.) */}
+                    <h2 className='absolute -top-6 left-1/2 -translate-x-1/2 flex items-center justify-center w-[60%] md:w-[70%] lg:w-[80%] p-2 text-lg md:text-2xl bg-gradient-to-l from-green-700 via-yellow-400 to-green-700 shadow-md text-white rounded font-bold'>
+                      {level}
+                    </h2>
 
-                  {/* Program cards */}
-                  <div className='relative flex flex-wrap gap-10 justify-center pb-4 pt-8 px-4'>
-                    {programs.map((programName, idx) => (
+                    {/* Program cards */}
+                    <div className='relative flex flex-wrap gap-10 justify-center pb-4 pt-8 px-4'>
+                      {programs.map((programName, idx) => (
+                        <div
+                          key={idx}
+                          className='relative flex items-center justify-center h-60 p-4 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl border border-slate-300 shadow hover:shadow-md cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80'
+                        >
+                          <p className='text-wrap bg-gradient-to-b from-yellow-300 to-amber-400 w-full text-lg md:text-xl text-white text-center shadow font-bold p-4'>
+                            {programName}
+                          </p>
+
+                          <button 
+                            title='Options'
+                            className='absolute top-0 p-2 right-0 text-slate-100 rounded-bl-xl rounded-tr-lg hover:shadow hover:text-slate-200 hover:bg-slate-100/20 active:opacity-50 transition cursor-pointer'>
+                            <EllipsisVertical size={20}/>
+                          </button>
+                        </div>
+                      ))}
+
+                      {/* For adding program */}
                       <div
-                        key={idx}
-                        className='relative flex items-center justify-center h-60 p-4 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl border border-slate-300 shadow hover:shadow-md cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80'
+                        onClick={() => handleAddClick({ isFromCard: true })}
+                        title='Click to add program'
+                        className='relative flex flex-col items-center justify-center gap-y-2 h-60 p-4 bg-slate-200 border border-gray-300 rounded-lg shadow-md hover:shadow-lg active:shadow-md cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80'
                       >
-                        <p className='bg-gradient-to-b from-yellow-300 to-amber-400 w-full text-2xl text-white text-center shadow font-bold p-4'>
-                          {programName}
-                        </p>
-
-                        <button 
-                          title='Options'
-                          className='absolute top-0 p-2 right-0 text-slate-100 rounded-bl-xl rounded-tr-lg hover:shadow hover:text-slate-200 hover:bg-slate-100/20 active:opacity-50 transition cursor-pointer'>
-                          <EllipsisVertical size={20}/>
+                        <Plus className='text-slate-600 h-16 w-16 rounded-full'/>
+                        <button className='text-xl font-medium text-slate-600 py-4 px-6 hover:bg-slate-300 rounded-full cursor-pointer'>
+                          Add Program
                         </button>
                       </div>
-                    ))}
+                    </div>
                   </div>
-                </div>
+                </React.Fragment>
               ))}
             </div>
           ))

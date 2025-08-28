@@ -2,7 +2,7 @@ import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-const DatePickerComponent = ({ selected, onChange, placeholder, className, onFocus, onBlur, dateFormat, minDate, disabled }) => {
+const DatePickerComponent = ({ selected, onChange, placeholder, className, onFocus, onBlur, dateFormat, minDate, disabled, open, onClickOutside }) => {
   return (
     <DatePicker 
       selected={selected} 
@@ -14,6 +14,8 @@ const DatePickerComponent = ({ selected, onChange, placeholder, className, onFoc
       dateFormat={dateFormat}
       minDate={minDate}
       disabled={disabled}
+      open={open}
+      onClickOutside={onClickOutside}
     />
   );
 };

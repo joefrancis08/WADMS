@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { USER_ROLES, USER_STATUS } from "../../constants/user";
 import PATH from "../../constants/path";
-import { useUsersBy } from "../fetch/useUsers";
+import { useUsersBy } from "../fetch-react-query/useUsers";
 import MODAL_TYPES from "../../constants/modalTypes";
 import { TOAST_MESSAGES } from "../../constants/messages";
 import { checkUserEmail, deleteUser, postUser, updateUser } from "../../api/users/userAPI";

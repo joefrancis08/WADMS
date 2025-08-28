@@ -1,10 +1,10 @@
-import db from "../../../../config/db.js";
-import getLevelBy from "../GET/getLevelBy.js";
-import getPeriodBy from "../GET/getPeriodBy.js";
-import getProgramBy from "../GET/getProgramBy.js";
-import { insertLevel } from "./insertLevel.js";
+import db from '../../../../config/db.js';
+import getLevelBy from '../../level/GET/getLevelBy.js'
+import getPeriodBy from '../../period/GET/getPeriodBy.js';
+import getProgramBy from '../../../programs/GET/getProgramBy.js';
+import { insertLevel } from "../../level/POST/insertLevel.js";
 import insertPeriod from "./insertPeriod.js";
-import { insertProgram } from "./insertProgram.js";
+import { insertProgram } from "../../../programs/POST/insertProgram.js";
 
 const insertProgramtoAccredit = async (startDate, endDate, level, program) => {
   console.log()

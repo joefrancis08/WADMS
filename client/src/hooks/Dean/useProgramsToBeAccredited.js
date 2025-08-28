@@ -1,11 +1,11 @@
 import { format } from "date-fns";
 import { useState } from "react";
 import { addProgramToBeAccredited } from "../../api/accreditation/accreditationAPI";
-import { useFetchProgramsToBeAccredited } from "../fetch/useFetchProgramsToBeAccredited";
+import { useFetchProgramsToBeAccredited } from "../fetch-react-query/useFetchProgramsToBeAccredited";
 import { showSuccessToast } from "../../utils/toastNotification";
 import { TOAST_MESSAGES } from "../../constants/messages";
 import MODAL_TYPE from "../../constants/modalTypes";
-import useAccreditationLevel from "../fetch/useAccreditationLevel";
+import useAccreditationLevel from "../fetch-react-query/useAccreditationLevel";
 
 export const useProgramsToBeAccredited = () => {
   const { programsToBeAccredited, loading, error } = useFetchProgramsToBeAccredited();
@@ -27,18 +27,26 @@ export const useProgramsToBeAccredited = () => {
   const disableAddButton = !formValue.startDate || !formValue.endDate || 
     !formValue.level.trim() || programs.length === 0;
 
-  const handleAddClick = () => {
-    setModalType(MODAL_TYPE.ADD_PROGRAM_TO_ACCREDIT);
+  const handleAddClick = (options = {}) => {
+    setModalType(MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED);
+    
+    if (options.isFromCard) {
+      setModalType(MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED_CARD);
+    }
   };
 
-  const handleCloseClick = () => {
+  // isFromMain and isFromCard is the options (don't forget), add more if necessary
+  const handleCloseClick = (options = {}) => {
     setModalType(null);
-    setPrograms([]);
-    setFormValue({
-      startDate: null,
-      endDate: null,
-      level: '',
-    });
+    
+    if (options.isFromMain) {
+      setPrograms([]);
+      setFormValue({
+        startDate: null,
+        endDate: null,
+        level: '',
+      });
+    }
   };
 
   const handleInputChange = (eOrDate, fieldName) => {
@@ -70,11 +78,12 @@ export const useProgramsToBeAccredited = () => {
     }
   };
 
-  const handleOptionSelection = (level, options = {}) => {
-    
-
-    options.isForAddLevel && setFormValue(prev => ({...prev, level}));
-    
+  const handleOptionSelection = (level, program, options = {}) => {
+    if (options.isForAddLevel) {
+      setFormValue(prev => ({...prev, level}));
+    } else if (options.isForAddProgram) {
+      setPrograms(prev => [...prev, program]);
+    }
   };
 
   const handleProgramChange = (e) => {
@@ -102,7 +111,7 @@ export const useProgramsToBeAccredited = () => {
           programs
         );
 
-        handleCloseClick();
+        handleCloseClick({ isFromMain: true });
         res.data.success && showSuccessToast(PROGRAMS_TO_BE_ACCREDITED_ADDITION.SUCCESS);
       }
     } catch (error) {

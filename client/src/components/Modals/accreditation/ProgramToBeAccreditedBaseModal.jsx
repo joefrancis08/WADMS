@@ -47,7 +47,7 @@ const Footer = ({ onCancel, onSave, primaryButton, disabled, secondaryButton }) 
   );
 };
 
-const ProgramToAccreditModal = (
+const ProgramToBeAccreditedBaseModal = (
   { 
     onClose, onCancel, onSave, headerContent, 
     bodyContent, primaryButton, disabled, 
@@ -66,4 +66,4 @@ const ProgramToAccreditModal = (
   );
 };
 
-export default ProgramToAccreditModal;
+export default ProgramToBeAccreditedBaseModal;

@@ -1,9 +1,8 @@
-import insertProgramtoAccredit from "../../models/accreditation/program-to-be-accredited/POST/insertProgramtoAccredit.js";
-import sendUpdate from "../../services/websocket/sendUpdate.js";
-import isValidDateFormat from "../../utils/isValidDateFormat.js";
+import insertProgramtoAccredit from '../../../../models/accreditation/program-to-be-accredited/POST/insertProgramtoAccredit.js';
+import sendUpdate from '../../../../services/websocket/sendUpdate.js';
+import isValidDateFormat from '../../../../utils/isValidDateFormat.js';
 
-// Controller function to add one or multiple programs to accredit
-export const addProgramToBeAccredited = async (req, res) => {
+const addProgramToBeAccredited = async (req, res) => {
   try {
     /* 
       Destructure the incoming data from the request body
@@ -90,3 +89,5 @@ export const addProgramToBeAccredited = async (req, res) => {
     });
   }
 };
+
+export default addProgramToBeAccredited;

@@ -1,25 +1,5 @@
-import db from "../../config/db.js";
-import { insertProgram } from "../../models/accreditation/program-to-be-accredited/POST/insertProgram.js";
+import fetchProgram from './GET/fetchProgram.js';
+import addProgram from './POST/addProgram.js';
 
-// Get the request body from frontend and try to insert in program table
-export const addProgram = async (req, res) => {
-  const connection = await db.getConnection();
-  try {
-    const { programName } = req.body;
-    const response = await insertProgram(connection, programName);
-    console.log(response);
-
-    res.status(200).json({
-      message: 'Program added successfully',
-      success: true,
-      response
-    });
-
-  } catch (error) {
-    console.error('Error adding program: ', error);
-    res.status(500).json({
-      message: 'Internal server error',
-      success: false,
-    })
-  }
-};
+export const addProgramController = (req, res) => addProgram(req, res);
+export const fetchProgramController = (req, res) => fetchProgram(req, res);
