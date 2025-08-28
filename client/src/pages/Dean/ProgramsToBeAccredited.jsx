@@ -1,5 +1,5 @@
 import DeanLayout from '../../components/Layout/Dean/DeanLayout';
-import { BookPlus, NotebookPen, NotepadText, Scroll } from 'lucide-react';
+import { BookPlus, EllipsisVertical, NotebookPen, NotepadText, Plus, Scroll } from 'lucide-react';
 import ContentHeader from '../../components/Dean/ContentHeader';
 import { useProgramsToBeAccredited } from '../../hooks/Dean/useProgramsToBeAccredited';
 import ProgramToBeAccreditedModal from '../../components/Dean/ProgramToBeAccreditedModal';
@@ -7,7 +7,6 @@ import formatAccreditationPeriod from '../../utils/formatAccreditationPeriod';
 
 const ProgramsToAccredit = () => {
   const { 
-    accreditationLevels,
     addButton, 
     close,
     dropdown, 
@@ -33,11 +32,9 @@ const ProgramsToAccredit = () => {
   const { 
     programInput,
     programs, 
-    hoverProgramOptions, 
     handleProgramChange,
     handleAddProgramValue,
     handleRemoveProgramValue,
-    handleHoverProgramOptions 
   } = program;
   
   // Array of Programs To Be Accredited, fallback to empty array if fetch is loading
@@ -117,44 +114,35 @@ const ProgramsToAccredit = () => {
                   {periodKey}
                 </p>
               </div>
-
+              
               {/* Loop through levels inside each period */}
               {Object.entries(levels).map(([level, programs]) => (
                 <div 
                   key={level} 
                   className='relative p-4 space-y-6 mb-4 border bg-slate-200 shadow-md border-slate-300 rounded-md mx-4 mt-12'
                 >
+
                   {/* Level label (ex: Level II, Preliminary, etc.) */}
                   <h2 className='absolute -top-6 left-1/2 -translate-x-1/2 flex items-center justify-center w-[80%] md:w-[70%] lg:w-1/2 p-2 text-2xl bg-gradient-to-l from-green-700 via-yellow-400 to-green-700 shadow-md text-white rounded font-bold'>
                     {level}
                   </h2>
 
                   {/* Program cards */}
-                  <div className='relative flex flex-wrap gap-10 justify-center pb-4 pt-8'>
+                  <div className='relative flex flex-wrap gap-10 justify-center pb-4 pt-8 px-4'>
                     {programs.map((programName, idx) => (
                       <div
                         key={idx}
-                        onMouseEnter={handleHoverProgramOptions}
-                        onMouseLeave={handleHoverProgramOptions}
                         className='relative flex items-center justify-center h-60 p-4 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl border border-slate-300 shadow hover:shadow-md cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80'
                       >
-                        <p className='bg-gradient-to-b from-yellow-300 to-amber-400 w-full text-2xl text-white text-center shadow font-bold mt-3 p-4'>
-                          {programName} {/* <- Now uses data */}
+                        <p className='bg-gradient-to-b from-yellow-300 to-amber-400 w-full text-2xl text-white text-center shadow font-bold p-4'>
+                          {programName}
                         </p>
 
-                        {/* Hover actions */}
-                        {hoverProgramOptions && (
-                          <>
-                            <div className="absolute inset-0 rounded-xl bg-black/10 backdrop-blur-xs z-10"></div>
-                            <div className='flex items-center justify-center px-6 py-4 gap-x-4 bg-white absolute z-20'>
-                              <BookPlus />
-                              <BookPlus />
-                              <BookPlus />
-                              <BookPlus />
-                              <BookPlus />
-                            </div>
-                          </>
-                        )}
+                        <button 
+                          title='Options'
+                          className='absolute top-0 p-2 right-0 text-slate-100 rounded-bl-xl rounded-tr-lg hover:shadow hover:text-slate-200 hover:bg-slate-100/20 active:opacity-50 transition cursor-pointer'>
+                          <EllipsisVertical size={20}/>
+                        </button>
                       </div>
                     ))}
                   </div>

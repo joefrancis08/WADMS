@@ -14,7 +14,7 @@ export const useTaskForce = () => {
   const { users, loading, error } = useUsersBy();
 
   const navigate = useNavigate();
-  const containerRef = useRef();
+  const dropdownRef = useRef();
 
   const { ADD_USER, UPDATE_USER, USER_DELETION_CONFIRMATION } = MODAL_TYPES;
   const { TASK_FORCE, TASK_FORCE_DETAIL } = PATH.DEAN;
@@ -55,7 +55,17 @@ export const useTaskForce = () => {
     }
   }, [selectedUser]);
 
-  
+  // Close when clicking outside of the user card menu options
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setActiveDropdownId(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Check real-time if email already exist
   useEffect(() => {
@@ -302,7 +312,7 @@ export const useTaskForce = () => {
     },
 
     ref: {
-      containerRef
+      dropdownRef
     },
 
     saveButton: {

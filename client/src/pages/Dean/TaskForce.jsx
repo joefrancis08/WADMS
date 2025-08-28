@@ -28,7 +28,7 @@ const TaskForce = () => {
   const { modalType, handleCloseModal } = modal;
   const { navigate } = navigation;
   const { setProfilePic, handleProfilePic, setUpdatedProfilePic, handleProfilePicUpdate } = profilePic;
-  const { containerRef } = ref;
+  const { dropdownRef } = ref;
   const { isUpdateBtnDisabled } = saveButton;
   const { searchClick, handleSearchClick} = search;
   const { loading, error } = state;
@@ -84,7 +84,7 @@ const TaskForce = () => {
                         }
                       </h2>
                       <TaskForceCard
-                        containerRef={containerRef}
+                        dropdownRef={dropdownRef}
                         key={label}
                         activeDropdownId={activeDropdownId}
                         label={label}

@@ -14,7 +14,6 @@ export const useProgramsToBeAccredited = () => {
   const { PROGRAMS_TO_BE_ACCREDITED_ADDITION } = TOAST_MESSAGES;
 
   const [modalType, setModalType] = useState(null);
-  const [hoverProgramOptions, setHoverProgramOptions] = useState(false);
   const [infoHover, setInfoHover] = useState(false);
   
   const [programs, setPrograms] = useState([]); // Save here the program inputted
@@ -115,10 +114,6 @@ export const useProgramsToBeAccredited = () => {
     setInfoHover(!infoHover);
   };
 
-  const handleHoverProgramOptions = () => {
-    setHoverProgramOptions(!hoverProgramOptions);
-  }
-
   return {
     addButton: {
       disableAddButton,
@@ -159,11 +154,9 @@ export const useProgramsToBeAccredited = () => {
     program: {
       programInput,
       programs,
-      hoverProgramOptions,
       handleProgramChange,
       handleAddProgramValue,
       handleRemoveProgramValue,
-      handleHoverProgramOptions
     },
 
     saveHandler: {

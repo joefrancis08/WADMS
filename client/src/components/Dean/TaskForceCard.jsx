@@ -1,9 +1,9 @@
-import { CirclePlus, EllipsisVertical, FolderTree, Link, SquareUserRound, Trash2, UserRoundPen } from 'lucide-react';
+import { CirclePlus, EllipsisVertical, FileUser, FolderTree, Link, SquareUserRound, Trash2, UserRoundPen, View } from 'lucide-react';
 import Dropdown from '../Dropdown/Dropdown';
 import ProfilePicture from '../ProfilePicture';
 
 const TaskForceCard = ({ 
-  containerRef,
+  dropdownRef,
   activeDropdownId, 
   label,
   taskForce, 
@@ -17,14 +17,14 @@ const TaskForceCard = ({
     const dropDownMenu = [
       { icon: <FolderTree size={20} />, label: 'Assign Program, Area, & Parameter' },
       { icon: <Link size={20} />, label: 'Generate Access Link' },
-      { icon: <SquareUserRound size={20} />, label: 'View Details' },
+      { icon: <FileUser size={20} />, label: 'View Details' },
       { icon: <UserRoundPen size={20} />, label: 'Update' },
       { icon: <Trash2 size={20} color='red'/>, label: 'Delete' }
     ];
 
     return (
       activeDropdownId === user.user_uuid && (
-        <div ref={containerRef} className='absolute top-8 left-15 max-sm:left-10 transition'>
+        <div ref={dropdownRef} className='absolute top-8 left-15 max-sm:left-10 transition'>
           <Dropdown width={'w-50'} border={'border border-gray-300 rounded-md'}>
             {dropDownMenu.map((menu, index) => (
               <div
