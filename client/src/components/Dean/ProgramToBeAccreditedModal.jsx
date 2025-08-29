@@ -130,7 +130,7 @@ const ProgramToBeAccreditedModal = ({
                   {showDropdown && dataP.length > 0 && (
                     <div
                       ref={dropdownRef}
-                      className="absolute top-25 left-0 flex flex-col w-full border-2 border-slate-400 rounded-md bg-slate-100 shadow-xl z-50 p-2 text-gray-700"
+                      className="absolute top-25 left-0 flex flex-col w-full border border-slate-400 rounded-md bg-slate-100 shadow-xl z-50 p-2 text-gray-700"
                     >
                       {dataP.map((item, index) => (
                         <div

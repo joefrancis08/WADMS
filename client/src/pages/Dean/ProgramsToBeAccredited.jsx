@@ -88,9 +88,9 @@ const ProgramsToAccredit = () => {
   ];
 
   const programOptions = [
-    { icon: <Folders size={24} />, label: 'View Areas and Parameters' },
-    { icon: <SquarePen size={24} />, label: 'Update' },
-    { icon: <Trash2 size={24} />, label: 'Delete' },
+    { icon: <Folders size={22} />, label: 'View Areas and Parameters' },
+    { icon: <SquarePen size={22} />, label: 'Update' },
+    { icon: <Trash2 size={22} />, label: 'Delete' },
   ];
 
   return (
@@ -157,7 +157,7 @@ const ProgramsToAccredit = () => {
                         <div 
                           onClick={handleOptionItemClick}
                           key={index} 
-                          className={`flex items-center p-2 justify-start gap-x-2 cursor-pointer rounded-md active:opacity-60 ${option.label === 'Delete' ? 
+                          className={`flex items-center p-2 justify-start gap-x-2 cursor-pointer rounded-md active:opacity-60 transition ${option.label === 'Delete' ? 
                           'hover:bg-red-200' : 'hover:bg-slate-200'}`}
                         >
                           <i className={option.label === 'Delete' ? 'text-red-500' : 'text-slate-800'}>
@@ -242,7 +242,7 @@ const ProgramsToAccredit = () => {
                                         <i className={option.label === 'Delete' ? 'text-red-500' : 'text-slate-800'}>
                                           {option.icon}
                                         </i>
-                                        <p className={option.label === 'Delete' ? 'text-red-500' : 'text-slate-800'}>
+                                        <p className={`text-sm ${option.label === 'Delete' ? 'text-red-500' : 'text-slate-800'}`}>
                                           {option.label}
                                         </p>
                                       </div>

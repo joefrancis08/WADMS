@@ -166,7 +166,7 @@ const AddField = ({
                     : 'border-red-500 text-red-500 focus:outline-0 focus:ring-1 focus:ring-red-500'  }`}
                 open={calendarOpen}
                 onClickOutside={() => setCalendarOpen(false)}
-                onFocus={onFocus}
+                onFocus={handleFocus}
                 onBlur={onBlur}
                 dateFormat='MMMM d, yyyy'
                 minDate={minDate}
