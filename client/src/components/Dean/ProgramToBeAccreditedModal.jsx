@@ -15,11 +15,13 @@ const ProgramToBeAccreditedModal = ({
   formValue,
   programs,
   programInput,
-  disableAddButton,
+  disableButton,
   handlers,
+  modalData
 }) => {
   const dropdownRef = useRef();
   const [ showDropdown, setShowDropdown ] = useState(false); // Create local state for date dropdown
+  const [focus, setFocus] = useState(false);
 
   // Here we store the value of the selected period in the dropdown
   const [ periodStartValue, setPeriodStartValue] = useState(null); 
@@ -31,15 +33,10 @@ const ProgramToBeAccreditedModal = ({
   
   const { period, loadingP, errorP } = useAccreditationPeriod();
   const dataP = period?.data ?? [];
-  console.log('Period:', dataP.length > 0);
 
   const { programsData, loadingPr, errorPr } = usePrograms();
   const dataPr = programsData?.data ?? [];
   const programsArray = dataPr.map(item => item.program);
-  console.log(programsArray);
-
-  console.log(periodStartValue);
-  console.log(periodEndValue);
   
   const {
     handleCloseClick,
@@ -77,20 +74,28 @@ const ProgramToBeAccreditedModal = ({
     handleProgramChange({ target: { name: 'programInput', value: '' } }); // Reset textarea
   };
 
+  const handleFocus = () => {
+    setFocus(true);
+
+    const interval = setTimeout(() => setFocus(false), 10000);
+    return () => clearInterval(interval);
+  };
+
   switch (modalType) {
       case MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED:
         return (
           <ProgramToBeAccreditedBaseModal
             mode='add'
+            modalData={modalData}
             onClose={() => handleClose({isFromMain: true})}
             onCancel={() => handleClose({isFromMain: true})}
             onSave={handleSave}
-            primaryButton='Add Program'
+            primaryButton='Create'
             secondaryButton='Cancel'
-            disabled={disableAddButton}
+            disabled={disableButton?.({ isFromMain: true })}
             headerContent={
               <p className='ml-5 text-xl font-semibold text-slate-900'>
-                Add period, level, and program
+                Create Period, Level, and Program
               </p>
             }
             bodyContent={
@@ -134,11 +139,11 @@ const ProgramToBeAccreditedModal = ({
                           onClick={() => handleDropdownOptionClick(item.period_start, item.period_end)}
                         >
                           <span className="text-md">
-                            {format(item.period_start, "MMM d, yyyy")}
+                            {format(item.period_start, "MMMM dd, yyyy")}
                           </span>
                           <span className="text-gray-500"><MoveRight size={15}/></span>
                           <span className="text-mdp">
-                            {format(item.period_end, "MMM d, yyyy")}
+                            {format(item.period_end, "MMMM dd, yyyy")}
                           </span>
                         </div>
                       ))}
@@ -186,7 +191,7 @@ const ProgramToBeAccreditedModal = ({
                       position='-top-18 -left-7'
                       content={
                         <p className='text-white text-sm p-2'>
-                          You can add multiple programs. Press "Enter" after you add one program.
+                          Type a program and press Enter to add it. Click 'Create' to save all programs with their level and period.
                         </p>
                       }
                     />
@@ -203,14 +208,21 @@ const ProgramToBeAccreditedModal = ({
             mode='add'
             onClose={() => handleCloseClick({isFromCard: true})}
             onCancel={() => handleCloseClick({isFromCard: true})}
-            onSave={null}
-            primaryButton={'Add Program'}
-            disabled={false}
+            onSave={() => handleSave({
+              isFromCard: true,
+              data: {
+                startDate: modalData.startDate,
+                endDate: modalData.endDate,
+                level: modalData.level
+              }
+            })}
+            primaryButton={programs.length > 1 ? 'Add Programs' : 'Add Program'}
+            disabled={disableButton?.({ isFromCard: true })}
             secondaryButton={'Cancel'}
             headerContent={
               <div className='flex items-center justify-center relative gap-x-2'>
                 <p className='ml-5 text-xl font-semibold text-slate-800'>
-                  Add Program
+                  Add Program to {modalData.level}
                 </p>
                 {<CircleQuestionMark 
                   onMouseEnter={null}
@@ -219,11 +231,34 @@ const ProgramToBeAccreditedModal = ({
               </div>
             }
             bodyContent={
-              <AddField 
-                fieldName={'Program'}
-                type='textarea'
-                multiValue={true}
-              />
+              <div className='relative w-[90%]'>
+                <AddField 
+                  fieldName={programs.length > 1 ? 'Programs' : 'Program'}
+                  placeholder='e.g., Master of Management, Doctor of Philosophy in Education in Educational Management, etc.'
+                  type='textarea'
+                  name='programInput'
+                  formValue={programInput}
+                  multiValue={true}
+                  multiValues={programs}
+                  dropdownItems={programsArray}
+                  showDropdownOnFocus={true}
+                  onDropdownMenuClick={handleOptionSelection}
+                  onAddValue={(val) => handleAddProgramValue(val)}
+                  onRemoveValue={(index) => handleRemoveProgramValue(index)}
+                  onChange={(e) => handleProgramChange(e)}
+                  onFocus={handleFocus}
+                />
+                {focus && (
+                  <Popover 
+                    position='-top-4 -left-64 translate-y-1/2'
+                    content={
+                      <p className='text-white text-sm p-2'>
+                        Type a program and press Enter to store it. Click 'Add Program' to save all stored programs.
+                      </p>
+                    }
+                  />
+                )}
+              </div>
             }
           />
         );

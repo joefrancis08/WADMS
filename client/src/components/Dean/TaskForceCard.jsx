@@ -1,4 +1,4 @@
-import { CirclePlus, EllipsisVertical, FileUser, FolderTree, Link, SquareUserRound, Trash2, UserRoundPen, View } from 'lucide-react';
+import { CirclePlus, EllipsisVertical, FileUser, FolderTree, Link, Plus, SquareUserRound, Trash2, UserRoundPen, View } from 'lucide-react';
 import Dropdown from '../Dropdown/Dropdown';
 import ProfilePicture from '../ProfilePicture';
 
@@ -25,7 +25,7 @@ const TaskForceCard = ({
     return (
       activeDropdownId === user.user_uuid && (
         <div ref={dropdownRef} className='absolute top-8 left-15 max-sm:left-10 transition'>
-          <Dropdown width={'w-50'} border={'border border-gray-300 rounded-md'}>
+          <Dropdown width='w-50' border='border border-gray-300 rounded-md'>
             {dropDownMenu.map((menu, index) => (
               <div
                 onClick={(e) => {
@@ -97,8 +97,8 @@ const TaskForceCard = ({
         ${label === 'Chair' && 'w-45 sm:w-50 md:w-55 lg:w-60 xl:w-65'}
         ${label === 'Member' && 'w-36 sm:w-40 md:w-44 lg:w-48 xl:w-52'}`}>
           <div className='flex flex-col items-center justify-center gap-2'>
-            <CirclePlus className='text-slate-500' size={80}/>
-            <p className='text-slate-500 font-medium text-xl text-center'>
+            <Plus className='text-slate-500' size={60}/>
+            <p className='text-slate-500 font-medium text-lg text-center'>
               Add
               {
                 label === 'Chair' ? ' Chair' : ' Member'

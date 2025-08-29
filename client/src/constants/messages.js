@@ -15,14 +15,19 @@ export const TOAST_MESSAGES = {
     ERROR: 'Something went wrong. Try again.'
   },
 
-  TASK_FORCE_ADDITION: {
-    SUCCESS: 'Added successfully.',
-    ERROR: 'Something went wrong while adding user. Try again.'
+  TASK_FORCE_CREATION: {
+    SUCCESS: 'Created successfully.',
+    ERROR: 'Something went wrong while creating task force.'
   },
 
   TASK_FORCE_UPDATE: {
     SUCCESS: 'Updated successfully.',
     ERROR: 'Something went wrong while updating user. Try again.'
+  },
+
+  PROGRAMS_TO_BE_ACCREDITED_CREATION: {
+    SUCCESS: 'Created successfully.',
+    ERROR: 'Something went wrong while creating period, level, and programs.'
   },
 
   PROGRAMS_TO_BE_ACCREDITED_ADDITION: {

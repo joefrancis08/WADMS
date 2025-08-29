@@ -9,6 +9,7 @@ import { checkUserEmail, deleteUser, postUser, updateUser } from "../../api/user
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
 import { emailRegex } from "../../utils/regEx";
 import { useRef } from "react";
+import useOutsideClick from "../useOutsideClick";
 
 export const useTaskForce = () => {
   const { users, loading, error } = useUsersBy();
@@ -18,7 +19,7 @@ export const useTaskForce = () => {
 
   const { ADD_USER, UPDATE_USER, USER_DELETION_CONFIRMATION } = MODAL_TYPES;
   const { TASK_FORCE, TASK_FORCE_DETAIL } = PATH.DEAN;
-  const { TASK_FORCE_ADDITION, TASK_FORCE_UPDATE, TASK_FORCE_DELETION } = TOAST_MESSAGES;
+  const { TASK_FORCE_CREATION, TASK_FORCE_UPDATE, TASK_FORCE_DELETION } = TOAST_MESSAGES;
   const { TASK_FORCE_CHAIR, TASK_FORCE_MEMBER } = USER_ROLES;
   const { VERIFIED } = USER_STATUS;
 
@@ -55,17 +56,8 @@ export const useTaskForce = () => {
     }
   }, [selectedUser]);
 
-  // Close when clicking outside of the user card menu options
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setActiveDropdownId(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  // Reuse useOutsideClick hook to make dropdown gone when clicking outside
+  useOutsideClick(dropdownRef, () => setActiveDropdownId(null));
 
   // Check real-time if email already exist
   useEffect(() => {
@@ -140,11 +132,11 @@ export const useTaskForce = () => {
 
       const res = await postUser(data);
 
-      res?.data?.success && showSuccessToast(TASK_FORCE_ADDITION.SUCCESS);
+      res?.data?.success && showSuccessToast(TASK_FORCE_CREATION.SUCCESS);
 
     } catch (error) {
       console.error(error);
-      showErrorToast(TASK_FORCE_ADDITION.ERROR);
+      showErrorToast(TASK_FORCE_CREATION.ERROR);
     }
 
     handleCloseModal({untoggleDropdown: true, clearForm: true});

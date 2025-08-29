@@ -1,20 +1,32 @@
 import { format } from "date-fns";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { addProgramToBeAccredited } from "../../api/accreditation/accreditationAPI";
 import { useFetchProgramsToBeAccredited } from "../fetch-react-query/useFetchProgramsToBeAccredited";
-import { showSuccessToast } from "../../utils/toastNotification";
+import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
 import { TOAST_MESSAGES } from "../../constants/messages";
 import MODAL_TYPE from "../../constants/modalTypes";
-import useAccreditationLevel from "../fetch-react-query/useAccreditationLevel";
+import useOutsideClick from "../useOutsideClick";
 
 export const useProgramsToBeAccredited = () => {
   const { programsToBeAccredited, loading, error } = useFetchProgramsToBeAccredited();
-  const { levels, loadingAL, errorAL } = useAccreditationLevel();
-
-  const { PROGRAMS_TO_BE_ACCREDITED_ADDITION } = TOAST_MESSAGES;
+  const periodOptionsRef = useRef();
+  const programOptionsRef = useRef();
+  const { 
+    PROGRAMS_TO_BE_ACCREDITED_CREATION, 
+    PROGRAMS_TO_BE_ACCREDITED_ADDITION
+  } = TOAST_MESSAGES;
 
   const [modalType, setModalType] = useState(null);
+  const [modalData, setModalData] = useState({
+    startDate: null,
+    endDate: null,
+    level: ''
+  });
+
   const [infoHover, setInfoHover] = useState(false);
+
+  const [activePeriodId, setActivePeriodId] = useState(null);
+  const [activeProgramId, setActiveProgramId] = useState(null);
   
   const [programs, setPrograms] = useState([]); // Save here the program inputted
   const [programInput, setProgramInput] = useState(''); // Temporaty input for text area
@@ -24,8 +36,28 @@ export const useProgramsToBeAccredited = () => {
     level: '',
   });
 
-  const disableAddButton = !formValue.startDate || !formValue.endDate || 
-    !formValue.level.trim() || programs.length === 0;
+  // Reuse useOutsideClick hook to make period and program options disappear
+  useOutsideClick(periodOptionsRef, () => setActivePeriodId(null));
+  useOutsideClick(programOptionsRef, () => setActiveProgramId(null));
+
+  const disableButton = (options = {}) => {
+    if (options.isFromMain) {
+      return (
+        !formValue.startDate || 
+        !formValue.endDate || 
+        !formValue.level.trim() || 
+        programs.length === 0
+      );
+
+    } else if (options.isFromCard) {
+      return (
+        !modalData.startDate ||
+        !modalData.endDate ||
+        !modalData.level.trim() ||
+        programs.length === 0
+      );
+    }
+  };
 
   const handleAddClick = (options = {}) => {
     setModalType(MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED);
@@ -33,7 +65,16 @@ export const useProgramsToBeAccredited = () => {
     if (options.isFromCard) {
       setModalType(MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED_CARD);
     }
+
+    if (options.isFromCard && options.data) {
+      setModalData({
+        startDate: options.data.period[0],
+        endDate: options.data.period[1],
+        level: options.data.level,
+      });
+    }
   };
+
 
   // isFromMain and isFromCard is the options (don't forget), add more if necessary
   const handleCloseClick = (options = {}) => {
@@ -46,6 +87,10 @@ export const useProgramsToBeAccredited = () => {
         endDate: null,
         level: '',
       });
+
+    } else if (options.isFromCard) {
+      setPrograms([]);
+      setModalData(null);
     }
   };
 
@@ -98,7 +143,7 @@ export const useProgramsToBeAccredited = () => {
     setPrograms(programs.filter((_, i) => i !== index))
   };
 
-  const handleSave = async () => {
+  const handleSave = async (options = {}) => {
     try {
       if (formValue.startDate && formValue.endDate && formValue.level && programs.length > 0) {
         const formattedStartDate = format(formValue.startDate, "yyyy-MM-dd");
@@ -112,20 +157,62 @@ export const useProgramsToBeAccredited = () => {
         );
 
         handleCloseClick({ isFromMain: true });
-        res.data.success && showSuccessToast(PROGRAMS_TO_BE_ACCREDITED_ADDITION.SUCCESS);
+        res.data.success && showSuccessToast(PROGRAMS_TO_BE_ACCREDITED_CREATION.SUCCESS);
       }
+
+      if (options.isFromCard && options.data) {
+        const startDate = options.data.startDate;
+        const endDate = options.data.endDate;
+        const level = options.data.level;
+        const res = await addProgramToBeAccredited(
+          startDate,
+          endDate,
+          level,
+          programs
+        );
+
+        handleCloseClick({ isFromCard: true });
+        if (res.data.success) {
+          showSuccessToast(PROGRAMS_TO_BE_ACCREDITED_ADDITION.SUCCESS);
+        } else {
+          showErrorToast(PROGRAMS_TO_BE_ACCREDITED_ADDITION.ERROR);
+        }
+      }
+
     } catch (error) {
       console.error('Error adding program to be accredited: ', error);
     }
   };
 
   const handleInfoHover = () => {
-    setInfoHover(!infoHover);
+    setInfoHover(prev => !prev);
+  };
+
+  const handleOptionClick = (options = {}) => {
+    if (options.isFromPeriod && options.data.periodId) {
+      setActivePeriodId(prev => (
+        prev === options.data.periodId ? null : options.data.periodId
+      ));
+
+    } else if (options.isFromProgram && options.data.programId) {
+      setActiveProgramId(prev => (
+        prev === options.data.programId ? null : options.data.programId
+      ));
+    }
+  };
+
+  const handleOptionItemClick = (options = {}) => {
+    if (options.isFromPeriod) {
+      setActivePeriodId(null);
+
+    } else if (options.isFromProgram) {
+      setActiveProgramId(null);
+    }
   };
 
   return {
     addButton: {
-      disableAddButton,
+      disableButton,
       handleAddClick
     },
 
@@ -157,7 +244,15 @@ export const useProgramsToBeAccredited = () => {
     },
 
     modal: {
-      modalType
+      modalType,
+      modalData
+    },
+
+    option: {
+      handleOptionClick,
+      activePeriodId,
+      activeProgramId,
+      handleOptionItemClick
     },
 
     program: {
@@ -166,6 +261,11 @@ export const useProgramsToBeAccredited = () => {
       handleProgramChange,
       handleAddProgramValue,
       handleRemoveProgramValue,
+    },
+
+    ref: {
+      periodOptionsRef,
+      programOptionsRef
     },
 
     saveHandler: {

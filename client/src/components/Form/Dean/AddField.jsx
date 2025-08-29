@@ -5,6 +5,7 @@ import { Calendar, CalendarDays, ChevronDown, CircleAlert, X } from 'lucide-reac
 import Popover from '../../Popover';
 import DatePickerComponent from '../../DatePickerComponent';
 import { getUserRolesDropdown } from '../../../utils/dropdownOptions';
+import useOutsideClick from '../../../hooks/useOutsideClick';
 
 const AddField = ({
   fieldName,
@@ -40,18 +41,11 @@ const AddField = ({
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [availablePrograms, setAvailablePrograms] = useState(() => dropdownItems);
 
-  // Close when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (containerRef.current && !containerRef.current.contains(event.target)) {
-        setShowDropdown(false);
-        setIsFocused(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  // Reuse the useOutsideClick hook to make dropdown gone when clicking outside
+  useOutsideClick(containerRef, () => {
+    setShowDropdown(false);
+    setIsFocused(false);
+  });
 
   const isFloating = isFocused && name !== 'role' || 
     (type === 'date'
@@ -71,6 +65,7 @@ const AddField = ({
 
   const handleFocus = (options = {}) => {
     setIsFocused(true);
+    onFocus?.(); // Calls only if onFocus is a function
     options.showDropdown && setShowDropdown(true);
   };
 
@@ -148,9 +143,9 @@ const AddField = ({
         <div className='relative flex flex-col items-start'>
           <label
             onClick={() => (!datePickerDisabled || multiValues.length > 0) && setIsFocused(true)}
-            className={`absolute left-3 bg-gradient-to-r from-gray-100 to-gray-50 px-2 rounded-md transition-all duration-300
+            className={`absolute left-3 px-2 rounded-md transition-all
             ${datePickerDisabled && 'cursor-not-allowed'}
-            ${isFloating ? '-top-3 text-sm text-slate-700': 'top-3 text-md text-slate-600'}
+            ${isFloating ? '-top-3 text-sm text-slate-700 bg-gradient-to-r from-gray-100 to-gray-50': 'top-3 text-md text-slate-600'}
             ${type === 'date' && 'z-10'}`}>
             {fieldName}
           </label>

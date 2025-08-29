@@ -1,8 +1,8 @@
-import multer from "multer"; // Import multer to use file system (fs) for file management
+import multer from "multer";
 import path from "path";
 import fs from "fs";
 
-const uploadDir = process.env.PROFILE_PIC_PATH;
+const uploadDir = process.env.PROFILE_PIC_PATH || 'C:/WDMS/uploads/user-profile-pictures';
 
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });

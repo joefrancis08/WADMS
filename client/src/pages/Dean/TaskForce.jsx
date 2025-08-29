@@ -60,7 +60,7 @@ const TaskForce = () => {
               className='p-2 rounded-full mr-2 cursor-pointer transition-all shadow bg-slate-300 hover:opacity-80 active:opacity-50'>
               <Link2 className='text-slate-700' size={32}/>
             </button>
-            <button title='Add Task Force' onClick={handleAddUser} className='p-2 rounded-full mr-2 cursor-pointer transition-all shadow bg-slate-300 hover:opacity-80 active:opacity-50'>
+            <button title='Create Task Force' onClick={handleAddUser} className='p-2 rounded-full mr-2 cursor-pointer transition-all shadow bg-slate-300 hover:opacity-80 active:opacity-50'>
               <UserRoundPlus className='text-slate-700' size={32}/>
             </button>
           </div>
@@ -103,7 +103,7 @@ const TaskForce = () => {
               <div className='flex flex-col items-center justify-center h-100'>
                 <UserRoundX className='text-slate-500 w-40 md:w-60 h-auto' />
                 <p className='text-lg md:text-xl font-medium text-slate-700'>
-                  No task force added at the moment.
+                  No task force created at the moment.
                 </p>
               </div>
             )}
@@ -111,6 +111,7 @@ const TaskForce = () => {
         )}
       </div>
       <TaskForceModal
+        loading={loading}
         modalType={modalType}
         formValue={formValue}
         emailAlreadyExist={emailAlreadyExist}

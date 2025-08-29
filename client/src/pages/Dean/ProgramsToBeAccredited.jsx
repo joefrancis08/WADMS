@@ -1,11 +1,13 @@
 import React from 'react';
 import DeanLayout from '../../components/Layout/Dean/DeanLayout';
-import { BookPlus, CirclePlus, EllipsisVertical, NotebookPen, NotepadText, Plus, Scroll } from 'lucide-react';
+import { CalendarArrowUp, ClipboardPenLine, ClipboardPlus, EllipsisVertical, Folders, NotebookPen, NotepadText, Plus, Scroll, SquarePen, Trash2 } from 'lucide-react';
 import ContentHeader from '../../components/Dean/ContentHeader';
 import { useProgramsToBeAccredited } from '../../hooks/Dean/useProgramsToBeAccredited';
 import ProgramToBeAccreditedModal from '../../components/Dean/ProgramToBeAccreditedModal';
 import formatAccreditationPeriod from '../../utils/formatAccreditationPeriod';
 import ProgramsToBeAccreditedSL from '../../components/Loaders/ProgramsToBeAccreditedSL';
+import parseAccreditationPeriod from '../../utils/parseAccreditationPeriod';
+import Dropdown from '../../components/Dropdown/Dropdown';
 
 const ProgramsToAccredit = () => {
   const { 
@@ -16,20 +18,22 @@ const ProgramsToAccredit = () => {
     hovers, 
     inputs, 
     modal, 
+    option,
     program, 
     programsToBeAccreditedData,
+    ref,
     saveHandler 
   } = useProgramsToBeAccredited();
 
-  const { disableAddButton, handleAddClick } = addButton;
+  const { periodOptionsRef, programOptionsRef } = ref;
+  const { disableButton, handleAddClick } = addButton;
   const { handleCloseClick } = close;
   const { handleOptionSelection } = dropdown;
   const { formValue } = form;
   const { infoHover, handleInfoHover } = hovers;
   const { handleInputChange } = inputs;
-  const { modalType } = modal;
+  const { modalType, modalData } = modal;
   const { handleSave } = saveHandler;
-  
   const { programsToBeAccredited, loading, error } = programsToBeAccreditedData;
   const { 
     programInput,
@@ -38,6 +42,12 @@ const ProgramsToAccredit = () => {
     handleAddProgramValue,
     handleRemoveProgramValue,
   } = program;
+  const { 
+    activePeriodId,
+    activeProgramId, 
+    handleOptionClick, 
+    handleOptionItemClick 
+  } = option;
   
   // Array of Programs To Be Accredited, fallback to empty array if fetch is loading
   const data = programsToBeAccredited.data || [];
@@ -70,6 +80,19 @@ const ProgramsToAccredit = () => {
     return acc;
   }, {}); // Start with an empty object {}
 
+  // Options for Period
+  const periodOptions = [
+    { icon: <ClipboardPlus size={24} />, label: 'Add Level and Programs' },
+    { icon: <CalendarArrowUp size={24} />, label: 'Change Period' },
+    { icon: <Trash2 size={24} />, label: 'Delete' },
+  ];
+
+  const programOptions = [
+    { icon: <Folders size={24} />, label: 'View Areas and Parameters' },
+    { icon: <SquarePen size={24} />, label: 'Update' },
+    { icon: <Trash2 size={24} />, label: 'Delete' },
+  ];
+
   return (
     <DeanLayout>
       <div className='flex-1 space-y-3'>
@@ -86,7 +109,7 @@ const ProgramsToAccredit = () => {
         <div className='relative px-4 flex justify-end'>
           <div className='flex items-center'>
             <button 
-              title='Add period, level, and program' 
+              title='Create period, level, and programs to be accredited' 
               onClick={handleAddClick} 
               className='p-3 rounded-full mr-2 cursor-pointer transition-all shadow bg-slate-300 hover:opacity-80 active:opacity-50'
             >
@@ -118,7 +141,47 @@ const ProgramsToAccredit = () => {
                   {periodKey}
                 </p>
               </div>
+              {/* Render period options if the Options button is clicked */}
+              {activePeriodId === periodKey && (
+                <div ref={periodOptionsRef} className='absolute top-8 right-48 z-10 space-y-2 p-2 '>
+                  <Dropdown 
+                    key={periodKey}
+                    width='h-auto w-50' 
+                    border='border border-slate-400 rounded-md' 
+                  >
+                    {periodOptions.map((option, index) => (
+                      <React.Fragment key={index}>
+                        {option.label === 'Delete' && (
+                          <hr className='m-1 text-slate-300'></hr>
+                        )}
+                        <div 
+                          onClick={handleOptionItemClick}
+                          key={index} 
+                          className={`flex items-center p-2 justify-start gap-x-2 cursor-pointer rounded-md active:opacity-60 ${option.label === 'Delete' ? 
+                          'hover:bg-red-200' : 'hover:bg-slate-200'}`}
+                        >
+                          <i className={option.label === 'Delete' ? 'text-red-500' : 'text-slate-800'}>
+                            {option.icon}
+                          </i>
+                          <p className={option.label === 'Delete' ? 'text-red-500' : 'text-slate-800'}>
+                            {option.label}
+                          </p>
+                        </div>
+                      </React.Fragment>
+                      
+                    ))}
+                  </Dropdown>
+                </div>
+              )}
+              {/* Options for Accreditation Period */}
               <button 
+                onClick={() => (
+                  handleOptionClick({ 
+                    isFromPeriod: true,
+                    data: {
+                      periodId: periodKey
+                    }
+                  }))}
                 title='Options'
                 className='absolute top-2 p-2 right-2 text-slate-800 rounded-bl-xl rounded-tr-lg hover:shadow hover:text-slate-700 hover:bg-slate-200 active:opacity-50 transition cursor-pointer'>
                 <EllipsisVertical size={24}/>
@@ -138,31 +201,89 @@ const ProgramsToAccredit = () => {
 
                     {/* Program cards */}
                     <div className='relative flex flex-wrap gap-10 justify-center pb-4 pt-8 px-4'>
-                      {programs.map((programName, idx) => (
-                        <div
-                          key={idx}
-                          className='relative flex items-center justify-center h-60 p-8 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl border border-slate-300 shadow hover:shadow-md cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80'
-                        >
-                          <p className='flex items-center justify-center text-wrap bg-gradient-to-b from-yellow-300 to-amber-400 w-full text-lg md:text-xl text-white text-center shadow h-40 font-bold p-4'>
-                            {programName}
-                          </p>
+                      {programs.map((programName, id) => {
+                        /* 
+                          Use this id (programId) in passing the data because id is an index
+                          and it starts with zero and when activeProgramId === 0
+                          then that would be false and won't render the dropdown options 
+                          of the first program card.
+                          Lesson learned: Never rely on 2nd parameter on map, only
+                          use it in keys.
+                        */
+                        const programId = `${level}-${programName}`; 
+                        return (
+                          <div
+                            key={id}
+                            className='relative flex items-center justify-center h-60 p-8 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl border border-slate-300 shadow hover:shadow-md cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80'
+                          >
+                            <p className='flex items-center justify-center text-wrap bg-gradient-to-b rounded-md from-yellow-300 to-amber-400 w-full text-lg md:text-xl text-white text-center shadow h-40 font-bold p-4'>
+                              {programName}
+                            </p>
 
-                          <button 
-                            title='Options'
-                            className='absolute top-0 p-2 right-0 text-slate-100 rounded-bl-xl rounded-tr-lg hover:shadow hover:text-slate-200 hover:bg-slate-100/20 active:opacity-50 transition cursor-pointer'>
-                            <EllipsisVertical size={20}/>
-                          </button>
-                        </div>
-                      ))}
+                            {/* Render program options when option button is clicked */}
+                            {activeProgramId === programId && (
+                              <div ref={programOptionsRef} className='absolute top-6 right-47 z-10 space-y-2 p-2 '>
+                                <Dropdown 
+                                  key={id}
+                                  width='h-auto w-50' 
+                                  border='border border-slate-400 rounded-md' 
+                                >
+                                  {programOptions.map((option, index) => (
+                                    <React.Fragment key={index}>
+                                      {option.label === 'Delete' && (
+                                        <hr className='m-1 text-slate-300'></hr>
+                                      )}
+                                      <div 
+                                        onClick={handleOptionItemClick}
+                                        key={index} 
+                                        className={`flex items-center p-2 justify-start gap-x-2 cursor-pointer rounded-md active:opacity-60 ${option.label === 'Delete' ? 
+                                        'hover:bg-red-200' : 'hover:bg-slate-200'}`}
+                                      >
+                                        <i className={option.label === 'Delete' ? 'text-red-500' : 'text-slate-800'}>
+                                          {option.icon}
+                                        </i>
+                                        <p className={option.label === 'Delete' ? 'text-red-500' : 'text-slate-800'}>
+                                          {option.label}
+                                        </p>
+                                      </div>
+                                    </React.Fragment>
+                                    
+                                  ))}
+                                </Dropdown>
+                              </div>
+                            )}
 
-                      {/* For adding program */}
+                            {/* Option button for Program Cards */}
+                            <button 
+                              onClick={() => (
+                                handleOptionClick({ 
+                                  isFromProgram: true,
+                                  data: {
+                                    programId
+                                  }
+                                }))}
+                              title='Options'
+                              className='absolute top-1 p-2 right-1 text-slate-100 rounded-bl-xl rounded-tr-lg hover:shadow hover:text-slate-200 hover:bg-slate-100/20 active:opacity-50 transition cursor-pointer'>
+                              <EllipsisVertical size={20}/>
+                            </button>
+                          </div>
+                        )}
+                      )}
+
+                      {/* Card button for adding program */}
                       <div
-                        onClick={() => handleAddClick({ isFromCard: true })}
+                        onClick={() => handleAddClick({ 
+                          isFromCard: true, 
+                          data: { 
+                            level,
+                            period: parseAccreditationPeriod(periodKey) 
+                          }  
+                        })}
                         title='Click to add program'
                         className='relative flex flex-col items-center justify-center gap-y-2 h-60 p-4 bg-slate-200 border border-gray-300 rounded-lg shadow-md hover:shadow-lg active:shadow-md cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80'
                       >
                         <Plus className='text-slate-600 h-16 w-16 rounded-full'/>
-                        <button className='text-xl font-medium text-slate-600 py-4 px-6 hover:bg-slate-300 rounded-full cursor-pointer'>
+                        <button className='text-xl font-medium text-slate-600 py-4 px-6 rounded-full cursor-pointer'>
                           Add Program
                         </button>
                       </div>
@@ -177,12 +298,13 @@ const ProgramsToAccredit = () => {
 
       {/* Modal */}
       <ProgramToBeAccreditedModal 
+        modalData={modalData}
         infoHover={infoHover}
         modalType={modalType}
         formValue={formValue}
         programs={programs}
         programInput={programInput}
-        disableAddButton={disableAddButton}
+        disableButton={disableButton}
         handlers={{
           handleCloseClick,
           handleSave,

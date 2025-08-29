@@ -1,6 +1,6 @@
 import cors from 'cors';
 
-const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || [];
+const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || ['http://localhost:5000'];
 
 const corsMiddleware = cors({
   origin: (origin, callback) => {

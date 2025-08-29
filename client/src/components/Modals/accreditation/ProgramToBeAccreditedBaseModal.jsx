@@ -51,7 +51,7 @@ const ProgramToBeAccreditedBaseModal = (
   { 
     onClose, onCancel, onSave, headerContent, 
     bodyContent, primaryButton, disabled, 
-    secondaryButton,  mode = 'add' 
+    secondaryButton, mode = 'add' 
   }
 ) => {
   return (
