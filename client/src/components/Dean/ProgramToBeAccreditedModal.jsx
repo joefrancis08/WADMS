@@ -1,4 +1,4 @@
-import { CircleQuestionMark, Info, MoveRight } from 'lucide-react';
+import { CircleQuestionMark, Info, MoveRight, TriangleAlert } from 'lucide-react';
 import MODAL_TYPE from '../../constants/modalTypes';
 import AddField from '../Form/Dean/AddField';
 import ProgramToBeAccreditedBaseModal from '../Modals/accreditation/ProgramToBeAccreditedBaseModal';
@@ -8,6 +8,7 @@ import useAccreditationPeriod from '../../hooks/fetch-react-query/useAccreditati
 import { useEffect, useRef, useState } from 'react';
 import { format } from 'date-fns';
 import usePrograms from '../../hooks/fetch-react-query/usePrograms';
+import ConfirmationModal from '../Modals/ConfirmationModal';
 
 const ProgramToBeAccreditedModal = ({
   infoHover,
@@ -40,6 +41,7 @@ const ProgramToBeAccreditedModal = ({
   
   const {
     handleCloseClick,
+    handleConfirmClick,
     handleSave,
     handleInputChange,
     handleOptionSelection,
@@ -258,6 +260,34 @@ const ProgramToBeAccreditedModal = ({
                     }
                   />
                 )}
+              </div>
+            }
+          />
+        );
+
+      case MODAL_TYPE.DELETE_PROGRAM_TO_BE_ACCREDITED:
+        return (
+          <ConfirmationModal 
+            onClose={() => handleCloseClick({ isFromProgram: true, isDelete: true})}
+            onCancelClick={() => handleCloseClick({ isFromProgram: true, isDelete: true })}
+            onConfirmClick={() => handleConfirmClick({ isFromProgram: true, isDelete: true })}
+            isDelete={true}
+            primaryButton={'Confirm'}
+            secondaryButton={'Cancel'}
+            bodyContent={
+              <div className='flex flex-col items-center justify-center pb-4 px-2'>
+                <div className='flex flex-col items-center justify-center pb-4'>
+                  <TriangleAlert className='text-red-400 h-20 w-20'/>
+                  <p className='px-8 text-lg text-center text-red-500'>
+                    Delete {modalData.program}?
+                  </p>
+                </div>
+                
+                <div className='pb-2 space-y-2'>
+                  <p className='text-center'>
+                    You can't undo this action. Do you want to proceed?
+                  </p>
+                </div>
               </div>
             }
           />

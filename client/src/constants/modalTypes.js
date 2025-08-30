@@ -7,7 +7,8 @@ const MODAL_TYPES = {
 
   ADD_PROGRAM_TO_BE_ACCREDITED_CARD: 'add-program-to-be-accredited-card',
   ADD_PROGRAM_TO_BE_ACCREDITED: 'add-program-to-be-accredited',
-  UPDATE_PROGRAM_TO_ACCREDIT: 'update-program-to-accredit'
+  UPDATE_PROGRAM_TO_BE_ACCREDITED: 'update-program-to-accredit',
+  DELETE_PROGRAM_TO_BE_ACCREDITED: 'delete-program-to-be-accredited'
 };
 
 export default MODAL_TYPES;

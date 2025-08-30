@@ -13,6 +13,7 @@ const ProgramsToAccredit = () => {
   const { 
     addButton,
     close,
+    confirmation,
     dropdown, 
     form, 
     hovers, 
@@ -28,6 +29,7 @@ const ProgramsToAccredit = () => {
   const { periodOptionsRef, programOptionsRef } = ref;
   const { disableButton, handleAddClick } = addButton;
   const { handleCloseClick } = close;
+  const { handleConfirmClick } = confirmation;
   const { handleOptionSelection } = dropdown;
   const { formValue } = form;
   const { infoHover, handleInfoHover } = hovers;
@@ -155,7 +157,11 @@ const ProgramsToAccredit = () => {
                           <hr className='m-1 text-slate-300'></hr>
                         )}
                         <div 
-                          onClick={handleOptionItemClick}
+                          onClick={(e) => (
+                            handleOptionItemClick(e, {
+                              isFromPeriod: true
+                            })
+                          )}
                           key={index} 
                           className={`flex items-center p-2 justify-start gap-x-2 cursor-pointer rounded-md active:opacity-60 transition ${option.label === 'Delete' ? 
                           'hover:bg-red-200' : 'hover:bg-slate-200'}`}
@@ -206,15 +212,16 @@ const ProgramsToAccredit = () => {
                           Use this id (programId) in passing the data because id is an index
                           and it starts with zero and when activeProgramId === 0
                           then that would be false and won't render the dropdown options 
-                          of the first program card.
-                          Lesson learned: Never rely on 2nd parameter on map, only
-                          use it in keys.
+                          of the first program card. Never rely on 2nd parameter on map, only
+                          use it in keys. Also, include the periodKey in id, 
+                          not just level and programName because there mignt be cases that 
+                          level and programName is the same in the different period.
                         */
-                        const programId = `${level}-${programName}`; 
+                        const programId = `${periodKey}-${level}-${programName}`; 
                         return (
                           <div
                             key={id}
-                            className='relative flex items-center justify-center h-60 p-8 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl border border-slate-300 shadow hover:shadow-md cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80'
+                            className='relative flex items-center justify-center h-60 p-8 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl border border-slate-300 shadow hover:shadow-lg active:shadow cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80'
                           >
                             <p className='flex items-center justify-center text-wrap bg-gradient-to-b rounded-md from-yellow-300 to-amber-400 w-full text-lg md:text-xl text-white text-center shadow h-40 font-bold p-4'>
                               {programName}
@@ -234,7 +241,15 @@ const ProgramsToAccredit = () => {
                                         <hr className='m-1 text-slate-300'></hr>
                                       )}
                                       <div 
-                                        onClick={handleOptionItemClick}
+                                        onClick={(e) => (
+                                          handleOptionItemClick(e, { 
+                                            isFromProgram: true,
+                                            optionName: option.label,
+                                            data: {
+                                              programName,
+                                              level
+                                            }
+                                          }))}
                                         key={index} 
                                         className={`flex items-center p-2 justify-start gap-x-2 cursor-pointer rounded-md active:opacity-60 ${option.label === 'Delete' ? 
                                         'hover:bg-red-200' : 'hover:bg-slate-200'}`}
@@ -307,6 +322,7 @@ const ProgramsToAccredit = () => {
         disableButton={disableButton}
         handlers={{
           handleCloseClick,
+          handleConfirmClick,
           handleSave,
           handleInputChange,
           handleOptionSelection,

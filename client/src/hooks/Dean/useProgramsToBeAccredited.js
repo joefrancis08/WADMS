@@ -20,7 +20,8 @@ export const useProgramsToBeAccredited = () => {
   const [modalData, setModalData] = useState({
     startDate: null,
     endDate: null,
-    level: ''
+    level: '',
+    program: ''
   });
 
   const [infoHover, setInfoHover] = useState(false);
@@ -76,7 +77,10 @@ export const useProgramsToBeAccredited = () => {
   };
 
 
-  // isFromMain and isFromCard is the options (don't forget), add more if necessary
+  /* 
+    isFromMain, isFromCard, isFromPeriod, and isFromProgram 
+    is the options (don't forget), add more if necessary 
+  */
   const handleCloseClick = (options = {}) => {
     setModalType(null);
     
@@ -90,6 +94,13 @@ export const useProgramsToBeAccredited = () => {
 
     } else if (options.isFromCard) {
       setPrograms([]);
+      setModalData(null);
+
+    } else if (options.isFromPeriod) {
+      setModalType(null);
+      
+    } else if (options.isFromProgram && options.isDelete) {
+      setModalType(null);
       setModalData(null);
     }
   };
@@ -201,12 +212,29 @@ export const useProgramsToBeAccredited = () => {
     }
   };
 
-  const handleOptionItemClick = (options = {}) => {
+  const handleOptionItemClick = (e, options = {}) => {
+    e.stopPropagation();
     if (options.isFromPeriod) {
       setActivePeriodId(null);
+     
 
-    } else if (options.isFromProgram) {
+    } else if (options.isFromProgram && options.optionName) {
       setActiveProgramId(null);
+      if (options.optionName === 'Delete' && options.data) {
+        setModalType(MODAL_TYPE.DELETE_PROGRAM_TO_BE_ACCREDITED);
+        setModalData(prev => ({
+          ...prev, 
+          program: options.data.programName,
+          level: options.data.level
+        }));
+      }
+    }
+  };
+
+  const handleConfirmClick = (options = {}) => {
+    handleCloseClick({ isFromProgram: true, isDelete: true })
+    if (options.isFromProgram && options.isDelete) {
+      console.log('Delete Program');
     }
   };
 
@@ -218,6 +246,10 @@ export const useProgramsToBeAccredited = () => {
 
     close: {
       handleCloseClick
+    },
+
+    confirmation: {
+      handleConfirmClick
     },
 
     dropdown: {
