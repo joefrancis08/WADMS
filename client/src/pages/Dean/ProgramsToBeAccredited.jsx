@@ -95,6 +95,8 @@ const ProgramsToAccredit = () => {
     { icon: <Trash2 size={22} />, label: 'Delete' },
   ];
 
+  console.log(data);
+
   return (
     <DeanLayout>
       <div className='flex-1 space-y-3'>
@@ -246,8 +248,9 @@ const ProgramsToAccredit = () => {
                                             isFromProgram: true,
                                             optionName: option.label,
                                             data: {
-                                              programName,
-                                              level
+                                              period: parseAccreditationPeriod(periodKey),
+                                              level,
+                                              programName
                                             }
                                           }))}
                                         key={index} 

@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { useRef, useState } from "react";
-import { addProgramToBeAccredited } from "../../api/accreditation/accreditationAPI";
+import { addProgramToBeAccredited, deleteProgramToBeAccredited } from "../../api/accreditation/accreditationAPI";
 import { useFetchProgramsToBeAccredited } from "../fetch-react-query/useFetchProgramsToBeAccredited";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
 import { TOAST_MESSAGES } from "../../constants/messages";
@@ -224,18 +224,31 @@ export const useProgramsToBeAccredited = () => {
         setModalType(MODAL_TYPE.DELETE_PROGRAM_TO_BE_ACCREDITED);
         setModalData(prev => ({
           ...prev, 
+          startDate: options.data.period[0],
+          endDate: options.data.period[1],
+          level: options.data.level,
           program: options.data.programName,
-          level: options.data.level
         }));
       }
     }
   };
 
-  const handleConfirmClick = (options = {}) => {
-    handleCloseClick({ isFromProgram: true, isDelete: true })
+  const handleConfirmClick = async (options = {}) => {
     if (options.isFromProgram && options.isDelete) {
-      console.log('Delete Program');
+      // try {
+      //   const periodId = options.data.periodId;
+      //   const levelId = options.data.levelId;
+      //   const programId = options.data.programId;
+      //   await deleteProgramToBeAccredited()
+
+      // } catch (error) {
+        
+      // }
+
+      console.log('Confirm Delete');
     }
+
+    handleCloseClick({ isFromProgram: true, isDelete: true });
   };
 
   return {
