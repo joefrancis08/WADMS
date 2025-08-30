@@ -6,6 +6,7 @@ const deleteProgramToBeAccredited = async (req, res) => {
     const { periodId, levelId, programId } = req.body;
     const result = await deleteProgramMapping(periodId, levelId, programId);
 
+    // Validate request body
     if (!periodId || !levelId || !programId) {
       return res.status(400).json({
         success: false,
@@ -13,6 +14,7 @@ const deleteProgramToBeAccredited = async (req, res) => {
       });
     }
 
+    // Return 404 if program does not exist
     if (result.affectedRows === 0) {
       return res.status(404).json({
         success: false,
