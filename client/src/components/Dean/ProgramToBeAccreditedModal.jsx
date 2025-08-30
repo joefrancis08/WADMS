@@ -278,7 +278,7 @@ const ProgramToBeAccreditedModal = ({
               <div className='flex flex-col items-center justify-center pb-4 px-2'>
                 <div className='flex flex-col items-center justify-center pb-4'>
                   <TriangleAlert className='text-red-400 h-20 w-20'/>
-                  <p className='px-8 text-lg text-center text-red-500'>
+                  <p className='px-8 text-md md:text-lg text-center text-red-500'>
                     Delete {modalData.program}?
                   </p>
                 </div>
