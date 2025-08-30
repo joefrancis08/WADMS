@@ -6,6 +6,13 @@ const deleteProgramToBeAccredited = async (req, res) => {
     const { periodId, levelId, programId } = req.body;
     const result = await deleteProgramMapping(periodId, levelId, programId);
 
+    if (!periodId || !levelId || !programId) {
+      return res.status(400).json({
+        success: false,
+        message: 'periodId, levelId, and programId are required.'
+      });
+    }
+
     if (result.affectedRows === 0) {
       return res.status(404).json({
         success: false,
@@ -15,7 +22,7 @@ const deleteProgramToBeAccredited = async (req, res) => {
 
     // Notify frontend via WebSocket
     sendUpdate('programs-to-be-accredited-deleted');
-    
+
     res.status(200).json({
       success: true,
       message: 'Program to be accredited deleted successfully.'
