@@ -189,7 +189,7 @@ const ProgramsToAccredit = () => {
                     }
                   }))}
                 title='Options'
-                className='absolute top-2 p-2 right-2 text-slate-800 rounded-bl-xl rounded-tr-lg hover:shadow hover:text-slate-700 hover:bg-slate-200 active:opacity-50 transition cursor-pointer'>
+                className='absolute top-2 p-2 right-2 text-slate-800 rounded-bl-lg rounded-tr-lg hover:shadow hover:text-slate-700 hover:bg-slate-200 active:opacity-50 transition cursor-pointer'>
                 <EllipsisVertical size={24}/>
               </button>
               
@@ -262,7 +262,6 @@ const ProgramsToAccredit = () => {
                                         </p>
                                       </div>
                                     </React.Fragment>
-                                    
                                   ))}
                                 </Dropdown>
                               </div>
@@ -278,7 +277,7 @@ const ProgramsToAccredit = () => {
                                   }
                                 }))}
                               title='Options'
-                              className='absolute top-1 p-2 right-1 text-slate-100 rounded-bl-xl rounded-tr-lg hover:shadow hover:text-slate-200 hover:bg-slate-100/20 active:opacity-50 transition cursor-pointer'>
+                              className='absolute top-1 p-2 right-1 text-slate-100 rounded-bl-lg rounded-tr-lg hover:shadow hover:text-slate-200 hover:bg-slate-100/20 active:opacity-50 transition cursor-pointer'>
                               <EllipsisVertical size={20}/>
                             </button>
                           </div>
