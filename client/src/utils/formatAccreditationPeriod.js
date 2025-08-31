@@ -16,19 +16,24 @@ const formatAccreditationPeriod = (startDate, endDate) => {
   const start = dayjs(startDate).tz(TIMEZONE);
   const end = dayjs(endDate).tz(TIMEZONE);
 
-  // Case 1: If start and end are in the same month and year
+  // Case 1: If start and end are the same day
+  if (start.isSame(end, 'day')) {
+    return start.format('MMMM D, YYYY');
+  }
+
+  // Case 2: If start and end are in the same month and year
   // Example: August 27-30, 2025
   if (start.month() === end.month() && start.year() === end.year()) {
     return `${start.format('MMMM D')}-${end.format('D, YYYY')}`;
   }
 
-  // Case 2: If start and end are in the same year but different months
+  // Case 3: If start and end are in the same year but different months
   // Example: August 31 - September 3, 2025
   if (start.year() === end.year()) {
     return `${start.format('MMMM D')} - ${end.format('MMMM D, YYYY')}`
   }
 
-  // Case 3: If start and end are in different years
+  // Case 4: If start and end are in different years
   // Example: December 30, 2025 - January 2, 2026
   return `${start.format('MMMM D, YYYY')} - ${end.format('MMMM D, YYYY')}`;
 };

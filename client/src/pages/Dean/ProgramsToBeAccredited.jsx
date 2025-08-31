@@ -159,7 +159,11 @@ const ProgramsToAccredit = () => {
                         <div 
                           onClick={(e) => (
                             handleOptionItemClick(e, {
-                              isFromPeriod: true
+                              isFromPeriod: true,
+                              optionName: option.label,
+                              data: {
+                                period: parseAccreditationPeriod(periodKey)
+                              }
                             })
                           )}
                           key={index} 

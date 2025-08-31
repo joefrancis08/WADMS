@@ -5,8 +5,7 @@ import ProgramToBeAccreditedBaseModal from '../Modals/accreditation/ProgramToBeA
 import Popover from '../Popover';
 import useAccreditationLevel from '../../hooks/fetch-react-query/useAccreditationLevel';
 import useAccreditationPeriod from '../../hooks/fetch-react-query/useAccreditationPeriod';
-import { useEffect, useRef, useState } from 'react';
-import { format } from 'date-fns';
+import { useRef, useState } from 'react';
 import usePrograms from '../../hooks/fetch-react-query/usePrograms';
 import ConfirmationModal from '../Modals/ConfirmationModal';
 import useOutsideClick from '../../hooks/useOutsideClick';
@@ -34,7 +33,6 @@ const ProgramToBeAccreditedModal = ({
   const levelsArray = data.map(item => item.level); // Map over data to extract only the "level" values
   
   const { period, loadingP, errorP } = useAccreditationPeriod();
-  const dataP = period?.data ?? [];
 
   const { programsData, loadingPr, errorPr } = usePrograms();
   const dataPr = programsData?.data ?? [];
@@ -54,13 +52,6 @@ const ProgramToBeAccreditedModal = ({
 
   // Use useOutsideClick hook to close the dropdown on outside click
   useOutsideClick(dropdownRef, () => setShowDropdown(false));
-
-  const handleDropdownOptionClick = (periodStart, periodEnd) => {
-    setShowDropdown(false);
-    
-    handleInputChange(periodStart, 'startDate');
-    handleInputChange(periodEnd, 'endDate');
-  };
 
   const handleClose = () => {
     handleCloseClick({ isFromMain: true });
@@ -101,7 +92,7 @@ const ProgramToBeAccreditedModal = ({
                 <div className='flex flex-row items-center gap-x-2'>
                   <AddField
                     fieldName='Start Date'
-                    placeholder='Select start date'
+                    placeholder='Type or select date'
                     type='date'
                     name='startDate'
                     formValue={formValue.startDate || periodStartValue}
@@ -113,7 +104,7 @@ const ProgramToBeAccreditedModal = ({
                   <p className='text-gray-500'>&ndash;</p>
                   <AddField 
                     fieldName='End Date'
-                    placeholder='Select end date'
+                    placeholder='Type or select end date'
                     type='date'
                     name='endDate'
                     formValue={formValue.endDate || periodEndValue}
@@ -121,30 +112,6 @@ const ProgramToBeAccreditedModal = ({
                     minDate={formValue.startDate}
                     onChange={handleInputChange}
                   />
-                  
-                  {showDropdown && dataP.length > 0 && (
-                    <div
-                      ref={dropdownRef}
-                      className="absolute top-25 left-0 flex flex-col w-full border border-slate-400 rounded-md bg-slate-100 shadow-xl z-50 p-2 text-gray-700"
-                    >
-                      {dataP.map((item, index) => (
-                        <div
-                          key={index}
-                          className="flex justify-between items-center w-full px-3 py-2 hover:bg-slate-200 rounded-md cursor-pointer active:opacity-70"
-                          onClick={() => handleDropdownOptionClick(item.period_start, item.period_end)}
-                        >
-                          <span className="text-md">
-                            {format(item.period_start, "MMMM dd, yyyy")}
-                          </span>
-                          <span className="text-gray-500"><MoveRight size={15}/></span>
-                          <span className="text-mdp">
-                            {format(item.period_end, "MMMM dd, yyyy")}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
                 </div>
                 <hr className='w-[60%] mx-auto text-slate-300'></hr>
                 <AddField 

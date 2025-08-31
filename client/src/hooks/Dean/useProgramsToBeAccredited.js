@@ -119,7 +119,7 @@ export const useProgramsToBeAccredited = () => {
           // Start date selected
           const newStartDate = eOrDate; // Store selected start date
           const newEndDate = new Date(newStartDate); // Copy start date
-          newEndDate.setDate(newEndDate.getDate() + 3); // Automatically set end date to 3 days after start date
+          // newEndDate.setDate(newEndDate.getDate() + 3); // Automatically set end date to 3 days after start date
           setFormValue(prev => ({ ...prev, startDate: newStartDate, endDate: newEndDate }));
           // Update both startDate and endDate in form state
 
@@ -216,10 +216,19 @@ export const useProgramsToBeAccredited = () => {
 
   const handleOptionItemClick = (e, options = {}) => {
     e.stopPropagation();
-    if (options.isFromPeriod) {
+    if (options.isFromPeriod && options.optionName) {
       setActivePeriodId(null);
-     
+      console.log('Delete Click from Period');
 
+      if (options.optionName === 'Delete' && options.data) {
+        setModalType(MODAL_TYPE.DELETE_PERIOD);
+        setModalData(prev => ({
+          ...prev,
+          startDate: options.data.period[0],
+          endDate: options.data.period[1]
+        }));
+      }
+      
     } else if (options.isFromProgram && options.optionName) {
       setActiveProgramId(null);
       if (options.optionName === 'Delete' && options.data) {
@@ -235,13 +244,19 @@ export const useProgramsToBeAccredited = () => {
     }
   };
 
-  console.log(parseAccreditationPeriod('January 20-22, 2025'));
-  console.log(parseAccreditationPeriod('January 20 - February 21, 2025'));
-  console.log(parseAccreditationPeriod('January 20, 2025 - January 26, 2025'));
-  console.log(parseAccreditationPeriod('January 20, 2025'));
-
   const handleConfirmClick = async (options = {}) => {
-    if (options.isFromProgram && options.isDelete && options.data) {
+    if (options.isFromPeriod && options.isDelete && options.data) {
+      try {
+        const startDate = options.data.startDate;
+        const endDate = options.data.endDate;
+        const result = null;
+
+      } catch (error) {
+        console.error('Failed to delete period', error);
+        throw error;
+      }
+
+    } else if (options.isFromProgram && options.isDelete && options.data) {
       try {
         const startDate = options.data.startDate;
         const endDate = options.data.endDate;
