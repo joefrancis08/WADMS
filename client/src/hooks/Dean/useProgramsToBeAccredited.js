@@ -1,12 +1,11 @@
 import { format } from "date-fns";
 import { useRef, useState } from "react";
-import { addProgramToBeAccredited, deleteProgramToBeAccredited } from "../../api/accreditation/accreditationAPI";
+import { addProgramToBeAccredited, deleteAccreditationPeriod, deleteProgramToBeAccredited } from "../../api/accreditation/accreditationAPI";
 import { useFetchProgramsToBeAccredited } from "../fetch-react-query/useFetchProgramsToBeAccredited";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
 import { TOAST_MESSAGES } from "../../constants/messages";
 import MODAL_TYPE from "../../constants/modalTypes";
 import useOutsideClick from "../useOutsideClick";
-import parseAccreditationPeriod from "../../utils/parseAccreditationPeriod";
 
 export const useProgramsToBeAccredited = () => {
   const { programsToBeAccredited, loading, error } = useFetchProgramsToBeAccredited();
@@ -15,7 +14,8 @@ export const useProgramsToBeAccredited = () => {
   const { 
     PROGRAMS_TO_BE_ACCREDITED_CREATION, 
     PROGRAMS_TO_BE_ACCREDITED_ADDITION,
-    PROGRAMS_TO_BE_ACCREDITED_DELETION
+    PROGRAMS_TO_BE_ACCREDITED_DELETION,
+    PERIOD_DELETION
   } = TOAST_MESSAGES;
 
   const [modalType, setModalType] = useState(null);
@@ -84,28 +84,26 @@ export const useProgramsToBeAccredited = () => {
     is the options (don't forget), add more if necessary 
   */
   const handleCloseClick = (options = {}) => {
-    setModalType(null);
-    
     if (options.isFromMain) {
       setPrograms([]);
+      setModalType(null);
       setFormValue({
         startDate: null,
         endDate: null,
         level: '',
       });
 
-    } else if (options.isFromCard) {
-      setPrograms([]);
-      setModalData(null);
-
-    } else if (options.isFromPeriod) {
-      setModalType(null);
-      
-    } else if (options.isFromProgram && options.isDelete) {
-      setModalType(null);
-      setModalData(null);
-    }
+    } else if (
+      options.isFromCard || 
+      (options.isFromPeriod && options.isDelete) || 
+      (options.isFromProgram && options.isDelete)) {
+        setPrograms([]);
+        setModalType(null);
+        setModalData(null);
+      }
   };
+
+  console.log(modalData);
 
   const handleInputChange = (eOrDate, fieldName) => {
     // Check if the input is a normal DOM event (like typing in a text field)
@@ -249,7 +247,16 @@ export const useProgramsToBeAccredited = () => {
       try {
         const startDate = options.data.startDate;
         const endDate = options.data.endDate;
-        const result = null;
+        const result = await deleteAccreditationPeriod(startDate, endDate, { isFromPTBA: true });
+        console.log(result);
+
+        if (result.data.success) {
+          showSuccessToast(PERIOD_DELETION.SUCCESS);
+        } else {
+          showErrorToast(PERIOD_DELETION.ERROR);
+        }
+
+        handleCloseClick({ isFromPeriod: true, isDelete: true });
 
       } catch (error) {
         console.error('Failed to delete period', error);
@@ -270,13 +277,13 @@ export const useProgramsToBeAccredited = () => {
           showErrorToast(PROGRAMS_TO_BE_ACCREDITED_DELETION.ERROR);
         }
 
+        handleCloseClick({ isFromProgram: true, isDelete: true });
+
       } catch (error) {
         console.error('Failed to delete program.', error);
         throw error;
       }
     }
-
-    handleCloseClick({ isFromProgram: true, isDelete: true });
   };
 
   return {

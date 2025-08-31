@@ -9,6 +9,7 @@ import { useRef, useState } from 'react';
 import usePrograms from '../../hooks/fetch-react-query/usePrograms';
 import ConfirmationModal from '../Modals/ConfirmationModal';
 import useOutsideClick from '../../hooks/useOutsideClick';
+import formatAccreditationPeriod from '../../utils/formatAccreditationPeriod';
 
 const ProgramToBeAccreditedModal = ({
   infoHover,
@@ -116,7 +117,7 @@ const ProgramToBeAccreditedModal = ({
                 <hr className='w-[60%] mx-auto text-slate-300'></hr>
                 <AddField 
                   fieldName='Level'
-                  placeholder='e.g., Preliminary, Level I, Level II, etc.'
+                  placeholder='Create new or select from existing level...'
                   type='text'
                   name='level'
                   formValue={formValue.level}
@@ -128,7 +129,7 @@ const ProgramToBeAccreditedModal = ({
                 <div className='relative'>
                   <AddField 
                     fieldName={programs.length > 1 ? 'Programs' : 'Program'}
-                    placeholder='e.g., Master of Management, Doctor of Philosophy in Education in Educational Management, etc.'
+                    placeholder='Create new or select from existing program...'
                     type='textarea'
                     name='programInput'
                     formValue={programInput}
@@ -141,16 +142,11 @@ const ProgramToBeAccreditedModal = ({
                     onRemoveValue={(index) => handleRemoveProgramValue(index)}
                     onChange={(e) => handleProgramChange(e)}
                   />
-                  <CircleQuestionMark
-                    onMouseEnter={handleInfoHover}
-                    onMouseLeave={handleInfoHover}
-                    className='absolute text-slate-500 hover:text-slate-600 top-4 -left-7' size={22}
-                  />
-                  {infoHover && (
+                  {(
                     <Popover 
                       handleMouseEnter={handleInfoHover}
                       handleMouseLeave={handleInfoHover}
-                      position='-top-18 -left-7'
+                      position='top-3 -left-62'
                       content={
                         <p className='text-white text-sm p-2'>
                           Type a program and press Enter to add it. Click 'Create' to save all programs with their level and period.
@@ -215,10 +211,8 @@ const ProgramToBeAccreditedModal = ({
                     position='-top-2 -left-64 translate-y-1/2'
                     content={
                       <p className='text-white text-xs p-2'>
-                        Type a program and press Enter to store it. {'\n'}
-                        <span>
-                          Click 'Add Program' or 'Add Programs' to save all stored programs.
-                        </span>
+                        Type a program and press Enter to store it.
+                        Click 'Add Program' or 'Add Programs' to save all stored programs.
                       </p>
                     }
                   />
@@ -251,13 +245,61 @@ const ProgramToBeAccreditedModal = ({
                 <div className='flex flex-col items-center justify-center pb-4'>
                   <TriangleAlert className='text-red-400 h-20 w-20'/>
                   <p className='px-8 text-md md:text-lg text-center text-red-500'>
-                    Delete "{modalData.programName}"?
+                    Delete {'\n'}
+                    <span className='font-bold'>
+                      {modalData.programName}
+                    </span>?
                   </p>
                 </div>
                 
                 <div className='pb-2 space-y-2'>
                   <p className='px-8 text-center'>
-                    This action cannot be undone. Are you sure you want to delete this program?
+                    This will permanently delete the program along with all associated areas and parameters. This action cannot be undone.
+                  </p>
+                  <p className='px-8 text-center'>
+                    Do you want to proceed?
+                  </p>
+                </div>
+              </div>
+            }
+          />
+        );
+      
+      case MODAL_TYPE.DELETE_PERIOD:
+        return (
+          <ConfirmationModal 
+            onClose={() => handleCloseClick({ isFromPeriod: true, isDelete: true })}
+            onCancelClick={() => handleCloseClick({ isFromPeriod: true, isDelete: true })}
+            onConfirmClick={() => handleConfirmClick({
+              isFromPeriod: true,
+              isDelete: true,
+              data: {
+                startDate: modalData.startDate,
+                endDate: modalData.endDate
+              }
+            })}
+            isDelete={true}
+            primaryButton='Delete'
+            secondaryButton='Cancel'
+            bodyContent={
+              <div className='flex flex-col items-center justify-center pb-4 px-2'>
+                <div className='flex flex-col items-center justify-center pb-4'>
+                  <TriangleAlert className='text-red-400 h-20 w-20'/>
+                  <p className='px-8 text-md md:text-lg text-center text-red-500'>
+                    Delete {'\n'}
+                    <span className='font-bold'>
+                      {formatAccreditationPeriod(modalData.startDate, modalData.endDate)}
+                    </span> {'\n'}
+                    Period?
+                  </p>
+                </div>
+                
+                <div className='pb-2 space-y-2'>
+                  <p className='px-8 text-center'>
+                    This action will permanently delete the period along with all associated levels and programs. This cannot be undone.
+                  </p>
+                  <p className='px-8 text-center'>
+                    Do you want to proceed?
                   </p>
                 </div>
               </div>

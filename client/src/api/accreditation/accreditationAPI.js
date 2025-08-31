@@ -39,3 +39,18 @@ export const deleteProgramToBeAccredited = (startDate, endDate, levelName, progr
     }
   });
 };
+
+export const deleteAccreditationPeriod = (startDate, endDate, options = {}) => {
+  if (options.isFromPTBA) {
+    return axios.delete(`${API_BASE_URL}/accreditation/delete-accreditation-period`, {
+      params: {
+        startDate,
+        endDate
+      }
+    });
+    
+  } else {
+    return 'Invalid options.';
+  }
+  
+}

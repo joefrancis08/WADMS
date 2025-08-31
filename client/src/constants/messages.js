@@ -1,4 +1,4 @@
-export const TOAST_MESSAGES = {
+export const TOAST_MESSAGES = Object.freeze({
   REGISTRATION: {
     SUCCESS: 'Registration successful',
     UNSUCCESSFUL: 'Unsuccessful registration. Try again',
@@ -38,8 +38,13 @@ export const TOAST_MESSAGES = {
   PROGRAMS_TO_BE_ACCREDITED_DELETION: {
     SUCCESS: 'Deleted successfully!',
     ERROR: 'Something went wrong while deleting programs to be accredited.'
+  },
+
+  PERIOD_DELETION: {
+    SUCCESS: 'Deleted successfully!',
+    ERROR: 'Something went wrong while deleting period.'
   }
-}
+});
 
 export const VALIDATION_MESSAGE = () => {
   const EMPTY = 'This field is required.';

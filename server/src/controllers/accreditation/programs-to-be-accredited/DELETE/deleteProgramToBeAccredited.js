@@ -6,8 +6,6 @@ const deleteProgramToBeAccredited = async (req, res) => {
     // For deletion with multiple conditions, better to use req.query
     const { startDate, endDate, levelName, programName } = req.query;
 
-    console.log({ startDate, endDate, levelName, programName });
-
     // Validate params
     if (!startDate) return res.status(400).json({ success: false, message: 'startDate is required.' });
     if (!endDate) return res.status(400).json({ success: false, message: 'endDate is required.' });
@@ -36,7 +34,7 @@ const deleteProgramToBeAccredited = async (req, res) => {
     }
 
     // Notify frontend via WebSocket
-    sendUpdate('programs-to-be-accredited-deleted');
+    sendUpdate('programs-to-be-accredited-update');
 
     res.status(200).json({
       success: true,
