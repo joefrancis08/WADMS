@@ -270,22 +270,31 @@ const ProgramToBeAccreditedModal = ({
           <ConfirmationModal 
             onClose={() => handleCloseClick({ isFromProgram: true, isDelete: true})}
             onCancelClick={() => handleCloseClick({ isFromProgram: true, isDelete: true })}
-            onConfirmClick={() => handleConfirmClick({ isFromProgram: true, isDelete: true })}
+            onConfirmClick={() => handleConfirmClick({ 
+              isFromProgram: true, 
+              isDelete: true,
+              data: {
+                startDate: modalData.startDate,
+                endDate: modalData.endDate,
+                levelName: modalData.levelName,
+                programName: modalData.programName
+              }
+            })}
             isDelete={true}
-            primaryButton={'Confirm'}
+            primaryButton={'Delete'}
             secondaryButton={'Cancel'}
             bodyContent={
               <div className='flex flex-col items-center justify-center pb-4 px-2'>
                 <div className='flex flex-col items-center justify-center pb-4'>
                   <TriangleAlert className='text-red-400 h-20 w-20'/>
                   <p className='px-8 text-md md:text-lg text-center text-red-500'>
-                    Delete {modalData.program}?
+                    Delete "{modalData.programName}"?
                   </p>
                 </div>
                 
                 <div className='pb-2 space-y-2'>
-                  <p className='text-center'>
-                    You can't undo this action. Do you want to proceed?
+                  <p className='px-8 text-center'>
+                    This action cannot be undone. Are you sure you want to delete this program?
                   </p>
                 </div>
               </div>

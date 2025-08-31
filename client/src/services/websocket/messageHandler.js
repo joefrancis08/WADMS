@@ -33,6 +33,11 @@ export const messageHandler = (callback) => {
             callback(); // Trigger the callback again for this case
             break;
 
+          case 'programs-to-be-accredited-deleted':
+            console.log('Programs-to-be-accredited delete update received.');
+            callback();
+            break;
+
           // For any unrecognized message type
           default:
             console.warn('Unhandled WebSocket message type:', data.type);

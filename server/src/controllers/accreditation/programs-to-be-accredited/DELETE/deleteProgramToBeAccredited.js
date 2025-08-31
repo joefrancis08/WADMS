@@ -3,15 +3,17 @@ import sendUpdate from "../../../../services/websocket/sendUpdate.js";
 
 const deleteProgramToBeAccredited = async (req, res) => {
   try {
-    const { startDate, endDate, levelName, programName } = req.body;
+    // For deletion with multiple conditions, better to use req.query
+    const { startDate, endDate, levelName, programName } = req.query;
 
-    // Validate request body
-    if (!startDate || !endDate || !levelName || !programName) {
-      return res.status(400).json({
-        success: false,
-        message: 'startDate, endDate, levelName, and programName are required.'
-      });
-    }
+    console.log({ startDate, endDate, levelName, programName });
+
+    // Validate params
+    if (!startDate) return res.status(400).json({ success: false, message: 'startDate is required.' });
+    if (!endDate) return res.status(400).json({ success: false, message: 'endDate is required.' });
+    if (!levelName) return res.status(400).json({ success: false, message: 'levelName is required.' });
+    if (!programName) return res.status(400).json({ success: false, message: 'programName is required.' });
+
 
     // Validate date format
     const isValidDate = (dateStr) => /^\d{4}-\d{2}-\d{2}$/.test(dateStr) && !isNaN(Date.parse(dateStr));
@@ -26,7 +28,7 @@ const deleteProgramToBeAccredited = async (req, res) => {
     const result = await deleteProgramMapping(startDate, endDate, levelName, programName);
 
     // Return 404 if program does not exist
-    if (result.affectedRows === 0) {
+    if (result === 0) {
       return res.status(404).json({
         success: false,
         message: 'Program not found or already deleted.'

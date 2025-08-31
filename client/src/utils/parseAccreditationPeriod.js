@@ -1,56 +1,71 @@
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
-import { parse } from 'date-fns';
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
+import { parse, isValid } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
 
 const TIMEZONE = 'Asia/Manila';
 
+/**
+ * Parse a raw string into YYYY-MM-DD (Asia/Manila)
+ */
+const parseDate = (dateStr) => {
+  const formats = ['MMMM d, yyyy', 'MMMM dd, yyyy'];
+  for (const fmt of formats) {
+    const parsed = parse(dateStr, fmt, new Date());
+    if (isValid(parsed)) {
+      return formatInTimeZone(parsed, TIMEZONE, 'yyyy-MM-dd');
+    }
+  }
+  throw new Error(`Invalid date string: '${dateStr}'`);
+}
+
+/*
+  Parse accreditation period strings into [start, end] in YYYY-MM-DD
+ *
+  Supported formats:
+  - January 20-22, 2025
+  - August 29 - September 02, 2025
+  - August 29, 2025 - August 29, 2026
+  - August 29, 2025
+ */
 const parseAccreditationPeriod = (humanDate) => {
-  // Remove extra spaces
-  humanDate = humanDate.trim();
-
-  let start, end;
-
-  // Case: "August 29-30, 2025"
-  if (humanDate.match(/^[A-Za-z]+ \d{1,2}-\d{1,2}, \d{4}$/)) {
-    const [month, rest] = humanDate.split(' ');
-    const [daysPart, yearPart] = rest.split(',').map(s => s.trim());
-    const [startDay, endDay] = daysPart.split('-').map(Number);
-    const year = Number(yearPart);
-
-    start = dayjs(`${year}-${month}-${startDay}`, 'YYYY-MMMM-D').tz(TIMEZONE).format('YYYY-MM-DD');
-    end = dayjs(`${year}-${month}-${endDay}`, 'YYYY-MMMM-D').tz(TIMEZONE).format('YYYY-MM-DD');
-  }
-  // Case: "August 29 - September 02, 2025"
-  else if (humanDate.match(/^[A-Za-z]+ \d{1,2} - [A-Za-z]+ \d{1,2}, \d{4}$/)) {
-    const [startPart, endPartYear] = humanDate.split(' - ');
-    const [endPart, yearPart] = endPartYear.split(',').map(s => s.trim());
-
-    const [startMonth, startDay] = startPart.split(' ');
-    const [endMonth, endDay] = endPart.split(' ');
-
-    const year = Number(yearPart);
-
-    start = dayjs(`${year}-${startMonth}-${startDay}`, 'YYYY-MMMM-D').tz(TIMEZONE).format('YYYY-MM-DD');
-    end = dayjs(`${year}-${endMonth}-${endDay}`, 'YYYY-MMMM-D').tz(TIMEZONE).format('YYYY-MM-DD');
-  }
-  // Case: "August 29, 2025 - August 29, 2026"
-  else if (humanDate.match(/^[A-Za-z]+ \d{1,2}, \d{4} - [A-Za-z]+ \d{1,2}, \d{4}$/)) {
-    const [startPart, endPart] = humanDate.split(' - ');
-
-    const start = dayjs(startPart, 'MMMM D, YYYY').tz(TIMEZONE).format('YYYY-MM-DD');
-    const end = dayjs(endPart, 'MMMM D, YYYY').tz(TIMEZONE).format('YYYY-MM-DD');
-    
-    return [start, end];
-  } 
-  else {
-    throw new Error("Unrecognized date format");
+  if (!humanDate || typeof humanDate !== 'string') {
+    throw new Error('Date input must be a non-empty string');
   }
 
-  return [start, end];
-};
+  // Normalize whitespace: collapse multiple spaces into one
+  // and trim leading/trailing spaces
+  humanDate = humanDate.replace(/\s+/g, ' ').trim();
+
+  let match;
+
+  // Case 1: January 20-22, 2025
+  match = /^([A-Za-z]+) (\d{1,2})-(\d{1,2}), (\d{4})$/.exec(humanDate);
+  if (match) {
+    const [, month, d1, d2, year] = match;
+    return [parseDate(`${month} ${d1}, ${year}`), parseDate(`${month} ${d2}, ${year}`)];
+  }
+
+  // Case 2: August 29 - September 02, 2025
+  match = /^([A-Za-z]+ \d{1,2}) - ([A-Za-z]+ \d{1,2}), (\d{4})$/.exec(humanDate);
+  if (match) {
+    const [, start, end, year] = match;
+    return [parseDate(`${start}, ${year}`), parseDate(`${end}, ${year}`)];
+  }
+
+  // Case 3: August 29, 2025 - August 29, 2026
+  match = /^([A-Za-z]+ \d{1,2}, \d{4}) - ([A-Za-z]+ \d{1,2}, \d{4})$/.exec(humanDate);
+  if (match) {
+    const [, start, end] = match;
+    return [parseDate(start), parseDate(end)];
+  }
+
+  // Case 4: August 29, 2025 (single day)
+  match = /^([A-Za-z]+ \d{1,2}, \d{4})$/.exec(humanDate);
+  if (match) {
+    const date = parseDate(match[1]);
+    return [date, date];
+  }
+
+  throw new Error(`Unrecognized date format: '${humanDate}'`);
+}
 
 export default parseAccreditationPeriod;

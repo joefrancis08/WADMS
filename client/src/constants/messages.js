@@ -33,6 +33,11 @@ export const TOAST_MESSAGES = {
   PROGRAMS_TO_BE_ACCREDITED_ADDITION: {
     SUCCESS: 'Added successfully.',
     ERROR: 'Something went wrong while adding programs to be accredited.'
+  },
+
+  PROGRAMS_TO_BE_ACCREDITED_DELETION: {
+    SUCCESS: 'Deleted successfully!',
+    ERROR: 'Something went wrong while deleting programs to be accredited.'
   }
 }
 

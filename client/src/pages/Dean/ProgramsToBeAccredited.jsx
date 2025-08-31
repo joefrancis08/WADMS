@@ -95,8 +95,6 @@ const ProgramsToAccredit = () => {
     { icon: <Trash2 size={22} />, label: 'Delete' },
   ];
 
-  console.log(data);
-
   return (
     <DeanLayout>
       <div className='flex-1 space-y-3'>
@@ -249,7 +247,7 @@ const ProgramsToAccredit = () => {
                                             optionName: option.label,
                                             data: {
                                               period: parseAccreditationPeriod(periodKey),
-                                              level,
+                                              levelName: level,
                                               programName
                                             }
                                           }))}

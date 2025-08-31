@@ -6,6 +6,7 @@ import { showErrorToast, showSuccessToast } from "../../utils/toastNotification"
 import { TOAST_MESSAGES } from "../../constants/messages";
 import MODAL_TYPE from "../../constants/modalTypes";
 import useOutsideClick from "../useOutsideClick";
+import parseAccreditationPeriod from "../../utils/parseAccreditationPeriod";
 
 export const useProgramsToBeAccredited = () => {
   const { programsToBeAccredited, loading, error } = useFetchProgramsToBeAccredited();
@@ -13,7 +14,8 @@ export const useProgramsToBeAccredited = () => {
   const programOptionsRef = useRef();
   const { 
     PROGRAMS_TO_BE_ACCREDITED_CREATION, 
-    PROGRAMS_TO_BE_ACCREDITED_ADDITION
+    PROGRAMS_TO_BE_ACCREDITED_ADDITION,
+    PROGRAMS_TO_BE_ACCREDITED_DELETION
   } = TOAST_MESSAGES;
 
   const [modalType, setModalType] = useState(null);
@@ -112,7 +114,7 @@ export const useProgramsToBeAccredited = () => {
       setFormValue(prev => ({ ...prev, [name]: value })); // Update the form value for that field
     } else {
       // Input is a Date (from a date picker)
-      if (fieldName === "startDate") {
+      if (fieldName === 'startDate') {
         if (eOrDate) {
           // Start date selected
           const newStartDate = eOrDate; // Store selected start date
@@ -226,26 +228,37 @@ export const useProgramsToBeAccredited = () => {
           ...prev, 
           startDate: options.data.period[0],
           endDate: options.data.period[1],
-          level: options.data.level,
-          program: options.data.programName,
+          levelName: options.data.levelName,
+          programName: options.data.programName,
         }));
       }
     }
   };
 
+  console.log(parseAccreditationPeriod('January 20-22, 2025'));
+  console.log(parseAccreditationPeriod('January 20 - February 21, 2025'));
+  console.log(parseAccreditationPeriod('January 20, 2025 - January 26, 2025'));
+  console.log(parseAccreditationPeriod('January 20, 2025'));
+
   const handleConfirmClick = async (options = {}) => {
-    if (options.isFromProgram && options.isDelete) {
-      // try {
-      //   const periodId = options.data.periodId;
-      //   const levelId = options.data.levelId;
-      //   const programId = options.data.programId;
-      //   await deleteProgramToBeAccredited()
+    if (options.isFromProgram && options.isDelete && options.data) {
+      try {
+        const startDate = options.data.startDate;
+        const endDate = options.data.endDate;
+        const levelName = options.data.levelName;
+        const programName = options.data.programName;
+        const result = await deleteProgramToBeAccredited(startDate, endDate, levelName, programName);
+        console.log(result);
+        if (result.data.success) {
+          showSuccessToast(PROGRAMS_TO_BE_ACCREDITED_DELETION.SUCCESS);
+        } else {
+          showErrorToast(PROGRAMS_TO_BE_ACCREDITED_DELETION.ERROR);
+        }
 
-      // } catch (error) {
-        
-      // }
-
-      console.log('Confirm Delete');
+      } catch (error) {
+        console.error('Failed to delete program.', error);
+        throw error;
+      }
     }
 
     handleCloseClick({ isFromProgram: true, isDelete: true });

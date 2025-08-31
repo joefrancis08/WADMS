@@ -29,10 +29,13 @@ export const fetchAccreditationPeriod = (controller) => {
   });
 };
 
-export const deleteProgramToBeAccredited = (periodId, levelId, programId) => {
+export const deleteProgramToBeAccredited = (startDate, endDate, levelName, programName) => {
   return axios.delete(`${API_BASE_URL}/accreditation/delete-programs-to-be-accredited`, {
-    periodId,
-    levelId,
-    programId
+    params: {
+      startDate,
+      endDate,
+      levelName,
+      programName
+    }
   });
 };

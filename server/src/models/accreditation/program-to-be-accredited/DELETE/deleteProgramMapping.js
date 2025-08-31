@@ -8,8 +8,8 @@ const deleteProgramMapping = async (startDate, endDate, levelName, programName, 
     JOIN accreditation_period ap ON plm.period_id = ap.id
     JOIN accreditation_level al ON plm.level_id = al.id
     JOIN program p ON plm.program_id = p.id
-    WHERE ap.start_date = ?
-      AND ap.end_date = ?
+    WHERE DATE(ap.start_date) = ?
+      AND DATE(ap.end_date) = ?
       AND al.level_name = ?
       AND p.program_name = ?
   `;
