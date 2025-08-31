@@ -12,7 +12,7 @@ const PATH = {
     TASK_FORCE: '/d/task-force',
     TASK_FORCE_DETAIL: (id) => `/d/task-force/${id}`,
     TASK_FORCE_DETAIL_TEMPLATE: '/d/task-force/:id',
-    PROGRAMS_TO_ACCREDIT: '/d/accreditation/programs-to-accredit',
+    PROGRAMS_TO_BE_ACCREDITED: '/d/accreditation/programs-to-be-accredited',
     DOCUMENTS: '/d/accreditation/documents'
   }
 }

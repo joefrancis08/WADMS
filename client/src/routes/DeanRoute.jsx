@@ -16,7 +16,7 @@ const {
   UNVERIFIED_USERS,
   UNVERIFIED_USERS_ID, 
   TASK_FORCE, 
-  PROGRAMS_TO_ACCREDIT, 
+  PROGRAMS_TO_BE_ACCREDITED, 
   DOCUMENTS
 } = PATH.DEAN;
 
@@ -28,7 +28,7 @@ const protectedRoutes = [
   { path: UNVERIFIED_USERS, element: <UnverifiedUsers /> },
   { path: TASK_FORCE_DETAIL_TEMPLATE, element: <TaskForceDetail /> },
   { path: UNVERIFIED_USERS_ID, element: <UnverifiedUsers /> },
-  { path: PROGRAMS_TO_ACCREDIT, element: <ProgramsToBeAccredited/> },
+  { path: PROGRAMS_TO_BE_ACCREDITED, element: <ProgramsToBeAccredited/> },
   { path: DOCUMENTS, element: <Documents /> }
 ];
 
