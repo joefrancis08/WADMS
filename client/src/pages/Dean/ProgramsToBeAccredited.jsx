@@ -174,7 +174,6 @@ const ProgramsToAccredit = () => {
                           </p>
                         </div>
                       </React.Fragment>
-                      
                     ))}
                   </Dropdown>
                 </div>

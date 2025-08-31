@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from 'react';
 import { format } from 'date-fns';
 import usePrograms from '../../hooks/fetch-react-query/usePrograms';
 import ConfirmationModal from '../Modals/ConfirmationModal';
+import useOutsideClick from '../../hooks/useOutsideClick';
 
 const ProgramToBeAccreditedModal = ({
   infoHover,
@@ -51,16 +52,8 @@ const ProgramToBeAccreditedModal = ({
     handleInfoHover,
   } = handlers;
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowDropdown(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  // Use useOutsideClick hook to close the dropdown on outside click
+  useOutsideClick(dropdownRef, () => setShowDropdown(false));
 
   const handleDropdownOptionClick = (periodStart, periodEnd) => {
     setShowDropdown(false);
@@ -252,10 +245,13 @@ const ProgramToBeAccreditedModal = ({
                 />
                 {focus && (
                   <Popover 
-                    position='-top-4 -left-64 translate-y-1/2'
+                    position='-top-2 -left-64 translate-y-1/2'
                     content={
-                      <p className='text-white text-sm p-2'>
-                        Type a program and press Enter to store it. Click 'Add Program' to save all stored programs.
+                      <p className='text-white text-xs p-2'>
+                        Type a program and press Enter to store it. {'\n'}
+                        <span>
+                          Click 'Add Program' or 'Add Programs' to save all stored programs.
+                        </span>
                       </p>
                     }
                   />
