@@ -10,6 +10,7 @@ import userRouter from './src/routes/userRoute.js';
 import setupWebSocket from './src/config/ws.js';
 import programRouter from './src/routes/programRoute.js';
 import accreditationRouter from './src/routes/accreditationRoute.js';
+import areaRouter from './src/routes/areaRoute.js';
 
 dotenv.config({ quiet: true });
 const __filename = fileURLToPath(import.meta.url);
@@ -32,6 +33,7 @@ app.use(express.static(path.join(__dirname, '../client/dist')));
 
 app.use('/users', userRouter);
 app.use('/programs', programRouter);
+app.use('/area', areaRouter);
 app.use('/accreditation', accreditationRouter);
 
 const server = http.createServer(app);
