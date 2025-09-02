@@ -127,9 +127,9 @@ const ProgramsToAccredit = () => {
           <ProgramsToBeAccreditedSL /> 
         ) : Object.entries(grouped).length === 0 ? (
           <div className='flex flex-col items-center justify-center h-100'>
-            <Scroll className='text-slate-500 h-40 w-40 md:h-60 md:w-60'/>
-            <p className='text-center font-medium text-slate-600 text-lg md:text-xl'>
-              No program to be accredited yet.
+            <Scroll className='text-slate-700 h-40 w-40 md:h-60 md:w-60'/>
+            <p className='text-center font-medium text-slate-700 text-lg md:text-xl'>
+              No data to display at the moment.
             </p>
           </div>
         ) : (

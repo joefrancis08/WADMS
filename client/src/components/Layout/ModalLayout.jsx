@@ -1,3 +1,5 @@
+import { CircleQuestionMark } from "lucide-react";
+
 const ModalLayout = ({ 
   onClose, 
   header, 

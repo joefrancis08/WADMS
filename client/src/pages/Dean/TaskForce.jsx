@@ -102,9 +102,9 @@ const TaskForce = () => {
             </>
             {!loading && taskForceChair.length === 0 && taskForceMember.length === 0 && (
               <div className='flex flex-col items-center justify-center h-100'>
-                <UserRoundX className='text-slate-500 w-40 md:w-60 h-auto' />
+                <UserRoundX className='text-slate-700 w-40 md:w-60 h-auto' />
                 <p className='text-lg md:text-xl font-medium text-slate-700'>
-                  No task force created at the moment.
+                  No data to display at the moment.
                 </p>
               </div>
             )}
