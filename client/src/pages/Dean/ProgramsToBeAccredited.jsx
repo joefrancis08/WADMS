@@ -18,7 +18,8 @@ const ProgramsToAccredit = () => {
     form, 
     hovers, 
     inputs, 
-    modal, 
+    modal,
+    navigation, 
     option,
     program, 
     programsToBeAccreditedData,
@@ -35,6 +36,7 @@ const ProgramsToAccredit = () => {
   const { infoHover, handleInfoHover } = hovers;
   const { handleInputChange } = inputs;
   const { modalType, modalData } = modal;
+  const { handleProgramCardClick } = navigation;
   const { handleSave } = saveHandler;
   const { programsToBeAccredited, loading, error } = programsToBeAccreditedData;
   const { 
@@ -138,7 +140,7 @@ const ProgramsToAccredit = () => {
               className='relative bg-slate-300 rounded-md p-4 mx-4 mb-15 mt-6'
             >
               {/* Period label (ex: Aug 26 – Aug 29, 2025) */}
-              <div className='absolute -top-5 left-1/2 -translate-x-1/2 flex items-center justify-center w-1/2 lg:w-1/3 p-2 bg-gradient-to-l from-slate-900 via-green-600 to-slate-900 shadow-md text-white rounded font-bold'>
+              <div className='absolute -top-5 left-1/2 -translate-x-1/2 flex items-center justify-center w-1/2 lg:w-1/3 p-2 bg-slate-600 shadow-md text-white rounded font-bold'>
                 <p className='max-sm:text-sm md:text-md lg:text-lg text-center'>
                   {periodKey}
                 </p>
@@ -184,15 +186,15 @@ const ProgramsToAccredit = () => {
               )}
               {/* Options for Accreditation Period */}
               <button 
-                onClick={() => (
-                  handleOptionClick({ 
+                onClick={(e) => (
+                  handleOptionClick(e, { 
                     isFromPeriod: true,
                     data: {
                       periodId: periodKey
                     }
                   }))}
                 title='Options'
-                className='absolute top-2 p-2 right-2 text-slate-800 rounded-bl-lg rounded-tr-lg hover:shadow hover:text-slate-700 hover:bg-slate-200 active:opacity-50 transition cursor-pointer'>
+                className='absolute top-2 p-2 right-2 text-black rounded-bl-lg rounded-tr-lg hover:shadow hover:text-slate-700 hover:bg-slate-200 active:opacity-50 transition cursor-pointer'>
                 <EllipsisVertical size={24}/>
               </button>
               
@@ -200,16 +202,16 @@ const ProgramsToAccredit = () => {
               {Object.entries(levels).map(([level, programs]) => (
                 <React.Fragment key={level} >
                   <div 
-                    className='relative p-4 space-y-6 mb-4 border bg-slate-200 shadow-md border-slate-300 rounded-md mx-4 mt-12'
+                    className='relative p-4 space-y-6 mb-4 border bg-slate-800 shadow-lg border-slate-700 rounded-lg mx-4 mt-12 '
                   >
 
                     {/* Level label (ex: Level II, Preliminary, etc.) */}
-                    <h2 className='absolute -top-6 left-1/2 -translate-x-1/2 flex items-center justify-center w-[60%] md:w-[70%] lg:w-[80%] p-2 text-lg md:text-2xl bg-gradient-to-l from-green-700 via-yellow-400 to-green-700 shadow-md text-white rounded font-bold'>
+                    <h2 className='absolute top-3 left-1/2 -translate-x-1/2 flex items-center justify-center w-[60%] md:w-[50%] lg:w-[40%] p-2 text-lg md:text-2xl bg-slate-900 border-b-2 border-slate-500 to-green-700 shadow-md text-white rounded font-bold'>
                       {level}
                     </h2>
 
                     {/* Program cards */}
-                    <div className='relative flex flex-wrap gap-10 justify-center pb-4 pt-8 px-4'>
+                    <div className='relative flex flex-wrap gap-10 justify-center pb-4 pt-16 px-4'>
                       {programs.map((programName, id) => {
                         /* 
                           Use this id (programId) in passing the data because id is an index
@@ -224,9 +226,16 @@ const ProgramsToAccredit = () => {
                         return (
                           <div
                             key={id}
-                            className='relative flex items-center justify-center h-60 p-8 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl border border-slate-300 shadow hover:shadow-lg active:shadow cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80'
+                            onClick={(e) => handleProgramCardClick(e, {
+                              data: {
+                                periodKey,
+                                level,
+                                programName
+                              }
+                            })}
+                            className='relative flex items-center justify-center h-60 py-8 px-4 bg-gradient-to-b from-green-700 to-yellow-400 rounded-xl shadow hover:shadow-slate-500 hover:shadow-md active:shadow cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80'
                           >
-                            <p className='flex items-center justify-center text-wrap bg-gradient-to-b rounded-md from-yellow-300 to-amber-400 w-full text-lg md:text-xl text-white text-center shadow h-40 font-bold p-4'>
+                            <p className='flex items-center justify-center text-wrap rounded-md bg-gradient-to-b border-slate-400 from-slate-900 to-green-600 w-full text-lg md:text-xl text-white text-center shadow h-40 font-bold p-5'>
                               {programName}
                             </p>
 
@@ -273,10 +282,12 @@ const ProgramsToAccredit = () => {
 
                             {/* Option button for Program Cards */}
                             <button 
-                              onClick={() => (
-                                handleOptionClick({ 
+                              onClick={(e) => (
+                                handleOptionClick(e, { 
                                   isFromProgram: true,
                                   data: {
+                                    periodKey,
+                                    level,
                                     programId
                                   }
                                 }))}
@@ -298,10 +309,10 @@ const ProgramsToAccredit = () => {
                           }  
                         })}
                         title='Click to add program'
-                        className='relative flex flex-col items-center justify-center gap-y-2 h-60 p-4 bg-slate-200 border border-gray-300 rounded-lg shadow-md hover:shadow-lg active:shadow-md cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80'
+                        className='relative flex flex-col items-center justify-center gap-y-2 h-60 p-4 bg-slate-600 rounded-lg shadow-md hover:shadow-slate-400 hover:shadow-md active:shadow cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80'
                       >
-                        <Plus className='text-slate-600 h-16 w-16 rounded-full'/>
-                        <button className='text-xl font-medium text-slate-600 py-4 px-6 rounded-full cursor-pointer'>
+                        <Plus className='text-white h-16 w-16 rounded-full'/>
+                        <button className='text-xl font-medium text-white py-4 px-6 rounded-full cursor-pointer'>
                           Add Program
                         </button>
                       </div>

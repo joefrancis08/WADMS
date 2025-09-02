@@ -76,10 +76,11 @@ const TaskForce = () => {
               {taskForceData.map(({ data, label }) => (
                 data.length > 0 && (
                   <React.Fragment key={label}>
-                    <div className='relative p-4 pt-15 space-y-6 mb-15 border bg-slate-200 shadow-md border-slate-300 rounded-md mx-4 mt-8'>
-                      <h2 className={`absolute -top-6 left-1/2 -translate-x-1/2 flex items-center justify-center w-1/2 p-2 text-2xl bg-gradient-to-l from-slate-900 via-green-600 to-slate-900 shadow-md max-lg:text-center text-slate-50 rounded font-bold`}>
+                    <div className='relative p-4 pt-15 space-y-6 mb-15 border bg-slate-800 shadow-md border-slate-300 rounded-lg mx-4 mt-8'>
+                      <h2 className={`absolute -top-6 left-1/2 -translate-x-1/2 flex items-center justify-center w-1/2 p-2 text-2xl bg-gradient-to-l from-slate-900 via-green-600 to-slate-900 shadow-md max-lg:text-center text-slate-50 rounded font-bold border-b-2 border-slate-400`}>
                         {label 
-                          ? (taskForceChair.length > 1 && taskForceMember.length > 1 ? `${String(label).toUpperCase()}S` : String(label).toUpperCase()) 
+                          ? (taskForceChair.length > 1 && taskForceMember.length > 1
+                            ? `${String(label).toUpperCase()}S` : String(label).toUpperCase()) 
                           : ''
                         }
                       </h2>

@@ -9,7 +9,6 @@ const Dashboard = () => {
         </div>
       </div>
     </AdminLayout>
-    
   );
 };
 

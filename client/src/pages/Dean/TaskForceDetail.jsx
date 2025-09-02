@@ -49,24 +49,24 @@ const TaskForceDetail = () => {
               </div>
             )
           : (
-            <div className='flex flex-col w-full h-full bg-gray-50 px-8 rounded-xl border border-gray-100 shadow'>
+            <div className='flex flex-col w-full h-full bg-slate-800 px-8 rounded-xl border border-gray-100 shadow'>
               <div className='flex justify-end px-2 md:p-1'>
                 <button
                   title='Update Info'
                   onClick={(e) => handleUpdate(e, selectedUser)}
-                  className='text-slate-900 rounded-full p-4 cursor-pointer transition-all duration-300 hover:bg-gray-200 active:opacity-20'
+                  className='text-white rounded-full p-4 cursor-pointer transition-all duration-300 hover:bg-slate-600 active:opacity-20'
                 >
                   <Pen />
                 </button>
                 <button
                   title='Delete'
                   onClick={(e) => handleDelete(e, selectedUser)}
-                  className='text-red-500 rounded-full p-4 cursor-pointer transition-all duration-300  hover:bg-gray-200 active:opacity-20'
+                  className='text-red-400 rounded-full p-4 cursor-pointer transition-all duration-300  hover:bg-slate-600 active:opacity-20'
                 >
                   <Trash2 />
                 </button>
               </div>
-              <div className='border bg-gradient-to-b from-green-700 to-amber-300 border-slate-300 rounded-xl shadow-md mb-8'>
+              <div className='bg-gradient-to-b from-green-700 to-amber-300 rounded-xl shadow-md mb-8'>
                 <div className='flex max-lg:flex-col items-center px-5 pb-5 pt-8 lg:flex-row md:px-20 md:pb-5 justify-evenly'>
                   <div className='rounded-full shadow-md'>
                     <ProfilePicture

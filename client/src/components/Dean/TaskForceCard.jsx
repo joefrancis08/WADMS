@@ -58,7 +58,7 @@ const TaskForceCard = ({
           <div
             onClick={() => navigation(user)}
             key={user.user_uuid} 
-            className={`relative p-4 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl shadow hover:shadow-xl cursor-pointer transition
+            className={`relative p-4 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl shadow hover:shadow-md hover:shadow-slate-400 active:shadow cursor-pointer transition
               ${label === 'Chair' && 'w-45 sm:w-50 md:w-55 lg:w-60 xl:w-65'}
               ${label === 'Member' && 'w-36 sm:w-40 md:w-44 lg:w-48 xl:w-52'}
             `}
@@ -99,12 +99,12 @@ const TaskForceCard = ({
             </div>
           </div>
         ))}
-        <div className={`flex items-center justify-center bg-slate-50 p-4 rounded-xl shadow hover:shadow-xl cursor-pointer transition active:shadow
+        <div className={`flex items-center justify-center bg-slate-700 p-4 rounded-xl shadow hover:shadow-md hover:shadow-slate-400 cursor-pointer transition active:shadow
         ${label === 'Chair' && 'w-45 sm:w-50 md:w-55 lg:w-60 xl:w-65'}
         ${label === 'Member' && 'w-36 sm:w-40 md:w-44 lg:w-48 xl:w-52'}`}>
           <div className='flex flex-col items-center justify-center gap-2'>
-            <Plus className='text-slate-500' size={60}/>
-            <p className='text-slate-500 font-medium text-lg text-center'>
+            <Plus className='text-white' size={60}/>
+            <p className='text-white font-medium text-lg text-center'>
               Add
               {
                 label === 'Chair' ? ' Chair' : ' Member'

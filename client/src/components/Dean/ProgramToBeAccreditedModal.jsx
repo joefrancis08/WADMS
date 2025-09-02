@@ -5,14 +5,12 @@ import ProgramToBeAccreditedBaseModal from '../Modals/accreditation/ProgramToBeA
 import Popover from '../Popover';
 import useAccreditationLevel from '../../hooks/fetch-react-query/useAccreditationLevel';
 import useAccreditationPeriod from '../../hooks/fetch-react-query/useAccreditationPeriod';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import usePrograms from '../../hooks/fetch-react-query/usePrograms';
 import ConfirmationModal from '../Modals/ConfirmationModal';
-import useOutsideClick from '../../hooks/useOutsideClick';
 import formatAccreditationPeriod from '../../utils/formatAccreditationPeriod';
 
 const ProgramToBeAccreditedModal = ({
-  infoHover,
   modalType,
   formValue,
   programs,
@@ -21,8 +19,6 @@ const ProgramToBeAccreditedModal = ({
   handlers,
   modalData
 }) => {
-  const dropdownRef = useRef();
-  const [ showDropdown, setShowDropdown ] = useState(false); // Create local state for date dropdown
   const [focus, setFocus] = useState(false);
 
   // Here we store the value of the selected period in the dropdown
@@ -32,8 +28,6 @@ const ProgramToBeAccreditedModal = ({
   const { levels, loadingAL, errorAL } = useAccreditationLevel();
   const data = levels?.data ?? []; // Fallback to [] if levels.data is null or undefined
   const levelsArray = data.map(item => item.level); // Map over data to extract only the "level" values
-  
-  const { period, loadingP, errorP } = useAccreditationPeriod();
 
   const { programsData, loadingPr, errorPr } = usePrograms();
   const dataPr = programsData?.data ?? [];
@@ -50,9 +44,6 @@ const ProgramToBeAccreditedModal = ({
     handleProgramChange,
     handleInfoHover,
   } = handlers;
-
-  // Use useOutsideClick hook to close the dropdown on outside click
-  useOutsideClick(dropdownRef, () => setShowDropdown(false));
 
   const handleClose = () => {
     handleCloseClick({ isFromMain: true });
@@ -93,19 +84,17 @@ const ProgramToBeAccreditedModal = ({
                 <div className='flex flex-row items-center gap-x-2'>
                   <AddField
                     fieldName='Start Date'
-                    placeholder='Type or select date'
+                    placeholder='Enter or select date'
                     type='date'
                     name='startDate'
                     formValue={formValue.startDate || periodStartValue}
                     minDate={new Date()}
-                    onFocus={() => setShowDropdown(true)}
                     onChange={handleInputChange}
-                    calendarClose={showDropdown}
                   />
                   <p className='text-gray-500'>&ndash;</p>
                   <AddField 
                     fieldName='End Date'
-                    placeholder='Type or select end date'
+                    placeholder='Enter or select date'
                     type='date'
                     name='endDate'
                     formValue={formValue.endDate || periodEndValue}
@@ -117,7 +106,7 @@ const ProgramToBeAccreditedModal = ({
                 <hr className='w-[60%] mx-auto text-slate-300'></hr>
                 <AddField 
                   fieldName='Level'
-                  placeholder='Create new or select from existing level...'
+                  placeholder='Enter new level or select an existing one...'
                   type='text'
                   name='level'
                   formValue={formValue.level}
@@ -129,7 +118,7 @@ const ProgramToBeAccreditedModal = ({
                 <div className='relative'>
                   <AddField 
                     fieldName={programs.length > 1 ? 'Programs' : 'Program'}
-                    placeholder='Create new or select from existing program...'
+                    placeholder='Enter a new program or select an existing one...'
                     type='textarea'
                     name='programInput'
                     formValue={programInput}
@@ -141,15 +130,16 @@ const ProgramToBeAccreditedModal = ({
                     onAddValue={(val) => handleAddProgramValue(val)}
                     onRemoveValue={(index) => handleRemoveProgramValue(index)}
                     onChange={(e) => handleProgramChange(e)}
+                    onFocus={handleFocus}
                   />
-                  {(
+                  {focus && (
                     <Popover 
                       handleMouseEnter={handleInfoHover}
                       handleMouseLeave={handleInfoHover}
                       position='top-3 -left-62'
                       content={
                         <p className='text-white text-sm p-2'>
-                          Type a program and press Enter to add it. Click 'Create' to save all programs with their level and period.
+                          Type a program and press Enter to add it. Click "Create" when done to save all programs with their level and period.
                         </p>
                       }
                     />
@@ -192,7 +182,7 @@ const ProgramToBeAccreditedModal = ({
               <div className='relative w-[90%]'>
                 <AddField 
                   fieldName={programs.length > 1 ? 'Programs' : 'Program'}
-                  placeholder='e.g., Master of Management, Doctor of Philosophy in Education in Educational Management, etc.'
+                  placeholder='Enter a new program or select an existing one...'
                   type='textarea'
                   name='programInput'
                   formValue={programInput}

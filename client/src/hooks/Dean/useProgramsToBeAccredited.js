@@ -1,16 +1,21 @@
-import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 import { useRef, useState } from "react";
-import { addProgramToBeAccredited, deleteAccreditationPeriod, deleteProgramToBeAccredited } from "../../api/accreditation/accreditationAPI";
+import { format, parse } from "date-fns";
 import { useFetchProgramsToBeAccredited } from "../fetch-react-query/useFetchProgramsToBeAccredited";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
 import { TOAST_MESSAGES } from "../../constants/messages";
+import { addProgramToBeAccredited, deleteAccreditationPeriod, deleteProgramToBeAccredited } from "../../api/accreditation/accreditationAPI";
+import PATH from "../../constants/path";
 import MODAL_TYPE from "../../constants/modalTypes";
 import useOutsideClick from "../useOutsideClick";
+import parseAccreditationPeriod from "../../utils/parseAccreditationPeriod";
 
 export const useProgramsToBeAccredited = () => {
+  const navigate = useNavigate();
   const { programsToBeAccredited, loading, error } = useFetchProgramsToBeAccredited();
   const periodOptionsRef = useRef();
   const programOptionsRef = useRef();
+  const { PROGRAM_AREAS } = PATH.DEAN;
   const { 
     PROGRAMS_TO_BE_ACCREDITED_CREATION, 
     PROGRAMS_TO_BE_ACCREDITED_ADDITION,
@@ -199,7 +204,8 @@ export const useProgramsToBeAccredited = () => {
     setInfoHover(prev => !prev);
   };
 
-  const handleOptionClick = (options = {}) => {
+  const handleOptionClick = (e, options = {}) => {
+    e.stopPropagation();
     if (options.isFromPeriod && options.data.periodId) {
       setActivePeriodId(prev => (
         prev === options.data.periodId ? null : options.data.periodId
@@ -286,6 +292,22 @@ export const useProgramsToBeAccredited = () => {
     }
   };
 
+  const handleProgramCardClick = (e, options = {}) => {
+    e.stopPropagation();
+
+    if (options.data) {
+      const startDate = parseAccreditationPeriod(options.data.periodKey)[0].replaceAll('-', '');
+      const endDate = parseAccreditationPeriod(options.data.periodKey)[1].replaceAll('-', '');
+      const level = options.data.level;
+      const program = options.data.programName;
+
+      const formattedLevel = String(level).toLowerCase().split(' ').join('-');
+      const formattedProgram = String(program).toLowerCase().split(' ').join('-');
+
+      navigate(PROGRAM_AREAS(startDate + endDate, formattedLevel, formattedProgram));
+    }
+  };
+
   return {
     addButton: {
       disableButton,
@@ -326,6 +348,10 @@ export const useProgramsToBeAccredited = () => {
     modal: {
       modalType,
       modalData
+    },
+
+    navigation: {
+      handleProgramCardClick
     },
 
     option: {
