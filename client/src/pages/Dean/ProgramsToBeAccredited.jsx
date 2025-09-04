@@ -206,7 +206,7 @@ const ProgramsToAccredit = () => {
                   >
 
                     {/* Level label (ex: Level II, Preliminary, etc.) */}
-                    <h2 className='absolute top-3 left-1/2 -translate-x-1/2 flex items-center justify-center w-[60%] md:w-[50%] lg:w-[40%] p-2 text-lg md:text-2xl bg-slate-900 border-b-2 border-slate-500 to-green-700 shadow-md text-white rounded font-bold'>
+                    <h2 className='absolute top-3 left-1/2 -translate-x-1/2 flex items-center justify-center w-[60%] md:w-[50%] lg:w-[40%] p-2 text-lg md:text-2xl bg-green-600 border-b-2 border-slate-200 to-green-700 shadow-md text-white rounded font-bold'>
                       {level}
                     </h2>
 

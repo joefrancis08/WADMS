@@ -145,7 +145,7 @@ const AddField = ({
             onClick={() => (!datePickerDisabled || multiValues.length > 0) && setIsFocused(true)}
             className={`absolute left-3 px-2 rounded-md transition-all
             ${datePickerDisabled && 'cursor-not-allowed'}
-            ${isFloating ? '-top-3 text-sm text-slate-700 bg-gradient-to-r from-gray-100 to-gray-50': 'top-3 text-md text-slate-600'}
+            ${isFloating ? '-top-3 text-sm text-slate-700 bg-white': 'top-3 text-md text-slate-600'}
             ${type === 'date' && 'z-10'}`}>
             {fieldName}
           </label>
