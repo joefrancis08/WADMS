@@ -48,7 +48,7 @@ const addProgramAreaMapping = async (req, res) => {
       results.push(response); // Collect the response for reporting back to client
     }
 
-        // Notify frontend via WebSocket
+    // Notify frontend via WebSocket
     sendUpdate('program-area-update');
 
     // Send success response back to the client with all inserted results
