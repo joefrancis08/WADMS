@@ -8,7 +8,7 @@ export const getProgramsToBeAccredited = async (connection = db) => {
       - level name
       - program name
     */
-    SELECT 
+    SELECT
         ap.start_date     AS period_start,                  -- start date from accreditation_period
         ap.end_date       AS period_end,                    -- end date from accreditation_period
         l.level_name      AS level,                         -- level name from level table

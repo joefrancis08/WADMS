@@ -84,6 +84,7 @@ const ProgramsToAccredit = () => {
     return acc;
   }, {}); // Start with an empty object {}
 
+  console.log(grouped);
   // Options for Period
   const periodOptions = [
     { icon: <ClipboardPlus size={24} />, label: 'Add Level and Programs' },
@@ -92,7 +93,7 @@ const ProgramsToAccredit = () => {
   ];
 
   const programOptions = [
-    { icon: <Folders size={22} />, label: 'View Areas and Parameters' },
+    { icon: <Folders size={22} />, label: 'View Areas' },
     { icon: <SquarePen size={22} />, label: 'Update' },
     { icon: <Trash2 size={22} />, label: 'Delete' },
   ];

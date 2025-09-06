@@ -1,5 +1,6 @@
 import insertProgramAreaMapping from "../../../../models/accreditation/program-area-mapping/POST/insertProgramAreaMapping.js";
 import sendUpdate from "../../../../services/websocket/sendUpdate.js";
+import isValidDateFormat from "../../../../utils/isValidDateFormat.js";
 
 const addProgramAreaMapping = async (req, res) => {
   const { startDate, endDate, levelName, programName, areaNames } = req.body;
@@ -20,7 +21,8 @@ const addProgramAreaMapping = async (req, res) => {
     }
 
     // Validate if levelName and programName is not empty
-    if (!levelName || !programName || typeof levelName !== 'string' || typeof programName !== 'string') {
+    if (!levelName.trim() || !programName.trim() || 
+      typeof levelName !== 'string' || typeof programName !== 'string') {
       return res.status(400).json({
         success: false,
         message: 'Level and program name must not be empty.'
@@ -28,9 +30,9 @@ const addProgramAreaMapping = async (req, res) => {
     }
 
     // Treat areaNames as an array since there might be 2 or more areas
-    const areas = Array.isArray(areaNames)
-      ? areaNames
-      : [areaNames]
+    const areas = (Array.isArray(areaNames) ? areaNames : [areaNames])
+      .map(a => a.trim())
+      .filter(a => a.length > 0);
 
     // Validate if program names array is not empty
     if (areas.length === 0 || !areaNames) {

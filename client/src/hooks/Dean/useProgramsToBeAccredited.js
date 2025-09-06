@@ -244,6 +244,15 @@ export const useProgramsToBeAccredited = () => {
           levelName: options.data.levelName,
           programName: options.data.programName,
         }));
+
+      } else if (options.optionName === 'View Areas' && options.data) {
+        console.log(options.data.period);
+        const startDate = String(options.data.period[0]).split('-').join('');
+        const endDate = String(options.data.period[1]).split('-').join('');
+        const formattedLevel = String(options.data.levelName).toLowerCase().split(' ').join('-');
+        const formattedProgram = String(options.data.programName).toLowerCase().split(' ').join('-');
+
+        navigate(PROGRAM_AREAS(startDate + endDate, formattedLevel, formattedProgram));
       }
     }
   };
@@ -254,7 +263,7 @@ export const useProgramsToBeAccredited = () => {
         const startDate = options.data.startDate;
         const endDate = options.data.endDate;
         const result = await deleteAccreditationPeriod(startDate, endDate, { isFromPTBA: true });
-        console.log(result);
+
 
         if (result.data.success) {
           showSuccessToast(PERIOD_DELETION.SUCCESS);
@@ -294,7 +303,7 @@ export const useProgramsToBeAccredited = () => {
 
   const handleProgramCardClick = (e, options = {}) => {
     e.stopPropagation();
-
+    
     if (options.data) {
       const startDate = parseAccreditationPeriod(options.data.periodKey)[0].replaceAll('-', '');
       const endDate = parseAccreditationPeriod(options.data.periodKey)[1].replaceAll('-', '');

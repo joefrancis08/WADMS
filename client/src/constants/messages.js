@@ -43,6 +43,11 @@ export const TOAST_MESSAGES = Object.freeze({
   PERIOD_DELETION: {
     SUCCESS: 'Deleted successfully!',
     ERROR: 'Something went wrong while deleting period.'
+  },
+
+  AREA_ADDITION: {
+    SUCCESS: 'Added successfully!',
+    ERROR: 'Something went wrong while adding area.'
   }
 });
 

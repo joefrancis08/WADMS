@@ -11,6 +11,8 @@ const MODAL_TYPES = {
   DELETE_PROGRAM_TO_BE_ACCREDITED: 'delete-program-to-be-accredited',
 
   DELETE_PERIOD: 'delete-period',
+
+  ADD_AREA: 'add-area'
 };
 
 export default MODAL_TYPES;

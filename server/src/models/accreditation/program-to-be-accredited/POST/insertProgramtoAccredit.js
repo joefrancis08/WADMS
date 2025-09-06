@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import db from '../../../../config/db.js';
 import getLevelBy from '../../level/GET/getLevelBy.js'
 import getPeriodBy from '../../period/GET/getPeriodBy.js';
@@ -13,6 +14,7 @@ const insertProgramtoAccredit = async (startDate, endDate, level, program) => {
     so we can manually control transaction behavior
   */
   const connection = await db.getConnection();
+  const uuid = uuidv4();
 
   try {
     /* 
@@ -63,10 +65,10 @@ const insertProgramtoAccredit = async (startDate, endDate, level, program) => {
 
     // Insert program and level Id into Program Level Mapping Table
     const query = `
-      INSERT INTO program_level_mapping (program_id, level_id, period_id) 
-      VALUES (?, ?, ?)
+      INSERT INTO program_level_mapping (uuid, program_id, level_id, period_id) 
+      VALUES (?, ?, ?, ?)
     `;
-    await connection.execute(query, [programId, levelId, periodId])
+    await connection.execute(query, [uuid, programId, levelId, periodId])
 
     /* 
       If everything is successful, commit the transaction

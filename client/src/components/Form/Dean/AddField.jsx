@@ -8,6 +8,7 @@ import { getUserRolesDropdown } from '../../../utils/dropdownOptions';
 import useOutsideClick from '../../../hooks/useOutsideClick';
 
 const AddField = ({
+  ref,
   fieldName,
   placeholder,
   type = 'text',
@@ -193,7 +194,7 @@ const AddField = ({
                   <div key={index} className='flex items-center justify-center text-slate-800 px-2 py-1 rounded border border-slate-300'>
                     <button 
                       title='Remove'
-                      type="button"
+                      type='button'
                       onClick={() => {
                         onRemoveValue(index);
                         // Restore the remove value but only restore the original part of dropdownItems
@@ -209,6 +210,7 @@ const AddField = ({
                   </div>
                 ))}
                 <textarea
+                  ref={ref}
                   placeholder={isFloating ? placeholder : ''}
                   readOnly={isReadOnly}
                   name={name}
@@ -222,8 +224,8 @@ const AddField = ({
                   onFocus={() => handleFocus({showDropdown: true})}
                   onBlur={() => handleBlur({hideDropdown: true})}
                   rows={2}
-                  className={`flex resize-y overflow-hidden text-wrap w-full py-2 m-0 focus:outline-none 
-                  ${multiValues.length > 0 && 'border-t border-slate-300 bg-slate-100'}`}
+                  className={`flex resize-none overflow-hidden text-wrap w-full py-2 m-0 focus:outline-none 
+                  ${multiValues.length > 0 && 'border px-4 border-slate-300 bg-slate-100 rounded-md'}`}
                   onInput={(e) => {
                     e.target.style.height = "auto";
                     e.target.style.height = e.target.scrollHeight + "px";
