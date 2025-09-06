@@ -1,4 +1,4 @@
-export const TOAST_MESSAGES = {
+export const TOAST_MESSAGES = Object.freeze({
   REGISTRATION: {
     SUCCESS: 'Registration successful',
     UNSUCCESSFUL: 'Unsuccessful registration. Try again',
@@ -15,9 +15,9 @@ export const TOAST_MESSAGES = {
     ERROR: 'Something went wrong. Try again.'
   },
 
-  TASK_FORCE_ADDITION: {
-    SUCCESS: 'Added successfully.',
-    ERROR: 'Something went wrong while adding user. Try again.'
+  TASK_FORCE_CREATION: {
+    SUCCESS: 'Created successfully.',
+    ERROR: 'Something went wrong while creating task force.'
   },
 
   TASK_FORCE_UPDATE: {
@@ -25,11 +25,31 @@ export const TOAST_MESSAGES = {
     ERROR: 'Something went wrong while updating user. Try again.'
   },
 
+  PROGRAMS_TO_BE_ACCREDITED_CREATION: {
+    SUCCESS: 'Created successfully.',
+    ERROR: 'Something went wrong while creating period, level, and programs.'
+  },
+
   PROGRAMS_TO_BE_ACCREDITED_ADDITION: {
     SUCCESS: 'Added successfully.',
     ERROR: 'Something went wrong while adding programs to be accredited.'
+  },
+
+  PROGRAMS_TO_BE_ACCREDITED_DELETION: {
+    SUCCESS: 'Deleted successfully!',
+    ERROR: 'Something went wrong while deleting programs to be accredited.'
+  },
+
+  PERIOD_DELETION: {
+    SUCCESS: 'Deleted successfully!',
+    ERROR: 'Something went wrong while deleting period.'
+  },
+
+  AREA_ADDITION: {
+    SUCCESS: 'Added successfully!',
+    ERROR: 'Something went wrong while adding area.'
   }
-}
+});
 
 export const VALIDATION_MESSAGE = () => {
   const EMPTY = 'This field is required.';

@@ -1,6 +1,7 @@
-import { CirclePlus, EllipsisVertical, FileUser, FolderTree, Link, SquareUserRound, Trash2, UserRoundPen, View } from 'lucide-react';
+import { CirclePlus, EllipsisVertical, FileUser, FolderTree, Link, Plus, SquareUserRound, Trash2, UserRoundPen, View } from 'lucide-react';
 import Dropdown from '../Dropdown/Dropdown';
 import ProfilePicture from '../ProfilePicture';
+import React from 'react';
 
 const TaskForceCard = ({ 
   dropdownRef,
@@ -15,29 +16,34 @@ const TaskForceCard = ({
   const renderDropdown = (user) => {
     
     const dropDownMenu = [
-      { icon: <FolderTree size={20} />, label: 'Assign Program, Area, & Parameter' },
-      { icon: <Link size={20} />, label: 'Generate Access Link' },
-      { icon: <FileUser size={20} />, label: 'View Details' },
-      { icon: <UserRoundPen size={20} />, label: 'Update' },
-      { icon: <Trash2 size={20} color='red'/>, label: 'Delete' }
+      { icon: <FolderTree size={22} />, label: 'Assign Program, Area, & Parameter' },
+      { icon: <Link size={22} />, label: 'Generate Access Link' },
+      { icon: <FileUser size={22} />, label: 'View Details' },
+      { icon: <UserRoundPen size={22} />, label: 'Update' },
+      { icon: <Trash2 size={22} color='red'/>, label: 'Delete' }
     ];
 
     return (
       activeDropdownId === user.user_uuid && (
         <div ref={dropdownRef} className='absolute top-8 left-15 max-sm:left-10 transition'>
-          <Dropdown width={'w-50'} border={'border border-gray-300 rounded-md'}>
+          <Dropdown width='w-50' border='border border-gray-300 rounded-md'>
             {dropDownMenu.map((menu, index) => (
-              <div
-                onClick={(e) => {
-                  e.stopPropagation(); // This code prevent card click.
-                  handleDropdown(e, menu, user)
-                }}
-                key={index}
-                className={`flex items-center gap-2 text-gray-700 text-sm p-2 hover:first:rounded-t hover:last:rounded-b hover:font-medium hover:shadow transition-all ${menu.label === 'Delete' ? 'border-t border-gray-300 hover:bg-red-300/50' : 'hover:bg-slate-300'}`}
-              >
-                <i>{menu.icon}</i>
-                <p className={menu.label === 'Delete' ? 'text-red-500' : ''}>{menu.label}</p>
-              </div>
+              <React.Fragment key={index}>
+                {menu.label === 'Delete' && (
+                  <hr className='m-1 text-slate-300'></hr>
+                )}
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation(); // This code prevent card click.
+                    handleDropdown(e, menu, user)
+                  }}
+                  className={`flex items-center gap-x-2 text-gray-700 text-sm p-2 rounded-md hover:shadow transition-all active:opacity-60 ${menu.label === 'Delete' ? 
+                  'hover:bg-red-200' : 'hover:bg-slate-200'}`}
+                >
+                  <i>{menu.icon}</i>
+                  <p className={menu.label === 'Delete' ? 'text-red-500' : ''}>{menu.label}</p>
+                </div>
+              </React.Fragment>
             ))}
           </Dropdown>
         </div>
@@ -52,7 +58,7 @@ const TaskForceCard = ({
           <div
             onClick={() => navigation(user)}
             key={user.user_uuid} 
-            className={`relative p-4 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl shadow hover:shadow-xl cursor-pointer transition
+            className={`relative p-4 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl shadow hover:shadow-md hover:shadow-slate-400 active:shadow cursor-pointer transition
               ${label === 'Chair' && 'w-45 sm:w-50 md:w-55 lg:w-60 xl:w-65'}
               ${label === 'Member' && 'w-36 sm:w-40 md:w-44 lg:w-48 xl:w-52'}
             `}
@@ -61,7 +67,7 @@ const TaskForceCard = ({
               onClick={(e) => {
                 handleEllipsisClick(e, user);
               }} 
-              className='absolute top-0 p-2 right-0 text-slate-100 rounded-bl-xl rounded-tr-lg hover:shadow hover:text-slate-200 hover:bg-slate-100/20 active:opacity-50 transition'>
+              className='absolute top-1 p-2 right-1 text-slate-100 rounded-bl-xl rounded-tr-lg hover:shadow hover:text-slate-200 hover:bg-slate-100/20 active:opacity-50 transition'>
               <EllipsisVertical size={20}/>
             </div>
             {renderDropdown(user)}
@@ -93,12 +99,12 @@ const TaskForceCard = ({
             </div>
           </div>
         ))}
-        <div className={`flex items-center justify-center bg-slate-50 p-4 rounded-xl shadow hover:shadow-xl cursor-pointer transition active:shadow
+        <div className={`flex items-center justify-center bg-slate-700 p-4 rounded-xl shadow hover:shadow-md hover:shadow-slate-400 cursor-pointer transition active:shadow
         ${label === 'Chair' && 'w-45 sm:w-50 md:w-55 lg:w-60 xl:w-65'}
         ${label === 'Member' && 'w-36 sm:w-40 md:w-44 lg:w-48 xl:w-52'}`}>
           <div className='flex flex-col items-center justify-center gap-2'>
-            <CirclePlus className='text-slate-500' size={80}/>
-            <p className='text-slate-500 font-medium text-xl text-center'>
+            <Plus className='text-white' size={60}/>
+            <p className='text-white font-medium text-lg text-center'>
               Add
               {
                 label === 'Chair' ? ' Chair' : ' Member'

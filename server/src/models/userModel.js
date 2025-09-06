@@ -1,7 +1,7 @@
 import { deleteAllUsersModel, deleteUserByIdModel } from "./user/DELETE/deleteUserModel.js";
 import { getAllUsersModel, getUserBy } from "./user/GET/getUser.js";
 import { insertUserModel } from "./user/POST/postUser.js";
-import { updateUserModel, updateUserRoleModel } from "./user/UPDATE/updateUserModel.js";
+import { updateUserModel } from "./user/UPDATE/updateUserModel.js";
 
 // POST/INSERT
 export const insertUser = (userUUID, profilePicPath, fullName, email, role) => (

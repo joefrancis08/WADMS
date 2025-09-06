@@ -62,14 +62,15 @@ const addProgramToBeAccredited = async (req, res) => {
       results.push(response); // Collect the response for reporting back to client
     }
 
+    // Notify frontend via WebSocket
+    sendUpdate('programs-to-be-accredited-update');
+
     // Send success response back to the client with all inserted results
     res.status(200).json({
       success: true,
       message: 'Program to accredit added successfully.',
       results
     });
-
-    sendUpdate('programs-to-be-accredited-update');
     
   } catch (error) {
     // Catch duplicate entry

@@ -33,6 +33,15 @@ export const messageHandler = (callback) => {
             callback(); // Trigger the callback again for this case
             break;
 
+          case 'accreditation-period-update':
+            console.log('Accreditation period update received.');
+            callback();
+            break;
+
+          case 'program-area-update':
+            callback();
+            break;
+
           // For any unrecognized message type
           default:
             console.warn('Unhandled WebSocket message type:', data.type);

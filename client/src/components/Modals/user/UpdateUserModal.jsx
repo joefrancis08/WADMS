@@ -10,10 +10,10 @@ const UpdateUserModalHeader = ({ onClose, headerContent }) => {
       </p>
       <button
         onClick={onClose}
-        className="text-gray-600 p-3 rounded-full transition cursor-pointer hover:bg-slate-200 active:opacity-75"
+        className="text-gray-800 p-3 rounded-full transition cursor-pointer hover:bg-slate-200 active:opacity-75"
         aria-label="Close"
       >
-        <X />
+        <X className='h-5 w-5'/>
       </button>
     </>
   );

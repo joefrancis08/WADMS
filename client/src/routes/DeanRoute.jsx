@@ -9,6 +9,7 @@ import Documents from '../pages/Dean/Documents';
 import TaskForceDetail from '../pages/Dean/TaskForceDetail';
 import ProgramsToBeAccredited from '../pages/Dean/ProgramsToBeAccredited';
 import EmailConfirmation from '../pages/EmailConfirmation';
+import ProgramAreas from '../pages/Dean/ProgramAreas';
 
 const { 
   DASHBOARD, 
@@ -16,7 +17,8 @@ const {
   UNVERIFIED_USERS,
   UNVERIFIED_USERS_ID, 
   TASK_FORCE, 
-  PROGRAMS_TO_ACCREDIT, 
+  PROGRAMS_TO_BE_ACCREDITED,
+  PROGRAM_AREAS_TEMPLATE, 
   DOCUMENTS
 } = PATH.DEAN;
 
@@ -28,7 +30,8 @@ const protectedRoutes = [
   { path: UNVERIFIED_USERS, element: <UnverifiedUsers /> },
   { path: TASK_FORCE_DETAIL_TEMPLATE, element: <TaskForceDetail /> },
   { path: UNVERIFIED_USERS_ID, element: <UnverifiedUsers /> },
-  { path: PROGRAMS_TO_ACCREDIT, element: <ProgramsToBeAccredited/> },
+  { path: PROGRAMS_TO_BE_ACCREDITED, element: <ProgramsToBeAccredited/> },
+  { path: PROGRAM_AREAS_TEMPLATE, element: <ProgramAreas/> },
   { path: DOCUMENTS, element: <Documents /> }
 ];
 

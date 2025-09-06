@@ -10,6 +10,7 @@ import userRouter from './src/routes/userRoute.js';
 import setupWebSocket from './src/config/ws.js';
 import programRouter from './src/routes/programRoute.js';
 import accreditationRouter from './src/routes/accreditationRoute.js';
+import areaRouter from './src/routes/areaRoute.js';
 
 dotenv.config({ quiet: true });
 const __filename = fileURLToPath(import.meta.url);
@@ -27,12 +28,12 @@ app.use(sessionMiddleware); // Middleware for session management
 app.use(express.json()); // Passing json data from incoming http request
 app.use(express.urlencoded({ extended: true })); // Middleware to parse URL-encoded data
 
-app.get('/', (req, res) => {
-    res.send('Server is running.');
-})
+// Add this in your server.js after routes
+app.use(express.static(path.join(__dirname, '../client/dist')));
 
 app.use('/users', userRouter);
 app.use('/programs', programRouter);
+app.use('/area', areaRouter);
 app.use('/accreditation', accreditationRouter);
 
 const server = http.createServer(app);
@@ -40,6 +41,11 @@ setupWebSocket(server);
 
 // Serve profile pictures
 app.use('/uploads', express.static(path.join(PROFILE_PIC_PATH)));
+
+// Catch-all route to serve React index.html
+app.get(/^\/(?!users|programs|accreditation).*/, (req, res) => {
+  res.sendFile(path.resolve(__dirname, '../client/dist/index.html'));
+});
 
 // Start the server to make it ready to response to incoming request
 server.listen(port, () => {

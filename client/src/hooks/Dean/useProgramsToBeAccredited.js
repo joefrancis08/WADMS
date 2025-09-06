@@ -1,20 +1,40 @@
-import { format } from "date-fns";
-import { useState } from "react";
-import { addProgramToBeAccredited } from "../../api/accreditation/accreditationAPI";
+import { useNavigate } from "react-router-dom";
+import { useRef, useState } from "react";
+import { format, parse } from "date-fns";
 import { useFetchProgramsToBeAccredited } from "../fetch-react-query/useFetchProgramsToBeAccredited";
-import { showSuccessToast } from "../../utils/toastNotification";
+import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
 import { TOAST_MESSAGES } from "../../constants/messages";
+import { addProgramToBeAccredited, deleteAccreditationPeriod, deleteProgramToBeAccredited } from "../../api/accreditation/accreditationAPI";
+import PATH from "../../constants/path";
 import MODAL_TYPE from "../../constants/modalTypes";
-import useAccreditationLevel from "../fetch-react-query/useAccreditationLevel";
+import useOutsideClick from "../useOutsideClick";
+import parseAccreditationPeriod from "../../utils/parseAccreditationPeriod";
 
 export const useProgramsToBeAccredited = () => {
+  const navigate = useNavigate();
   const { programsToBeAccredited, loading, error } = useFetchProgramsToBeAccredited();
-  const { levels, loadingAL, errorAL } = useAccreditationLevel();
-
-  const { PROGRAMS_TO_BE_ACCREDITED_ADDITION } = TOAST_MESSAGES;
+  const periodOptionsRef = useRef();
+  const programOptionsRef = useRef();
+  const { PROGRAM_AREAS } = PATH.DEAN;
+  const { 
+    PROGRAMS_TO_BE_ACCREDITED_CREATION, 
+    PROGRAMS_TO_BE_ACCREDITED_ADDITION,
+    PROGRAMS_TO_BE_ACCREDITED_DELETION,
+    PERIOD_DELETION
+  } = TOAST_MESSAGES;
 
   const [modalType, setModalType] = useState(null);
+  const [modalData, setModalData] = useState({
+    startDate: null,
+    endDate: null,
+    level: '',
+    program: ''
+  });
+
   const [infoHover, setInfoHover] = useState(false);
+
+  const [activePeriodId, setActivePeriodId] = useState(null);
+  const [activeProgramId, setActiveProgramId] = useState(null);
   
   const [programs, setPrograms] = useState([]); // Save here the program inputted
   const [programInput, setProgramInput] = useState(''); // Temporaty input for text area
@@ -24,8 +44,28 @@ export const useProgramsToBeAccredited = () => {
     level: '',
   });
 
-  const disableAddButton = !formValue.startDate || !formValue.endDate || 
-    !formValue.level.trim() || programs.length === 0;
+  // Reuse useOutsideClick hook to make period and program options disappear
+  useOutsideClick(periodOptionsRef, () => setActivePeriodId(null));
+  useOutsideClick(programOptionsRef, () => setActiveProgramId(null));
+
+  const disableButton = (options = {}) => {
+    if (options.isFromMain) {
+      return (
+        !formValue.startDate || 
+        !formValue.endDate || 
+        !formValue.level.trim() || 
+        programs.length === 0
+      );
+
+    } else if (options.isFromCard) {
+      return (
+        !modalData.startDate ||
+        !modalData.endDate ||
+        !modalData.level.trim() ||
+        programs.length === 0
+      );
+    }
+  };
 
   const handleAddClick = (options = {}) => {
     setModalType(MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED);
@@ -33,21 +73,42 @@ export const useProgramsToBeAccredited = () => {
     if (options.isFromCard) {
       setModalType(MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED_CARD);
     }
+
+    if (options.isFromCard && options.data) {
+      setModalData({
+        startDate: options.data.period[0],
+        endDate: options.data.period[1],
+        level: options.data.level,
+      });
+    }
   };
 
-  // isFromMain and isFromCard is the options (don't forget), add more if necessary
+
+  /* 
+    isFromMain, isFromCard, isFromPeriod, and isFromProgram 
+    is the options (don't forget), add more if necessary 
+  */
   const handleCloseClick = (options = {}) => {
-    setModalType(null);
-    
     if (options.isFromMain) {
       setPrograms([]);
+      setModalType(null);
       setFormValue({
         startDate: null,
         endDate: null,
         level: '',
       });
-    }
+
+    } else if (
+      options.isFromCard || 
+      (options.isFromPeriod && options.isDelete) || 
+      (options.isFromProgram && options.isDelete)) {
+        setPrograms([]);
+        setModalType(null);
+        setModalData(null);
+      }
   };
+
+  console.log(modalData);
 
   const handleInputChange = (eOrDate, fieldName) => {
     // Check if the input is a normal DOM event (like typing in a text field)
@@ -56,12 +117,12 @@ export const useProgramsToBeAccredited = () => {
       setFormValue(prev => ({ ...prev, [name]: value })); // Update the form value for that field
     } else {
       // Input is a Date (from a date picker)
-      if (fieldName === "startDate") {
+      if (fieldName === 'startDate') {
         if (eOrDate) {
           // Start date selected
           const newStartDate = eOrDate; // Store selected start date
           const newEndDate = new Date(newStartDate); // Copy start date
-          newEndDate.setDate(newEndDate.getDate() + 3); // Automatically set end date to 3 days after start date
+          // newEndDate.setDate(newEndDate.getDate() + 3); // Automatically set end date to 3 days after start date
           setFormValue(prev => ({ ...prev, startDate: newStartDate, endDate: newEndDate }));
           // Update both startDate and endDate in form state
 
@@ -98,7 +159,7 @@ export const useProgramsToBeAccredited = () => {
     setPrograms(programs.filter((_, i) => i !== index))
   };
 
-  const handleSave = async () => {
+  const handleSave = async (options = {}) => {
     try {
       if (formValue.startDate && formValue.endDate && formValue.level && programs.length > 0) {
         const formattedStartDate = format(formValue.startDate, "yyyy-MM-dd");
@@ -112,25 +173,162 @@ export const useProgramsToBeAccredited = () => {
         );
 
         handleCloseClick({ isFromMain: true });
-        res.data.success && showSuccessToast(PROGRAMS_TO_BE_ACCREDITED_ADDITION.SUCCESS);
+        res.data.success && showSuccessToast(PROGRAMS_TO_BE_ACCREDITED_CREATION.SUCCESS);
       }
+
+      if (options.isFromCard && options.data) {
+        const startDate = options.data.startDate;
+        const endDate = options.data.endDate;
+        const level = options.data.level;
+        const res = await addProgramToBeAccredited(
+          startDate,
+          endDate,
+          level,
+          programs
+        );
+
+        handleCloseClick({ isFromCard: true });
+        if (res.data.success) {
+          showSuccessToast(PROGRAMS_TO_BE_ACCREDITED_ADDITION.SUCCESS);
+        } else {
+          showErrorToast(PROGRAMS_TO_BE_ACCREDITED_ADDITION.ERROR);
+        }
+      }
+
     } catch (error) {
       console.error('Error adding program to be accredited: ', error);
     }
   };
 
   const handleInfoHover = () => {
-    setInfoHover(!infoHover);
+    setInfoHover(prev => !prev);
+  };
+
+  const handleOptionClick = (e, options = {}) => {
+    e.stopPropagation();
+    if (options.isFromPeriod && options.data.periodId) {
+      setActivePeriodId(prev => (
+        prev === options.data.periodId ? null : options.data.periodId
+      ));
+
+    } else if (options.isFromProgram && options.data.programId) {
+      setActiveProgramId(prev => (
+        prev === options.data.programId ? null : options.data.programId
+      ));
+    }
+  };
+
+  const handleOptionItemClick = (e, options = {}) => {
+    e.stopPropagation();
+    if (options.isFromPeriod && options.optionName) {
+      setActivePeriodId(null);
+      console.log('Delete Click from Period');
+
+      if (options.optionName === 'Delete' && options.data) {
+        setModalType(MODAL_TYPE.DELETE_PERIOD);
+        setModalData(prev => ({
+          ...prev,
+          startDate: options.data.period[0],
+          endDate: options.data.period[1]
+        }));
+      }
+      
+    } else if (options.isFromProgram && options.optionName) {
+      setActiveProgramId(null);
+      if (options.optionName === 'Delete' && options.data) {
+        setModalType(MODAL_TYPE.DELETE_PROGRAM_TO_BE_ACCREDITED);
+        setModalData(prev => ({
+          ...prev, 
+          startDate: options.data.period[0],
+          endDate: options.data.period[1],
+          levelName: options.data.levelName,
+          programName: options.data.programName,
+        }));
+
+      } else if (options.optionName === 'View Areas' && options.data) {
+        console.log(options.data.period);
+        const startDate = String(options.data.period[0]).split('-').join('');
+        const endDate = String(options.data.period[1]).split('-').join('');
+        const formattedLevel = String(options.data.levelName).toLowerCase().split(' ').join('-');
+        const formattedProgram = String(options.data.programName).toLowerCase().split(' ').join('-');
+
+        navigate(PROGRAM_AREAS(startDate + endDate, formattedLevel, formattedProgram));
+      }
+    }
+  };
+
+  const handleConfirmClick = async (options = {}) => {
+    if (options.isFromPeriod && options.isDelete && options.data) {
+      try {
+        const startDate = options.data.startDate;
+        const endDate = options.data.endDate;
+        const result = await deleteAccreditationPeriod(startDate, endDate, { isFromPTBA: true });
+
+
+        if (result.data.success) {
+          showSuccessToast(PERIOD_DELETION.SUCCESS);
+        } else {
+          showErrorToast(PERIOD_DELETION.ERROR);
+        }
+
+        handleCloseClick({ isFromPeriod: true, isDelete: true });
+
+      } catch (error) {
+        console.error('Failed to delete period', error);
+        throw error;
+      }
+
+    } else if (options.isFromProgram && options.isDelete && options.data) {
+      try {
+        const startDate = options.data.startDate;
+        const endDate = options.data.endDate;
+        const levelName = options.data.levelName;
+        const programName = options.data.programName;
+        const result = await deleteProgramToBeAccredited(startDate, endDate, levelName, programName);
+        console.log(result);
+        if (result.data.success) {
+          showSuccessToast(PROGRAMS_TO_BE_ACCREDITED_DELETION.SUCCESS);
+        } else {
+          showErrorToast(PROGRAMS_TO_BE_ACCREDITED_DELETION.ERROR);
+        }
+
+        handleCloseClick({ isFromProgram: true, isDelete: true });
+
+      } catch (error) {
+        console.error('Failed to delete program.', error);
+        throw error;
+      }
+    }
+  };
+
+  const handleProgramCardClick = (e, options = {}) => {
+    e.stopPropagation();
+    
+    if (options.data) {
+      const startDate = parseAccreditationPeriod(options.data.periodKey)[0].replaceAll('-', '');
+      const endDate = parseAccreditationPeriod(options.data.periodKey)[1].replaceAll('-', '');
+      const level = options.data.level;
+      const program = options.data.programName;
+
+      const formattedLevel = String(level).toLowerCase().split(' ').join('-');
+      const formattedProgram = String(program).toLowerCase().split(' ').join('-');
+
+      navigate(PROGRAM_AREAS(startDate + endDate, formattedLevel, formattedProgram));
+    }
   };
 
   return {
     addButton: {
-      disableAddButton,
+      disableButton,
       handleAddClick
     },
 
     close: {
       handleCloseClick
+    },
+
+    confirmation: {
+      handleConfirmClick
     },
 
     dropdown: {
@@ -157,7 +355,19 @@ export const useProgramsToBeAccredited = () => {
     },
 
     modal: {
-      modalType
+      modalType,
+      modalData
+    },
+
+    navigation: {
+      handleProgramCardClick
+    },
+
+    option: {
+      handleOptionClick,
+      activePeriodId,
+      activeProgramId,
+      handleOptionItemClick
     },
 
     program: {
@@ -166,6 +376,11 @@ export const useProgramsToBeAccredited = () => {
       handleProgramChange,
       handleAddProgramValue,
       handleRemoveProgramValue,
+    },
+
+    ref: {
+      periodOptionsRef,
+      programOptionsRef
     },
 
     saveHandler: {

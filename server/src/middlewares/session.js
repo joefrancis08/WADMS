@@ -19,7 +19,7 @@ const sessionStore = new MySQLStore({
 
 const sessionMiddleware = session({
   key: process.env.SESSION_KEY,
-  secret: process.env.SESSION_SECRET,
+  secret: process.env.SESSION_SECRET || 'default_secret',
   store: sessionStore,
   resave: false,
   saveUninitialized: false,

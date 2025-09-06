@@ -1,3 +1,5 @@
+import { CircleQuestionMark } from "lucide-react";
+
 const ModalLayout = ({ 
   onClose, 
   header, 
@@ -13,8 +15,8 @@ const ModalLayout = ({
   }
 
   return (
-    <div onClick={() => { onClose?.() }} className="h-full fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs overflow-hidden">
-      <div onClick={handleContentClick} className="w-full md:max-w-xl max-md:mx-4 bg-gradient-to-r from-gray-100 to-white rounded shadow-2xl px-6 pt-4 animate-fadeIn ">
+    <div className="h-full fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs overflow-hidden">
+      <div onClick={handleContentClick} className="w-full md:max-w-xl max-md:mx-4 bg-white rounded shadow-2xl px-6 pt-4 animate-fadeIn ">
         <div className='flex text-gray-700 justify-between items-center max-md:items-center'>
           {header}
           <button className='hidden' onClick={() => { onClose?.() }}></button>

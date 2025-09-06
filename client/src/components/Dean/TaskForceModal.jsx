@@ -8,8 +8,10 @@ import ConfirmationModal from '../Modals/ConfirmationModal';
 import AddField from '../Form/Dean/AddField';
 import { emailRegex } from '../../utils/regEx';
 import Tooltip from '../Popover';
+import Popover from '../Popover';
 
 const TaskForceModal = ({
+  loading,
   modalType,
   formValue,
   emailAlreadyExist,
@@ -47,25 +49,26 @@ const TaskForceModal = ({
             formValue.fullName.trim() === '' ||
             formValue.email.trim() === '' ||
             formValue.role.trim() === '' ||
+            loading ||
             emailAlreadyExist ||
             !emailRegex.test(formValue.email)
           }
-          primaryButton="Add"
+          primaryButton="Create"
           secondaryButton="Cancel"
           headerContent={
             <div className='relative flex items-center transition-all duration-300'>
-              <p className='mr-2 text-2xl font-bold text-slate-700'>Add Task Force</p>
+              <p className='mr-2 text-2xl font-bold text-slate-700'>Create Task Force</p>
               <CircleQuestionMark 
                 onClick={handleInfoClick}
                 className='text-slate-500 hover:text-slate-600 cursor-pointer' size={20}
               />
               {infoClick && (
-                <Tooltip 
+                <Popover 
                   handleInfoClick={handleInfoClick}
-                  position='top-3 left-52'
+                  position='top-2 left-1/2 translate-x-1/2'
                   content={
                     <p className='text-slate-100 text-xs p-2'>
-                      The "Add" button is enabled only if all mandatory fields (excluding the profile picture) are completed and the email is correctly formatted and not already taken.
+                      The "Create" button is enabled only if all mandatory fields (excluding the profile picture) are completed and the email is correctly formatted and not already taken.
                     </p>
                   }
                 />

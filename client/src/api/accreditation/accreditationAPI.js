@@ -11,6 +11,16 @@ export const addProgramToBeAccredited = (startDate, endDate, levelName, programN
   });
 };
 
+export const addProgramAreas = (startDate, endDate, levelName, programName, areaNames) => {
+  return axios.post(`${API_BASE_URL}/accreditation/add-program-areas`, {
+    startDate, 
+    endDate, 
+    levelName, 
+    programName, 
+    areaNames
+  });
+};
+
 export const fetchProgramsToBeAccredited = (controller) => {
   return axios.get(`${API_BASE_URL}/accreditation/fetch-programs-to-be-accredited`, {
     signal: controller.signal
@@ -28,3 +38,43 @@ export const fetchAccreditationPeriod = (controller) => {
     signal: controller.signal
   });
 };
+
+export const fetchProgramAreas = (startDate, endDate, levelName, programName, controller) => {
+  return axios.get(`${API_BASE_URL}/accreditation/fetch-program-areas`, {
+    params: {
+      startDate,
+      endDate,
+      levelName,
+      programName
+    }, 
+    signal: controller.signal
+  });
+};
+
+export const deleteProgramToBeAccredited = (startDate, endDate, levelName, programName) => {
+  return axios.delete(`${API_BASE_URL}/accreditation/delete-programs-to-be-accredited`, {
+    params: {
+      startDate,
+      endDate,
+      levelName,
+      programName
+    }
+  });
+};
+
+export const deleteAccreditationPeriod = (startDate, endDate, options = {}) => {
+  if (options.isFromPTBA) {
+    return axios.delete(`${API_BASE_URL}/accreditation/delete-accreditation-period`, {
+      params: {
+        startDate,
+        endDate
+      }
+    });
+    
+  } else {
+    return 'Invalid options.';
+  }
+  
+}
+
+
