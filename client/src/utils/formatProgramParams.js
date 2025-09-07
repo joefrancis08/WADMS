@@ -1,5 +1,4 @@
-const formatProgramParams = (dateRange, levelSlug, programSlug, areaSlug) => {
-  console.log(areaSlug);
+const formatProgramParams = (dateRange, levelSlug, programSlug) => {
   const startDate = dateRange.substring(0, 8);
   const endDate   = dateRange.substring(8, 16);
 
@@ -36,7 +35,6 @@ const formatProgramParams = (dateRange, levelSlug, programSlug, areaSlug) => {
     endDate: formatDate(endDate),
     level: capitalizeWords(levelSlug),
     program: capitalizeWords(programSlug),
-    area: areaSlug ? capitalizeWords(areaSlug) : ''
   };
 };
 

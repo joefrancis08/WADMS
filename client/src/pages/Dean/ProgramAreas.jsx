@@ -5,7 +5,7 @@ import formatProgramParams from '../../utils/formatProgramParams';
 import { useProgramsToBeAccredited } from '../../hooks/Dean/useProgramsToBeAccredited';
 import { useFetchProgramsToBeAccredited } from '../../hooks/fetch-react-query/useFetchProgramsToBeAccredited';
 import useFetchProgramAreas from '../../hooks/fetch-react-query/useFetchProgramAreas';
-import { ArrowBigLeft, ArrowDownLeft, ArrowLeft, ChevronRight, EllipsisVertical, Folder, FolderPlus, Plus } from 'lucide-react';
+import { ArrowBigLeft, ArrowDownLeft, ArrowLeft, ChevronRight, EllipsisVertical, Folder, FolderOpen, FolderPlus, Plus } from 'lucide-react';
 import ContentHeader from '../../components/Dean/ContentHeader';
 import MODAL_TYPE from '../../constants/modalTypes';
 import AreaBaseModal from '../../components/Modals/accreditation/AreaBaseModal';
@@ -167,7 +167,7 @@ const ProgramAreas = () => {
     <DeanLayout>
       <div className='flex-1'>
         <ContentHeader 
-          headerIcon={Folder}
+          headerIcon={FolderOpen}
           headerTitle='Areas'
           searchTitle='Search Areas'
           placeholder='Search Areas...'
@@ -188,10 +188,13 @@ const ProgramAreas = () => {
           </p>
         </div>
         <div className='flex justify-end px-5 py-3'>
-          <FolderPlus
+          <button
             onClick={handleAddArea}
-            className='h-8 w-8 cursor-pointer hover:opacity-80 active:opacity-50'
-          />
+            title='Add Areas'
+            className='cursor-pointer hover:opacity-80 active:opacity-50'
+          >
+            <Plus className='h-8 w-8' />
+          </button>
         </div>
         <div className='flex flex-wrap gap-4 justify-center mb-8'>
           {data.length === 0 && (
@@ -203,7 +206,7 @@ const ProgramAreas = () => {
             <div
               key={index}
               onClick={() => handleAreaCardClick(area_uuid)}  
-              className='relative flex flex-col items-start justify-center border py-8 px-2 w-75 rounded-md transition-all cursor-pointer hover:bg-slate-50 active:opacity-50'
+              className='relative flex flex-col items-start justify-center border py-8 px-4 w-75 rounded-md transition-all cursor-pointer hover:bg-slate-50 active:opacity-50'
             >
               {String(area).toUpperCase().split(':').map((s, i) => (
                 <p 

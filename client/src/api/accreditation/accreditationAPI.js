@@ -51,6 +51,19 @@ export const fetchProgramAreas = (startDate, endDate, levelName, programName, co
   });
 };
 
+export const fetchAreaParameters = ({ startDate, endDate, levelName, programName, areaName}, controller) => {
+  return axios.get(`${API_BASE_URL}/accreditation/fetch-area-parameters`, {
+    params: {
+      startDate,
+      endDate,
+      levelName,
+      programName,
+      areaName
+    },
+    signal: controller.signal
+  })
+}
+
 export const deleteProgramToBeAccredited = (startDate, endDate, levelName, programName) => {
   return axios.delete(`${API_BASE_URL}/accreditation/delete-programs-to-be-accredited`, {
     params: {

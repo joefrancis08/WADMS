@@ -42,6 +42,10 @@ export const messageHandler = (callback) => {
             callback();
             break;
 
+          case 'area-parameter-update':
+            callback();
+            break;
+
           // For any unrecognized message type
           default:
             console.warn('Unhandled WebSocket message type:', data.type);
