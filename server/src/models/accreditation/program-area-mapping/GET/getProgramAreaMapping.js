@@ -3,11 +3,12 @@ import db from "../../../../config/db.js";
 const getProgramAreaMapping = async (startDate, endDate, levelName, programName, connection = null) => {
   const query = `
     SELECT
+      a.uuid           AS area_uuid,
       ap.start_date    AS period_start,
       ap.end_date      AS period_end,
-      al.level_name   AS level,
-      pr.program_name AS program,
-      a.area_name     AS area
+      al.level_name    AS level,
+      pr.program_name  AS program,
+      a.area_name      AS area
     FROM program_area_mapping pam
     JOIN program_level_mapping plm
       ON pam.program_level_mapping_id = plm.id

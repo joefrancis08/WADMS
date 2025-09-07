@@ -8,7 +8,7 @@ const insertProgramAreaMapping = async (startDate, endDate, level, program, area
   try {
     await connection.beginTransaction();
 
-    // Step 1: Check if an exist, if not insert it.
+    // Step 1: Check if an area exist, if not insert it.
     const areaResult = await getAreaBy('area_name', area, connection);
 
     let areaId;
@@ -20,7 +20,7 @@ const insertProgramAreaMapping = async (startDate, endDate, level, program, area
       areaId = newArea.insertId;
     }
 
-    // Step : Get the program-level mapping id
+    // Step 2: Get the program-level mapping id
     const programLevelMappingQuery = `
       SELECT plm.id
       FROM program_level_mapping plm
@@ -48,7 +48,20 @@ const insertProgramAreaMapping = async (startDate, endDate, level, program, area
 
     const programLevelMappingId = rows[0].id;
 
-    // Step 3: Insert mapping
+    // Step 3: Check if program_area_mapping already exists
+    const checkQuery = `
+      SELECT id FROM program_area_mapping
+      WHERE program_level_mapping_id = ?
+      AND area_id = ?
+    `;
+
+    const [exists] = await connection.execute(checkQuery, [programLevelMappingId, areaId]);
+    if (exists.length > 0) {
+      throw new Error('DUPLICATE_ENTRY');
+    }
+
+
+    // Step 4: Insert mapping
     const query = `
       INSERT INTO program_area_mapping (program_level_mapping_id, area_id)
       VALUES (?, ?)
@@ -57,7 +70,7 @@ const insertProgramAreaMapping = async (startDate, endDate, level, program, area
     await connection.execute(query, [programLevelMappingId, areaId]);
 
     await connection.commit();
-    return {programLevelMappingId, areaId};
+    return { programLevelMappingId, areaId };
 
   } catch (error) {
     await connection.rollback();

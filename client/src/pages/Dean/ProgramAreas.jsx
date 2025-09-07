@@ -31,6 +31,7 @@ const ProgramAreas = () => {
   const { AREA_PARAMETERS, PROGRAMS_TO_BE_ACCREDITED } = PATH.DEAN;
 
   const { areas: areasData, loading, error, refetch } = useFetchProgramAreas(startDate, endDate, formattedLevel, formattedProgram);
+  console.log(areasData);
 
   const data = areasData.data ?? [];
 
@@ -103,13 +104,11 @@ const ProgramAreas = () => {
   }
 
   const handleAreaCardClick = (area) => {
-    const slug = area.split(":")[0].trim().toLowerCase().replace(/\s+/g, "-");
-    console.log(slug);
     navigate(AREA_PARAMETERS({
       period,
       level,
       program,
-      area: slug
+      area
     }))
   };
 
@@ -200,10 +199,10 @@ const ProgramAreas = () => {
               No areas to display.
             </p>
           )}
-          {data.map(({area}, index) => (
+          {data.map(({area_uuid, area}, index) => (
             <div
               key={index}
-              onClick={() => handleAreaCardClick(area)}  
+              onClick={() => handleAreaCardClick(area_uuid)}  
               className='relative flex flex-col items-start justify-center border py-8 px-2 w-75 rounded-md transition-all cursor-pointer hover:bg-slate-50 active:opacity-50'
             >
               {String(area).toUpperCase().split(':').map((s, i) => (

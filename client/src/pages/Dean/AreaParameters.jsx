@@ -5,13 +5,16 @@ import { ChevronRight, FileSpreadsheet } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import formatProgramParams from '../../utils/formatProgramParams';
 import PATH from '../../constants/path';
+import useFetchProgramAreas from '../../hooks/fetch-react-query/useFetchProgramAreas';
+import formatAreaName from '../../utils/formatAreaName';
 
 const AreaParameters = () => {
+  const navigate = useNavigate();
+
   const { 
     PROGRAMS_TO_BE_ACCREDITED,
     PROGRAM_AREAS_TEMPLATE
   } = PATH.DEAN;
-  const navigate = useNavigate();
 
   const { period, level, program, area } = useParams();
   console.log(area);
@@ -21,8 +24,16 @@ const AreaParameters = () => {
     endDate, 
     level: formattedLevel, 
     program: formattedProgram,
-    area: formattedArea 
-  } = formatProgramParams(period, level, program, area);
+  } = formatProgramParams(period, level, program);
+
+  const { areas: areasData, loading, error, refetch } = useFetchProgramAreas(startDate, endDate, formattedLevel, formattedProgram);
+
+  const data = areasData.data ?? [];
+
+  const areaObj = data.find(d => d.area_uuid === area) ?? null;
+  const areaName = areaObj ? areaObj.area : 'Unknown area';
+
+  console.log(areaName);
 
   return (
     <DeanLayout>
@@ -53,7 +64,7 @@ const AreaParameters = () => {
               Areas
             </span>
             <ChevronRight className='h-5 w-5'/>
-            {formattedArea}
+            {formatAreaName(areaName)}
           </p>
         </div>
       </div>
