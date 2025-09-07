@@ -13,6 +13,7 @@ import AddField from '../../components/Form/Dean/AddField';
 import { addProgramAreas } from '../../api/accreditation/accreditationAPI';
 import { TOAST_MESSAGES } from '../../constants/messages';
 import { showErrorToast, showSuccessToast } from '../../utils/toastNotification';
+import PATH from '../../constants/path';
 
 const ProgramAreas = () => {
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ const ProgramAreas = () => {
   } = formatProgramParams(period, level, program);
 
   const { AREA_ADDITION } = TOAST_MESSAGES;
+  const { AREA_PARAMETERS, PROGRAMS_TO_BE_ACCREDITED } = PATH.DEAN;
 
   const { areas: areasData, loading, error, refetch } = useFetchProgramAreas(startDate, endDate, formattedLevel, formattedProgram);
 
@@ -100,6 +102,17 @@ const ProgramAreas = () => {
     }
   }
 
+  const handleAreaCardClick = (area) => {
+    const slug = area.split(":")[0].trim().toLowerCase().replace(/\s+/g, "-");
+    console.log(slug);
+    navigate(AREA_PARAMETERS({
+      period,
+      level,
+      program,
+      area: slug
+    }))
+  };
+
   const renderModal = () => {
     switch (modalType) {
       case MODAL_TYPE.ADD_AREA:
@@ -166,7 +179,7 @@ const ProgramAreas = () => {
           <p className='flex flex-row items-center'>
             <span 
               title='Back to Programs'
-              onClick={() => navigate(-1)}
+              onClick={() => navigate(PROGRAMS_TO_BE_ACCREDITED)}
               className='hover:underline hover:text-green-800 cursor-pointer'
             >
               {formattedLevel} - {formattedProgram}
@@ -181,7 +194,7 @@ const ProgramAreas = () => {
             className='h-8 w-8 cursor-pointer hover:opacity-80 active:opacity-50'
           />
         </div>
-        <div className='flex flex-wrap gap-4 justify-center'>
+        <div className='flex flex-wrap gap-4 justify-center mb-8'>
           {data.length === 0 && (
             <p>
               No areas to display.
@@ -189,13 +202,14 @@ const ProgramAreas = () => {
           )}
           {data.map(({area}, index) => (
             <div
-              key={index} 
-              className='relative flex flex-col items-center justify-center border py-8 px-2 w-75 rounded-md transition-all'
+              key={index}
+              onClick={() => handleAreaCardClick(area)}  
+              className='relative flex flex-col items-start justify-center border py-8 px-2 w-75 rounded-md transition-all cursor-pointer hover:bg-slate-50 active:opacity-50'
             >
               {String(area).toUpperCase().split(':').map((s, i) => (
                 <p 
-                  key={i} 
-                  className={`text-center 
+                  key={i}
+                  className={`text-start 
                     ${i === 0 
                       ? 'text-xl font-bold' 
                       : 'text-md text-slate-700 font-semibold'}`

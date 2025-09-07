@@ -1,4 +1,5 @@
-const formatProgramParams = (dateRange, levelSlug, programSlug) => {
+const formatProgramParams = (dateRange, levelSlug, programSlug, areaSlug) => {
+  console.log(areaSlug);
   const startDate = dateRange.substring(0, 8);
   const endDate   = dateRange.substring(8, 16);
 
@@ -8,7 +9,7 @@ const formatProgramParams = (dateRange, levelSlug, programSlug) => {
   // Words to keep lowercase unless first word
   const smallWords = ['of', 'in', 'on', 'at', 'to', 'and', 'the', 'a', 'an'];
 
-  const capitalizeWords = (str) =>
+  const capitalizeWords = (str = '') =>
     str
       .replace(/-/g, " ")
       .split(" ")
@@ -34,7 +35,8 @@ const formatProgramParams = (dateRange, levelSlug, programSlug) => {
     startDate: formatDate(startDate),
     endDate: formatDate(endDate),
     level: capitalizeWords(levelSlug),
-    program: capitalizeWords(programSlug)
+    program: capitalizeWords(programSlug),
+    area: areaSlug ? capitalizeWords(areaSlug) : ''
   };
 };
 

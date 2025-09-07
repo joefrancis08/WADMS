@@ -252,7 +252,11 @@ export const useProgramsToBeAccredited = () => {
         const formattedLevel = String(options.data.levelName).toLowerCase().split(' ').join('-');
         const formattedProgram = String(options.data.programName).toLowerCase().split(' ').join('-');
 
-        navigate(PROGRAM_AREAS(startDate + endDate, formattedLevel, formattedProgram));
+        navigate(PROGRAM_AREAS({ 
+          period: startDate + endDate, 
+          level: formattedLevel, 
+          program: formattedProgram 
+        }));
       }
     }
   };
@@ -313,7 +317,11 @@ export const useProgramsToBeAccredited = () => {
       const formattedLevel = String(level).toLowerCase().split(' ').join('-');
       const formattedProgram = String(program).toLowerCase().split(' ').join('-');
 
-      navigate(PROGRAM_AREAS(startDate + endDate, formattedLevel, formattedProgram));
+      navigate(PROGRAM_AREAS({ 
+        period: startDate + endDate, 
+        level: formattedLevel, 
+        program: formattedProgram 
+      }));
     }
   };
 
