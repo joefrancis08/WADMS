@@ -191,7 +191,7 @@ const ProgramAreas = () => {
             <span 
               title='Back to Programs'
               onClick={() => navigate(PROGRAMS_TO_BE_ACCREDITED)}
-              className='hover:underline hover:text-green-800 cursor-pointer'
+              className='hover:underline opacity-80 hover:opacity-100 cursor-pointer transition-all'
             >
               {formattedLevel} - {formattedProgram}
             </span>
