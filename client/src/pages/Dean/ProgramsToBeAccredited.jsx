@@ -217,7 +217,7 @@ const ProgramsToAccredit = () => {
                   >
 
                     {/* Level label (ex: Level II, Preliminary, etc.) */}
-                    <h2 className='absolute top-3 left-1/2 -translate-x-1/2 flex items-center justify-center w-[60%] md:w-[50%] lg:w-[40%] p-2 text-lg md:text-2xl bg-gradient-to-l from-slate-900 via-green-600 to-slate-900 border-b border-slate-300 shadow-md text-white rounded font-bold'>
+                    <h2 className='absolute top-3 left-1/2 -translate-x-1/2 flex items-center justify-center w-[60%] md:w-[50%] lg:w-[40%] p-2 text-lg md:text-2xl bg-gradient-to-l from-slate-900 via-green-600 to-slate-900 border-b border-slate-400 shadow-md text-white rounded font-bold'>
                       {level}
                     </h2>
 
@@ -246,7 +246,7 @@ const ProgramsToAccredit = () => {
                             })}
                             className='relative flex items-center justify-center h-60 py-8 px-4 bg-gradient-to-b from-green-700 to-yellow-400 rounded-xl shadow hover:shadow-slate-500 hover:shadow-md active:shadow cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80'
                           >
-                            <p className='flex items-center justify-center text-wrap rounded-md bg-gradient-to-b border-slate-400 from-slate-900 to-green-600 w-full text-lg md:text-xl text-white text-center shadow h-40 font-bold p-5'>
+                            <p className='flex items-center justify-center text-wrap rounded-xl bg-gradient-to-b border-slate-400 from-slate-900 to-green-600 w-full text-lg md:text-xl text-white text-center shadow h-40 font-bold p-5'>
                               {programName}
                             </p>
 
@@ -320,7 +320,7 @@ const ProgramsToAccredit = () => {
                           }  
                         })}
                         title='Click to add program'
-                        className='relative flex flex-col items-center justify-center gap-y-2 h-60 p-4 bg-slate-600 rounded-lg shadow-md hover:shadow-slate-400 hover:shadow-md active:shadow cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80'
+                        className='relative flex flex-col items-center justify-center gap-y-2 h-60 p-4 bg-slate-600 rounded-xl shadow-md hover:shadow-slate-400 hover:shadow-md active:shadow cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80'
                       >
                         <Plus className='text-white h-16 w-16 rounded-full'/>
                         <button className='text-xl font-medium text-white py-4 px-6 rounded-full cursor-pointer'>
