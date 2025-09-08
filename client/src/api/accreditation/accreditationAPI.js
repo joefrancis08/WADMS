@@ -21,6 +21,17 @@ export const addProgramAreas = (startDate, endDate, levelName, programName, area
   });
 };
 
+export const addAreaParameters = ({ startDate, endDate, levelName, programName, areaName, parameterNames }) => {
+  return axios.post(`${API_BASE_URL}/accreditation/add-area-parameters`, {
+    startDate,
+    endDate,
+    levelName,
+    programName,
+    areaName,
+    parameterNames
+  });
+};
+
 export const fetchProgramsToBeAccredited = (controller) => {
   return axios.get(`${API_BASE_URL}/accreditation/fetch-programs-to-be-accredited`, {
     signal: controller.signal

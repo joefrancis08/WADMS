@@ -65,10 +65,10 @@ const insertProgramtoAccredit = async (startDate, endDate, level, program) => {
 
     // Insert program and level Id into Program Level Mapping Table
     const query = `
-      INSERT INTO program_level_mapping (uuid, program_id, level_id, period_id) 
-      VALUES (?, ?, ?, ?)
+      INSERT INTO program_level_mapping (program_id, level_id, period_id) 
+      VALUES (?, ?, ?)
     `;
-    await connection.execute(query, [uuid, programId, levelId, periodId])
+    await connection.execute(query, [programId, levelId, periodId])
 
     /* 
       If everything is successful, commit the transaction

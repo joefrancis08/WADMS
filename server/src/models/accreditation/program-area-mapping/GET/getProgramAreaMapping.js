@@ -24,6 +24,35 @@ const getProgramAreaMapping = async (startDate, endDate, levelName, programName,
       AND ap.end_date = ?
       AND al.level_name = ?
       AND pr.program_name = ?
+    ORDER BY
+      FIELD(
+        TRIM(
+          SUBSTRING_INDEX(
+            SUBSTRING_INDEX(a.area_name, ':', 1),
+            '-', 1
+          )
+        ),
+        'AREA I',
+        'AREA II',
+        'AREA III',
+        'AREA IV',
+        'AREA V',
+        'AREA VI',
+        'AREA VII',
+        'AREA VIII',
+        'AREA IX',
+        'AREA X',
+        'AREA XI',
+        'AREA XII',
+        'AREA XIII',
+        'AREA XIV',
+        'AREA XV',
+        'AREA XVI',
+        'AREA XVII',
+        'AREA XVIII',
+        'AREA XIX',
+        'AREA XX'
+      )
   `;
 
   try {

@@ -11,6 +11,7 @@ import ConfirmationModal from '../Modals/ConfirmationModal';
 import formatAccreditationPeriod from '../../utils/formatAccreditationPeriod';
 
 const ProgramToBeAccreditedModal = ({
+  ref,
   modalType,
   formValue,
   programs,
@@ -19,17 +20,15 @@ const ProgramToBeAccreditedModal = ({
   handlers,
   modalData
 }) => {
-  const [focus, setFocus] = useState(false);
-
   // Here we store the value of the selected period in the dropdown
   const [ periodStartValue, setPeriodStartValue] = useState(null); 
   const [ periodEndValue, setPeriodEndValue ] = useState(null);
 
-  const { levels, loadingAL, errorAL } = useAccreditationLevel();
+  const { levels, loading: levelLoading, error: errorLoading } = useAccreditationLevel();
   const data = levels?.data ?? []; // Fallback to [] if levels.data is null or undefined
   const levelsArray = data.map(item => item.level); // Map over data to extract only the "level" values
 
-  const { programsData, loadingPr, errorPr } = usePrograms();
+  const { programsData, loading: programLoading, error: programError } = usePrograms();
   const dataPr = programsData?.data ?? [];
   const programsArray = dataPr.map(item => item.program);
   
@@ -52,13 +51,6 @@ const ProgramToBeAccreditedModal = ({
     handleProgramChange({ target: { name: 'programInput', value: '' } }); // Reset textarea
   };
 
-  const handleFocus = () => {
-    setFocus(true);
-
-    const interval = setTimeout(() => setFocus(false), 10000);
-    return () => clearInterval(interval);
-  };
-
   switch (modalType) {
       case MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED:
         return (
@@ -73,7 +65,7 @@ const ProgramToBeAccreditedModal = ({
             disabled={disableButton?.({ isFromMain: true })}
             headerContent={
               <p className='ml-5 text-xl font-semibold text-slate-900'>
-                Create Period, Level, and Program
+                Create New Period, Level, and Program
               </p>
             }
             bodyContent={
@@ -83,8 +75,9 @@ const ProgramToBeAccreditedModal = ({
                 </p>
                 <div className='flex flex-row items-center gap-x-2'>
                   <AddField
+                    ref={ref}
                     fieldName='Start Date'
-                    placeholder='Enter or select date'
+                    placeholder='Enter or select date...'
                     type='date'
                     name='startDate'
                     formValue={formValue.startDate || periodStartValue}
@@ -94,7 +87,7 @@ const ProgramToBeAccreditedModal = ({
                   <p className='text-gray-500'>&ndash;</p>
                   <AddField 
                     fieldName='End Date'
-                    placeholder='Enter or select date'
+                    placeholder='Enter or select date...'
                     type='date'
                     name='endDate'
                     formValue={formValue.endDate || periodEndValue}
@@ -106,10 +99,14 @@ const ProgramToBeAccreditedModal = ({
                 <hr className='w-[60%] mx-auto text-slate-300'></hr>
                 <AddField 
                   fieldName='Level'
-                  placeholder='Enter new level or select an existing one...'
+                  placeholder={levelsArray.length > 0 
+                    ? 'Enter new level or select from below...'
+                    : 'Enter new level...'
+                  }
                   type='text'
                   name='level'
                   formValue={formValue.level}
+                  isDropdown={levelsArray.length > 0}
                   onChange={handleInputChange}
                   showDropdownOnFocus={true}
                   dropdownItems={levelsArray}
@@ -118,7 +115,10 @@ const ProgramToBeAccreditedModal = ({
                 <div className='relative'>
                   <AddField 
                     fieldName={programs.length > 1 ? 'Programs' : 'Program'}
-                    placeholder='Enter a new program or select an existing one...'
+                    placeholder={programsArray.length > 0 
+                      ? 'Enter new program or select from below...'
+                      : 'Enter new program...'
+                    }
                     type='textarea'
                     name='programInput'
                     formValue={programInput}
@@ -126,24 +126,12 @@ const ProgramToBeAccreditedModal = ({
                     multiValues={programs}
                     dropdownItems={programsArray}
                     showDropdownOnFocus={true}
+                    isDropdown={programsArray.length > 0 && !programs.length}
                     onDropdownMenuClick={handleOptionSelection}
                     onAddValue={(val) => handleAddProgramValue(val)}
                     onRemoveValue={(index) => handleRemoveProgramValue(index)}
                     onChange={(e) => handleProgramChange(e)}
-                    onFocus={handleFocus}
                   />
-                  {focus && (
-                    <Popover 
-                      handleMouseEnter={handleInfoHover}
-                      handleMouseLeave={handleInfoHover}
-                      position='top-3 -left-62'
-                      content={
-                        <p className='text-white text-sm p-2'>
-                          Type a program and press Enter to add it. Click "Create" when done to save all programs with their level and period.
-                        </p>
-                      }
-                    />
-                  )}
                 </div>
               </div>
             }
@@ -180,9 +168,14 @@ const ProgramToBeAccreditedModal = ({
             }
             bodyContent={
               <div className='relative w-[90%]'>
-                <AddField 
+                <AddField
+                  ref={ref} 
                   fieldName={programs.length > 1 ? 'Programs' : 'Program'}
-                  placeholder='Enter a new program or select an existing one...'
+                  placeholder={
+                    programsArray.length > 0 
+                      ? 'Enter new program or select from below...'
+                      : 'Enter new program...'
+                  }
                   type='textarea'
                   name='programInput'
                   formValue={programInput}
@@ -190,23 +183,12 @@ const ProgramToBeAccreditedModal = ({
                   multiValues={programs}
                   dropdownItems={programsArray}
                   showDropdownOnFocus={true}
+                  isDropdown={programsArray.length > 0 && !programs.length}
                   onDropdownMenuClick={handleOptionSelection}
                   onAddValue={(val) => handleAddProgramValue(val)}
                   onRemoveValue={(index) => handleRemoveProgramValue(index)}
                   onChange={(e) => handleProgramChange(e)}
-                  onFocus={handleFocus}
                 />
-                {focus && (
-                  <Popover 
-                    position='-top-2 -left-64 translate-y-1/2'
-                    content={
-                      <p className='text-white text-xs p-2'>
-                        Type a program and press Enter to store it.
-                        Click 'Add Program' or 'Add Programs' to save all stored programs.
-                      </p>
-                    }
-                  />
-                )}
               </div>
             }
           />

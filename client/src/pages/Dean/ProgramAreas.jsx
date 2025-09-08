@@ -1,11 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DeanLayout from '../../components/Layout/Dean/DeanLayout';
 import { useNavigate, useParams } from 'react-router-dom';
 import formatProgramParams from '../../utils/formatProgramParams';
-import { useProgramsToBeAccredited } from '../../hooks/Dean/useProgramsToBeAccredited';
-import { useFetchProgramsToBeAccredited } from '../../hooks/fetch-react-query/useFetchProgramsToBeAccredited';
 import useFetchProgramAreas from '../../hooks/fetch-react-query/useFetchProgramAreas';
-import { ArrowBigLeft, ArrowDownLeft, ArrowLeft, ChevronRight, EllipsisVertical, Folder, FolderOpen, FolderPlus, Plus } from 'lucide-react';
+import { ChevronRight, EllipsisVertical, FolderOpen, Plus } from 'lucide-react';
 import ContentHeader from '../../components/Dean/ContentHeader';
 import MODAL_TYPE from '../../constants/modalTypes';
 import AreaBaseModal from '../../components/Modals/accreditation/AreaBaseModal';
@@ -14,10 +12,11 @@ import { addProgramAreas } from '../../api/accreditation/accreditationAPI';
 import { TOAST_MESSAGES } from '../../constants/messages';
 import { showErrorToast, showSuccessToast } from '../../utils/toastNotification';
 import PATH from '../../constants/path';
+import formatArea from '../../utils/formatArea';
+import useAutoFocus from '../../hooks/useAutoFocus';
 
 const ProgramAreas = () => {
   const navigate = useNavigate();
-  const areaInputRef = useRef();
 
   const { period, level, program } = useParams();
   const { 
@@ -40,16 +39,21 @@ const ProgramAreas = () => {
   const [areas, setAreas] = useState([]);
   const [areaInput, setAreaInput] = useState('');
 
-  const [isDuplicate, setIsDuplicate] = useState(false);
+  const [duplicateValues, setDuplicateValues] = useState([]);
   const [hoveredIndex, setHoveredIndex] = useState(-1);
 
   const areasArray = [];
 
+  // Auto-focus on area input
+  const areaInputRef = useAutoFocus(
+    modalType,
+    modalType === MODAL_TYPE.ADD_AREA
+  );
+
+  // If a duplicate was removed from areas, it gets removed from duplicateValues automatically.
   useEffect(() => {
-    if (modalType === MODAL_TYPE.ADD_AREA && areaInputRef.current) {
-      areaInputRef.current.focus();
-    }
-  }, [modalType]);
+    setDuplicateValues(prev => prev.filter(val => areas.includes(val)));
+  }, [areas]);
 
   const findDuplicate = (value) => {
     return data.findIndex(d => d.area.toUpperCase().trim() === value.toUpperCase().trim());
@@ -68,13 +72,13 @@ const ProgramAreas = () => {
     const duplicateIndex = findDuplicate(val);
   
     if (duplicateIndex !== -1) {
-      setIsDuplicate(true);
-      showErrorToast(`Area already exist.`);
+      setDuplicateValues(prev => [...new Set([...prev, formatArea(val)])]);
+      showErrorToast(`${String(val).toUpperCase()} already exist.`);
       return; 
     }
 
-    setIsDuplicate(false);
-    setAreas([...areas, String(val).toUpperCase()]);
+    setDuplicateValues(prev => prev.filter(v => v !== formatArea(val)));
+    setAreas([...areas, formatArea(val)]);
   };
 
   const handleAddArea = () => {
@@ -82,7 +86,12 @@ const ProgramAreas = () => {
   };
 
   const handleRemoveAreaValue = (index) => {
-    setAreas(areas.filter((_, i) => i !== index))
+    const removedVal = areas[index];
+    
+    setAreas(areas.filter((_, i) => i !== index));
+
+    // If removed value was marked duplicate, clear it from duplicateValues
+    setDuplicateValues(prev => prev.filter(v => v !== removedVal));
   };
 
   const handleSaveAreas = async () => {
@@ -97,8 +106,10 @@ const ProgramAreas = () => {
 
     } catch (error) {
       if (error.response.data.isDuplicate) {
-        setIsDuplicate(true);
-        showErrorToast('Area already exist.');
+        const message = error.response.data.message;
+        const duplicateValue = error.response.data.duplicateValue;
+        setDuplicateValues(prev => [...new Set([...prev, duplicateValue])]);
+        showErrorToast(message);
       }
     }
   }
@@ -122,7 +133,7 @@ const ProgramAreas = () => {
             onSave={handleSaveAreas}
             primaryButton={areas.length > 1 ? 'Add Areas' : 'Add Area'}
             secondaryButton={'Cancel'}
-            disabled={areas.length === 0 || isDuplicate}
+            disabled={areas.length === 0 || duplicateValues.length > 0}
             mode='add'
             headerContent={
               <div>
@@ -145,8 +156,9 @@ const ProgramAreas = () => {
                   formValue={areaInput}
                   multiValue={true}
                   multiValues={areas}
-                  // dropdownItems={areasArray}
+                  // dropdownItems={data}
                   showDropdownOnFocus={true}
+                  duplicateValues={duplicateValues}
                   // onDropdownMenuClick={handleOptionSelection}
                   onAddValue={(val) => handleAddAreaValue(val)}
                   onRemoveValue={(index) => handleRemoveAreaValue(index)}
@@ -184,7 +196,9 @@ const ProgramAreas = () => {
               {formattedLevel} - {formattedProgram}
             </span>
             <ChevronRight className='h-5 w-5'/>
-            Areas
+            <span className='font-semibold'>
+              {data.length > 1 ? 'Areas' : 'Area'}
+            </span>
           </p>
         </div>
         <div className='flex justify-end px-5 py-3'>
@@ -199,16 +213,16 @@ const ProgramAreas = () => {
         <div className='flex flex-wrap gap-4 justify-center mb-8'>
           {data.length === 0 && (
             <p>
-              No areas to display.
+              No data to display.
             </p>
           )}
           {data.map(({area_uuid, area}, index) => (
             <div
               key={index}
               onClick={() => handleAreaCardClick(area_uuid)}  
-              className='relative flex flex-col items-start justify-center border py-8 px-4 w-75 rounded-md transition-all cursor-pointer hover:bg-slate-50 active:opacity-50'
+              className='relative flex flex-col items-start justify-start border py-8 px-4 w-75 rounded-md transition-all cursor-pointer hover:bg-slate-50 active:opacity-50'
             >
-              {String(area).toUpperCase().split(':').map((s, i) => (
+              {String(area).toUpperCase().split(/[:-]/).map((s, i) => (
                 <p 
                   key={i}
                   className={`text-start 

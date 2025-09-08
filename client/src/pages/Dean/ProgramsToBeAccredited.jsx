@@ -1,6 +1,6 @@
 import React from 'react';
 import DeanLayout from '../../components/Layout/Dean/DeanLayout';
-import { CalendarArrowUp, ClipboardPenLine, ClipboardPlus, EllipsisVertical, Folders, NotebookPen, NotepadText, Plus, Scroll, SquarePen, Trash2 } from 'lucide-react';
+import { Archive, CalendarArrowUp, ClipboardPenLine, ClipboardPlus, EllipsisVertical, Folders, NotebookPen, NotepadText, Plus, Scroll, SquarePen, Trash2 } from 'lucide-react';
 import ContentHeader from '../../components/Dean/ContentHeader';
 import { useProgramsToBeAccredited } from '../../hooks/Dean/useProgramsToBeAccredited';
 import ProgramToBeAccreditedModal from '../../components/Dean/ProgramToBeAccreditedModal';
@@ -8,6 +8,7 @@ import formatAccreditationPeriod from '../../utils/formatAccreditationPeriod';
 import ProgramsToBeAccreditedSL from '../../components/Loaders/ProgramsToBeAccreditedSL';
 import parseAccreditationPeriod from '../../utils/parseAccreditationPeriod';
 import Dropdown from '../../components/Dropdown/Dropdown';
+import MODAL_TYPE from '../../constants/modalTypes';
 
 const ProgramsToAccredit = () => {
   const { 
@@ -27,7 +28,7 @@ const ProgramsToAccredit = () => {
     saveHandler 
   } = useProgramsToBeAccredited();
 
-  const { periodOptionsRef, programOptionsRef } = ref;
+  const { periodOptionsRef, programOptionsRef, programInputRef, startDateInputRef } = ref;
   const { disableButton, handleAddClick } = addButton;
   const { handleCloseClick } = close;
   const { handleConfirmClick } = confirmation;
@@ -52,6 +53,16 @@ const ProgramsToAccredit = () => {
     handleOptionClick, 
     handleOptionItemClick 
   } = option;
+
+  const getInputRef = () => {
+    if (modalType === MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED) {
+      return startDateInputRef;
+    } else if (modalType === MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED_CARD) {
+      return programInputRef;
+    }
+  }
+
+  const inputRef = getInputRef();
   
   // Array of Programs To Be Accredited, fallback to empty array if fetch is loading
   const data = programsToBeAccredited.data || [];
@@ -89,13 +100,12 @@ const ProgramsToAccredit = () => {
   const periodOptions = [
     { icon: <ClipboardPlus size={24} />, label: 'Add Level and Programs' },
     { icon: <CalendarArrowUp size={24} />, label: 'Change Period' },
-    { icon: <Trash2 size={24} />, label: 'Delete' },
+    { icon: <Archive size={24} />, label: 'Move to Archive' },
   ];
 
   const programOptions = [
     { icon: <Folders size={22} />, label: 'View Areas' },
-    { icon: <SquarePen size={22} />, label: 'Update' },
-    { icon: <Trash2 size={22} />, label: 'Delete' },
+    { icon: <Archive size={22} />, label: 'Move to Archive' },
   ];
 
   return (
@@ -156,7 +166,7 @@ const ProgramsToAccredit = () => {
                   >
                     {periodOptions.map((option, index) => (
                       <React.Fragment key={index}>
-                        {option.label === 'Delete' && (
+                        {option.label === 'Move to Archive' && (
                           <hr className='m-1 text-slate-300'></hr>
                         )}
                         <div 
@@ -173,10 +183,10 @@ const ProgramsToAccredit = () => {
                           className={`flex items-center p-2 justify-start gap-x-2 cursor-pointer rounded-md active:opacity-60 transition ${option.label === 'Delete' ? 
                           'hover:bg-red-200' : 'hover:bg-slate-200'}`}
                         >
-                          <i className={option.label === 'Delete' ? 'text-red-500' : 'text-slate-800'}>
+                          <i className={option.label === 'Move to Archive' ? 'text-slate-700' : 'text-slate-800'}>
                             {option.icon}
                           </i>
-                          <p className={option.label === 'Delete' ? 'text-red-500' : 'text-slate-800'}>
+                          <p className={option.label === 'Move to Archive' ? 'text-slate-700' : 'text-slate-800'}>
                             {option.label}
                           </p>
                         </div>
@@ -207,7 +217,7 @@ const ProgramsToAccredit = () => {
                   >
 
                     {/* Level label (ex: Level II, Preliminary, etc.) */}
-                    <h2 className='absolute top-3 left-1/2 -translate-x-1/2 flex items-center justify-center w-[60%] md:w-[50%] lg:w-[40%] p-2 text-lg md:text-2xl bg-green-600 border-b-2 border-slate-200 to-green-700 shadow-md text-white rounded font-bold'>
+                    <h2 className='absolute top-3 left-1/2 -translate-x-1/2 flex items-center justify-center w-[60%] md:w-[50%] lg:w-[40%] p-2 text-lg md:text-2xl bg-gradient-to-l from-slate-900 via-green-600 to-slate-900 border-b border-slate-300 shadow-md text-white rounded font-bold'>
                       {level}
                     </h2>
 
@@ -250,7 +260,7 @@ const ProgramsToAccredit = () => {
                                 >
                                   {programOptions.map((option, index) => (
                                     <React.Fragment key={index}>
-                                      {option.label === 'Delete' && (
+                                      {option.label === 'Move to Archive' && (
                                         <hr className='m-1 text-slate-300'></hr>
                                       )}
                                       <div 
@@ -265,13 +275,13 @@ const ProgramsToAccredit = () => {
                                             }
                                           }))}
                                         key={index} 
-                                        className={`flex items-center p-2 justify-start gap-x-2 cursor-pointer rounded-md active:opacity-60 ${option.label === 'Delete' ? 
-                                        'hover:bg-red-200' : 'hover:bg-slate-200'}`}
+                                        className={`flex items-center p-2 justify-start gap-x-2 cursor-pointer rounded-md active:opacity-60 ${option.label === 'Move to Archive' ? 
+                                        'hover:bg-slate-300' : 'hover:bg-slate-200'}`}
                                       >
-                                        <i className={option.label === 'Delete' ? 'text-red-500' : 'text-slate-800'}>
+                                        <i className={option.label === 'Move to Archive' ? 'text-gray-700' : 'text-slate-800'}>
                                           {option.icon}
                                         </i>
-                                        <p className={`text-sm ${option.label === 'Delete' ? 'text-red-500' : 'text-slate-800'}`}>
+                                        <p className={`text-sm ${option.label === 'Move to Archive' ? 'text-gray-700' : 'text-slate-800'}`}>
                                           {option.label}
                                         </p>
                                       </div>
@@ -314,7 +324,7 @@ const ProgramsToAccredit = () => {
                       >
                         <Plus className='text-white h-16 w-16 rounded-full'/>
                         <button className='text-xl font-medium text-white py-4 px-6 rounded-full cursor-pointer'>
-                          Add Program
+                          Add Programs
                         </button>
                       </div>
                     </div>
@@ -327,7 +337,8 @@ const ProgramsToAccredit = () => {
       </div>
 
       {/* Modal */}
-      <ProgramToBeAccreditedModal 
+      <ProgramToBeAccreditedModal
+        ref={inputRef} 
         modalData={modalData}
         infoHover={infoHover}
         modalType={modalType}

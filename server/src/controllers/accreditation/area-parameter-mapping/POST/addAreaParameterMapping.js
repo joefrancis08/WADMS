@@ -5,6 +5,13 @@ import isValidDateFormat from "../../../../utils/isValidDateFormat.js";
 const addAreaParameterMapping = async (req, res) => {
   const { startDate, endDate, levelName, programName, areaName, parameterNames } = req.body;
 
+  console.log(startDate);
+  console.log(endDate);
+  console.log(levelName);
+  console.log(programName);
+  console.log(areaName);
+  console.log(parameterNames);
+
   try {
     // Validate if date is not empty and in valid format (e.g., 2025-08-25)
     if (!startDate || !endDate) {

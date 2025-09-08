@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { format, parse } from "date-fns";
 import { useFetchProgramsToBeAccredited } from "../fetch-react-query/useFetchProgramsToBeAccredited";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
@@ -9,6 +9,7 @@ import PATH from "../../constants/path";
 import MODAL_TYPE from "../../constants/modalTypes";
 import useOutsideClick from "../useOutsideClick";
 import parseAccreditationPeriod from "../../utils/parseAccreditationPeriod";
+import useAutoFocus from "../useAutoFocus";
 
 export const useProgramsToBeAccredited = () => {
   const navigate = useNavigate();
@@ -43,6 +44,19 @@ export const useProgramsToBeAccredited = () => {
     endDate: null,
     level: '',
   });
+
+  // Auto-focus on start date to let the user know where to start
+  const startDateInputRef = useAutoFocus(
+    modalType,
+    modalType === MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED,
+    { forDateInput: true }
+  );
+
+  // Auto-focus on program input when modal renders
+  const programInputRef = useAutoFocus(
+    modalType, 
+    modalType === MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED_CARD
+  );
 
   // Reuse useOutsideClick hook to make period and program options disappear
   useOutsideClick(periodOptionsRef, () => setActivePeriodId(null));
@@ -388,7 +402,9 @@ export const useProgramsToBeAccredited = () => {
 
     ref: {
       periodOptionsRef,
-      programOptionsRef
+      programOptionsRef,
+      startDateInputRef,
+      programInputRef,
     },
 
     saveHandler: {

@@ -1,6 +1,7 @@
 import db from "../../../../config/db.js";
 import getAreaBy from "../../areas/GET/getAreaBy.js";
 import insertArea from "../../areas/POST/insertArea.js";
+import getLevelBy from "../../level/GET/getLevelBy.js";
 
 const insertProgramAreaMapping = async (startDate, endDate, level, program, area) => {
   const connection = await db.getConnection();
@@ -16,7 +17,14 @@ const insertProgramAreaMapping = async (startDate, endDate, level, program, area
       areaId = areaResult[0].id;
       
     } else {
-      const newArea = await insertArea(area, connection);
+      const levelResult = await getLevelBy('level_name', level, connection);
+      
+      if (!levelResult.length) {
+        throw new Error('LEVEL_NOT_FOUND');
+      }
+
+      const levelID = levelResult[0].id;
+      const newArea = await insertArea(area, levelID, connection);
       areaId = newArea.insertId;
     }
 
@@ -57,7 +65,9 @@ const insertProgramAreaMapping = async (startDate, endDate, level, program, area
 
     const [exists] = await connection.execute(checkQuery, [programLevelMappingId, areaId]);
     if (exists.length > 0) {
-      throw new Error('DUPLICATE_ENTRY');
+      const error = new Error('DUPLICATE_ENTRY');
+      error.duplicateValue = area; // Attach the area name
+      throw error;
     }
 
 
@@ -76,7 +86,9 @@ const insertProgramAreaMapping = async (startDate, endDate, level, program, area
     await connection.rollback();
 
     if (error.code === 'ER_DUP_ENTRY') {
-      throw new Error('DUPLICATE_ENTRY');
+      const duplicateError = new Error('DUPLICATE_ENTRY');
+      duplicateError.duplicateValue = area;
+      throw duplicateError;
     }
 
     throw error;

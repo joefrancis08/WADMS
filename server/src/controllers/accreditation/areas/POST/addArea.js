@@ -1,8 +1,20 @@
 import insertArea from "../../../../models/accreditation/areas/POST/insertArea.js";
+import getLevelBy from "../../../../models/accreditation/level/GET/getLevelBy.js";
 
 const addArea = async (req, res) => {
   try {
-    const { areaName } = req.body;
+    const { areaName, levelName } = req.body;
+
+    const levelResult = await getLevelBy('level_name', levelName);
+
+    if (!levelResult.length) {
+      return res.status(404).json({
+        message: 'Level not found.',
+        success: false
+      });
+    }
+
+    const levelID = levelResult[0].id;
 
     if (!areaName || !isNaN(areaName)) {
       return res.status(400).json({
@@ -11,7 +23,7 @@ const addArea = async (req, res) => {
       });
     }
 
-    const response = await insertArea(String(areaName).toUpperCase());
+    const response = await insertArea(areaName, levelID);
     
     res.status(200).json({
       message: 'Area added successfully.',
