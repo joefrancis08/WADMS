@@ -6,7 +6,10 @@ import { messageHandler } from "../../services/websocket/messageHandler";
 const useFetchAreaParameters = (startDate, endDate, levelName, programName, areaName) => {
   const queryClient = useQueryClient();
 
-  const queryKey = useMemo(() => ['parameters'], []);
+  const queryKey = useMemo(
+    () => ['parameters', startDate, endDate, levelName, programName, areaName],
+    [startDate, endDate, levelName, programName, areaName]
+  );
   const queryFn = async ({ signal }) => {
     try {
       const res = await fetchAreaParameters({
@@ -30,7 +33,7 @@ const useFetchAreaParameters = (startDate, endDate, levelName, programName, area
     queryFn,
     staleTime: 0,
     refetchOnWindowFocus: true
-  })
+  });
 
   useEffect(() => {
     const { cleanup } = messageHandler(() => {

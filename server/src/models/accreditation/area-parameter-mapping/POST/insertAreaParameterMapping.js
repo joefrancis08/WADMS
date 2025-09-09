@@ -28,7 +28,7 @@ const insertAreaParameterMapping = async (startDate, endDate, level, program, ar
       parameterId = newParameter.insertId;
     }
 
-    // Step 2: Get the area_parameter_mapping id
+    // Step 2: Get the program_area_mapping id
     const programAreaMappingQuery = `
       SELECT pam.id
       FROM program_area_mapping pam
@@ -64,7 +64,9 @@ const insertAreaParameterMapping = async (startDate, endDate, level, program, ar
     `;
     const [exists] = await connection.execute(checkQuery, [programAreaMappingId, parameterId]);
     if (exists.length > 0) {
-      throw new Error('DUPLICATE_ENTRY');
+      const error = new Error('Duplicate entry');
+      error.code = 'DUPLICATE_ENTRY';
+      throw error;
     }
 
     // Step 4: Insert mapping
@@ -79,11 +81,6 @@ const insertAreaParameterMapping = async (startDate, endDate, level, program, ar
 
   } catch (error) {
     await connection.rollback();
-
-    if (error.code === 'ER_DUP_ENTRY') {
-      throw new Error('DUPLICATE_ENTRY');
-    }
-
     throw error;
 
   } finally {

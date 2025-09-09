@@ -27,17 +27,19 @@ const addAreaParameterMapping = async (req, res) => {
       });
     }
 
+    // Validate if levelName, programName, and areaName is a string
+    if (typeof levelName !== 'string' || typeof programName !== 'string' || typeof areaName !== 'string') {
+      return res.status(400).json({
+        success: false, 
+        message: 'Level, program, and area must be a string.'
+      });
+    }
+
     // Validate if levelName, programName, and areaName is not empty
     if (!levelName.trim() || !programName.trim() || !areaName.trim()) {
       return res.status(400).json({
         success: false,
         message: 'Level, program, and area must not be empty.'
-      });
-
-    } else if (typeof levelName !== 'string' || typeof programName !== 'string' || typeof areaName !== 'string') {
-      return res.status(400).json({
-        success: false, 
-        message: 'Level, program, and area must be a string.'
       });
     }
 

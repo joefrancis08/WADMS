@@ -99,16 +99,18 @@ const AddField = ({
   ));
 
   const levelDropdownItems = dropdownItems.map(level => (
-    <p 
-      key={level}
-      onClick={() => {
-        onDropdownMenuClick(level, null, {isForAddLevel: true });
-        setShowDropdown(false);
-        setIsFocused(false);
-      }}
-      className='p-2 text-gray-800 hover:shadow cursor-pointer hover:bg-gray-200 first:rounded-t-md last:rounded-b-md active:opacity-50'>
-      {level}
-    </p>
+    dropdownItems.length > 0 && (
+      <p 
+        key={level}
+        onClick={() => {
+          onDropdownMenuClick(level, null, {isForAddLevel: true });
+          setShowDropdown(false);
+          setIsFocused(false);
+        }}
+        className='p-2 text-gray-800 hover:shadow cursor-pointer hover:bg-gray-200 first:rounded-t-md last:rounded-b-md active:opacity-50'>
+        {level}
+      </p>
+    )
   ));
 
   const programDropdownItems = availablePrograms.map(program => (
@@ -125,7 +127,7 @@ const AddField = ({
     </p>
   ));
 
-  let dropdownContent = null;
+  let dropdownContent;
   if (isDropdown && toggleDropdown) {
     dropdownContent = roleDropdownItems;
 
@@ -290,7 +292,7 @@ const AddField = ({
               size={26}
             />
           )}
-          {dropdownContent && (
+          {dropdownContent && dropdownItems.length > 0 && (
             <Dropdown width='w-full' border='border border-gray-400 rounded-md'>
               <div className='transition-all duration-300 max-h-35 overflow-auto'>
                 {dropdownContent}

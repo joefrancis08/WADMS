@@ -53,7 +53,7 @@ const AreaParameters = () => {
     endDate, 
     formattedLevel, 
     formattedProgram, 
-    areaName
+    areaName ?? ''
   );
 
   const parameterData = parameters.data ?? [];
@@ -98,6 +98,7 @@ const AreaParameters = () => {
 
       if (res.data.success) {
         showSuccessToast(PARAMETER_ADDITION.SUCCESS);
+        await refetch();
       }
 
       handleCloseModal();
@@ -200,9 +201,9 @@ const AreaParameters = () => {
               No parameters to display for {formatAreaName(areaName)}.
             </p>
           )}
-          {parameterData.map(({parameter}, index) => (
+          {parameterData.map(({parameter_uuid, parameter}, index) => (
             <div
-              onClick={() => console.log(parameter)}
+              onClick={() => console.log(parameter_uuid)}
               key={index} 
               className='relative flex items-center justify-start border py-5 px-2 h-20 w-100 max-md:w-full rounded-md transition-all cursor-pointer hover:bg-slate-50 active:opacity-50'
             >

@@ -1,9 +1,9 @@
 import db from "../../../../config/db.js";
 
-const getParameters = async (connection = null) => {
+const getSubParameters = async (connection = null) => {
   const query = `
-    SELECT parameter_name AS parameter
-    FROM parameter
+    SELECT sub_parameter_name AS sub_parameter
+    FROM sub_parameter
   `;
 
   try {
@@ -19,9 +19,9 @@ const getParameters = async (connection = null) => {
     return result;
 
   } catch (error) {
-    console.error('Error fetching parameters:', error);
+    console.error('Error fetching sub-parameters:', error);
     throw error;
   }
 };
 
-export default getParameters;
+export default getSubParameters;
