@@ -21,7 +21,7 @@ const AreaParameters = () => {
   const navigate = useNavigate();
   const { period, level, program, area } = useParams();
 
-  const { PROGRAMS_TO_BE_ACCREDITED } = PATH.DEAN;
+  const { PROGRAMS_TO_BE_ACCREDITED, PARAM_SUBPARAMS } = PATH.DEAN;
   const { PARAMETER_ADDITION } = TOAST_MESSAGES;
 
   const [modalType, setModalType] = useState(null);
@@ -203,7 +203,13 @@ const AreaParameters = () => {
           )}
           {parameterData.map(({parameter_uuid, parameter}, index) => (
             <div
-              onClick={() => console.log(parameter_uuid)}
+              onClick={() => navigate(PARAM_SUBPARAMS({ 
+                period, 
+                level, 
+                program, 
+                area, 
+                parameter: parameter_uuid 
+              }))}
               key={index} 
               className='relative flex items-center justify-start border py-5 px-2 h-20 w-100 max-md:w-full rounded-md transition-all cursor-pointer hover:bg-slate-50 active:opacity-50'
             >

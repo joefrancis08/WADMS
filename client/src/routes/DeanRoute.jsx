@@ -11,6 +11,7 @@ import ProgramsToBeAccredited from '../pages/Dean/ProgramsToBeAccredited';
 import EmailConfirmation from '../pages/EmailConfirmation';
 import ProgramAreas from '../pages/Dean/ProgramAreas';
 import AreaParameters from '../pages/Dean/AreaParameters';
+import ParamSubparam from '../pages/Dean/ParamSubparam';
 
 const { 
   DASHBOARD, 
@@ -21,6 +22,7 @@ const {
   PROGRAMS_TO_BE_ACCREDITED,
   PROGRAM_AREAS_TEMPLATE, 
   AREA_PARAMETERS_TEMPLATE,
+  PARAM_SUBPARAMS_TEMPLATE,
   DOCUMENTS
 } = PATH.DEAN;
 
@@ -35,6 +37,7 @@ const protectedRoutes = [
   { path: PROGRAMS_TO_BE_ACCREDITED, element: <ProgramsToBeAccredited /> },
   { path: PROGRAM_AREAS_TEMPLATE, element: <ProgramAreas /> },
   { path: AREA_PARAMETERS_TEMPLATE, element: <AreaParameters /> },
+  { path: PARAM_SUBPARAMS_TEMPLATE, element: <ParamSubparam /> },
   { path: DOCUMENTS, element: <Documents /> }
 ];
 
