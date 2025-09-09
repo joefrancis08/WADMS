@@ -21,7 +21,7 @@ const AreaParameters = () => {
   const navigate = useNavigate();
   const { period, level, program, area } = useParams();
 
-  const { PROGRAMS_TO_BE_ACCREDITED, PARAM_SUBPARAMS } = PATH.DEAN;
+  const { PROGRAMS_TO_BE_ACCREDITED, PROGRAM_AREAS, PARAM_SUBPARAMS, AREA_PARAMETERS } = PATH.DEAN;
   const { PARAMETER_ADDITION } = TOAST_MESSAGES;
 
   const [modalType, setModalType] = useState(null);
@@ -176,7 +176,11 @@ const AreaParameters = () => {
             <ChevronRight className='h-5 w-5'/>
             <span
               title='Back to Areas'
-              onClick={() => navigate(-1)}
+              onClick={() => navigate(PROGRAM_AREAS({
+                period,
+                level,
+                program
+              }))}
               className='hover:underline opacity-80 hover:opacity-100 cursor-pointer transition-all'
             >
               {formatAreaName(areaName)}
