@@ -1,4 +1,5 @@
 import db from "../../../../config/db.js";
+import getAreaBy from "../../areas/GET/getAreaBy.js";
 import getParameterBy from "../../parameters/GET/getParameterBy.js";
 import insertParameter from "../../parameters/POST/insertParameter.js";
 
@@ -16,7 +17,14 @@ const insertAreaParameterMapping = async (startDate, endDate, level, program, ar
       parameterId = parameterResult[0].id;
 
     } else {
-      const newParameter = await insertParameter(parameter, connection);
+      const areaResult = await getAreaBy('area_name', area, connection);
+
+      if (!areaResult.length) {
+        throw new Error('AREA_NOT_FOUND');
+      }
+
+      const areaID = areaResult[0].id;
+      const newParameter = await insertParameter(parameter, areaID, connection);
       parameterId = newParameter.insertId;
     }
 

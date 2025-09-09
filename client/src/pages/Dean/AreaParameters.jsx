@@ -194,7 +194,7 @@ const AreaParameters = () => {
             <Plus className='h-8 w-8' />
           </button>
         </div>
-        <div className={`flex max-md:flex-col gap-2 p-2 mb-8 ${parameterData.length === 0 ? 'justify-center' : 'justify-start'}`}>
+        <div className={`flex max-md:flex-col flex-wrap gap-y-2 p-2 mb-8 ${parameterData.length === 0 ? 'justify-center' : 'justify-evenly'}`}>
           {parameterData.length === 0 && (
             <p>
               No parameters to display for {formatAreaName(areaName)}.
@@ -204,7 +204,7 @@ const AreaParameters = () => {
             <div
               onClick={() => console.log(parameter)}
               key={index} 
-              className='relative flex items-center justify-start border py-5 px-2 w-1/2 max-md:w-full rounded-md transition-all cursor-pointer hover:bg-slate-50 active:opacity-50'
+              className='relative flex items-center justify-start border py-5 px-2 h-20 w-100 max-md:w-full rounded-md transition-all cursor-pointer hover:bg-slate-50 active:opacity-50'
             >
               <Folder className='flex shrink-0 mr-2'/>
               <p className='pr-10'>

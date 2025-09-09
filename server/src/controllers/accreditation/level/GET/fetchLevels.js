@@ -1,8 +1,8 @@
-import { getLevel } from "../../../../models/accreditation/level/GET/getLevel.js";
+import getLevelBy from "../../../../models/accreditation/level/GET/getLevelBy.js";
 
 const fetchLevels = async (req, res) => {
   try {
-    const levels = await getLevel();
+    const levels = await getLevelBy();
     res.status(200).json({
       success: true,
       data: levels

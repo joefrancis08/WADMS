@@ -8,6 +8,7 @@ const getAreaParameterMappings = async (startDate, endDate, levelName, programNa
       al.level_name     AS level,
       pr.program_name   AS program,
       a.area_name       AS area,
+      pa.uuid           AS parameter_uuid,
       pa.parameter_name AS parameter
     FROM area_parameter_mapping apm
     JOIN program_area_mapping pam
