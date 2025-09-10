@@ -16,6 +16,7 @@ const ProgramToBeAccreditedModal = ({
   formValue,
   programs,
   programInput,
+  duplicateValues,
   disableButton,
   handlers,
   modalData
@@ -115,7 +116,7 @@ const ProgramToBeAccreditedModal = ({
                 <div className='relative'>
                   <AddField 
                     fieldName={programs.length > 1 ? 'Programs' : 'Program'}
-                    placeholder={programsArray.length > 0 
+                    placeholder={programs.length < programsArray.length && programsArray.length > 0 
                       ? 'Enter new program or select from below...'
                       : 'Enter new program...'
                     }
@@ -125,6 +126,7 @@ const ProgramToBeAccreditedModal = ({
                     multiValue={true}
                     multiValues={programs}
                     dropdownItems={programsArray}
+                    duplicateValues={duplicateValues}
                     showDropdownOnFocus={true}
                     isDropdown={programsArray.length > 0 && !programs.length}
                     onDropdownMenuClick={handleOptionSelection}
@@ -172,7 +174,7 @@ const ProgramToBeAccreditedModal = ({
                   ref={ref} 
                   fieldName={programs.length > 1 ? 'Programs' : 'Program'}
                   placeholder={
-                    programsArray.length > 0 
+                    programs.length < programsArray.length && programsArray.length > 0
                       ? 'Enter new program or select from below...'
                       : 'Enter new program...'
                   }
@@ -182,6 +184,7 @@ const ProgramToBeAccreditedModal = ({
                   multiValue={true}
                   multiValues={programs}
                   dropdownItems={programsArray}
+                  duplicateValues={duplicateValues}
                   showDropdownOnFocus={true}
                   isDropdown={programsArray.length > 0 && !programs.length}
                   onDropdownMenuClick={handleOptionSelection}

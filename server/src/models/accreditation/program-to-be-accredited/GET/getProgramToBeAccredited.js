@@ -9,9 +9,11 @@ export const getProgramsToBeAccredited = async (connection = db) => {
       - program name
     */
     SELECT
+        ap.uuid           AS period_uuid,                   -- period uuid from accreditation_period
         ap.start_date     AS period_start,                  -- start date from accreditation_period
         ap.end_date       AS period_end,                    -- end date from accreditation_period
         l.level_name      AS level,                         -- level name from level table
+        p.uuid            AS program_uuid,                  -- program_uuid from program table
         p.program_name    AS program                        -- program name from program table
     FROM program_level_mapping plm                          -- mapping table
     JOIN accreditation_period ap ON plm.period_id = ap.id   -- join with accreditation_period

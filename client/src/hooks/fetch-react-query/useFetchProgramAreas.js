@@ -6,7 +6,10 @@ import { messageHandler } from "../../services/websocket/messageHandler";
 const useFetchProgramAreas = (startDate, endDate, levelName, programName) => {
   const queryClient = useQueryClient();
 
-  const queryKey = useMemo(() => ['areas'], []);
+  const queryKey = useMemo(() => [
+    'areas', startDate, endDate, levelName, programName
+  ], [startDate, endDate, levelName, programName]);
+  
   const queryFn = async ({ signal }) => {
     try {
       const res = await fetchProgramAreas(startDate, endDate, levelName, programName, { signal });

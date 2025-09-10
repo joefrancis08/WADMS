@@ -74,14 +74,13 @@ const addParamSubparamMapping = async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error);
     // Catch duplicate entry
     if (error.message === 'DUPLICATE_ENTRY') {
       return res.status(409).json({
         success: false,
         isDuplicate: true,
         message: 'Duplicate entry.'
-      })
+      });
     }
 
     // Return other server errors
@@ -90,6 +89,8 @@ const addParamSubparamMapping = async (req, res) => {
       message: 'Internal server error',
       error
     });
+
+    throw error;
   }
 };
 

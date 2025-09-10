@@ -17,46 +17,49 @@ import useAutoFocus from '../../hooks/useAutoFocus';
 import { addSubParams } from '../../api/accreditation/accreditationAPI';
 import { showErrorToast, showSuccessToast } from '../../utils/toastNotification';
 import { TOAST_MESSAGES } from '../../constants/messages';
+import { useProgramAreaDetails, useProgramToBeAccreditedDetails } from '../../hooks/useAccreditationDetails';
+
+const { PROGRAMS_TO_BE_ACCREDITED, AREA_PARAMETERS, PROGRAM_AREAS } = PATH.DEAN;
+const { SUBPARAMETER_ADDITION } = TOAST_MESSAGES;
 
 const ParamSubparam = () => {
   const navigate = useNavigate();
-  const { period, level, program, area, parameter } = useParams();
+  const { periodID, level, programID, areaID, parameterID } = useParams();
 
-  const { PROGRAMS_TO_BE_ACCREDITED, AREA_PARAMETERS, PROGRAM_AREAS } = PATH.DEAN;
-  const { SUBPARAMETER_ADDITION } = TOAST_MESSAGES;
+  const { level: levelName } = formatProgramParams(level);
 
-  const { startDate, endDate, level: formattedLevel, program: formattedProgram} = formatProgramParams(period, level, program);
+  const {
+    startDate,
+    endDate,
+    programName
+  } = useProgramToBeAccreditedDetails(periodID, programID);
 
-  const { areas: areasData } = useFetchProgramAreas(
-    startDate, 
-    endDate, 
-    formattedLevel, 
-    formattedProgram
-  );
-
-  const data = areasData.data ?? [];
-
-  const areaObj = data.find(d => d.area_uuid === area) ?? null;
-  const areaName = areaObj ? areaObj.area : 'Unknown area';
+  const { areaName } = useProgramAreaDetails({
+    startDate,
+    endDate,
+    levelName,
+    programName,
+    areaID
+  });
 
   const { parameters, loading: paramLoading, error: paramError, refetch: paramRefetch } = useFetchAreaParameters(
     startDate, 
     endDate, 
-    formattedLevel, 
-    formattedProgram, 
+    levelName, 
+    programName, 
     areaName ?? ''
   );
 
   const parameterData = parameters.data ?? [];
 
-  const parameterObj = parameterData.find(p => p.parameter_uuid === parameter) ?? null;
+  const parameterObj = parameterData.find(p => p.parameter_uuid === parameterID) ?? null;
   const parameterName = parameterObj ? parameterObj.parameter : 'Unknown Parameter';
 
   const { subParameters, loading, error, refetch } = useFetchParamSubparam(
     startDate,
     endDate,
-    formattedLevel,
-    formattedProgram,
+    levelName,
+    programName,
     areaName,
     parameterName
   );
@@ -102,8 +105,8 @@ const ParamSubparam = () => {
       const res = await addSubParams({
         startDate,
         endDate,
-        levelName: formattedLevel,
-        programName: formattedProgram,
+        levelName,
+        programName,
         areaName,
         parameterName,
         subParameterNames: subParamsArr
@@ -130,8 +133,12 @@ const ParamSubparam = () => {
             onClose={handleCloseModal}
             onCancel={handleCloseModal}
             onSave={handleSaveSubParams}
-            primaryButton={'Add Sub-Parameters'}
-            disabled={false}
+            primaryButton={
+              subParamsArr.length > 1 
+                ? 'Add Sub-Parameters'
+                : 'Add Sub-Parameter'
+            }
+            disabled={subParamsArr.length === 0}
             secondaryButton={'Cancel'}
             mode={'Add'}
             headerContent={
@@ -145,8 +152,12 @@ const ParamSubparam = () => {
               <div className='relative w-full'>
                 <AddField
                   ref={subParamInputRef}
-                  fieldName={'Sub-Parameters'}
-                  placeholder={'Enter sub-parameters...'}
+                  fieldName={
+                    subParamsArr.length > 1
+                      ? 'Sub-Parameters'
+                      : 'Sub-Parameter'
+                  }
+                  placeholder={'Enter new sub-parameters...'}
                   type='textarea'
                   name='subParamInput'
                   formValue={subParameterInput}
@@ -190,15 +201,15 @@ const ParamSubparam = () => {
               onClick={() => navigate(PROGRAMS_TO_BE_ACCREDITED)}
               className='hover:underline opacity-80 hover:opacity-100 cursor-pointer transition-all'
             >
-              {formattedLevel} - {formattedProgram}
+              {levelName} - {programName}
             </span>
             <ChevronRight className='h-5 w-5'/>
             <span
               title='Back to Areas'
               onClick={() => navigate(PROGRAM_AREAS({
-                period,
+                periodID,
                 level,
-                program
+                programID
               }))}
               className='hover:underline opacity-80 hover:opacity-100 cursor-pointer transition-all'
             >
@@ -208,10 +219,10 @@ const ParamSubparam = () => {
             <span
               title='Back to Parameters'
               onClick={() => navigate(AREA_PARAMETERS({
-                period,
+                periodID,
                 level,
-                program,
-                area
+                programID,
+                areaID
               }))}
               className='hover:underline opacity-80 hover:opacity-100 cursor-pointer transition-all'
             >
@@ -241,7 +252,7 @@ const ParamSubparam = () => {
           {subParamsData.map(({sub_parameter_uuid, sub_parameter}, index) => (
             <div
               onClick={(null)}
-              key={index} 
+              key={sub_parameter_uuid} 
               className='relative flex items-center justify-start border py-5 px-2 h-20 w-100 max-md:w-full rounded-md transition-all cursor-pointer hover:bg-slate-50 active:opacity-50'
             >
               <File className='flex shrink-0 mr-2'/>

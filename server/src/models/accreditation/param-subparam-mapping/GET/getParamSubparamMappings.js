@@ -29,7 +29,7 @@ const getParamSubparamMappings = async (startDate, endDate, levelName, programNa
     JOIN parameter pa
       ON apm.parameter_id = pa.id
     JOIN sub_parameter spa
-      ON pspm.subparameter_id
+      ON pspm.subparameter_id = spa.id
     WHERE ap.start_date = ?
       AND ap.end_date = ?
       AND al.level_name = ?

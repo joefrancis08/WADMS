@@ -70,7 +70,6 @@ const insertProgramAreaMapping = async (startDate, endDate, level, program, area
       throw error;
     }
 
-
     // Step 4: Insert mapping
     const query = `
       INSERT INTO program_area_mapping (program_level_mapping_id, area_id)

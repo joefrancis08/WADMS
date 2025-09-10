@@ -65,7 +65,7 @@ const insertAreaParameterMapping = async (startDate, endDate, level, program, ar
     const [exists] = await connection.execute(checkQuery, [programAreaMappingId, parameterId]);
     if (exists.length > 0) {
       const error = new Error('Duplicate entry');
-      error.code = 'DUPLICATE_ENTRY';
+      error.duplicateValue = parameter;
       throw error;
     }
 
@@ -81,6 +81,13 @@ const insertAreaParameterMapping = async (startDate, endDate, level, program, ar
 
   } catch (error) {
     await connection.rollback();
+
+    if (error.code === 'ER_DUP_ENTRY') {
+      const duplicateError = new Error('DUPLICATE_ENTRY');
+      duplicateError.duplicateValue = parameter;
+      throw duplicateError;
+    }
+    
     throw error;
 
   } finally {

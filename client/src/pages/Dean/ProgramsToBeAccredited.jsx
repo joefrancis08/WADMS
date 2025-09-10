@@ -13,9 +13,11 @@ import MODAL_TYPE from '../../constants/modalTypes';
 const ProgramsToAccredit = () => {
   const { 
     addButton,
+    chevron,
     close,
     confirmation,
-    dropdown, 
+    dropdown,
+    duplicates, 
     form, 
     hovers, 
     inputs, 
@@ -30,9 +32,11 @@ const ProgramsToAccredit = () => {
 
   const { periodOptionsRef, programOptionsRef, programInputRef, startDateInputRef } = ref;
   const { disableButton, handleAddClick } = addButton;
+  const { handleChevronClick } = chevron;
   const { handleCloseClick } = close;
   const { handleConfirmClick } = confirmation;
-  const { handleOptionSelection } = dropdown;
+  const { toggleDropdown, handleOptionSelection } = dropdown;
+  const { duplicateValues } = duplicates;
   const { formValue } = form;
   const { infoHover, handleInfoHover } = hovers;
   const { handleInputChange } = inputs;
@@ -89,7 +93,11 @@ const ProgramsToAccredit = () => {
     }
 
     // Push the current program into the correct period + level group.
-    acc[periodKey][item.level].push(item.program);
+    acc[periodKey][item.level].push({
+      ...item.program,
+      period: item.period,
+      level: item.level
+    });
 
     // Always return the accumulator so reduce can keep building it.
     return acc;
@@ -223,7 +231,7 @@ const ProgramsToAccredit = () => {
 
                     {/* Program cards */}
                     <div className='relative flex flex-wrap gap-10 justify-center pb-4 pt-16 px-4'>
-                      {programs.map((programName, id) => {
+                      {programs.map((programObj, id) => {
                         /* 
                           Use this id (programId) in passing the data because id is an index
                           and it starts with zero and when activeProgramId === 0
@@ -233,7 +241,7 @@ const ProgramsToAccredit = () => {
                           not just level and programName because there mignt be cases that 
                           level and programName is the same in the different period.
                         */
-                        const programId = `${periodKey}-${level}-${programName}`; 
+                        const programId = `${periodKey}-${level}-${programObj.program_uuid}`; 
                         return (
                           <div
                             key={id}
@@ -241,13 +249,15 @@ const ProgramsToAccredit = () => {
                               data: {
                                 periodKey,
                                 level,
-                                programName
+                                periodUUID: programObj.period.period_uuid,
+                                programUUID: programObj.program_uuid,
+                                programName: programObj.program
                               }
                             })}
                             className='relative flex items-center justify-center h-60 py-8 px-4 bg-gradient-to-b from-green-700 to-yellow-400 rounded-xl shadow hover:shadow-slate-500 hover:shadow-md active:shadow cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80'
                           >
                             <p className='flex items-center justify-center text-wrap rounded-xl bg-gradient-to-b border-slate-400 from-slate-900 to-green-600 w-full text-lg md:text-xl text-white text-center shadow h-40 font-bold p-5'>
-                              {programName}
+                              {programObj.program}
                             </p>
 
                             {/* Render program options when option button is clicked */}
@@ -271,7 +281,7 @@ const ProgramsToAccredit = () => {
                                             data: {
                                               period: parseAccreditationPeriod(periodKey),
                                               levelName: level,
-                                              programName
+                                              programName: programObj.program
                                             }
                                           }))}
                                         key={index} 
@@ -339,14 +349,17 @@ const ProgramsToAccredit = () => {
       {/* Modal */}
       <ProgramToBeAccreditedModal
         ref={inputRef} 
+        toggleDropdown={toggleDropdown}
         modalData={modalData}
         infoHover={infoHover}
         modalType={modalType}
         formValue={formValue}
         programs={programs}
         programInput={programInput}
+        duplicateValues={duplicateValues}
         disableButton={disableButton}
         handlers={{
+          handleChevronClick,
           handleCloseClick,
           handleConfirmClick,
           handleSave,

@@ -78,6 +78,7 @@ const addProgramToBeAccredited = async (req, res) => {
       return res.status(409).json({
         success: false,
         isDuplicate: true,
+        duplicateValue: error.duplicateValue,
         message: 'Duplicate entry.'
       });
     }

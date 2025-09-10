@@ -5,13 +5,6 @@ import isValidDateFormat from "../../../../utils/isValidDateFormat.js";
 const addAreaParameterMapping = async (req, res) => {
   const { startDate, endDate, levelName, programName, areaName, parameterNames } = req.body;
 
-  console.log(startDate);
-  console.log(endDate);
-  console.log(levelName);
-  console.log(programName);
-  console.log(areaName);
-  console.log(parameterNames);
-
   try {
     // Validate if date is not empty and in valid format (e.g., 2025-08-25)
     if (!startDate || !endDate) {
@@ -77,13 +70,13 @@ const addAreaParameterMapping = async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error);
     // Catch duplicate entry
     if (error.message === 'DUPLICATE_ENTRY') {
       return res.status(409).json({
         success: false,
         isDuplicate: true,
-        message: 'Duplicate entry.'
+        duplicateValue: error.duplicateValue,
+        message: `${error.duplicateValue} already exist.`
       })
     }
 

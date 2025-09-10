@@ -89,6 +89,10 @@ const AddField = ({
     }
   };
 
+  const handleChevronClick = () => {
+    setShowDropdown(prev => !prev);
+  };
+
   const roleDropdownItems = getUserRolesDropdown(formValue).map((roleValue) => (
     <p 
       key={roleValue}
@@ -287,12 +291,12 @@ const AddField = ({
           
           {isDropdown && (
             <ChevronDown 
-              onClick={onChevronClick}
-              className={`absolute top-3.5 right-3.5 text-gray-600 cursor-pointer rounded-full hover:bg-gray-100 hover:text-gray-800 transition duration-200 ${toggleDropdown || isFocused && '-rotate-180'}`} 
+              onClick={handleChevronClick}
+              className={`absolute top-3.5 right-3.5 text-gray-600 cursor-pointer rounded-full hover:bg-gray-100 hover:text-gray-800 transition duration-200 ${toggleDropdown && showDropdown && '-rotate-180'}`} 
               size={26}
             />
           )}
-          {dropdownContent && dropdownItems.length > 0 && (
+          {dropdownContent && showDropdown && (
             <Dropdown width='w-full' border='border border-gray-400 rounded-md'>
               <div className='transition-all duration-300 max-h-35 overflow-auto'>
                 {dropdownContent}

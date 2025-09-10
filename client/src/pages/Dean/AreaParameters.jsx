@@ -5,64 +5,69 @@ import { ChevronRight, EllipsisVertical, Folder, Plus } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import formatProgramParams from '../../utils/formatProgramParams';
 import PATH from '../../constants/path';
-import useFetchProgramAreas from '../../hooks/fetch-react-query/useFetchProgramAreas';
 import formatAreaName from '../../utils/formatAreaName';
 import useFetchAreaParameters from '../../hooks/fetch-react-query/useFetchAreaParameters';
 import MODAL_TYPE from '../../constants/modalTypes';
-import AreaBaseModal from '../../components/Modals/accreditation/AreaBaseModal';
 import ParameterBaseModal from '../../components/Modals/accreditation/ParameterBaseModal';
 import AddField from '../../components/Form/Dean/AddField';
 import useAutoFocus from '../../hooks/useAutoFocus';
 import { addAreaParameters } from '../../api/accreditation/accreditationAPI';
 import { showErrorToast, showSuccessToast } from '../../utils/toastNotification';
 import { TOAST_MESSAGES } from '../../constants/messages';
+import { useProgramAreaDetails, useProgramToBeAccreditedDetails } from '../../hooks/useAccreditationDetails';
+
+const { PROGRAMS_TO_BE_ACCREDITED, PROGRAM_AREAS, PARAM_SUBPARAMS } = PATH.DEAN;
+const { PARAMETER_ADDITION } = TOAST_MESSAGES;
 
 const AreaParameters = () => {
+  const { periodID, level, programID, areaID } = useParams();
+  const { level: levelName } = formatProgramParams(level);
   const navigate = useNavigate();
-  const { period, level, program, area } = useParams();
-
-  const { PROGRAMS_TO_BE_ACCREDITED, PROGRAM_AREAS, PARAM_SUBPARAMS, AREA_PARAMETERS } = PATH.DEAN;
-  const { PARAMETER_ADDITION } = TOAST_MESSAGES;
-
-  const [modalType, setModalType] = useState(null);
-
-  const [parametersArr, setParametersArr] = useState([]);
-  const [parameterInput, setParameterInput] = useState('');
 
   const { 
     startDate, 
     endDate, 
-    level: formattedLevel, 
-    program: formattedProgram,
-  } = formatProgramParams(period, level, program);
+    programName 
+  } = useProgramToBeAccreditedDetails(periodID, programID);
 
-  const { areas: areasData } = useFetchProgramAreas(
-    startDate, 
-    endDate, 
-    formattedLevel, 
-    formattedProgram
-  );
-
-  const data = areasData.data ?? [];
-
-  const areaObj = data.find(d => d.area_uuid === area) ?? null;
-  const areaName = areaObj ? areaObj.area : 'Unknown area';
+  const { areaName } = useProgramAreaDetails({
+    startDate,
+    endDate,
+    levelName,
+    programName,
+    areaID
+  });
 
   const { parameters, loading, error, refetch } = useFetchAreaParameters(
     startDate, 
     endDate, 
-    formattedLevel, 
-    formattedProgram, 
-    areaName ?? ''
+    levelName, 
+    programName, 
+    areaName,
+    !! areaName
   );
 
   const parameterData = parameters.data ?? [];
+
+  const [modalType, setModalType] = useState(null);
+  const [parametersArr, setParametersArr] = useState([]);
+  const [parameterInput, setParameterInput] = useState('');
+  const [duplicateValues, setDuplicateValues] = useState([]);
 
   // Auto-focus parameter input
   const parameterInputRef = useAutoFocus(
     modalType,
     modalType === MODAL_TYPE.ADD_PARAMETER
   );
+
+  // Remove duplicate automatically if parameter state changes
+  useEffect(() => {
+    setDuplicateValues(prev => prev.filter(val => parametersArr.includes(val)));
+  }, [parametersArr]);
+
+  const findDuplicate = (value) => {
+    return parameterData.some(d => d.parameter.trim() === value.trim());
+  };
 
   const handlePlusClick = () => {
     setModalType(MODAL_TYPE.ADD_PARAMETER);
@@ -78,11 +83,18 @@ const AreaParameters = () => {
   };
 
   const handleAddParameterValue = (val) => {
+    if (findDuplicate(val)) {
+      setDuplicateValues(prev => [...new Set([...prev, val])]);
+      showErrorToast(`${val} already exist.`, 'top-center', 3000);
+    }
     setParametersArr([...parametersArr, val]);
+    setDuplicateValues(prev => prev.filter(v => v !== val));
   };
 
   const handleRemoveParameterValue = (index) => {
-    setParametersArr(parametersArr.filter((_, i) => i !== index))
+    const removedVal = parametersArr[index];
+    setParametersArr(parametersArr.filter((_, i) => i !== index));
+    setDuplicateValues(prev => prev.filter(v => v !== removedVal));
   };
 
   const handleSaveParameters = async () => {
@@ -90,8 +102,8 @@ const AreaParameters = () => {
       const res = await addAreaParameters({
         startDate,
         endDate,
-        levelName: formattedLevel,
-        programName: formattedProgram,
+        levelName,
+        programName,
         areaName,
         parameterNames: parametersArr
       });
@@ -104,9 +116,10 @@ const AreaParameters = () => {
       handleCloseModal();
 
     } catch (error) {
-      if (error.response.data.isDuplicate) {
-        showErrorToast('Duplicate entry.');
-      }
+      const duplicateValue = error?.response?.data?.error?.duplicateValue;
+      console.log(duplicateValue);
+      setDuplicateValues(prev => [...new Set([...prev, duplicateValue])]);
+      showErrorToast(`${duplicateValue} already exist.`);
     }
   };
 
@@ -122,7 +135,7 @@ const AreaParameters = () => {
             disabled={parametersArr.length === 0}
             secondaryButton={'Cancel'}
             mode='add'
-            headerContent={'Add Parameters'}
+            headerContent={<p className='text-xl font-semibold'>Add Parameters</p>}
             bodyContent={
               <div className='relative w-full'>
                 <AddField
@@ -136,6 +149,7 @@ const AreaParameters = () => {
                   multiValues={parametersArr}
                   // dropdownItems={areasArray}
                   showDropdownOnFocus={true}
+                  duplicateValues={duplicateValues}
                   // onDropdownMenuClick={handleOptionSelection}
                   onAddValue={(val) => handleAddParameterValue(val)}
                   onRemoveValue={(index) => handleRemoveParameterValue(index)}
@@ -171,15 +185,15 @@ const AreaParameters = () => {
               onClick={() => navigate(PROGRAMS_TO_BE_ACCREDITED)}
               className='hover:underline opacity-80 hover:opacity-100 cursor-pointer transition-all'
             >
-              {formattedLevel} - {formattedProgram}
+              {levelName} - {programName}
             </span>
             <ChevronRight className='h-5 w-5'/>
             <span
               title='Back to Areas'
               onClick={() => navigate(PROGRAM_AREAS({
-                period,
+                periodID,
                 level,
-                program
+                programID
               }))}
               className='hover:underline opacity-80 hover:opacity-100 cursor-pointer transition-all'
             >
@@ -208,11 +222,11 @@ const AreaParameters = () => {
           {parameterData.map(({parameter_uuid, parameter}, index) => (
             <div
               onClick={() => navigate(PARAM_SUBPARAMS({ 
-                period, 
+                periodID, 
                 level, 
-                program, 
-                area, 
-                parameter: parameter_uuid 
+                programID, 
+                areaID, 
+                parameterID: parameter_uuid 
               }))}
               key={index} 
               className='relative flex items-center justify-start border py-5 px-2 h-20 w-100 max-md:w-full rounded-md transition-all cursor-pointer hover:bg-slate-50 active:opacity-50'

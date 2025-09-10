@@ -16,20 +16,20 @@ const PATH = {
 
     PROGRAMS_TO_BE_ACCREDITED: '/d/accreditation/programs',
 
-    PROGRAM_AREAS: ({ period, level, program }) => (
-      `/d/accreditation/programs/${level}/${program}/${period}`
+    PROGRAM_AREAS: ({ periodID, level, programID }) => (
+      `/d/accreditation/programs/${level}/${programID}/${periodID}`
     ),
-    PROGRAM_AREAS_TEMPLATE: '/d/accreditation/programs/:level/:program/:period',
+    PROGRAM_AREAS_TEMPLATE: '/d/accreditation/programs/:level/:programID/:periodID',
 
-    AREA_PARAMETERS: ({ period, level, program, area }) => (
-      `/d/accreditation/programs/${level}/${program}/${period}/${area}`
+    AREA_PARAMETERS: ({ periodID, level, programID, areaID }) => (
+      `/d/accreditation/programs/${level}/${programID}/${periodID}/${areaID}`
     ),
-    AREA_PARAMETERS_TEMPLATE: '/d/accreditation/programs/:level/:program/:period/:area',
+    AREA_PARAMETERS_TEMPLATE: '/d/accreditation/programs/:level/:programID/:periodID/:areaID',
 
-    PARAM_SUBPARAMS: ({ period, level, program, area, parameter }) => (
-      `/d/accreditation/programs/${level}/${program}/${period}/${area}/${parameter}`
+    PARAM_SUBPARAMS: ({ periodID, level, programID, areaID, parameterID }) => (
+      `/d/accreditation/programs/${level}/${programID}/${periodID}/${areaID}/${parameterID}`
     ),
-    PARAM_SUBPARAMS_TEMPLATE: '/d/accreditation/programs/:level/:program/:period/:area/:parameter',
+    PARAM_SUBPARAMS_TEMPLATE: '/d/accreditation/programs/:level/:programID/:periodID/:areaID/:parameterID',
     DOCUMENTS: '/d/accreditation/documents'
   }
 }
