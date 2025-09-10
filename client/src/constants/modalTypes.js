@@ -15,6 +15,8 @@ const MODAL_TYPES = {
   ADD_AREA: 'add-area',
 
   ADD_PARAMETER: 'add-parameter',
+
+  ADD_SUBPARAMETERS: 'add-subparameters'
 };
 
 export default MODAL_TYPES;

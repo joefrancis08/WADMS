@@ -32,6 +32,18 @@ export const addAreaParameters = ({ startDate, endDate, levelName, programName, 
   });
 };
 
+export const addSubParams = ({ startDate, endDate, levelName, programName, areaName, parameterName, subParameterNames }) => {
+  return axios.post(`${API_BASE_URL}/accreditation/add-parameter-subparameters`, {
+    startDate,
+    endDate,
+    levelName,
+    programName,
+    areaName,
+    parameterName,
+    subParameterNames
+  });
+};
+
 export const fetchProgramsToBeAccredited = (controller) => {
   return axios.get(`${API_BASE_URL}/accreditation/fetch-programs-to-be-accredited`, {
     signal: controller.signal
@@ -72,8 +84,22 @@ export const fetchAreaParameters = ({ startDate, endDate, levelName, programName
       areaName
     },
     signal: controller.signal
-  })
-}
+  });
+};
+
+export const fetchParamSubparams = ({ startDate, endDate, levelName, programName, areaName, parameterName }, controller) => {
+  return axios.get(`${API_BASE_URL}/accreditation/fetch-parameter-subparameters`, {
+    params: {
+      startDate,
+      endDate,
+      levelName,
+      programName,
+      areaName,
+      parameterName
+    },
+    signal: controller.signal
+  });
+};
 
 export const deleteProgramToBeAccredited = (startDate, endDate, levelName, programName) => {
   return axios.delete(`${API_BASE_URL}/accreditation/delete-programs-to-be-accredited`, {
