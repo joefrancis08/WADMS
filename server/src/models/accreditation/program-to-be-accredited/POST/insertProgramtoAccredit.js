@@ -14,7 +14,6 @@ const insertProgramtoAccredit = async (startDate, endDate, level, program) => {
     so we can manually control transaction behavior
   */
   const connection = await db.getConnection();
-  const uuid = uuidv4();
 
   try {
     /* 
@@ -35,7 +34,7 @@ const insertProgramtoAccredit = async (startDate, endDate, level, program) => {
       programId = programResult[0].id;
 
     } else {
-      const newProgram = await insertProgram(connection, program);
+      const newProgram = await insertProgram(program, connection);
       programId = newProgram.insertId;
     }
 
@@ -63,12 +62,28 @@ const insertProgramtoAccredit = async (startDate, endDate, level, program) => {
       periodId = newPeriod.insertId;
     }
 
+    // Check if program_level_mapping entry already exist
+    const checkQuery = `
+      SELECT id
+      FROM program_level_mapping
+      WHERE program_id = ?
+        AND level_id = ?
+        AND period_id = ?
+    `;
+
+    const [exists] = await connection.execute(checkQuery, [programId, levelId, periodId]);
+    if (exists.length > 0) {
+      const error = new Error('DUPLICATE_ENTRY');
+      error.duplicateValue = [startDate, endDate, level, program];
+      throw error;
+    }
+
     // Insert program and level Id into Program Level Mapping Table
     const query = `
-      INSERT INTO program_level_mapping (uuid, program_id, level_id, period_id) 
-      VALUES (?, ?, ?, ?)
+      INSERT INTO program_level_mapping (program_id, level_id, period_id) 
+      VALUES (?, ?, ?)
     `;
-    await connection.execute(query, [uuid, programId, levelId, periodId])
+    await connection.execute(query, [programId, levelId, periodId])
 
     /* 
       If everything is successful, commit the transaction
@@ -86,9 +101,10 @@ const insertProgramtoAccredit = async (startDate, endDate, level, program) => {
     await connection.rollback();
 
     if (error.code === 'ER_DUP_ENTRY') {
-      throw new Error('DUPLICATE_ENTRY');
+      const duplicateError = new Error('DUPLICATE_ENTRY');
+      duplicateError.duplicateValue = [startDate, endDate, level, program];
+      throw duplicateError;
     }
-    console.error(error);
 
     throw error;
 

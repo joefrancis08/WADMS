@@ -17,6 +17,7 @@ const AddField = ({
   dropdownItems = [],
   multiValue = false, // Enable multi-value mode (for textarea)
   multiValues = [], // Array of existing values (for textarea)
+  duplicateValues = [], 
   onAddValue, // Callback when a value is added (for textarea)
   onRemoveValue, // Callback when a value is removed (for textarea)
   minDate,
@@ -88,6 +89,10 @@ const AddField = ({
     }
   };
 
+  const handleChevronClick = () => {
+    setShowDropdown(prev => !prev);
+  };
+
   const roleDropdownItems = getUserRolesDropdown(formValue).map((roleValue) => (
     <p 
       key={roleValue}
@@ -98,34 +103,35 @@ const AddField = ({
   ));
 
   const levelDropdownItems = dropdownItems.map(level => (
-    <p 
-      key={level}
-      onClick={() => {
-        onDropdownMenuClick(level, null, {isForAddLevel: true });
-        setShowDropdown(false);
-      }}
-      className='p-2 text-gray-800 hover:shadow cursor-pointer hover:bg-gray-200 first:rounded-t-md last:rounded-b-md active:opacity-50'>
-      {level}
-    </p>
+    dropdownItems.length > 0 && (
+      <p 
+        key={level}
+        onClick={() => {
+          onDropdownMenuClick(level, null, {isForAddLevel: true });
+          setShowDropdown(false);
+          setIsFocused(false);
+        }}
+        className='p-2 text-gray-800 hover:shadow cursor-pointer hover:bg-gray-200 first:rounded-t-md last:rounded-b-md active:opacity-50'>
+        {level}
+      </p>
+    )
   ));
 
   const programDropdownItems = availablePrograms.map(program => (
-    <label
+    <p
       key={program}
-      className='flex items-center gap-2 p-2 text-slate-800 hover:shadow cursor-pointer hover:bg-gray-200 first:rounded-t-md last:rounded-b-md active:opacity-50'
+      onClick={() => {
+        onDropdownMenuClick(null, program, { isForAddProgram: true });
+        setAvailablePrograms(prev => prev.filter(item => item !== program));
+        setIsFocused(true);
+      }}
+      className='p-2 text-gray-800 hover:shadow cursor-pointer hover:bg-gray-200 first:rounded-t-md last:rounded-b-md active:opacity-50'
     >
-      <input 
-        type='checkbox'
-        onChange={() => {
-          onDropdownMenuClick(null, program, { isForAddProgram: true });
-          setAvailablePrograms(prev => prev.filter(item => item !== program));
-        }}
-      />
       {program}
-    </label>
+    </p>
   ));
 
-  let dropdownContent = null;
+  let dropdownContent;
   if (isDropdown && toggleDropdown) {
     dropdownContent = roleDropdownItems;
 
@@ -178,7 +184,7 @@ const AddField = ({
               {!datePickerDisabled && (
                 <CalendarDays 
                   onClick={() => setCalendarOpen(prev => !prev)}
-                  className='absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 cursor-pointer hover:text-gray-800'
+                  className='absolute right-3 top-1/2 transform -translate-y-1/2 text-black cursor-pointer hover:opacity-80'
                   size={20}
                 />
               )}
@@ -190,25 +196,32 @@ const AddField = ({
                     ? 'border-gray-400 text-gray-800 focus-within:ring-2 focus-within:ring-green-600' 
                     : 'border-red-500 text-red-500 focus-within:ring-1 focus-within:ring-red-500'}`}
               >
-                {multiValues.map((val, index) => (
-                  <div key={index} className='flex items-center justify-center text-slate-800 px-2 py-1 rounded border border-slate-300'>
-                    <button 
-                      title='Remove'
-                      type='button'
-                      onClick={() => {
-                        onRemoveValue(index);
-                        // Restore the remove value but only restore the original part of dropdownItems
-                        if (dropdownItems.includes(val)) {
-                          setAvailablePrograms(prev => [...prev, val]);
-                        }
-                      }}
-                      className='hover:rounded-full hover:bg-slate-200 p-0.5 font-bold hover:text-red-600 transition mr-1 cursor-pointer'
+                {multiValues.map((val, index) => {
+                  const isValueDuplicate = duplicateValues?.includes(val);
+
+                  return (
+                    <div key={index} className={`flex items-center justify-center px-2 py-1 rounded border ${isValueDuplicate 
+                      ? 'border-red-600 text-red-500' 
+                      : 'border-slate-300 text-slate-800'}`}
                     >
-                      <X size={16}/>
-                    </button>
-                    {val}
-                  </div>
-                ))}
+                      <button 
+                        title='Remove'
+                        type='button'
+                        onClick={() => {
+                          onRemoveValue(index);
+                          // Restore the remove value but only restore the original part of dropdownItems
+                          if (dropdownItems.includes(val)) {
+                            setAvailablePrograms(prev => [...prev, val]);
+                          }
+                        }}
+                        className='hover:rounded-full hover:bg-slate-200 p-0.5 font-bold hover:text-red-600 transition mr-1 cursor-pointer'
+                      >
+                        <X size={16}/>
+                      </button>
+                      {val}
+                    </div>
+                  )
+                })}
                 <textarea
                   ref={ref}
                   placeholder={isFloating ? placeholder : ''}
@@ -223,9 +236,9 @@ const AddField = ({
                   onKeyDown={(e) => handleKeyDown(e)}
                   onFocus={() => handleFocus({showDropdown: true})}
                   onBlur={() => handleBlur({hideDropdown: true})}
-                  rows={2}
-                  className={`flex resize-none overflow-hidden text-wrap w-full py-2 m-0 focus:outline-none 
-                  ${multiValues.length > 0 && 'border px-4 border-slate-300 bg-slate-100 rounded-md'}`}
+                  rows={1}
+                  className={`flex resize-none overflow-hidden text-wrap w-full py-2 focus:outline-none 
+                  ${multiValues.length > 0 && 'border px-4 border-slate-300 bg-slate-100 rounded'}`}
                   onInput={(e) => {
                     e.target.style.height = "auto";
                     e.target.style.height = e.target.scrollHeight + "px";
@@ -234,6 +247,7 @@ const AddField = ({
               </div>
           ) : (
             <input
+              ref={ref}
               placeholder={isFloating ? placeholder : ''}
               readOnly={isReadOnly}
               type={type}
@@ -277,12 +291,12 @@ const AddField = ({
           
           {isDropdown && (
             <ChevronDown 
-              onClick={onChevronClick}
-              className={`absolute top-3.5 right-3.5 text-gray-600 cursor-pointer rounded-full hover:bg-gray-100 hover:text-gray-800 transition duration-300 ${toggleDropdown && '-rotate-180'}`} 
+              onClick={handleChevronClick}
+              className={`absolute top-3.5 right-3.5 text-gray-600 cursor-pointer rounded-full hover:bg-gray-100 hover:text-gray-800 transition duration-200 ${toggleDropdown && showDropdown && '-rotate-180'}`} 
               size={26}
             />
           )}
-          {dropdownContent && (
+          {dropdownContent && showDropdown && (
             <Dropdown width='w-full' border='border border-gray-400 rounded-md'>
               <div className='transition-all duration-300 max-h-35 overflow-auto'>
                 {dropdownContent}

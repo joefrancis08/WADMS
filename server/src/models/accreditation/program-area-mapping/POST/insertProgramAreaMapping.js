@@ -1,6 +1,7 @@
 import db from "../../../../config/db.js";
 import getAreaBy from "../../areas/GET/getAreaBy.js";
 import insertArea from "../../areas/POST/insertArea.js";
+import getLevelBy from "../../level/GET/getLevelBy.js";
 
 const insertProgramAreaMapping = async (startDate, endDate, level, program, area) => {
   const connection = await db.getConnection();
@@ -8,7 +9,7 @@ const insertProgramAreaMapping = async (startDate, endDate, level, program, area
   try {
     await connection.beginTransaction();
 
-    // Step 1: Check if an exist, if not insert it.
+    // Step 1: Check if an area exist, if not insert it.
     const areaResult = await getAreaBy('area_name', area, connection);
 
     let areaId;
@@ -16,11 +17,18 @@ const insertProgramAreaMapping = async (startDate, endDate, level, program, area
       areaId = areaResult[0].id;
       
     } else {
-      const newArea = await insertArea(area, connection);
+      const levelResult = await getLevelBy('level_name', level, connection);
+      
+      if (!levelResult.length) {
+        throw new Error('LEVEL_NOT_FOUND');
+      }
+
+      const levelID = levelResult[0].id;
+      const newArea = await insertArea(area, levelID, connection);
       areaId = newArea.insertId;
     }
 
-    // Step : Get the program-level mapping id
+    // Step 2: Get the program-level mapping id
     const programLevelMappingQuery = `
       SELECT plm.id
       FROM program_level_mapping plm
@@ -48,7 +56,21 @@ const insertProgramAreaMapping = async (startDate, endDate, level, program, area
 
     const programLevelMappingId = rows[0].id;
 
-    // Step 3: Insert mapping
+    // Step 3: Check if program_area_mapping already exists
+    const checkQuery = `
+      SELECT id FROM program_area_mapping
+      WHERE program_level_mapping_id = ?
+      AND area_id = ?
+    `;
+
+    const [exists] = await connection.execute(checkQuery, [programLevelMappingId, areaId]);
+    if (exists.length > 0) {
+      const error = new Error('DUPLICATE_ENTRY');
+      error.duplicateValue = area; // Attach the area name
+      throw error;
+    }
+
+    // Step 4: Insert mapping
     const query = `
       INSERT INTO program_area_mapping (program_level_mapping_id, area_id)
       VALUES (?, ?)
@@ -57,13 +79,15 @@ const insertProgramAreaMapping = async (startDate, endDate, level, program, area
     await connection.execute(query, [programLevelMappingId, areaId]);
 
     await connection.commit();
-    return {programLevelMappingId, areaId};
+    return { programLevelMappingId, areaId };
 
   } catch (error) {
     await connection.rollback();
 
     if (error.code === 'ER_DUP_ENTRY') {
-      throw new Error('DUPLICATE_ENTRY');
+      const duplicateError = new Error('DUPLICATE_ENTRY');
+      duplicateError.duplicateValue = area;
+      throw duplicateError;
     }
 
     throw error;

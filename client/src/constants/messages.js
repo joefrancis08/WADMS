@@ -48,6 +48,16 @@ export const TOAST_MESSAGES = Object.freeze({
   AREA_ADDITION: {
     SUCCESS: 'Added successfully!',
     ERROR: 'Something went wrong while adding area.'
+  },
+
+  PARAMETER_ADDITION: {
+    SUCCESS: 'Added successfully!',
+    ERROR: 'Something went wrong while adding parameters.'
+  },
+
+  SUBPARAMETER_ADDITION: {
+    SUCCESS: 'Added successfully!',
+    ERROR: 'Something went wrong while adding sub-parameters.'
   }
 });
 

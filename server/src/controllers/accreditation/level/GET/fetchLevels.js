@@ -1,4 +1,4 @@
-import { getLevel } from "../../../../models/accreditation/level/GET/getLevel.js";
+import getLevel from "../../../../models/accreditation/level/GET/getLevel.js";
 
 const fetchLevels = async (req, res) => {
   try {

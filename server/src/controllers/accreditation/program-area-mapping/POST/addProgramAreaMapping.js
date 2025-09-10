@@ -34,7 +34,7 @@ const addProgramAreaMapping = async (req, res) => {
       .map(a => a.trim())
       .filter(a => a.length > 0);
 
-    // Validate if program names array is not empty
+    // Validate if area names array is not empty
     if (areas.length === 0 || !areaNames) {
       return res.status(400).json({
         success: false,
@@ -66,7 +66,8 @@ const addProgramAreaMapping = async (req, res) => {
       return res.status(409).json({
         success: false,
         isDuplicate: true,
-        message: 'Duplicate entry.'
+        duplicateValue: error.duplicateValue,
+        message: `${error.duplicateValue} already exist.`
       });
     }
 
@@ -74,7 +75,7 @@ const addProgramAreaMapping = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Internal server error.',
-      error: error
+      error
     });
   }
 };

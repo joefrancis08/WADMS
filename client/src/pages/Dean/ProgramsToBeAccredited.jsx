@@ -1,6 +1,6 @@
 import React from 'react';
 import DeanLayout from '../../components/Layout/Dean/DeanLayout';
-import { CalendarArrowUp, ClipboardPenLine, ClipboardPlus, EllipsisVertical, Folders, NotebookPen, NotepadText, Plus, Scroll, SquarePen, Trash2 } from 'lucide-react';
+import { Archive, CalendarArrowUp, ClipboardPenLine, ClipboardPlus, EllipsisVertical, Folders, NotebookPen, NotepadText, Plus, Scroll, SquarePen, Trash2 } from 'lucide-react';
 import ContentHeader from '../../components/Dean/ContentHeader';
 import { useProgramsToBeAccredited } from '../../hooks/Dean/useProgramsToBeAccredited';
 import ProgramToBeAccreditedModal from '../../components/Dean/ProgramToBeAccreditedModal';
@@ -8,13 +8,16 @@ import formatAccreditationPeriod from '../../utils/formatAccreditationPeriod';
 import ProgramsToBeAccreditedSL from '../../components/Loaders/ProgramsToBeAccreditedSL';
 import parseAccreditationPeriod from '../../utils/parseAccreditationPeriod';
 import Dropdown from '../../components/Dropdown/Dropdown';
+import MODAL_TYPE from '../../constants/modalTypes';
 
 const ProgramsToAccredit = () => {
   const { 
     addButton,
+    chevron,
     close,
     confirmation,
-    dropdown, 
+    dropdown,
+    duplicates, 
     form, 
     hovers, 
     inputs, 
@@ -27,11 +30,13 @@ const ProgramsToAccredit = () => {
     saveHandler 
   } = useProgramsToBeAccredited();
 
-  const { periodOptionsRef, programOptionsRef } = ref;
+  const { periodOptionsRef, programOptionsRef, programInputRef, startDateInputRef } = ref;
   const { disableButton, handleAddClick } = addButton;
+  const { handleChevronClick } = chevron;
   const { handleCloseClick } = close;
   const { handleConfirmClick } = confirmation;
-  const { handleOptionSelection } = dropdown;
+  const { toggleDropdown, handleOptionSelection } = dropdown;
+  const { duplicateValues } = duplicates;
   const { formValue } = form;
   const { infoHover, handleInfoHover } = hovers;
   const { handleInputChange } = inputs;
@@ -52,6 +57,16 @@ const ProgramsToAccredit = () => {
     handleOptionClick, 
     handleOptionItemClick 
   } = option;
+
+  const getInputRef = () => {
+    if (modalType === MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED) {
+      return startDateInputRef;
+    } else if (modalType === MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED_CARD) {
+      return programInputRef;
+    }
+  }
+
+  const inputRef = getInputRef();
   
   // Array of Programs To Be Accredited, fallback to empty array if fetch is loading
   const data = programsToBeAccredited.data || [];
@@ -78,7 +93,11 @@ const ProgramsToAccredit = () => {
     }
 
     // Push the current program into the correct period + level group.
-    acc[periodKey][item.level].push(item.program);
+    acc[periodKey][item.level].push({
+      ...item.program,
+      period: item.period,
+      level: item.level
+    });
 
     // Always return the accumulator so reduce can keep building it.
     return acc;
@@ -89,13 +108,12 @@ const ProgramsToAccredit = () => {
   const periodOptions = [
     { icon: <ClipboardPlus size={24} />, label: 'Add Level and Programs' },
     { icon: <CalendarArrowUp size={24} />, label: 'Change Period' },
-    { icon: <Trash2 size={24} />, label: 'Delete' },
+    { icon: <Archive size={24} />, label: 'Move to Archive' },
   ];
 
   const programOptions = [
     { icon: <Folders size={22} />, label: 'View Areas' },
-    { icon: <SquarePen size={22} />, label: 'Update' },
-    { icon: <Trash2 size={22} />, label: 'Delete' },
+    { icon: <Archive size={22} />, label: 'Move to Archive' },
   ];
 
   return (
@@ -156,7 +174,7 @@ const ProgramsToAccredit = () => {
                   >
                     {periodOptions.map((option, index) => (
                       <React.Fragment key={index}>
-                        {option.label === 'Delete' && (
+                        {option.label === 'Move to Archive' && (
                           <hr className='m-1 text-slate-300'></hr>
                         )}
                         <div 
@@ -173,10 +191,10 @@ const ProgramsToAccredit = () => {
                           className={`flex items-center p-2 justify-start gap-x-2 cursor-pointer rounded-md active:opacity-60 transition ${option.label === 'Delete' ? 
                           'hover:bg-red-200' : 'hover:bg-slate-200'}`}
                         >
-                          <i className={option.label === 'Delete' ? 'text-red-500' : 'text-slate-800'}>
+                          <i className={option.label === 'Move to Archive' ? 'text-slate-700' : 'text-slate-800'}>
                             {option.icon}
                           </i>
-                          <p className={option.label === 'Delete' ? 'text-red-500' : 'text-slate-800'}>
+                          <p className={option.label === 'Move to Archive' ? 'text-slate-700' : 'text-slate-800'}>
                             {option.label}
                           </p>
                         </div>
@@ -207,13 +225,13 @@ const ProgramsToAccredit = () => {
                   >
 
                     {/* Level label (ex: Level II, Preliminary, etc.) */}
-                    <h2 className='absolute top-3 left-1/2 -translate-x-1/2 flex items-center justify-center w-[60%] md:w-[50%] lg:w-[40%] p-2 text-lg md:text-2xl bg-green-600 border-b-2 border-slate-200 to-green-700 shadow-md text-white rounded font-bold'>
+                    <h2 className='absolute top-3 left-1/2 -translate-x-1/2 flex items-center justify-center w-[60%] md:w-[50%] lg:w-[40%] p-2 text-lg md:text-2xl bg-gradient-to-l from-slate-900 via-green-600 to-slate-900 border-b border-slate-400 shadow-md text-white rounded font-bold'>
                       {level}
                     </h2>
 
                     {/* Program cards */}
                     <div className='relative flex flex-wrap gap-10 justify-center pb-4 pt-16 px-4'>
-                      {programs.map((programName, id) => {
+                      {programs.map((programObj, id) => {
                         /* 
                           Use this id (programId) in passing the data because id is an index
                           and it starts with zero and when activeProgramId === 0
@@ -223,7 +241,7 @@ const ProgramsToAccredit = () => {
                           not just level and programName because there mignt be cases that 
                           level and programName is the same in the different period.
                         */
-                        const programId = `${periodKey}-${level}-${programName}`; 
+                        const programId = `${periodKey}-${level}-${programObj.program_uuid}`; 
                         return (
                           <div
                             key={id}
@@ -231,13 +249,15 @@ const ProgramsToAccredit = () => {
                               data: {
                                 periodKey,
                                 level,
-                                programName
+                                periodUUID: programObj.period.period_uuid,
+                                programUUID: programObj.program_uuid,
+                                programName: programObj.program
                               }
                             })}
                             className='relative flex items-center justify-center h-60 py-8 px-4 bg-gradient-to-b from-green-700 to-yellow-400 rounded-xl shadow hover:shadow-slate-500 hover:shadow-md active:shadow cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80'
                           >
-                            <p className='flex items-center justify-center text-wrap rounded-md bg-gradient-to-b border-slate-400 from-slate-900 to-green-600 w-full text-lg md:text-xl text-white text-center shadow h-40 font-bold p-5'>
-                              {programName}
+                            <p className='flex items-center justify-center text-wrap rounded-xl bg-gradient-to-b border-slate-400 from-slate-900 to-green-600 w-full text-lg md:text-xl text-white text-center shadow h-40 font-bold p-5'>
+                              {programObj.program}
                             </p>
 
                             {/* Render program options when option button is clicked */}
@@ -250,7 +270,7 @@ const ProgramsToAccredit = () => {
                                 >
                                   {programOptions.map((option, index) => (
                                     <React.Fragment key={index}>
-                                      {option.label === 'Delete' && (
+                                      {option.label === 'Move to Archive' && (
                                         <hr className='m-1 text-slate-300'></hr>
                                       )}
                                       <div 
@@ -261,17 +281,17 @@ const ProgramsToAccredit = () => {
                                             data: {
                                               period: parseAccreditationPeriod(periodKey),
                                               levelName: level,
-                                              programName
+                                              programName: programObj.program
                                             }
                                           }))}
                                         key={index} 
-                                        className={`flex items-center p-2 justify-start gap-x-2 cursor-pointer rounded-md active:opacity-60 ${option.label === 'Delete' ? 
-                                        'hover:bg-red-200' : 'hover:bg-slate-200'}`}
+                                        className={`flex items-center p-2 justify-start gap-x-2 cursor-pointer rounded-md active:opacity-60 ${option.label === 'Move to Archive' ? 
+                                        'hover:bg-slate-300' : 'hover:bg-slate-200'}`}
                                       >
-                                        <i className={option.label === 'Delete' ? 'text-red-500' : 'text-slate-800'}>
+                                        <i className={option.label === 'Move to Archive' ? 'text-gray-700' : 'text-slate-800'}>
                                           {option.icon}
                                         </i>
-                                        <p className={`text-sm ${option.label === 'Delete' ? 'text-red-500' : 'text-slate-800'}`}>
+                                        <p className={`text-sm ${option.label === 'Move to Archive' ? 'text-gray-700' : 'text-slate-800'}`}>
                                           {option.label}
                                         </p>
                                       </div>
@@ -310,11 +330,11 @@ const ProgramsToAccredit = () => {
                           }  
                         })}
                         title='Click to add program'
-                        className='relative flex flex-col items-center justify-center gap-y-2 h-60 p-4 bg-slate-600 rounded-lg shadow-md hover:shadow-slate-400 hover:shadow-md active:shadow cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80'
+                        className='relative flex flex-col items-center justify-center gap-y-2 h-60 p-4 bg-slate-600 rounded-xl shadow-md hover:shadow-slate-400 hover:shadow-md active:shadow cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80'
                       >
                         <Plus className='text-white h-16 w-16 rounded-full'/>
                         <button className='text-xl font-medium text-white py-4 px-6 rounded-full cursor-pointer'>
-                          Add Program
+                          Add Programs
                         </button>
                       </div>
                     </div>
@@ -327,15 +347,19 @@ const ProgramsToAccredit = () => {
       </div>
 
       {/* Modal */}
-      <ProgramToBeAccreditedModal 
+      <ProgramToBeAccreditedModal
+        ref={inputRef} 
+        toggleDropdown={toggleDropdown}
         modalData={modalData}
         infoHover={infoHover}
         modalType={modalType}
         formValue={formValue}
         programs={programs}
         programInput={programInput}
+        duplicateValues={duplicateValues}
         disableButton={disableButton}
         handlers={{
+          handleChevronClick,
           handleCloseClick,
           handleConfirmClick,
           handleSave,

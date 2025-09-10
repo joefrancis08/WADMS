@@ -3,7 +3,7 @@ import db from "../../../../config/db.js";
 const getPeriod = async (connection = db) => {
   const query = `
     SELECT 
-      id AS period_id, 
+      uuid AS period_uuid,
       start_date AS period_start, 
       end_date AS period_end
     FROM 

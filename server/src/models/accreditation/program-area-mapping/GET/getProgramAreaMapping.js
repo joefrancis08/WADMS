@@ -3,11 +3,12 @@ import db from "../../../../config/db.js";
 const getProgramAreaMapping = async (startDate, endDate, levelName, programName, connection = null) => {
   const query = `
     SELECT
+      a.uuid           AS area_uuid,
       ap.start_date    AS period_start,
       ap.end_date      AS period_end,
-      al.level_name   AS level,
-      pr.program_name AS program,
-      a.area_name     AS area
+      al.level_name    AS level,
+      pr.program_name  AS program,
+      a.area_name      AS area
     FROM program_area_mapping pam
     JOIN program_level_mapping plm
       ON pam.program_level_mapping_id = plm.id
@@ -23,6 +24,35 @@ const getProgramAreaMapping = async (startDate, endDate, levelName, programName,
       AND ap.end_date = ?
       AND al.level_name = ?
       AND pr.program_name = ?
+    ORDER BY
+      FIELD(
+        TRIM(
+          SUBSTRING_INDEX(
+            SUBSTRING_INDEX(a.area_name, ':', 1),
+            '-', 1
+          )
+        ),
+        'AREA I',
+        'AREA II',
+        'AREA III',
+        'AREA IV',
+        'AREA V',
+        'AREA VI',
+        'AREA VII',
+        'AREA VIII',
+        'AREA IX',
+        'AREA X',
+        'AREA XI',
+        'AREA XII',
+        'AREA XIII',
+        'AREA XIV',
+        'AREA XV',
+        'AREA XVI',
+        'AREA XVII',
+        'AREA XVIII',
+        'AREA XIX',
+        'AREA XX'
+      )
   `;
 
   try {

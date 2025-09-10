@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { format, parse } from "date-fns";
 import { useFetchProgramsToBeAccredited } from "../fetch-react-query/useFetchProgramsToBeAccredited";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
@@ -9,19 +9,22 @@ import PATH from "../../constants/path";
 import MODAL_TYPE from "../../constants/modalTypes";
 import useOutsideClick from "../useOutsideClick";
 import parseAccreditationPeriod from "../../utils/parseAccreditationPeriod";
+import useAutoFocus from "../useAutoFocus";
+
+const { PROGRAM_AREAS } = PATH.DEAN;
+const { 
+  PROGRAMS_TO_BE_ACCREDITED_CREATION, 
+  PROGRAMS_TO_BE_ACCREDITED_ADDITION,
+  PROGRAMS_TO_BE_ACCREDITED_DELETION,
+  PERIOD_DELETION
+} = TOAST_MESSAGES;
 
 export const useProgramsToBeAccredited = () => {
   const navigate = useNavigate();
-  const { programsToBeAccredited, loading, error } = useFetchProgramsToBeAccredited();
   const periodOptionsRef = useRef();
   const programOptionsRef = useRef();
-  const { PROGRAM_AREAS } = PATH.DEAN;
-  const { 
-    PROGRAMS_TO_BE_ACCREDITED_CREATION, 
-    PROGRAMS_TO_BE_ACCREDITED_ADDITION,
-    PROGRAMS_TO_BE_ACCREDITED_DELETION,
-    PERIOD_DELETION
-  } = TOAST_MESSAGES;
+
+  const { programsToBeAccredited, loading, error } = useFetchProgramsToBeAccredited();
 
   const [modalType, setModalType] = useState(null);
   const [modalData, setModalData] = useState({
@@ -32,21 +35,46 @@ export const useProgramsToBeAccredited = () => {
   });
 
   const [infoHover, setInfoHover] = useState(false);
+  const [toggleDropdown, setToggleDropdown] = useState(false);
 
   const [activePeriodId, setActivePeriodId] = useState(null);
   const [activeProgramId, setActiveProgramId] = useState(null);
   
   const [programs, setPrograms] = useState([]); // Save here the program inputted
-  const [programInput, setProgramInput] = useState(''); // Temporaty input for text area
+  const [programInput, setProgramInput] = useState(''); // Temporary input for text area
+  const [duplicateValues, setDuplicateValues] = useState([]);
   const [formValue, setFormValue] = useState({
     startDate: null,
     endDate: null,
     level: '',
   });
 
+  // Auto-focus on start date to let the user know where to start
+  const startDateInputRef = useAutoFocus(
+    modalType,
+    modalType === MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED,
+    { forDateInput: true }
+  );
+
+  // Auto-focus on program input when modal renders
+  const programInputRef = useAutoFocus(
+    modalType, 
+    modalType === MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED_CARD
+  );
+
   // Reuse useOutsideClick hook to make period and program options disappear
   useOutsideClick(periodOptionsRef, () => setActivePeriodId(null));
   useOutsideClick(programOptionsRef, () => setActiveProgramId(null));
+
+  // Remove duplicates automatically if programs state changes
+  useEffect(() => {
+    setDuplicateValues(prev => prev.filter(val => programs.includes(val)));
+  }, [programs]);
+
+  const findDuplicate = (value) => {
+    const data = programsToBeAccredited.data ?? [];
+    return data.some(d => d.program?.program.trim() === value.trim());
+  }
 
   const disableButton = (options = {}) => {
     if (options.isFromMain) {
@@ -54,7 +82,8 @@ export const useProgramsToBeAccredited = () => {
         !formValue.startDate || 
         !formValue.endDate || 
         !formValue.level.trim() || 
-        programs.length === 0
+        programs.length === 0 ||
+        duplicateValues.length > 0
       );
 
     } else if (options.isFromCard) {
@@ -62,7 +91,8 @@ export const useProgramsToBeAccredited = () => {
         !modalData.startDate ||
         !modalData.endDate ||
         !modalData.level.trim() ||
-        programs.length === 0
+        programs.length === 0 ||
+        duplicateValues.length > 0
       );
     }
   };
@@ -115,6 +145,8 @@ export const useProgramsToBeAccredited = () => {
     if (eOrDate && eOrDate.target) {
       const { name, value } = eOrDate.target; // Destructure the field name and value
       setFormValue(prev => ({ ...prev, [name]: value })); // Update the form value for that field
+      setDuplicateValues([]);
+
     } else {
       // Input is a Date (from a date picker)
       if (fieldName === 'startDate') {
@@ -125,6 +157,7 @@ export const useProgramsToBeAccredited = () => {
           // newEndDate.setDate(newEndDate.getDate() + 3); // Automatically set end date to 3 days after start date
           setFormValue(prev => ({ ...prev, startDate: newStartDate, endDate: newEndDate }));
           // Update both startDate and endDate in form state
+          setDuplicateValues([]);
 
         } else {
           // Start date cleared
@@ -140,8 +173,11 @@ export const useProgramsToBeAccredited = () => {
   };
 
   const handleOptionSelection = (level, program, options = {}) => {
+    setDuplicateValues([]);
+
     if (options.isForAddLevel) {
       setFormValue(prev => ({...prev, level}));
+
     } else if (options.isForAddProgram) {
       setPrograms(prev => [...prev, program]);
     }
@@ -149,14 +185,23 @@ export const useProgramsToBeAccredited = () => {
 
   const handleProgramChange = (e) => {
     setProgramInput(e.target.value);
+    setDuplicateValues([]);
   };
 
   const handleAddProgramValue = (val) => {
-    setPrograms([...programs, val])
+    if (findDuplicate(val)) {
+      setDuplicateValues(prev => [...new Set([...prev, val])]);
+      showErrorToast(`${val} already exist.`, 'top-center', 8000);
+      return;
+    }
+    setPrograms(prev => [...prev, val]);
+    setDuplicateValues(prev => prev.filter(v => v !== val));
   };
 
   const handleRemoveProgramValue = (index) => {
-    setPrograms(programs.filter((_, i) => i !== index))
+    const removedVal = programs[index];
+    setPrograms(prev => prev.filter((_, i) => i !== index));
+    setDuplicateValues(prev => prev.filter(v => v !== removedVal));
   };
 
   const handleSave = async (options = {}) => {
@@ -173,7 +218,9 @@ export const useProgramsToBeAccredited = () => {
         );
 
         handleCloseClick({ isFromMain: true });
-        res.data.success && showSuccessToast(PROGRAMS_TO_BE_ACCREDITED_CREATION.SUCCESS);
+        if (res.data.success) {
+          showSuccessToast(PROGRAMS_TO_BE_ACCREDITED_CREATION.SUCCESS);
+        } 
       }
 
       if (options.isFromCard && options.data) {
@@ -190,18 +237,34 @@ export const useProgramsToBeAccredited = () => {
         handleCloseClick({ isFromCard: true });
         if (res.data.success) {
           showSuccessToast(PROGRAMS_TO_BE_ACCREDITED_ADDITION.SUCCESS);
-        } else {
-          showErrorToast(PROGRAMS_TO_BE_ACCREDITED_ADDITION.ERROR);
-        }
+        } 
       }
 
     } catch (error) {
-      console.error('Error adding program to be accredited: ', error);
+      const isDuplicate = error?.response?.data?.isDuplicate;
+      const errorMessage = error?.response?.data?.message;
+      const duplicates = error?.response?.data?.duplicateValue;
+
+      if (options.isFromCard) {
+        const duplicateValue = error?.response?.data?.duplicateValue[3];
+        if (isDuplicate && duplicateValue) {
+          setDuplicateValues(prev => [...new Set([...prev, duplicateValue])]);
+        }
+        showErrorToast(`${duplicateValue} already exist.`, 'top-center', 8000);
+        
+      } else {
+        setDuplicateValues(prev => [...new Set([...prev, duplicates])]);
+        showErrorToast('Period, level, and program already exist.', 'top-center', 8000);
+      }
     }
   };
 
   const handleInfoHover = () => {
     setInfoHover(prev => !prev);
+  };
+
+  const handleChevronClick = () => {
+    setToggleDropdown(!toggleDropdown);
   };
 
   const handleOptionClick = (e, options = {}) => {
@@ -252,7 +315,11 @@ export const useProgramsToBeAccredited = () => {
         const formattedLevel = String(options.data.levelName).toLowerCase().split(' ').join('-');
         const formattedProgram = String(options.data.programName).toLowerCase().split(' ').join('-');
 
-        navigate(PROGRAM_AREAS(startDate + endDate, formattedLevel, formattedProgram));
+        navigate(PROGRAM_AREAS({ 
+          period: startDate + endDate, 
+          level: formattedLevel, 
+          program: formattedProgram 
+        }));
       }
     }
   };
@@ -307,13 +374,21 @@ export const useProgramsToBeAccredited = () => {
     if (options.data) {
       const startDate = parseAccreditationPeriod(options.data.periodKey)[0].replaceAll('-', '');
       const endDate = parseAccreditationPeriod(options.data.periodKey)[1].replaceAll('-', '');
+      const periodUUID = options.data.periodUUID;
       const level = options.data.level;
+      const programUUID = options.data.programUUID;
       const program = options.data.programName;
 
       const formattedLevel = String(level).toLowerCase().split(' ').join('-');
       const formattedProgram = String(program).toLowerCase().split(' ').join('-');
+      console.log(periodUUID);
+      console.log(programUUID);
 
-      navigate(PROGRAM_AREAS(startDate + endDate, formattedLevel, formattedProgram));
+      navigate(PROGRAM_AREAS({ 
+        periodID: periodUUID, 
+        level: formattedLevel, 
+        programID: programUUID 
+      }));
     }
   };
 
@@ -327,12 +402,21 @@ export const useProgramsToBeAccredited = () => {
       handleCloseClick
     },
 
+    chevron: {
+      handleChevronClick
+    },
+
     confirmation: {
       handleConfirmClick
     },
 
     dropdown: {
+      toggleDropdown,
       handleOptionSelection
+    },
+
+    duplicates: {
+      duplicateValues
     },
 
     programsToBeAccreditedData: {
@@ -380,7 +464,9 @@ export const useProgramsToBeAccredited = () => {
 
     ref: {
       periodOptionsRef,
-      programOptionsRef
+      programOptionsRef,
+      startDateInputRef,
+      programInputRef,
     },
 
     saveHandler: {

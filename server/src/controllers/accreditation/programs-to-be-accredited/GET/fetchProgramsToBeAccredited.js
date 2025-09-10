@@ -1,11 +1,25 @@
+import getPeriod from "../../../../models/accreditation/period/GET/getPeriod.js";
 import { getProgramsToBeAccredited } from "../../../../models/accreditation/program-to-be-accredited/GET/getProgramToBeAccredited.js";
+import getProgram from "../../../../models/programs/GET/getProgram.js";
 
 const fetchProgramsToBeAccredited = async (req, res) => {
   try {
-    const programs = await getProgramsToBeAccredited();
+    const period = await getPeriod();
+    const programs = await getProgram();
+    const programsToBeAccredited = await getProgramsToBeAccredited();
+
     res.status(200).json({
       success: true,
-      data: programs
+      data: programsToBeAccredited.map(item => {
+        const program = programs.find(p => p.program_uuid === item.program_uuid);
+        const periodItem = period.find(pr => pr.period_uuid === item.period_uuid);
+
+        return {
+          ...item,
+          program: program || null,
+          period: periodItem || null
+        };
+      })
     });
 
   } catch (error) {

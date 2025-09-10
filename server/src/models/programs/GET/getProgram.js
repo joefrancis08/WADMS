@@ -2,7 +2,9 @@ import db from "../../../config/db.js";
 
 const getProgram = async (connection = db) => {
   const query = `
-    SELECT id, program_name AS program 
+    SELECT 
+      uuid AS program_uuid,
+      program_name AS program 
     FROM program 
     ORDER BY program_name ASC
   `;
