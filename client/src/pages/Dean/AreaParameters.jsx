@@ -86,6 +86,7 @@ const AreaParameters = () => {
     if (findDuplicate(val)) {
       setDuplicateValues(prev => [...new Set([...prev, val])]);
       showErrorToast(`${val} already exist.`, 'top-center', 3000);
+      return;
     }
     setParametersArr([...parametersArr, val]);
     setDuplicateValues(prev => prev.filter(v => v !== val));
