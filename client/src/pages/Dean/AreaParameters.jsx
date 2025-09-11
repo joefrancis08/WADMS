@@ -1,172 +1,48 @@
-import React, { useEffect, useRef, useState } from 'react';
 import DeanLayout from '../../components/Layout/Dean/DeanLayout';
 import ContentHeader from '../../components/Dean/ContentHeader';
 import { ChevronRight, EllipsisVertical, Folder, Plus } from 'lucide-react';
-import { useNavigate, useParams } from 'react-router-dom';
-import formatProgramParams from '../../utils/formatProgramParams';
 import PATH from '../../constants/path';
 import formatAreaName from '../../utils/formatAreaName';
-import useFetchAreaParameters from '../../hooks/fetch-react-query/useFetchAreaParameters';
-import MODAL_TYPE from '../../constants/modalTypes';
-import ParameterBaseModal from '../../components/Modals/accreditation/ParameterBaseModal';
-import AddField from '../../components/Form/Dean/AddField';
-import useAutoFocus from '../../hooks/useAutoFocus';
-import { addAreaParameters } from '../../api/accreditation/accreditationAPI';
-import { showErrorToast, showSuccessToast } from '../../utils/toastNotification';
-import { TOAST_MESSAGES } from '../../constants/messages';
-import { useProgramAreaDetails, useProgramToBeAccreditedDetails } from '../../hooks/useAccreditationDetails';
+import useAreaParameters from '../../hooks/Dean/useAreaParameters';
+import ParameterModal from '../../components/Dean/ParameterModal';
 
 const { PROGRAMS_TO_BE_ACCREDITED, PROGRAM_AREAS, PARAM_SUBPARAMS } = PATH.DEAN;
-const { PARAMETER_ADDITION } = TOAST_MESSAGES;
 
 const AreaParameters = () => {
-  const { periodID, level, programID, areaID } = useParams();
-  const { level: levelName } = formatProgramParams(level);
-  const navigate = useNavigate();
-
   const { 
-    startDate, 
-    endDate, 
-    programName 
-  } = useProgramToBeAccreditedDetails(periodID, programID);
+    params,
+    navigation, 
+    refs, 
+    datas, 
+    modals, 
+    inputs, 
+    handlers 
+  } = useAreaParameters();
 
-  const { areaName } = useProgramAreaDetails({
-    startDate,
-    endDate,
+  const { periodID, level, programID, areaID }  = params;
+  const { navigate } = navigation;
+  const { parameterInputRef } = refs;
+  const { modalType } = modals;
+  const { parameterInput } = inputs;
+  const {
     levelName,
     programName,
-    areaID
-  });
-
-  const { parameters, loading, error, refetch } = useFetchAreaParameters(
-    startDate, 
-    endDate, 
-    levelName, 
-    programName, 
     areaName,
-    !! areaName
-  );
-
-  const parameterData = parameters.data ?? [];
-
-  const [modalType, setModalType] = useState(null);
-  const [parametersArr, setParametersArr] = useState([]);
-  const [parameterInput, setParameterInput] = useState('');
-  const [duplicateValues, setDuplicateValues] = useState([]);
-
-  // Auto-focus parameter input
-  const parameterInputRef = useAutoFocus(
-    modalType,
-    modalType === MODAL_TYPE.ADD_PARAMETER
-  );
-
-  // Remove duplicate automatically if parameter state changes
-  useEffect(() => {
-    setDuplicateValues(prev => prev.filter(val => parametersArr.includes(val)));
-  }, [parametersArr]);
-
-  const findDuplicate = (value) => {
-    return parameterData.some(d => d.parameter.trim() === value.trim());
-  };
-
-  const handlePlusClick = () => {
-    setModalType(MODAL_TYPE.ADD_PARAMETER);
-  };
-
-  const handleCloseModal = () => {
-    setModalType(null);
-    setParametersArr([]);
-  };
-
-  const handleParameterChange = (e) => {
-    setParameterInput(e.target.value);
-  };
-
-  const handleAddParameterValue = (val) => {
-    if (findDuplicate(val)) {
-      setDuplicateValues(prev => [...new Set([...prev, val])]);
-      showErrorToast(`${val} already exist.`, 'top-center', 3000);
-      return;
-    }
-    setParametersArr([...parametersArr, val]);
-    setDuplicateValues(prev => prev.filter(v => v !== val));
-  };
-
-  const handleRemoveParameterValue = (index) => {
-    const removedVal = parametersArr[index];
-    setParametersArr(parametersArr.filter((_, i) => i !== index));
-    setDuplicateValues(prev => prev.filter(v => v !== removedVal));
-  };
-
-  const handleSaveParameters = async () => {
-    try {
-      const res = await addAreaParameters({
-        startDate,
-        endDate,
-        levelName,
-        programName,
-        areaName,
-        parameterNames: parametersArr
-      });
-
-      if (res.data.success) {
-        showSuccessToast(PARAMETER_ADDITION.SUCCESS);
-        await refetch();
-      }
-
-      handleCloseModal();
-
-    } catch (error) {
-      const duplicateValue = error?.response?.data?.error?.duplicateValue;
-      console.log(duplicateValue);
-      setDuplicateValues(prev => [...new Set([...prev, duplicateValue])]);
-      showErrorToast(`${duplicateValue} already exist.`);
-    }
-  };
-
-  const renderModal = () => {
-    switch (modalType) {
-      case MODAL_TYPE.ADD_PARAMETER:
-        return (
-          <ParameterBaseModal
-            onClose={handleCloseModal}
-            onCancel={handleCloseModal}
-            onSave={handleSaveParameters}
-            primaryButton={parametersArr.length > 1 ? 'Add Parameters' : 'Add Parameter'}
-            disabled={parametersArr.length === 0}
-            secondaryButton={'Cancel'}
-            mode='add'
-            headerContent={<p className='text-xl font-semibold'>Add Parameters</p>}
-            bodyContent={
-              <div className='relative w-full'>
-                <AddField
-                  ref={parameterInputRef}
-                  fieldName={parametersArr.length > 1 ? 'Parameters' : 'Parameter'}
-                  placeholder={'Enter a parameter...'}
-                  type='textarea'
-                  name='areaInput'
-                  formValue={parameterInput}
-                  multiValue={true}
-                  multiValues={parametersArr}
-                  // dropdownItems={areasArray}
-                  showDropdownOnFocus={true}
-                  duplicateValues={duplicateValues}
-                  // onDropdownMenuClick={handleOptionSelection}
-                  onAddValue={(val) => handleAddParameterValue(val)}
-                  onRemoveValue={(index) => handleRemoveParameterValue(index)}
-                  onChange={(e) => handleParameterChange(e)}
-                  // onFocus={handleFocus}
-                />
-              </div>
-            }
-          />
-        );
-        
-    
-      default:
-        break;
-    }
-  };
+    parameters,
+    loading,
+    error,
+    parameterData,
+    parametersArr,
+    duplicateValues
+  } = datas;
+  const {
+    handleCloseModal,
+    handlePlusClick,
+    handleParameterChange,
+    handleAddParameterValue,
+    handleRemoveParameterValue,
+    handleSaveParameters
+  } = handlers;
 
   return (
     <DeanLayout>
@@ -241,7 +117,19 @@ const AreaParameters = () => {
           ))}
         </div>
       </div>
-      {renderModal()}
+      <ParameterModal 
+        modalType={modalType}
+        refs={{ parameterInputRef }}
+        inputs={{ parameterInput }}
+        datas={{ parametersArr, duplicateValues }}
+        handlers={{
+          handleCloseModal,
+          handleSaveParameters,
+          handleAddParameterValue,
+          handleRemoveParameterValue,
+          handleParameterChange
+        }}
+      />
     </DeanLayout>
   );
 };

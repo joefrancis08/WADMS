@@ -79,7 +79,8 @@ const addParamSubparamMapping = async (req, res) => {
       return res.status(409).json({
         success: false,
         isDuplicate: true,
-        message: 'Duplicate entry.'
+        duplicateValue: error.duplicateValue,
+        message: `${error.duplicateValue} already exist.`
       });
     }
 

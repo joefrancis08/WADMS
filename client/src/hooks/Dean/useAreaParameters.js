@@ -1,0 +1,166 @@
+import { useNavigate, useParams } from "react-router-dom";
+import { TOAST_MESSAGES } from "../../constants/messages";
+import PATH from "../../constants/path";
+import formatProgramParams from "../../utils/formatProgramParams";
+import { useProgramAreaDetails, useProgramToBeAccreditedDetails } from "../useAccreditationDetails";
+import useFetchAreaParameters from "../fetch-react-query/useFetchAreaParameters";
+import { useEffect, useState } from "react";
+import useAutoFocus from "../useAutoFocus";
+import MODAL_TYPE from "../../constants/modalTypes";
+import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
+import { addAreaParameters } from "../../api/accreditation/accreditationAPI";
+
+const { PARAMETER_ADDITION } = TOAST_MESSAGES;
+
+const useAreaParameters = () => {
+  const { periodID, level, programID, areaID } = useParams();
+  const { level: levelName } = formatProgramParams(level);
+  const navigate = useNavigate();
+
+  const { 
+    startDate, 
+    endDate, 
+    programName 
+  } = useProgramToBeAccreditedDetails(periodID, programID);
+
+  const { areaName } = useProgramAreaDetails({
+    startDate,
+    endDate,
+    levelName,
+    programName,
+    areaID
+  });
+
+  const { parameters, loading, error, refetch } = useFetchAreaParameters(
+    startDate, 
+    endDate, 
+    levelName, 
+    programName, 
+    areaName,
+    !! areaName
+  );
+
+  const parameterData = parameters.data ?? [];
+
+  const [modalType, setModalType] = useState(null);
+  const [parametersArr, setParametersArr] = useState([]);
+  const [parameterInput, setParameterInput] = useState('');
+  const [duplicateValues, setDuplicateValues] = useState([]);
+
+  // Auto-focus parameter input
+  const parameterInputRef = useAutoFocus(
+    modalType,
+    modalType === MODAL_TYPE.ADD_PARAMETER
+  );
+
+  // Remove duplicate automatically if parameter state changes
+  useEffect(() => {
+    setDuplicateValues(prev => prev.filter(val => parametersArr.includes(val)));
+  }, [parametersArr]);
+
+  const findDuplicate = (value) => {
+    return parameterData.some(d => d.parameter.trim() === value.trim());
+  };
+
+  const handlePlusClick = () => {
+    setModalType(MODAL_TYPE.ADD_PARAMETER);
+  };
+
+  const handleCloseModal = () => {
+    setModalType(null);
+    setParametersArr([]);
+  };
+
+  const handleParameterChange = (e) => {
+    setParameterInput(e.target.value);
+  };
+
+  const handleAddParameterValue = (val) => {
+    if (findDuplicate(val)) {
+      setDuplicateValues(prev => [...new Set([...prev, val])]);
+      showErrorToast(`${val} already exist.`, 'top-center');
+      return;
+    }
+    setParametersArr([...parametersArr, val]);
+    setDuplicateValues(prev => prev.filter(v => v !== val));
+  };
+
+  const handleRemoveParameterValue = (index) => {
+    const removedVal = parametersArr[index];
+    setParametersArr(parametersArr.filter((_, i) => i !== index));
+    setDuplicateValues(prev => prev.filter(v => v !== removedVal));
+  };
+
+  const handleSaveParameters = async () => {
+    try {
+      const res = await addAreaParameters({
+        startDate,
+        endDate,
+        levelName,
+        programName,
+        areaName,
+        parameterNames: parametersArr
+      });
+
+      if (res.data.success) {
+        showSuccessToast(PARAMETER_ADDITION.SUCCESS);
+        await refetch();
+      }
+
+      handleCloseModal();
+
+    } catch (error) {
+      const duplicateValue = error?.response?.data?.error?.duplicateValue;
+      setDuplicateValues(prev => [...new Set([...prev, duplicateValue])]);
+      showErrorToast(`${duplicateValue} already exist.`, 'top-center');
+    }
+  };
+
+  return {
+    params: {
+      periodID,
+      level,
+      programID,
+      areaID
+    },
+
+    navigation: {
+      navigate
+    },
+
+    refs: {
+      parameterInputRef
+    },
+
+    modals: {
+      modalType
+    },
+
+    inputs: {
+      parameterInput
+    },
+
+    datas: {
+      levelName,
+      programName,
+      areaName,
+      parameters,
+      loading,
+      error,
+      parameterData,
+      parametersArr,
+      duplicateValues
+    },
+
+    handlers: {
+      handleCloseModal,
+      handlePlusClick,
+      handleParameterChange,
+      handleAddParameterValue,
+      handleRemoveParameterValue,
+      handleSaveParameters
+    }
+  }
+};
+
+export default useAreaParameters;

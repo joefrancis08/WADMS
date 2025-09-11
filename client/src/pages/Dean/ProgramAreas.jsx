@@ -1,138 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 import DeanLayout from '../../components/Layout/Dean/DeanLayout';
 import ContentHeader from '../../components/Dean/ContentHeader';
-import AreaBaseModal from '../../components/Modals/accreditation/AreaBaseModal';
-import AddField from '../../components/Form/Dean/AddField';
 import { ChevronRight, EllipsisVertical, FolderOpen, Plus } from 'lucide-react';
-import formatProgramParams from '../../utils/formatProgramParams';
-import formatArea from '../../utils/formatArea';
-import useAutoFocus from '../../hooks/useAutoFocus';
-import useFetchProgramAreas from '../../hooks/fetch-react-query/useFetchProgramAreas';
-import { addProgramAreas } from '../../api/accreditation/accreditationAPI';
-import { TOAST_MESSAGES } from '../../constants/messages';
-import { showErrorToast, showSuccessToast } from '../../utils/toastNotification';
-import MODAL_TYPE from '../../constants/modalTypes';
 import PATH from '../../constants/path';
-import { useProgramToBeAccreditedDetails } from '../../hooks/useAccreditationDetails';
+import useProgramAreas from '../../hooks/Dean/useProgramAreas';
+import AreaModal from '../../components/Dean/AreaModal';
 
 const ProgramAreas = () => {
-  const navigate = useNavigate();
-  const { periodID, level, programID } = useParams();
-  const { level: formattedLevel } = formatProgramParams(level);
+  const {
+    navigation,
+    datas,
+    inputs,
+    refs,
+    values,
+    modals,
+    handlers
+  } = useProgramAreas();
 
-  const { startDate, endDate, programName, programObj } = useProgramToBeAccreditedDetails(periodID, programID);
-
-  // Only fetch areas if programObj is ready
-  const { areas: areasData, loading, error, refetch } = useFetchProgramAreas(
-    startDate,
-    endDate,
-    formattedLevel,
-    programName,
-    !!programObj // Pass a boolean to conditionally fetch
-  );
-  const data = areasData?.data ?? [];
-
-  const [modalType, setModalType] = useState(null);
-  const [areas, setAreas] = useState([]);
-  const [areaInput, setAreaInput] = useState('');
-  const [duplicateValues, setDuplicateValues] = useState([]);
-
-  const areaInputRef = useAutoFocus(modalType, modalType === MODAL_TYPE.ADD_AREA);
-
-  // Remove duplicates automatically if areas state changes
-  useEffect(() => {
-    setDuplicateValues(prev => prev.filter(val => areas.includes(val)));
-  }, [areas]);
-
-  const findDuplicate = (value) => {
-    return data.some(d => d.area.toUpperCase().trim() === value.toUpperCase().trim());
-  };
-
-  const handleCloseModal = () => {
-    setModalType(null);
-    setAreas([]);
-  };
-
-  const handleAddAreaValue = (val) => {
-    if (findDuplicate(val)) {
-      const formattedVal = formatArea(val);
-      setDuplicateValues(prev => [...new Set([...prev, formattedVal])]);
-      showErrorToast(`${val} already exist.`, 'top-center', 3000);
-      return;
-    }
-    setAreas(prev => [...prev, formatArea(val)]);
-    setDuplicateValues(prev => prev.filter(v => v !== formatArea(val)));
-  };
-
-  const handleRemoveAreaValue = (index) => {
-    const removedVal = areas[index];
-    setAreas(prev => prev.filter((_, i) => i !== index));
-    setDuplicateValues(prev => prev.filter(v => v !== removedVal));
-  };
-
-  const handleSaveAreas = async () => {
-    if (!areas.length) return;
-
-    try {
-      const res = await addProgramAreas(startDate, endDate, formattedLevel, programName, areas);
-      if (res.data.success) {
-        showSuccessToast(TOAST_MESSAGES.AREA_ADDITION.SUCCESS);
-        handleCloseModal();
-        await refetch(); // Refresh areas after save
-      }
-      
-    } catch (err) {
-      const isDuplicate = err?.response?.data?.isDuplicate;
-      const duplicateValue = err?.response?.data?.duplicateValue;
-      const message = err?.response?.data?.message;
-
-      if (isDuplicate && duplicateValue) {
-        setDuplicateValues(prev => [...new Set([...prev, duplicateValue])]);
-        showErrorToast(message);
-      }
-    }
-  };
-
-  const handleAreaCardClick = (areaID) => {
-    navigate(PATH.DEAN.AREA_PARAMETERS({ periodID, level, programID, areaID }));
-  };
-
-  const renderModal = () => {
-    if (modalType !== MODAL_TYPE.ADD_AREA) return null;
-
-    return (
-      <AreaBaseModal
-        onClose={handleCloseModal}
-        onCancel={handleCloseModal}
-        onSave={handleSaveAreas}
-        primaryButton={areas.length > 1 ? 'Add Areas' : 'Add Area'}
-        secondaryButton='Cancel'
-        disabled={areas.length === 0 || duplicateValues.length > 0}
-        mode='add'
-        headerContent={<p className='text-xl font-semibold'>Add Areas</p>}
-        bodyContent={
-          <div className='relative w-full'>
-            <AddField
-              ref={areaInputRef}
-              fieldName={areas.length > 1 ? 'Areas' : 'Area'}
-              placeholder={data.length > 0 ? 'Enter a new area or select an existing one...' : 'Enter a new area'}
-              type='textarea'
-              name='areaInput'
-              formValue={areaInput}
-              multiValue
-              multiValues={areas}
-              showDropdownOnFocus
-              duplicateValues={duplicateValues}
-              onAddValue={handleAddAreaValue}
-              onRemoveValue={handleRemoveAreaValue}
-              onChange={(e) => setAreaInput(e.target.value)}
-            />
-          </div>
-        }
-      />
-    );
-  };
+  const { navigate } = navigation;
+  const { data, loading, error, formattedLevel, programName } = datas;
+  const { areas, areaInput } = inputs;
+  const { areaInputRef } = refs;
+  const { duplicateValues } = values;
+  const { modalType } = modals;
+  const {
+    handleAreaInputChange,
+    handleAddAreaClick,
+    handleCloseModal,
+    handleAddAreaValue,
+    handleRemoveAreaValue,
+    handleSaveAreas,
+    handleAreaCardClick
+  } = handlers
 
   return (
     <DeanLayout>
@@ -160,7 +58,7 @@ const ProgramAreas = () => {
         </div>
 
         <div className='flex justify-end px-5 py-3'>
-          <button onClick={() => setModalType(MODAL_TYPE.ADD_AREA)} title='Add Areas' className='cursor-pointer hover:opacity-80 active:opacity-50'>
+          <button onClick={handleAddAreaClick} title='Add Areas' className='cursor-pointer hover:opacity-80 active:opacity-50'>
             <Plus className='h-8 w-8' />
           </button>
         </div>
@@ -172,7 +70,7 @@ const ProgramAreas = () => {
             <div
               key={area_uuid}
               onClick={() => handleAreaCardClick(area_uuid)}
-              className='relative flex flex-col items-start justify-start border py-8 px-4 w-75 rounded-md transition-all cursor-pointer hover:bg-slate-50 active:opacity-50'
+              className='relative flex flex-col items-start justify-start border py-8 px-4 w-75 rounded-md transition-all cursor-pointer shadow hover:shadow-lg active:opacity-50'
             >
               {String(area)
                 .toUpperCase()
@@ -187,8 +85,25 @@ const ProgramAreas = () => {
           ))}
         </div>
       </div>
-
-      {renderModal()}
+      <AreaModal 
+        modalType={modalType}
+        refs={{ areaInputRef }}
+        inputs={{ areaInput }}
+        datas={{ 
+          data,
+          error,
+          loading, 
+          areas, 
+          duplicateValues 
+        }}
+        handlers={{
+          handleCloseModal,
+          handleSaveAreas,
+          handleAreaInputChange,
+          handleAddAreaValue,
+          handleRemoveAreaValue
+        }}
+      />
     </DeanLayout>
   );
 };

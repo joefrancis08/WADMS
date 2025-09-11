@@ -1,6 +1,6 @@
 import { ChevronDown } from "lucide-react";
-import { USER_ROLES } from "../../../constants/user";
-import Dropdown from "../../Dropdown/Dropdown";
+import { USER_ROLES } from "../../constants/user";
+import Dropdown from "../Dropdown/Dropdown";
 
 const UpdateField = ({
   fieldName,

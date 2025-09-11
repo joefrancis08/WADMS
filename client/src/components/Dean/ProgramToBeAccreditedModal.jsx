@@ -1,10 +1,9 @@
 import { CircleQuestionMark, Info, MoveRight, TriangleAlert } from 'lucide-react';
 import MODAL_TYPE from '../../constants/modalTypes';
-import AddField from '../Form/Dean/AddField';
+import AddField from '../Form/AddField';
 import ProgramToBeAccreditedBaseModal from '../Modals/accreditation/ProgramToBeAccreditedBaseModal';
 import Popover from '../Popover';
 import useAccreditationLevel from '../../hooks/fetch-react-query/useAccreditationLevel';
-import useAccreditationPeriod from '../../hooks/fetch-react-query/useAccreditationPeriod';
 import { useState } from 'react';
 import usePrograms from '../../hooks/fetch-react-query/usePrograms';
 import ConfirmationModal from '../Modals/ConfirmationModal';

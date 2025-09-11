@@ -71,6 +71,7 @@ const insertParamSubparamMapping = async (startDate, endDate, level, program, ar
     if (exists.length > 0) {
       const error = new Error('Duplicate entry');
       error.code = 'DUPLICATE_ENTRY';
+      error.duplicateValue = subParameter;
       throw error;
     }
 
@@ -87,6 +88,13 @@ const insertParamSubparamMapping = async (startDate, endDate, level, program, ar
 
   } catch (error) {
     await connection.rollback();
+
+    if (error.code === 'ER_DUP_ENTRY') {
+      const duplicateError = new Error('DUPLICATE_ENTRY');
+      duplicateError.duplicateValue = subParameter;
+      throw duplicateError;
+    }
+    
     throw error;
 
   } finally {

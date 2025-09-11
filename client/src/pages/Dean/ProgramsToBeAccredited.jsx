@@ -103,7 +103,6 @@ const ProgramsToAccredit = () => {
     return acc;
   }, {}); // Start with an empty object {}
 
-  console.log(grouped);
   // Options for Period
   const periodOptions = [
     { icon: <ClipboardPlus size={24} />, label: 'Add Level and Programs' },
@@ -279,8 +278,11 @@ const ProgramsToAccredit = () => {
                                             isFromProgram: true,
                                             optionName: option.label,
                                             data: {
-                                              period: parseAccreditationPeriod(periodKey),
+                                              periodUUID: programObj.period.period_uuid,
+                                              startDate: programObj.period.period_end,
+                                              endDate: programObj.period.period_end, 
                                               levelName: level,
+                                              programUUID: programObj.program_uuid,
                                               programName: programObj.program
                                             }
                                           }))}

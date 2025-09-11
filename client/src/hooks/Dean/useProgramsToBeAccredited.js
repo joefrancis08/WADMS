@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { format, parse } from "date-fns";
+import { format } from "date-fns";
 import { useFetchProgramsToBeAccredited } from "../fetch-react-query/useFetchProgramsToBeAccredited";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
 import { TOAST_MESSAGES } from "../../constants/messages";
@@ -8,7 +8,6 @@ import { addProgramToBeAccredited, deleteAccreditationPeriod, deleteProgramToBeA
 import PATH from "../../constants/path";
 import MODAL_TYPE from "../../constants/modalTypes";
 import useOutsideClick from "../useOutsideClick";
-import parseAccreditationPeriod from "../../utils/parseAccreditationPeriod";
 import useAutoFocus from "../useAutoFocus";
 
 const { PROGRAM_AREAS } = PATH.DEAN;
@@ -138,8 +137,6 @@ export const useProgramsToBeAccredited = () => {
       }
   };
 
-  console.log(modalData);
-
   const handleInputChange = (eOrDate, fieldName) => {
     // Check if the input is a normal DOM event (like typing in a text field)
     if (eOrDate && eOrDate.target) {
@@ -242,7 +239,6 @@ export const useProgramsToBeAccredited = () => {
 
     } catch (error) {
       const isDuplicate = error?.response?.data?.isDuplicate;
-      const errorMessage = error?.response?.data?.message;
       const duplicates = error?.response?.data?.duplicateValue;
 
       if (options.isFromCard) {
@@ -285,7 +281,6 @@ export const useProgramsToBeAccredited = () => {
     e.stopPropagation();
     if (options.isFromPeriod && options.optionName) {
       setActivePeriodId(null);
-      console.log('Delete Click from Period');
 
       if (options.optionName === 'Delete' && options.data) {
         setModalType(MODAL_TYPE.DELETE_PERIOD);
@@ -309,16 +304,14 @@ export const useProgramsToBeAccredited = () => {
         }));
 
       } else if (options.optionName === 'View Areas' && options.data) {
-        console.log(options.data.period);
-        const startDate = String(options.data.period[0]).split('-').join('');
-        const endDate = String(options.data.period[1]).split('-').join('');
+        const periodUUID = options?.data?.periodUUID;
+        const programUUID = options?.data?.programUUID;
         const formattedLevel = String(options.data.levelName).toLowerCase().split(' ').join('-');
-        const formattedProgram = String(options.data.programName).toLowerCase().split(' ').join('-');
 
         navigate(PROGRAM_AREAS({ 
-          period: startDate + endDate, 
+          periodID: periodUUID, 
           level: formattedLevel, 
-          program: formattedProgram 
+          programID: programUUID
         }));
       }
     }
@@ -352,7 +345,7 @@ export const useProgramsToBeAccredited = () => {
         const levelName = options.data.levelName;
         const programName = options.data.programName;
         const result = await deleteProgramToBeAccredited(startDate, endDate, levelName, programName);
-        console.log(result);
+        
         if (result.data.success) {
           showSuccessToast(PROGRAMS_TO_BE_ACCREDITED_DELETION.SUCCESS);
         } else {
@@ -372,17 +365,10 @@ export const useProgramsToBeAccredited = () => {
     e.stopPropagation();
     
     if (options.data) {
-      const startDate = parseAccreditationPeriod(options.data.periodKey)[0].replaceAll('-', '');
-      const endDate = parseAccreditationPeriod(options.data.periodKey)[1].replaceAll('-', '');
-      const periodUUID = options.data.periodUUID;
       const level = options.data.level;
-      const programUUID = options.data.programUUID;
-      const program = options.data.programName;
-
       const formattedLevel = String(level).toLowerCase().split(' ').join('-');
-      const formattedProgram = String(program).toLowerCase().split(' ').join('-');
-      console.log(periodUUID);
-      console.log(programUUID);
+      const periodUUID = options.data.periodUUID;
+      const programUUID = options.data.programUUID;
 
       navigate(PROGRAM_AREAS({ 
         periodID: periodUUID, 

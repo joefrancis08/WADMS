@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
-import Dropdown from '../../Dropdown/Dropdown';
-import { USER_ROLES } from '../../../constants/user';
+import Dropdown from '../Dropdown/Dropdown';
+import { USER_ROLES } from '../../constants/user';
 import { Calendar, CalendarDays, ChevronDown, CircleAlert, X } from 'lucide-react';
-import Popover from '../../Popover';
-import DatePickerComponent from '../../DatePickerComponent';
-import { getUserRolesDropdown } from '../../../utils/dropdownOptions';
-import useOutsideClick from '../../../hooks/useOutsideClick';
+import Popover from '../Popover';
+import DatePickerComponent from '../DatePickerComponent';
+import { getUserRolesDropdown } from '../../utils/dropdownOptions';
+import useOutsideClick from '../../hooks/useOutsideClick';
 
 const AddField = ({
   ref,
