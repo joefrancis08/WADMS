@@ -61,6 +61,8 @@ const insertAccreditationInfo = async (title, year, accredBody) => {
       throw duplicateError;
     }
 
+    console.error(error)
+
     throw error;
 
   } finally {

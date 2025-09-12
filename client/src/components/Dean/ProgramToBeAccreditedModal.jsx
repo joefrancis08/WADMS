@@ -20,9 +20,8 @@ const ProgramToBeAccreditedModal = ({
   handlers,
   modalData
 }) => {
-  // Here we store the value of the selected period in the dropdown
-  const [ periodStartValue, setPeriodStartValue] = useState(null); 
-  const [ periodEndValue, setPeriodEndValue ] = useState(null);
+  // Here we store the value of the selected year in the dropdown
+  const [ accredYear, setAccredYear] = useState(null); 
 
   const { levels, loading: levelLoading, error: errorLoading } = useAccreditationLevel();
   const data = levels?.data ?? []; // Fallback to [] if levels.data is null or undefined
@@ -41,13 +40,11 @@ const ProgramToBeAccreditedModal = ({
     handleAddProgramValue,
     handleRemoveProgramValue,
     handleProgramChange,
-    handleInfoHover,
   } = handlers;
 
   const handleClose = () => {
     handleCloseClick({ isFromMain: true });
-    setPeriodStartValue(null);
-    setPeriodEndValue(null);
+    setAccredYear(null);
     handleProgramChange({ target: { name: 'programInput', value: '' } }); // Reset textarea
   };
 
@@ -65,38 +62,47 @@ const ProgramToBeAccreditedModal = ({
             disabled={disableButton?.({ isFromMain: true })}
             headerContent={
               <p className='ml-5 text-xl font-semibold text-slate-900'>
-                Create New Period, Level, and Program
+                Add New Accreditation
               </p>
             }
             bodyContent={
-              <div className='relative w-[90%]'>
-                <p className='text-center text-lg text-slate-800'>
-                  Accreditation Period
-                </p>
+              <div className='relative w-full px-8'>
                 <div className='flex flex-row items-center gap-x-2'>
+                  <AddField 
+                    fieldName='Title'
+                    placeholder={'Enter new title...'}
+                    type='text'
+                    name='title'
+                    formValue={formValue?.title}
+                    isDropdown={false}
+                    onChange={handleInputChange}
+                    showDropdownOnFocus={false}
+                    // dropdownItems={null}
+                    // onDropdownMenuClick={handleOptionSelection}
+                  />
                   <AddField
                     ref={ref}
-                    fieldName='Start Date'
-                    placeholder='Enter or select date...'
+                    fieldName='Year'
+                    placeholder='Enter or year...'
                     type='date'
-                    name='startDate'
-                    formValue={formValue.startDate || periodStartValue}
+                    name='year'
+                    formValue={formValue.year ? new Date(formValue.year, 0, 1) : null}
                     minDate={new Date()}
                     onChange={handleInputChange}
                   />
-                  <p className='text-gray-500'>&ndash;</p>
-                  <AddField 
-                    fieldName='End Date'
-                    placeholder='Enter or select date...'
-                    type='date'
-                    name='endDate'
-                    formValue={formValue.endDate || periodEndValue}
-                    datePickerDisabled={!formValue.startDate}
-                    minDate={formValue.startDate}
-                    onChange={handleInputChange}
-                  />
                 </div>
-                <hr className='w-[60%] mx-auto text-slate-300'></hr>
+                <AddField 
+                  fieldName='Accrediting Agency'
+                  placeholder={'Enter accrediting agency...'}
+                  type='text'
+                  name='accreditationBody'
+                  formValue={formValue?.accreditationBody}
+                  isDropdown={false}
+                  onChange={handleInputChange}
+                  showDropdownOnFocus={false}
+                  // dropdownItems={levelsArray}
+                  // onDropdownMenuClick={handleOptionSelection}
+                />
                 <AddField 
                   fieldName='Level'
                   placeholder={levelsArray.length > 0 
@@ -110,6 +116,7 @@ const ProgramToBeAccreditedModal = ({
                   onChange={handleInputChange}
                   showDropdownOnFocus={true}
                   dropdownItems={levelsArray}
+                  isReadOnly
                   onDropdownMenuClick={handleOptionSelection}
                 />
                 <div className='relative'>
@@ -148,9 +155,11 @@ const ProgramToBeAccreditedModal = ({
             onSave={() => handleSave({
               isFromCard: true,
               data: {
-                startDate: modalData.startDate,
-                endDate: modalData.endDate,
-                level: modalData.level
+                title: modalData?.title,
+                year: modalData?.year,
+                accredBody: modalData?.accreditationBody,
+                level: modalData?.level,
+                programNames: programs
               }
             })}
             primaryButton={programs.length > 1 ? 'Add Programs' : 'Add Program'}

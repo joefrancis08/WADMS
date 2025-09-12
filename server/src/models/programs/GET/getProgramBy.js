@@ -13,7 +13,7 @@ const getProgramBy = async (column, value, connection = null) => {
     const executor = connection || db;
     const [rows] = await executor.execute(query, [value]);
 
-    return rows.length ? rows[0] : null;
+    return rows;
 
   } catch (error) {
     console.error(error);

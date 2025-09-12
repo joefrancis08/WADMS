@@ -3,10 +3,13 @@ import db from "../../../../config/db.js";
 const getAccredInfo = async (connection = null) => {
   const query = `
     SELECT 
-      uuid  AS accred_uuid,
-      title AS accred_title,
-      year  AS accred_year
-    FROM accreditation_info
+      ai.uuid    AS accred_uuid,
+      ai.title   AS accred_title,
+      ai.year    AS accred_year,
+      ab.name    AS accred_body
+    FROM accreditation_info ai
+    JOIN accreditation_body ab
+      ON ai.accreditation_body_id = ab.id
     ORDER BY year DESC
   `;
 

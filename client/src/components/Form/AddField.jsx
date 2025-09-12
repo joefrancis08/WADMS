@@ -147,7 +147,7 @@ const AddField = ({
   return (
     <div ref={containerRef} className='relative w-full flex-col pt-4'>
       <div className='pb-4'>
-        <div className='relative flex flex-col items-start'>
+        <div className='relative flex flex-col items-center'>
           <label
             onClick={() => (!datePickerDisabled || multiValues.length > 0) && setIsFocused(true)}
             className={`absolute left-3 px-2 rounded-md transition-all
@@ -157,7 +157,7 @@ const AddField = ({
             {fieldName}
           </label>
           {type === 'date' ? (
-            <div className='relative w-full'>
+            <>
               <DatePickerComponent 
                 selected={formValue}
                 onChange={(date) => {
@@ -165,7 +165,7 @@ const AddField = ({
                   setCalendarOpen(false);
                 }}
                 placeholder={isFloating ? placeholder : ''}
-                className={`w-full p-3 rounded-lg border shadow transition max-sm:text-xs max-md:text-sm
+                className={`w-full p-4 lg:p-3 rounded-lg border shadow transition max-sm:text-xs max-md:text-sm
                   ${datePickerDisabled && 'cursor-not-allowed'}
                   ${isClickable && 'cursor-pointer hover:bg-slate-100'}
                   ${!invalid
@@ -175,7 +175,7 @@ const AddField = ({
                 onClickOutside={() => setCalendarOpen(false)}
                 onFocus={handleFocus}
                 onBlur={onBlur}
-                dateFormat='MMMM d, yyyy'
+                dateFormat='yyyy'
                 minDate={minDate}
                 disabled={datePickerDisabled}
                 forceClosed={calendarClose}
@@ -188,7 +188,7 @@ const AddField = ({
                   size={20}
                 />
               )}
-            </div>
+            </>
           ) : type === 'textarea'  && multiValue ? (
               <div
                 className={`w-full min-h-[60px] flex flex-wrap items-center gap-2 p-3 rounded-lg border shadow transition max-h-50 overflow-auto

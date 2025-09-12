@@ -1,11 +1,11 @@
 import { useMemo } from "react";
-import { useFetchProgramsToBeAccredited } from "./fetch-react-query/useFetchProgramsToBeAccredited";
 import formatToLocalDate from "../utils/formatToLocalDate";
 import useFetchProgramAreas from "./fetch-react-query/useFetchProgramAreas";
 import useFetchAreaParameters from "./fetch-react-query/useFetchAreaParameters";
+import { useFetchILP } from "./fetch-react-query/useFetchILP";
 
 export const useProgramToBeAccreditedDetails = (periodID, programID) => {
-  const { programsToBeAccredited } = useFetchProgramsToBeAccredited();
+  const { programsToBeAccredited } = useFetchILP();
   const programsData = useMemo(() => programsToBeAccredited.data ?? [], [programsToBeAccredited.data]);
 
   return useMemo(() => {

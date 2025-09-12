@@ -1,14 +1,10 @@
-import { v4 as uuidv4 } from 'uuid';
 import db from '../../../../config/db.js';
 import getLevelBy from '../../level/GET/getLevelBy.js'
-import getPeriodBy from '../../period/GET/getPeriodBy.js';
 import getProgramBy from '../../../programs/GET/getProgramBy.js';
 import { insertLevel } from "../../level/POST/insertLevel.js";
 import insertAccreditationInfo from "../../accreditation-info/POST/insertAccreditationInfo.js";
 import { insertProgram } from "../../../programs/POST/insertProgram.js";
 import getAccredInfoBy from '../../accreditation-info/GET/getAccredInfoBy.js';
-import getAccredBodyBy from '../../bodies/GET/getAccredBodyBy.js';
-import insertAccredBody from '../../bodies/POST/insertAccredBody.js';
 
 const insertInfoLevelProgramMapping = async (title, year, accredBody, program, level) => {
   /* 
@@ -60,7 +56,7 @@ const insertInfoLevelProgramMapping = async (title, year, accredBody, program, l
       accredInfoId = accredInfoResult[0].id;
 
     } else {
-      const newAccredInfo = await insertAccreditationInfo(title, year, accredBody);
+      const newAccredInfo = await insertAccreditationInfo(title, year, accredBody, connection);
       accredInfoId = newAccredInfo.insertId;
     }
 

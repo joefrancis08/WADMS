@@ -2,11 +2,12 @@ import axios from "axios";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export const addProgramToBeAccredited = (startDate, endDate, levelName, programNames) => {
-  return axios.post(`${API_BASE_URL}/accreditation/add-programs-to-be-accredited`, {
-    startDate,
-    endDate, 
-    levelName,
+export const addInfoLevelProgram = ({ title, year, accredBody, level, programNames }) => {
+  return axios.post(`${API_BASE_URL}/accreditation/add-info-level-programs`, {
+    title,
+    year,
+    accredBody, 
+    level,
     programNames
   });
 };
@@ -44,8 +45,8 @@ export const addSubParams = ({ startDate, endDate, levelName, programName, areaN
   });
 };
 
-export const fetchProgramsToBeAccredited = (controller) => {
-  return axios.get(`${API_BASE_URL}/accreditation/fetch-programs-to-be-accredited`, {
+export const fetchILP = (controller) => {
+  return axios.get(`${API_BASE_URL}/accreditation/fetch-info-level-programs`, {
     signal: controller.signal
   });
 };
