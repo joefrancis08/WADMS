@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import formatProgramParams from "../../utils/formatProgramParams";
 import { useProgramToBeAccreditedDetails } from "../useAccreditationDetails";
 import useFetchProgramAreas from "../fetch-react-query/useFetchProgramAreas";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import MODAL_TYPE from "../../constants/modalTypes";
 import useAutoFocus from "../useAutoFocus";
 import formatArea from "../../utils/formatArea";
@@ -10,9 +10,11 @@ import { showErrorToast, showSuccessToast } from "../../utils/toastNotification"
 import { addProgramAreas } from "../../api/accreditation/accreditationAPI";
 import { TOAST_MESSAGES } from "../../constants/messages";
 import PATH from "../../constants/path";
+import useOutsideClick from "../useOutsideClick";
 
 const useProgramAreas = () => {
   const navigate = useNavigate();
+  const areaOptionsRef = useRef();
   const { periodID, level, programID } = useParams();
   const { level: formattedLevel } = formatProgramParams(level);
 
@@ -33,12 +35,19 @@ const useProgramAreas = () => {
   const [areaInput, setAreaInput] = useState('');
   const [duplicateValues, setDuplicateValues] = useState([]);
 
+  const [activeAreaId, setActiveAreaId] = useState(null);
+
+  console.log(activeAreaId);
+
   const areaInputRef = useAutoFocus(modalType, modalType === MODAL_TYPE.ADD_AREA);
 
   // Remove duplicates automatically if areas state changes
   useEffect(() => {
     setDuplicateValues(prev => prev.filter(val => areas.includes(val)));
   }, [areas]);
+
+  // Reuse useOutsideClick hook to make area options disappear
+  useOutsideClick(areaOptionsRef, () => setActiveAreaId(null));
 
   const findDuplicate = (value) => {
     return data.some(d => d.area.toUpperCase().trim() === value.toUpperCase().trim());
@@ -101,6 +110,11 @@ const useProgramAreas = () => {
     navigate(PATH.DEAN.AREA_PARAMETERS({ periodID, level, programID, areaID }));
   };
 
+  const handleAreaOptionClick = (e, data = {}) => {
+    e.stopPropagation();
+    setActiveAreaId(data?.areaID);
+  };
+
   return {
     navigation: {
       navigate
@@ -118,7 +132,8 @@ const useProgramAreas = () => {
       loading,
       error,
       formattedLevel,
-      programName
+      programName,
+      activeAreaId
     },
 
     inputs: {
@@ -128,7 +143,8 @@ const useProgramAreas = () => {
     },
 
     refs: {
-      areaInputRef
+      areaInputRef,
+      areaOptionsRef
     },
 
     values: {
@@ -147,6 +163,7 @@ const useProgramAreas = () => {
       handleRemoveAreaValue,
       handleSaveAreas,
       handleAreaCardClick,
+      handleAreaOptionClick
     }
   }
 };

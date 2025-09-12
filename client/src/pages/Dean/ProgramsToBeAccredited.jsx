@@ -117,7 +117,7 @@ const ProgramsToAccredit = () => {
 
   return (
     <DeanLayout>
-      <div className='flex-1 space-y-3'>
+      <div className='flex-1'>
         {/* Header */}
         <ContentHeader 
           headerIcon={NotepadText}
@@ -128,18 +128,55 @@ const ProgramsToAccredit = () => {
         />
 
         {/* Add button */}
-        <div className='relative px-4 flex justify-end'>
-          <div className='flex items-center'>
-            <button 
-              title='Create period, level, and programs to be accredited' 
-              onClick={handleAddClick} 
-              className='p-3 rounded-full mr-2 cursor-pointer transition-all shadow bg-slate-300 hover:opacity-80 active:opacity-50'
-            >
-              <NotebookPen className='text-slate-700' size={28}/>
-            </button>
+        <button 
+          title='Create period, level, and programs to be accredited' 
+          onClick={handleAddClick} 
+          className='fixed bottom-6 right-10 p-4 rounded-full cursor-pointer transition-all shadow-lg bg-slate-600 hover:bg-slate-700 active:opacity-90 z-50 border border-white'
+        >
+          <NotebookPen className='text-white' size={28}/>
+        </button>
+
+        <div className='relative w-full h-70 bg-[url("/pit-bg.jpg")] bg-cover bg-center shadow-lg'>
+          <div className='absolute inset-0 bg-black/40'></div>
+          {/* Content */}
+          <div className='absolute flex top-1 right-0'>
+            <img 
+              src='/cgs-logo.png' 
+              alt='CGS Logo' 
+              loading='lazy'
+              className='h-12 md:h-14 lg:h-16 w-auto'
+            />
+          </div>
+          <div className='absolute flex top-1 left-1'>
+            <img 
+              src='/pit-logo-outlined.png' 
+              alt='' 
+              loading='lazy' 
+              className='h-12 md:h-14 lg:h-16 w-auto'
+            />
+          </div>
+          <div className='relative flex items-center justify-center h-full'>
+            <p className='flex flex-col text-center items-center justify-center space-y-2'>
+              <span className='text-5xl md:text-6xl lg:text-7xl text-yellow-300 font-bold'>
+                AACCUP
+              </span>
+              <span className='text-white text-xl md:text-2xl lg:text-3xl font-bold'>
+                ACCREDITATION 2025
+              </span>
+              <hr className='w-full border-t-2 border-white my-2' />
+              <span className='text-white text-sm md:text-md lg:text-lg font-bold'>
+                <span className='hover:underline cursor-pointer'>
+                  PRELIMINARY
+                </span>
+                , {'\n'}
+                <span className='hover:underline cursor-pointer'>LEVEL I</span>
+                , {'\n'}
+                <span className='hover:underline cursor-pointer'>LEVEL II</span>
+              </span>
+            </p>
           </div>
         </div>
-        
+
         {/* Render fallback UI if data is empty */}
         {loading ? (
           <ProgramsToBeAccreditedSL /> 

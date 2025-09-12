@@ -112,7 +112,13 @@ const AreaParameters = () => {
               <p className='pr-10'>
                 {parameter}
               </p>
-              <EllipsisVertical className='absolute top-1/2 right-3 -translate-y-1/2 flex shrink-0 ml-4 h-5 w-5' />
+              <button
+                onClick={() => console.log('Clicked!')} 
+                title='Options'
+                className='absolute top-1/2 right-3 -translate-y-1/2 flex shrink-0 ml-4'
+              >
+                <EllipsisVertical className='h-5 w-5' />
+              </button>
             </div>
           ))}
         </div>

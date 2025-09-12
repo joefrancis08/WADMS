@@ -4,7 +4,7 @@ import getLevelBy from '../../level/GET/getLevelBy.js'
 import getPeriodBy from '../../period/GET/getPeriodBy.js';
 import getProgramBy from '../../../programs/GET/getProgramBy.js';
 import { insertLevel } from "../../level/POST/insertLevel.js";
-import insertPeriod from "./insertPeriod.js";
+import insertAccreditationInfo from "../../accreditation-info/POST/insertAccreditationInfo.js";
 import { insertProgram } from "../../../programs/POST/insertProgram.js";
 
 const insertProgramtoAccredit = async (startDate, endDate, level, program) => {
@@ -58,7 +58,7 @@ const insertProgramtoAccredit = async (startDate, endDate, level, program) => {
       periodId = periodResult[0].id;
 
     } else {
-      const newPeriod = await insertPeriod(startDate, endDate, connection);
+      const newPeriod = await insertAccreditationInfo(startDate, endDate, connection);
       periodId = newPeriod.insertId;
     }
 

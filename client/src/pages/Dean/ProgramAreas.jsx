@@ -1,9 +1,10 @@
 import DeanLayout from '../../components/Layout/Dean/DeanLayout';
 import ContentHeader from '../../components/Dean/ContentHeader';
-import { ChevronRight, EllipsisVertical, FolderOpen, Plus } from 'lucide-react';
+import { ChevronRight, EllipsisVertical, FileUser, FolderOpen, FolderPen, Folders, Plus } from 'lucide-react';
 import PATH from '../../constants/path';
 import useProgramAreas from '../../hooks/Dean/useProgramAreas';
 import AreaModal from '../../components/Dean/AreaModal';
+import Dropdown from '../../components/Dropdown/Dropdown';
 
 const ProgramAreas = () => {
   const {
@@ -17,11 +18,18 @@ const ProgramAreas = () => {
   } = useProgramAreas();
 
   const { navigate } = navigation;
-  const { data, loading, error, formattedLevel, programName } = datas;
   const { areas, areaInput } = inputs;
-  const { areaInputRef } = refs;
+  const { areaInputRef, areaOptionsRef } = refs;
   const { duplicateValues } = values;
   const { modalType } = modals;
+  const { 
+    data, 
+    loading, 
+    error, 
+    formattedLevel, 
+    programName,
+    activeAreaId
+  } = datas;
   const {
     handleAreaInputChange,
     handleAddAreaClick,
@@ -29,9 +37,15 @@ const ProgramAreas = () => {
     handleAddAreaValue,
     handleRemoveAreaValue,
     handleSaveAreas,
-    handleAreaCardClick
+    handleAreaCardClick,
+    handleAreaOptionClick
   } = handlers
 
+  const areaOptions = [
+    { icon: <Folders />, label: 'View Parameters' },
+    { icon: <FileUser />, label: 'Assign Task Force'},
+    { icon: <FolderPen />, label: 'Rename'}
+  ];
   return (
     <DeanLayout>
       <div className='flex-1'>
@@ -80,7 +94,34 @@ const ProgramAreas = () => {
                     {s.trim()}
                   </p>
                 ))}
-              <EllipsisVertical className='absolute top-2 right-1 h-5 w-5' />
+              <button
+                onClick={(e) => handleAreaOptionClick(e, { areaID: area_uuid })}
+                title='Options'
+                className='absolute top-2 right-1 cursor-pointer hover:opacity-80 active:opacity-50 rounded-full hover:bg-slate-200 p-2'
+              >
+                <EllipsisVertical className='h-5 w-5' />
+              </button>
+              {activeAreaId === area_uuid && (
+                <div ref={areaOptionsRef} className='absolute top-10 left-12 shadow-md'>
+                  <Dropdown 
+                    width={'w-60'} 
+                    border={'border border-slate-600 rounded-lg bg-slate-800'}
+                  >
+                    {areaOptions.map((item, index) => (
+                      <p 
+                        onClick={() => console.log('Clicked')}
+                        key={index}
+                        className='flex p-2 hover:bg-slate-200 rounded-md'
+                      >
+                        {item.icon}
+                        <span className='ml-2'>
+                          {item.label}
+                        </span>
+                      </p>
+                    ))}
+                  </Dropdown>
+                </div>
+              )}
             </div>
           ))}
         </div>

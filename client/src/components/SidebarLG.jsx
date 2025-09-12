@@ -38,7 +38,7 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
       <header className="relative flex items-center justify-between px-2 py-2 border-b border-gray-600 h-20 shadow-lg">
         {!isCollapsed && (
           <div className="h-10 flex items-center transition-all duration-300">
-            <img className="h-14 w-auto" src="/CGS_Logo.png" alt="Logo" />
+            <img className="h-14 w-auto" src="/cgs-logo.png" alt="Logo" />
             <div className="ml-2 overflow-hidden">
               <p className="text-2xl font-bold whitespace-nowrap">DMS</p>
               <p className="text-[8px] leading-none whitespace-nowrap">Document</p>

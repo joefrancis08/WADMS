@@ -5,10 +5,12 @@ import { deletePeriodController, fetchPeriodController } from '../controllers/ac
 import { addProgramAreaController, fetchProgramAreaController } from '../controllers/accreditation/program-area-mapping/programAreaMappingController.js';
 import { addAreaParameterController, fetchAreaParameterController } from '../controllers/accreditation/area-parameter-mapping/areaParameterMappingController.js';
 import { addParamSubParamController, fetchParamSubParamController } from '../controllers/accreditation/param-subparam-mapping/paramSubparamController.js';
+import { addAccredInfoController } from '../models/accreditation/accreditation-info/accreditationInfoController.js';
 
 const accreditationRouter = express.Router();
 
 accreditationRouter.post('/add-accreditation-level', addLevelController);
+accreditationRouter.post('/add-accreditation-info', addAccredInfoController);
 accreditationRouter.post('/add-programs-to-be-accredited', addProgramToBeAccreditedController);
 accreditationRouter.post('/add-program-areas', addProgramAreaController);
 accreditationRouter.post('/add-area-parameters', addAreaParameterController);

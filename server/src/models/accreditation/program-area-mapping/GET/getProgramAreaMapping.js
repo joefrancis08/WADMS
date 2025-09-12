@@ -4,8 +4,7 @@ const getProgramAreaMapping = async (startDate, endDate, levelName, programName,
   const query = `
     SELECT
       a.uuid           AS area_uuid,
-      ap.start_date    AS period_start,
-      ap.end_date      AS period_end,
+      ac.year          AS year,
       al.level_name    AS level,
       pr.program_name  AS program,
       a.area_name      AS area
