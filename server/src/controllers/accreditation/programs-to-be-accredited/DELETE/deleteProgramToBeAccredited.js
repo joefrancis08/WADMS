@@ -1,4 +1,4 @@
-import deleteProgramMapping from "../../../../models/accreditation/program-to-be-accredited/DELETE/deleteProgramMapping.js";
+import deleteProgramMapping from "../../../../models/accreditation/info-level-program-mapping/DELETE/deleteProgramMapping.js";
 import sendUpdate from "../../../../services/websocket/sendUpdate.js";
 
 const deleteProgramToBeAccredited = async (req, res) => {

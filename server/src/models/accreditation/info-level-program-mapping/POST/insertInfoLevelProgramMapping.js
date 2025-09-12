@@ -6,9 +6,11 @@ import getProgramBy from '../../../programs/GET/getProgramBy.js';
 import { insertLevel } from "../../level/POST/insertLevel.js";
 import insertAccreditationInfo from "../../accreditation-info/POST/insertAccreditationInfo.js";
 import { insertProgram } from "../../../programs/POST/insertProgram.js";
+import getAccredInfoBy from '../../accreditation-info/GET/getAccredInfoBy.js';
+import getAccredBodyBy from '../../bodies/GET/getAccredBodyBy.js';
+import insertAccredBody from '../../bodies/POST/insertAccredBody.js';
 
-const insertProgramtoAccredit = async (startDate, endDate, level, program) => {
-  console.log()
+const insertInfoLevelProgramMapping = async (title, year, accredBody, program, level) => {
   /* 
     Get a connection from the database pool
     so we can manually control transaction behavior
@@ -51,46 +53,46 @@ const insertProgramtoAccredit = async (startDate, endDate, level, program) => {
     }
 
     // Logic here is the same as program and level
-    const periodResult = await getPeriodBy('start_date', startDate, connection);
+    const accredInfoResult = await getAccredInfoBy('year', year, connection);
 
-    let periodId;
-    if (periodResult.length > 0) {
-      periodId = periodResult[0].id;
+    let accredInfoId;
+    if (accredInfoResult.length > 0) {
+      accredInfoId = accredInfoResult[0].id;
 
     } else {
-      const newPeriod = await insertAccreditationInfo(startDate, endDate, connection);
-      periodId = newPeriod.insertId;
+      const newAccredInfo = await insertAccreditationInfo(title, year, accredBody);
+      accredInfoId = newAccredInfo.insertId;
     }
 
     // Check if program_level_mapping entry already exist
     const checkQuery = `
       SELECT id
-      FROM program_level_mapping
+      FROM info_level_program_mapping
       WHERE program_id = ?
         AND level_id = ?
-        AND period_id = ?
+        AND accreditation_info_id = ?
     `;
 
-    const [exists] = await connection.execute(checkQuery, [programId, levelId, periodId]);
+    const [exists] = await connection.execute(checkQuery, [programId, levelId, accredInfoId]);
     if (exists.length > 0) {
       const error = new Error('DUPLICATE_ENTRY');
-      error.duplicateValue = [startDate, endDate, level, program];
+      error.duplicateValue = [title, year, accredBody, level, program];
       throw error;
     }
 
-    // Insert program and level Id into Program Level Mapping Table
+    // Insert programId, levelId, and accredInfoId into Program Level Mapping Table
     const query = `
-      INSERT INTO program_level_mapping (program_id, level_id, period_id) 
+      INSERT INTO info_level_program_mapping (program_id, level_id, accreditation_info_id) 
       VALUES (?, ?, ?)
     `;
-    await connection.execute(query, [programId, levelId, periodId])
+    await connection.execute(query, [programId, levelId, accredInfoId])
 
     /* 
       If everything is successful, commit the transaction
       which means saving all the changes permanently in the database.
     */
     await connection.commit();
-    return { periodId, levelId, programId }; // Return Level, Program, and Period Id (in case of use in the future)
+    return { accredInfoId, levelId, programId }; // Return Level, Program, and Period Id (in case of use in the future)
 
   } catch (error) {
     /* 
@@ -102,7 +104,7 @@ const insertProgramtoAccredit = async (startDate, endDate, level, program) => {
 
     if (error.code === 'ER_DUP_ENTRY') {
       const duplicateError = new Error('DUPLICATE_ENTRY');
-      duplicateError.duplicateValue = [startDate, endDate, level, program];
+      duplicateError.duplicateValue = [title, year, accredBody, level, program];
       throw duplicateError;
     }
 
@@ -117,4 +119,4 @@ const insertProgramtoAccredit = async (startDate, endDate, level, program) => {
   }
 };
 
-export default insertProgramtoAccredit;
+export default insertInfoLevelProgramMapping;

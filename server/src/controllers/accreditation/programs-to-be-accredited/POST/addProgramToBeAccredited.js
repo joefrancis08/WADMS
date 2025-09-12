@@ -1,4 +1,4 @@
-import insertProgramtoAccredit from '../../../../models/accreditation/program-to-be-accredited/POST/insertProgramtoAccredit.js';
+import insertProgramtoAccredit from '../../../../models/accreditation/info-level-program-mapping/POST/insertInfoLevelProgramMapping.js';
 import sendUpdate from '../../../../services/websocket/sendUpdate.js';
 import isValidDateFormat from '../../../../utils/isValidDateFormat.js';
 

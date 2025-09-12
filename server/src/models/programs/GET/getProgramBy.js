@@ -10,7 +10,7 @@ const getProgramBy = async (column, value, connection = null) => {
   const query = `SELECT id, program_name FROM program WHERE ${column} = ?`;
 
   try {
-    const executor = connect || db;
+    const executor = connection || db;
     const [rows] = await executor.execute(query, [value]);
 
     return rows.length ? rows[0] : null;

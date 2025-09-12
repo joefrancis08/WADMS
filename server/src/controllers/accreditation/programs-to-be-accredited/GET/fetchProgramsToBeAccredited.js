@@ -1,12 +1,12 @@
 import getPeriod from "../../../../models/accreditation/period/GET/getPeriod.js";
-import { getProgramsToBeAccredited } from "../../../../models/accreditation/program-to-be-accredited/GET/getProgramToBeAccredited.js";
+import getILP from "../../../../models/accreditation/info-level-program-mapping/GET/getILP.js";
 import getProgram from "../../../../models/programs/GET/getProgram.js";
 
 const fetchProgramsToBeAccredited = async (req, res) => {
   try {
     const period = await getPeriod();
     const programs = await getProgram();
-    const programsToBeAccredited = await getProgramsToBeAccredited();
+    const programsToBeAccredited = await getILP();
 
     res.status(200).json({
       success: true,

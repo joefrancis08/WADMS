@@ -49,6 +49,13 @@ const addAccreditationInfo = async (req, res) => {
         message: 'Duplicate entry.'
       });
     }
+
+    console.error('Error in addAccreditationInfo:', error);
+
+    return res.status(500).json({
+      success: false,
+      message: 'An unexpected error occurred. Please try again later.'
+    });
   }
 };
 
