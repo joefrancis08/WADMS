@@ -7,28 +7,27 @@ import MODAL_TYPE from "../../constants/modalTypes";
 import useAutoFocus from "../useAutoFocus";
 import formatArea from "../../utils/formatArea";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
-import { addProgramAreas } from "../../api/accreditation/accreditationAPI";
-import { TOAST_MESSAGES } from "../../constants/messages";
-import PATH from "../../constants/path";
 import useOutsideClick from "../useOutsideClick";
 
 const useProgramAreas = () => {
   const navigate = useNavigate();
   const areaOptionsRef = useRef();
-  const { periodID, level, programID } = useParams();
+  const { accredInfoUUID, level, programUUID } = useParams();
   const { level: formattedLevel } = formatProgramParams(level);
 
-  const { startDate, endDate, programName, programObj } = useProgramToBeAccreditedDetails(periodID, programID);
+  const { title, year, accredBody, program } = useProgramToBeAccreditedDetails(accredInfoUUID, programUUID);
 
   // Only fetch areas if programObj is ready
-  const { areas: areasData, loading, error, refetch } = useFetchProgramAreas(
-    startDate,
-    endDate,
-    formattedLevel,
-    programName,
-    !!programObj // Pass a boolean to conditionally fetch
-  );
+  const { areas: areasData, loading, error, refetch } = useFetchProgramAreas({
+    title,
+    year,
+    accredBody,
+    level: formattedLevel,
+    program
+  });
   const data = areasData?.data ?? [];
+
+  console.log(data);
 
   const [modalType, setModalType] = useState(null);
   const [areas, setAreas] = useState([]);
@@ -87,12 +86,12 @@ const useProgramAreas = () => {
     if (!areas.length) return;
 
     try {
-      const res = await addProgramAreas(startDate, endDate, formattedLevel, programName, areas);
-      if (res.data.success) {
-        showSuccessToast(TOAST_MESSAGES.AREA_ADDITION.SUCCESS);
-        handleCloseModal();
-        await refetch(); // Refresh areas after save
-      }
+      // const res = await addProgramAreas(startDate, endDate, formattedLevel, programName, areas);
+      // if (res.data.success) {
+      //   showSuccessToast(TOAST_MESSAGES.AREA_ADDITION.SUCCESS);
+      //   handleCloseModal();
+      //   await refetch(); // Refresh areas after save
+      // }
       
     } catch (err) {
       const isDuplicate = err?.response?.data?.isDuplicate;
@@ -106,9 +105,9 @@ const useProgramAreas = () => {
     }
   };
 
-  const handleAreaCardClick = (areaID) => {
-    navigate(PATH.DEAN.AREA_PARAMETERS({ periodID, level, programID, areaID }));
-  };
+  // const handleAreaCardClick = (areaID) => {
+  //   navigate(PATH.DEAN.AREA_PARAMETERS({ periodID, level, programID, areaID }));
+  // };
 
   const handleAreaOptionClick = (e, data = {}) => {
     e.stopPropagation();
@@ -121,8 +120,8 @@ const useProgramAreas = () => {
     },
 
     params: {
-      periodID, 
-      programID, 
+      accredInfoUUID, 
+      programUUID, 
       level
     }, 
 
@@ -132,7 +131,7 @@ const useProgramAreas = () => {
       loading,
       error,
       formattedLevel,
-      programName,
+      program,
       activeAreaId
     },
 
@@ -162,7 +161,7 @@ const useProgramAreas = () => {
       handleAddAreaValue,
       handleRemoveAreaValue,
       handleSaveAreas,
-      handleAreaCardClick,
+      // handleAreaCardClick,
       handleAreaOptionClick
     }
   }

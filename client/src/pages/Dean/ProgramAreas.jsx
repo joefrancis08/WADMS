@@ -27,7 +27,7 @@ const ProgramAreas = () => {
     loading, 
     error, 
     formattedLevel, 
-    programName,
+    program,
     activeAreaId
   } = datas;
   const {
@@ -64,7 +64,7 @@ const ProgramAreas = () => {
               onClick={() => navigate(PATH.DEAN.PROGRAMS_TO_BE_ACCREDITED)}
               className='hover:underline opacity-80 hover:opacity-100 cursor-pointer transition-all'
             >
-              {formattedLevel} - {programName}
+              {formattedLevel} - {program}
             </span>
             <ChevronRight className='h-5 w-5' />
             <span className='font-semibold'>{data.length > 1 ? 'Areas' : 'Area'}</span>

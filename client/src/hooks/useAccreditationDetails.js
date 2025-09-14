@@ -4,20 +4,22 @@ import useFetchProgramAreas from "./fetch-react-query/useFetchProgramAreas";
 import useFetchAreaParameters from "./fetch-react-query/useFetchAreaParameters";
 import { useFetchILP } from "./fetch-react-query/useFetchILP";
 
-export const useProgramToBeAccreditedDetails = (periodID, programID) => {
-  const { programsToBeAccredited } = useFetchILP();
-  const programsData = useMemo(() => programsToBeAccredited.data ?? [], [programsToBeAccredited.data]);
+export const useProgramToBeAccreditedDetails = (accredInfoUUID, programUUID) => {
+  const { accredInfoLevelPrograms } = useFetchILP();
+  const accredILPData = useMemo(() => accredInfoLevelPrograms.data ?? [], [accredInfoLevelPrograms]);
 
   return useMemo(() => {
-    const programObj = programsData.find(p => p.period_uuid === periodID && p.program_uuid === programID);
+    const programObj = accredILPData.find(p => p.accred_uuid === accredInfoUUID && p.program_uuid === programUUID);
+    console.log(programObj);
 
     return {
-      programName: programObj?.program?.program ?? '',
-      startDate: formatToLocalDate(programObj?.period?.period_start) ?? null,
-      endDate: formatToLocalDate(programObj?.period?.period_end) ?? null,
+      title: programObj?.accred_title,
+      year: programObj?.accred_year,
+      accredBody: programObj?.accred_body_name,
+      program: programObj?.program?.program ?? '',
       programObj
     };
-  }, [programsData, periodID, programID]);
+  }, [accredILPData, accredInfoUUID, programUUID]);
 };
 
 export const useProgramAreaDetails = ({ startDate, endDate, levelName, programName, areaID }) => {

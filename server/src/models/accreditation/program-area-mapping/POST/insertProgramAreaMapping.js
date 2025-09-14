@@ -3,7 +3,7 @@ import getAreaBy from "../../areas/GET/getAreaBy.js";
 import insertArea from "../../areas/POST/insertArea.js";
 import getLevelBy from "../../level/GET/getLevelBy.js";
 
-const insertProgramAreaMapping = async (startDate, endDate, level, program, area) => {
+const insertProgramAreaMapping = async ({ title, year, accredBody, level, program, area }) => {
   const connection = await db.getConnection();
 
   try {
@@ -28,58 +28,49 @@ const insertProgramAreaMapping = async (startDate, endDate, level, program, area
       areaId = newArea.insertId;
     }
 
-    // Step 2: Get the program-level mapping id
+    // Step 2: Get the info_level_program_mapping id
     const programLevelMappingQuery = `
-      SELECT plm.id
-      FROM program_level_mapping plm
-      JOIN accreditation_period ap
-        ON plm.period_id = ap.id
+      SELECT ilpm.id
+      FROM info_level_program_mapping ilpm
+      JOIN accreditation_info ai
+        ON ilpm.accreditation_info_id = ai.id
+      JOIN accreditation_body ab
+        ON ai.accreditation_body_id = ab.id
       JOIN accreditation_level al
-        ON plm.level_id = al.id
+        ON ilpm.level_id = al.id
       JOIN program p
-        ON plm.program_id = p.id
-      WHERE ap.start_date = ?
-        AND ap.end_date = ?
+        ON ilpm.program_id = p.id
+      WHERE ai.title = ?
+        AND ai.year = ?
+        AND ab.name = ?
         AND al.level_name = ?
         AND p.program_name = ?
     `;
+
     const [rows] = await connection.execute(programLevelMappingQuery, [
-      startDate,
-      endDate,
+      title,
+      year,
+      accredBody,
       level,
       program
     ]);
 
     if (rows.length === 0) {
-      throw new Error("PROGRAM_LEVEL_MAPPING_NOT_FOUND");
+      throw new Error("INFO_LEVEL_PROGRAM_MAPPING_NOT_FOUND");
     }
 
-    const programLevelMappingId = rows[0].id;
+    const infoLevelProgramMappingId = rows[0].id;
 
-    // Step 3: Check if program_area_mapping already exists
-    const checkQuery = `
-      SELECT id FROM program_area_mapping
-      WHERE program_level_mapping_id = ?
-      AND area_id = ?
-    `;
-
-    const [exists] = await connection.execute(checkQuery, [programLevelMappingId, areaId]);
-    if (exists.length > 0) {
-      const error = new Error('DUPLICATE_ENTRY');
-      error.duplicateValue = area; // Attach the area name
-      throw error;
-    }
-
-    // Step 4: Insert mapping
+    // Step 3: Insert mapping
     const query = `
-      INSERT INTO program_area_mapping (program_level_mapping_id, area_id)
+      INSERT INTO program_area_mapping (info_level_program_mapping_id, area_id)
       VALUES (?, ?)
     `;
 
-    await connection.execute(query, [programLevelMappingId, areaId]);
+    await connection.execute(query, [infoLevelProgramMappingId, areaId]);
 
     await connection.commit();
-    return { programLevelMappingId, areaId };
+    return { infoLevelProgramMappingId, areaId };
 
   } catch (error) {
     await connection.rollback();

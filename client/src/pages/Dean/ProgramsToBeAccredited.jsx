@@ -223,7 +223,7 @@ const ProgramsToAccredit = () => {
                     </button>
                     {/* Render period options if the Options button is clicked */}
                     {activeAccredInfoID === accredInfoUUID && (
-                      <div ref={accredInfoOptionsRef} className='absolute top-18 right-48 z-10 space-y-2 p-2 '>
+                      <div ref={accredInfoOptionsRef} className='absolute top-35 right-48 z-10 space-y-2 p-2 '>
                         <Dropdown 
                           key={accredInfoUUID}
                           width='h-auto w-50' 
@@ -265,7 +265,7 @@ const ProgramsToAccredit = () => {
                   </div>
                   <hr className='w-[75%] bg-green-600 border border-transparent h-3 my-10 mx-auto'></hr>
                   <div className='mx-auto my-4'>
-                    <p className='text-xl md:text-2xl lg:text-4xl text-center tracking-wider font-extrabold text-green-600'>
+                    <p className='text-xl md:text-2xl lg:text-3xl text-center tracking-wider font-extrabold text-green-700'>
                       PROGRAMS TO BE ACCREDITED
                     </p>
                   </div>
@@ -276,10 +276,10 @@ const ProgramsToAccredit = () => {
                         className='relative p-4 space-y-6 mb-4 bg-slate-300 border border-slate-300 shadow-md shadow-slate-400'
                       >
                         {/* Level label (ex: Level II, Preliminary, etc.) */}
-                        <h2 className='absolute top-3 left-1/2 -translate-x-1/2 flex items-center justify-center w-[60%] md:w-[50%] lg:w-[40%] p-2 text-lg md:text-2xl lg:text-3xl text-green-500 rounded font-extrabold tracking-wide'>
+                        <h2 className='absolute top-3 left-1/2 -translate-x-1/2 flex items-center justify-center w-[60%] md:w-[50%] lg:w-[40%] p-2 text-lg md:text-xl lg:text-2xl text-green-600 rounded font-extrabold tracking-wide'>
                           {level.toUpperCase()}
                         </h2>
-                        <hr className='w-[50%] bg-green-500 border border-transparent mt-12 h-1 mx-auto'></hr>
+                        <hr className='w-[50%] bg-green-600 border border-transparent mt-12 h-1 mx-auto'></hr>
 
                         {/* Program cards */}
                         <div className='relative flex flex-wrap gap-10 justify-center pb-4 px-4'>
@@ -296,6 +296,7 @@ const ProgramsToAccredit = () => {
                             const programId = `${accredTitle}-${level}-${programObj.program_uuid}`;
                             const programUUID = programObj?.program_uuid;
                             const program = programObj?.program;
+                            console.log(programObj);
                             return (
                               <div
                                 key={programUUID}
@@ -310,10 +311,10 @@ const ProgramsToAccredit = () => {
                                 })}
                                 className='relative flex items-center justify-center h-75 p-8 shadow hover:shadow-slate-400 hover:shadow-lg active:shadow cursor-pointer transition-all sm:w-[95%] md:w-[95%] lg:w-[95%] xl:w-[95%] w-full bg-[url("/pit-bg-5.png")] bg-cover bg-center'
                               >
-                                <div className='absolute inset-0 bg-black/50 z-10'></div>
+                                <div className='absolute inset-0 bg-black/40 z-10'></div>
                                 
                                 <div className='z-20'>
-                                   <p className='text-center leading-normal tracking-widest text-yellow-300 text-2xl md:text-3xl lg:text-4xl font-bold'>
+                                   <p className='text-center leading-normal tracking-widest text-white text-2xl md:text-3xl lg:text-4xl font-bold'>
                                     {programObj.program.toUpperCase()}
                                   </p>
                                 </div>
