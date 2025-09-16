@@ -68,7 +68,8 @@ const ProgramToBeAccreditedModal = ({
             bodyContent={
               <div className='relative w-full px-8'>
                 <div className='flex flex-row items-center gap-x-2'>
-                  <AddField 
+                  <AddField
+                    ref={ref} 
                     fieldName='Title'
                     placeholder={'Enter new title...'}
                     type='text'
@@ -81,7 +82,6 @@ const ProgramToBeAccreditedModal = ({
                     // onDropdownMenuClick={handleOptionSelection}
                   />
                   <AddField
-                    ref={ref}
                     fieldName='Year'
                     placeholder='Enter or year...'
                     type='date'

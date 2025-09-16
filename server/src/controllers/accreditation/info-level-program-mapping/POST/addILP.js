@@ -4,7 +4,7 @@ import sendUpdate from "../../../../services/websocket/sendUpdate.js";
 const addILP = async (req, res) => {
   const { title, year, accredBody, level, programNames } = req.body;
   const numYear = Number(year);
-  console.log({ title, numYear, accredBody, level, programNames});
+
   try {
     // Validate title and accredBody
     if (!title?.trim() || !accredBody?.trim() || !level?.trim()) {

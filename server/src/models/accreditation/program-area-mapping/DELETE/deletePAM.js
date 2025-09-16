@@ -1,27 +1,10 @@
 import db from "../../../../config/db.js";
 
-const getAreaParameterMappings = async ({ 
-  title, 
-  year, 
-  accredBody, 
-  level, 
-  program, 
-  area, 
-  connection = null
-}) => {
+const deletePAM = async ({ title, year, accredBody, level, program, area }, connection = null ) => {
+  
   const query = `
-    SELECT 
-      ai.title          AS accred_title,
-      ai.year           AS accred_year,
-      ab.name           AS accred_body_name,
-      al.level_name     AS level,
-      pr.program_name   AS program,
-      a.area_name       AS area,
-      pa.uuid           AS parameter_uuid,
-      pa.parameter_name AS parameter
-    FROM area_parameter_mapping apm
-    JOIN program_area_mapping pam
-      ON apm.program_area_mapping_id = pam.id
+    DELETE pam 
+    FROM program_area_mapping pam
     JOIN info_level_program_mapping ilpm
       ON pam.info_level_program_mapping_id = ilpm.id
     JOIN accreditation_info ai
@@ -34,8 +17,6 @@ const getAreaParameterMappings = async ({
       ON ilpm.program_id = pr.id
     JOIN area a
       ON pam.area_id = a.id
-    JOIN parameter pa
-      ON apm.parameter_id = pa.id
     WHERE ai.title = ?
       AND ai.year = ?
       AND ab.name = ?
@@ -43,7 +24,6 @@ const getAreaParameterMappings = async ({
       AND pr.program_name = ?
       AND a.area_name = ?
   `;
-
   try {
     const executor = connection || db;
     const [result] = await executor.execute(query, [
@@ -55,12 +35,15 @@ const getAreaParameterMappings = async ({
       area
     ]);
 
-    return result;
+    return {
+      deletedArea: area,
+      deletedCount: result.affectedRows
+    };
 
   } catch (error) {
-    console.error('Error fetching parameters:', error);
-    throw error;
+    console.error(error);
   }
+  
 };
 
-export default getAreaParameterMappings;
+export default deletePAM;

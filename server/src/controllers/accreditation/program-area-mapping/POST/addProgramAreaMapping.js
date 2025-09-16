@@ -5,7 +5,7 @@ const addProgramAreaMapping = async (req, res) => {
   const { title, year, accredBody, level, program, areaNames } = req.body;
 
   try {
-    /// Validate title, accredBody, level, and program
+    // Validate title, accredBody, level, and program
     if (!title?.trim() || !accredBody?.trim() || !level?.trim() || !program?.trim()) {
       return res.status(400).json({
         success: false,

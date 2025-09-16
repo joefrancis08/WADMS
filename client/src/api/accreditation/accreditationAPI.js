@@ -23,25 +23,36 @@ export const addProgramAreas = ({ title, year, accredBody, level, program, areaN
   });
 };
 
-export const addAreaParameters = ({ startDate, endDate, levelName, programName, areaName, parameterNames }) => {
+export const addAreaParameters = ({ title, year, accredBody, level, program, area, parameterNames }) => {
   return axios.post(`${API_BASE_URL}/accreditation/add-area-parameters`, {
-    startDate,
-    endDate,
-    levelName,
-    programName,
-    areaName,
+    title,
+    year,
+    accredBody,
+    level,
+    program,
+    area,
     parameterNames
   });
 };
 
-export const addSubParams = ({ startDate, endDate, levelName, programName, areaName, parameterName, subParameterNames }) => {
+export const addSubParams = ({ 
+  title, 
+  year, 
+  accredBody, 
+  level, 
+  program, 
+  area, 
+  parameter, 
+  subParameterNames 
+}) => {
   return axios.post(`${API_BASE_URL}/accreditation/add-parameter-subparameters`, {
-    startDate,
-    endDate,
-    levelName,
-    programName,
-    areaName,
-    parameterName,
+    title,
+    year,
+    accredBody,
+    level,
+    program,
+    area,
+    parameter,
     subParameterNames
   });
 };
@@ -77,29 +88,39 @@ export const fetchProgramAreas = ({ title, year, accredBody, level, program }, c
   });
 };
 
-export const fetchAreaParameters = ({ startDate, endDate, levelName, programName, areaName}, controller) => {
+export const fetchAreaParameters = ({ title, year, accredBody, level, program, area }, controller) => {
   return axios.get(`${API_BASE_URL}/accreditation/fetch-area-parameters`, {
     params: {
-      startDate,
-      endDate,
-      levelName,
-      programName,
-      areaName
+      title,
+      year,
+      accredBody,
+      level,
+      program,
+      area
     },
     signal: controller.signal
   });
 };
 
-export const fetchParamSubparams = ({ startDate, endDate, levelName, programName, areaName, parameterName }, controller) => {
+export const fetchParamSubparams = ({ 
+  title,
+  year,
+  accredBody,
+  level,
+  program,
+  area,
+  parameter
+ }, controller) => {
   return axios.get(`${API_BASE_URL}/accreditation/fetch-parameter-subparameters`, {
     params: {
-      startDate,
-      endDate,
-      levelName,
-      programName,
-      areaName,
-      parameterName
-    },
+      title,
+      year,
+      accredBody,
+      level,
+      program,
+      area,
+      parameter
+    }, 
     signal: controller.signal
   });
 };

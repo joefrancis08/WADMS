@@ -14,19 +14,20 @@ const ParamSubparam = () => {
 
   const { subParamInputRef } = refs;
   const { 
-    level, 
-    periodID, 
-    programID, 
-    areaID, 
+    accredInfoUUID,
+    level,
+    programUUID,
+    areaUUID,
+    parameterUUID
   } = params;
   const {
     loading,
     error,
     refetch,
     levelName,
-    programName,
-    areaName,
-    parameterName,
+    program,
+    area,
+    parameter,
     subParamsData,
     subParameterInput,
     subParamsArr,
@@ -59,32 +60,32 @@ const ParamSubparam = () => {
               onClick={() => navigate(PROGRAMS_TO_BE_ACCREDITED)}
               className='hover:underline opacity-80 hover:opacity-100 cursor-pointer transition-all'
             >
-              {levelName} - {programName}
+              {levelName} - {program}
             </span>
             <ChevronRight className='h-5 w-5'/>
             <span
               title='Back to Areas'
               onClick={() => navigate(PROGRAM_AREAS({
-                periodID,
+                accredInfoUUID,
                 level,
-                programID
+                programUUID
               }))}
               className='hover:underline opacity-80 hover:opacity-100 cursor-pointer transition-all'
             >
-              {formatAreaName(areaName)}
+              {formatAreaName(area)}
             </span>
             <ChevronRight className='h-5 w-5'/>
             <span
               title='Back to Parameters'
               onClick={() => navigate(AREA_PARAMETERS({
-                periodID,
+                accredInfoUUID,
                 level,
-                programID,
-                areaID
+                programUUID,
+                areaUUID
               }))}
               className='hover:underline opacity-80 hover:opacity-100 cursor-pointer transition-all'
             >
-              Parameter {formatParameterName(parameterName)}
+              Parameter {formatParameterName(parameter)}
             </span>
             <ChevronRight className='h-5 w-5'/>
             <span className='font-semibold'>
@@ -104,7 +105,7 @@ const ParamSubparam = () => {
         <div className={`flex max-md:flex-col flex-wrap gap-y-2 p-2 mb-8 ${subParamsData.length === 0 ? 'justify-center' : 'justify-evenly'}`}>
           {subParamsData.length === 0 && (
             <p>
-              No sub-parameters to display for Parameter {formatParameterName(parameterName)}.
+              No sub-parameters to display for Parameter {formatParameterName(parameter)}.
             </p>
           )}
           {subParamsData.map(({sub_parameter_uuid, sub_parameter}) => (

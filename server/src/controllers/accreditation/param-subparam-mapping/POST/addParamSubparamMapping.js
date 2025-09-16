@@ -3,42 +3,39 @@ import sendUpdate from "../../../../services/websocket/sendUpdate.js";
 import isValidDateFormat from "../../../../utils/isValidDateFormat.js";
 
 const addParamSubparamMapping = async (req, res) => {
-  const { startDate, endDate, levelName, programName, areaName, parameterName, subParameterNames } = req.body;
-
-  console.log(startDate);
-  console.log(endDate);
-  console.log(levelName);
-  console.log(programName);
-  console.log(areaName);
-  console.log(parameterName);
-  console.log(subParameterNames);
+  const { title, year, accredBody, level, program, area, parameter, subParameterNames } = req.body;
+  const numYear = Number(year);
+  console.log({
+    title,
+    year,
+    accredBody,
+    level,
+    program,
+    area,
+    parameter,
+    subParameterNames
+  });
 
   try {
-    // Validate if date is not empty and in valid format (e.g., 2025-08-25)
-    if (!startDate || !endDate) {
+    // Validate title, accredBody, level, program, and area
+    if (
+        !title?.trim() || !accredBody?.trim() || 
+        !level?.trim() || !program?.trim() ||
+        !area?.trim() || !parameter?.trim()
+      ) {
       return res.status(400).json({
         success: false,
-        message: 'Start and end date must not be empty.'
-      });
-
-    } else if (!isValidDateFormat(startDate) || !isValidDateFormat(endDate)) {
-      return res.status(400).json({
-        success:false,
-        message: 'Invalid date format. Expected format: YYYY-MM-DD'
+        message: 'Title, Accreditation Body, Level, Program, Area, and Parameter are required and must not be empty.'
       });
     }
 
-    // Validate if levelName, programName, areaName, and parameterName is a string
-      if (typeof levelName !== 'string' || typeof programName !== 'string' ||
-      typeof areaName !== 'string' || typeof parameterName !== 'string') {
-        return res.status(400).json({ success: false, message: 'All must be strings.' });
-      }
-
-      // Validate if levelName, programName, areaName, and parameterName is not empty
-      if (!levelName.trim() || !programName.trim() || !areaName.trim() || !parameterName.trim()) {
-        return res.status(400).json({ success: false, message: 'All must not be empty.' });
-      }
-
+    // Validate year
+    if (!/^\d{4}$/.test(numYear)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Year must be a valid 4-digit number.'
+      });
+    }
 
     // Treat subParameterNames as an array since 2 or more sub-parameters can exist in one parameter
     const subParameters = (Array.isArray(subParameterNames) 
@@ -59,7 +56,16 @@ const addParamSubparamMapping = async (req, res) => {
     const results = [];
     for (const subParameterName of subParameters) {
       // Insert each sub-parameter into the database with its associated period, level, program, area, and parameter
-      const response = await insertParamSubparamMapping(startDate, endDate, levelName, programName, areaName, parameterName, subParameterName);
+      const response = await insertParamSubparamMapping({ 
+        title, 
+        year: numYear, 
+        accredBody, 
+        level, 
+        program, 
+        area, 
+        parameter, 
+        subParameter: subParameterName 
+      });
       results.push(response); // Collect the response for reporting back to client
     }
 
@@ -83,6 +89,8 @@ const addParamSubparamMapping = async (req, res) => {
         message: `${error.duplicateValue} already exist.`
       });
     }
+
+    console.error(error);
 
     // Return other server errors
     res.status(500).json({

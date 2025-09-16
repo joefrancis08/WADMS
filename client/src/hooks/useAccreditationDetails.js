@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import formatToLocalDate from "../utils/formatToLocalDate";
 import useFetchProgramAreas from "./fetch-react-query/useFetchProgramAreas";
 import useFetchAreaParameters from "./fetch-react-query/useFetchAreaParameters";
 import { useFetchILP } from "./fetch-react-query/useFetchILP";
@@ -22,52 +21,59 @@ export const useProgramToBeAccreditedDetails = (accredInfoUUID, programUUID) => 
   }, [accredILPData, accredInfoUUID, programUUID]);
 };
 
-export const useProgramAreaDetails = ({ startDate, endDate, levelName, programName, areaID }) => {
+export const useProgramAreaDetails = ({ title, year, accredBody, level, program, areaUUID }) => {
   const { areas: areasData } = useFetchProgramAreas(
-    startDate, 
-    endDate, 
-    levelName, 
-    programName,
-    !!programName && !!startDate && !!endDate
+    {
+      title, 
+      year, 
+      accredBody, 
+      level,
+      program,
+    },
+    !!program
   );
 
   const data = useMemo(() => areasData?.data ?? [], [areasData?.data]);
+  console.log(data);
 
   return useMemo(() => {
-    const areaObj = data.find(a => a.area_uuid === areaID) ?? null;
+    const areaObj = data.find(a => a.area_uuid === areaUUID) ?? null;
 
     return {
-      areaName: areaObj ? areaObj.area : '',
+      area: areaObj ? areaObj.area : '',
       areaObj
     }
-  }, [data, areaID]);
+  }, [data, areaUUID]);
 };
 
 export const useAreaParamsDetails = ({
-  startDate,
-  endDate,
-  levelName,
-  programName,
-  areaName,
-  parameterID,
+  title,
+  year,
+  accredBody,
+  level,
+  program,
+  area,
+  parameterUUID,
 }) => {
   const { parameters } = useFetchAreaParameters(
-    startDate, 
-    endDate, 
-    levelName, 
-    programName,
-    areaName, 
-    !!areaName 
+    {
+      title,
+      year,
+      accredBody,
+      level, 
+      program,
+      area, 
+    }, !!area
   );
 
   const data = useMemo(() => parameters?.data ?? [], [parameters?.data]);
 
   return useMemo(() => {
-    const paramObj = data.find(p => p.parameter_uuid === parameterID) ?? null;
+    const paramObj = data.find(p => p.parameter_uuid === parameterUUID) ?? null;
 
     return {
       paramName: paramObj ? paramObj.parameter : '',
       paramObj
     }
-  }, [data, parameterID]);
+  }, [data, parameterUUID]);
 };

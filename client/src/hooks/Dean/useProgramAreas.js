@@ -8,6 +8,9 @@ import useAutoFocus from "../useAutoFocus";
 import formatArea from "../../utils/formatArea";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
 import useOutsideClick from "../useOutsideClick";
+import { addProgramAreas } from "../../api/accreditation/accreditationAPI";
+import { TOAST_MESSAGES } from "../../constants/messages";
+import PATH from "../../constants/path";
 
 const useProgramAreas = () => {
   const navigate = useNavigate();
@@ -86,12 +89,19 @@ const useProgramAreas = () => {
     if (!areas.length) return;
 
     try {
-      // const res = await addProgramAreas(startDate, endDate, formattedLevel, programName, areas);
-      // if (res.data.success) {
-      //   showSuccessToast(TOAST_MESSAGES.AREA_ADDITION.SUCCESS);
-      //   handleCloseModal();
-      //   await refetch(); // Refresh areas after save
-      // }
+      const res = await addProgramAreas({
+        title,
+        year,
+        accredBody,
+        level: formattedLevel,
+        program,
+        areaNames: areas
+      });
+      if (res.data.success) {
+        showSuccessToast(TOAST_MESSAGES.AREA_ADDITION.SUCCESS);
+        handleCloseModal();
+        await refetch(); // Refresh areas after save
+      }
       
     } catch (err) {
       const isDuplicate = err?.response?.data?.isDuplicate;
@@ -105,13 +115,21 @@ const useProgramAreas = () => {
     }
   };
 
-  // const handleAreaCardClick = (areaID) => {
-  //   navigate(PATH.DEAN.AREA_PARAMETERS({ periodID, level, programID, areaID }));
-  // };
+  const handleAreaCardClick = (areaUUID) => {
+    navigate(PATH.DEAN.AREA_PARAMETERS({ accredInfoUUID, level, programUUID, areaUUID }));
+  };
 
   const handleAreaOptionClick = (e, data = {}) => {
     e.stopPropagation();
     setActiveAreaId(data?.areaID);
+  };
+
+  const handleOptionItemClick = (e, data = {}) => {
+    e.stopPropagation();
+    if (data && data.label === 'Remove') {
+      console.log(data.label);
+      // Delete Area API call here
+    }
   };
 
   return {
@@ -161,8 +179,9 @@ const useProgramAreas = () => {
       handleAddAreaValue,
       handleRemoveAreaValue,
       handleSaveAreas,
-      // handleAreaCardClick,
-      handleAreaOptionClick
+      handleAreaCardClick,
+      handleAreaOptionClick,
+      handleOptionItemClick
     }
   }
 };

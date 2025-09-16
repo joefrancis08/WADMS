@@ -13,32 +13,37 @@ import { addAreaParameters } from "../../api/accreditation/accreditationAPI";
 const { PARAMETER_ADDITION } = TOAST_MESSAGES;
 
 const useAreaParameters = () => {
-  const { periodID, level, programID, areaID } = useParams();
+  const { accredInfoUUID, level, programUUID, areaUUID } = useParams();
   const { level: levelName } = formatProgramParams(level);
   const navigate = useNavigate();
 
   const { 
-    startDate, 
-    endDate, 
-    programName 
-  } = useProgramToBeAccreditedDetails(periodID, programID);
+    title,
+    year,
+    accredBody,
+    program 
+  } = useProgramToBeAccreditedDetails(accredInfoUUID, programUUID);
+  console.log({ title, year, accredBody, levelName, program, areaUUID })
 
-  const { areaName } = useProgramAreaDetails({
-    startDate,
-    endDate,
-    levelName,
-    programName,
-    areaID
+  const { area } = useProgramAreaDetails({
+    title,
+    year,
+    accredBody,
+    level: levelName,
+    program,
+    areaUUID
   });
+  console.log(area);
 
-  const { parameters, loading, error, refetch } = useFetchAreaParameters(
-    startDate, 
-    endDate, 
-    levelName, 
-    programName, 
-    areaName,
-    !! areaName
-  );
+  const { parameters, loading, error, refetch } = useFetchAreaParameters({
+    title, 
+    year, 
+    accredBody,
+    level: levelName, 
+    program, 
+    area
+  }, !!area);
+  console.log(parameters);
 
   const parameterData = parameters.data ?? [];
 
@@ -94,11 +99,12 @@ const useAreaParameters = () => {
   const handleSaveParameters = async () => {
     try {
       const res = await addAreaParameters({
-        startDate,
-        endDate,
-        levelName,
-        programName,
-        areaName,
+        title,
+        year,
+        accredBody,
+        level: levelName,
+        program,
+        area,
         parameterNames: parametersArr
       });
 
@@ -118,10 +124,10 @@ const useAreaParameters = () => {
 
   return {
     params: {
-      periodID,
+      accredInfoUUID,
       level,
-      programID,
-      areaID
+      programUUID,
+      areaUUID
     },
 
     navigation: {
@@ -142,8 +148,8 @@ const useAreaParameters = () => {
 
     datas: {
       levelName,
-      programName,
-      areaName,
+      program,
+      area,
       parameters,
       loading,
       error,

@@ -19,15 +19,15 @@ const AreaParameters = () => {
     handlers 
   } = useAreaParameters();
 
-  const { periodID, level, programID, areaID }  = params;
+  const { accredInfoUUID, level, programUUID, areaUUID }  = params;
   const { navigate } = navigation;
   const { parameterInputRef } = refs;
   const { modalType } = modals;
   const { parameterInput } = inputs;
   const {
     levelName,
-    programName,
-    areaName,
+    program,
+    area,
     parameters,
     loading,
     error,
@@ -62,19 +62,19 @@ const AreaParameters = () => {
               onClick={() => navigate(PROGRAMS_TO_BE_ACCREDITED)}
               className='hover:underline opacity-80 hover:opacity-100 cursor-pointer transition-all'
             >
-              {levelName} - {programName}
+              Programs
             </span>
             <ChevronRight className='h-5 w-5'/>
             <span
               title='Back to Areas'
               onClick={() => navigate(PROGRAM_AREAS({
-                periodID,
+                accredInfoUUID,
                 level,
-                programID
+                programUUID
               }))}
               className='hover:underline opacity-80 hover:opacity-100 cursor-pointer transition-all'
             >
-              {formatAreaName(areaName)}
+              Areas
             </span>
             <ChevronRight className='h-5 w-5'/>
             <span className='font-semibold'>
@@ -93,17 +93,17 @@ const AreaParameters = () => {
         <div className={`flex max-md:flex-col flex-wrap gap-y-2 p-2 mb-8 ${parameterData.length === 0 ? 'justify-center' : 'justify-evenly'}`}>
           {parameterData.length === 0 && (
             <p>
-              No parameters to display for {formatAreaName(areaName)}.
+              No parameters to display for {formatAreaName(area)}.
             </p>
           )}
           {parameterData.map(({parameter_uuid, parameter}, index) => (
             <div
               onClick={() => navigate(PARAM_SUBPARAMS({ 
-                periodID, 
+                accredInfoUUID, 
                 level, 
-                programID, 
-                areaID, 
-                parameterID: parameter_uuid 
+                programUUID, 
+                areaUUID, 
+                parameterUUID: parameter_uuid 
               }))}
               key={index} 
               className='relative flex items-center justify-start border py-5 px-2 h-20 w-100 max-md:w-full rounded-md transition-all cursor-pointer hover:bg-slate-50 active:opacity-50'

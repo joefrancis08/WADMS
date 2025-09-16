@@ -8,49 +8,58 @@ import MODAL_TYPE from "../../constants/modalTypes";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
 import { addSubParams } from "../../api/accreditation/accreditationAPI";
 import { TOAST_MESSAGES } from "../../constants/messages";
-import useFetchAreaParameters from "../fetch-react-query/useFetchAreaParameters";
 
 const { SUBPARAMETER_ADDITION } = TOAST_MESSAGES;
 
 const useParamSubparam = () => {
   const navigate = useNavigate();
-  const { periodID, level, programID, areaID, parameterID } = useParams();
+  const { accredInfoUUID, level, programUUID, areaUUID, parameterUUID } = useParams();
 
   const { level: levelName } = formatProgramParams(level);
 
   const {
-    startDate,
-    endDate,
-    programName
-  } = useProgramToBeAccreditedDetails(periodID, programID);
+    title,
+    year,
+    accredBody,
+    program,
+  } = useProgramToBeAccreditedDetails(accredInfoUUID, programUUID);
 
-  const { areaName } = useProgramAreaDetails({
-    startDate,
-    endDate,
-    levelName,
-    programName,
-    areaID
+  const { area } = useProgramAreaDetails({
+    title,
+    year,
+    accredBody,
+    level: levelName,
+    program,
+    areaUUID
   });
 
-  const { paramName: parameterName } = useAreaParamsDetails({
-    startDate,
-    endDate,
-    levelName,
-    programName,
-    areaName,
-    parameterID
+  const { paramName: parameter } = useAreaParamsDetails({
+    title,
+    year,
+    accredBody,
+    level: levelName,
+    program,
+    area,
+    parameterUUID
   });
+  console.log({
+    title,
+    year,
+    accredBody,
+    program
+  });
+  console.log('Area name:', area);
+  console.log('Parameter name:', parameter);
 
-  console.log('Parameter name:', parameterName);
-
-  const { subParameters, loading, error, refetch } = useFetchParamSubparam(
-    startDate,
-    endDate,
-    levelName,
-    programName,
-    areaName,
-    parameterName
-  );
+  const { subParameters, loading, error, refetch } = useFetchParamSubparam({
+    title,
+    year,
+    accredBody,
+    level: levelName,
+    program,
+    area,
+    parameter
+  });
 
   const subParamsData = subParameters.data ?? [];
 
@@ -107,12 +116,13 @@ const useParamSubparam = () => {
   const handleSaveSubParams = async () => {
     try {
       const res = await addSubParams({
-        startDate,
-        endDate,
-        levelName,
-        programName,
-        areaName,
-        parameterName,
+        title,
+        year,
+        accredBody,
+        level: levelName,
+        program,
+        area,
+        parameter,
         subParameterNames: subParamsArr
       });
 
@@ -139,11 +149,11 @@ const useParamSubparam = () => {
     },
     
     params: {
-      periodID,
+      accredInfoUUID,
       level,
-      programID,
-      areaID,
-      parameterID
+      programUUID,
+      areaUUID,
+      parameterUUID
     },
 
     datas: {
@@ -152,9 +162,9 @@ const useParamSubparam = () => {
       error,
       refetch,
       levelName,
-      programName,
-      areaName,
-      parameterName,
+      program,
+      area,
+      parameter,
       subParamsData,
       subParameterInput,
       subParamsArr,

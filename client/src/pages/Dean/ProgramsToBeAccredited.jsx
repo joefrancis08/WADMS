@@ -58,10 +58,10 @@ const ProgramsToAccredit = () => {
   } = option;
 
   const getInputRef = () => {
-    if (modalType === MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED) {
+    if (modalType === MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED && !formValue?.title) {
       return titleInputRef;
 
-    } else if (modalType === MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED_CARD) {
+    } else if (modalType === MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED_CARD && !programInput) {
       return programInputRef;
     }
   }
@@ -99,9 +99,9 @@ const ProgramsToAccredit = () => {
   console.log(grouped);
 
   // Options for Period
-  const periodOptions = [
+  const accredInfoOptions = [
     { icon: <ClipboardPlus size={24} />, label: 'Add Level and Programs' },
-    { icon: <CalendarArrowUp size={24} />, label: 'Change Period' },
+    { icon: <CalendarArrowUp size={24} />, label: 'Update info' },
     { icon: <Archive size={24} />, label: 'Move to Archive' },
   ];
 
@@ -116,7 +116,7 @@ const ProgramsToAccredit = () => {
         {/* Header */}
         <ContentHeader 
           headerIcon={NotepadText}
-          headerTitle='Programs'
+          headerTitle='Programs For Accreditation'
           searchTitle='Search Program to be Accredited'
           placeholder='Search program to be accredited...'
           condition={Object.entries(grouped).length > 0}
@@ -229,7 +229,7 @@ const ProgramsToAccredit = () => {
                           width='h-auto w-50' 
                           border='border border-slate-400 rounded-md' 
                         >
-                          {periodOptions.map((option, index) => (
+                          {accredInfoOptions.map((option, index) => (
                             <React.Fragment key={index}>
                               {option.label === 'Move to Archive' && (
                                 <hr className='m-1 text-slate-300'></hr>
@@ -300,15 +300,18 @@ const ProgramsToAccredit = () => {
                             return (
                               <div
                                 key={programUUID}
-                                onClick={(e) => handleProgramCardClick(e, {
-                                  data: {
-                                    accredTitle,
-                                    level,
-                                    accredInfoUUID,
-                                    programUUID,
-                                    program
-                                  }
-                                })}
+                                onClick={(e) => {
+                                  handleProgramCardClick(e, {
+                                    data: {
+                                      accredTitle,
+                                      level,
+                                      accredInfoUUID,
+                                      programUUID,
+                                      program
+                                    }
+                                  })}
+                                }
+                                
                                 className='relative flex items-center justify-center h-75 p-8 shadow hover:shadow-slate-400 hover:shadow-lg active:shadow cursor-pointer transition-all sm:w-[95%] md:w-[95%] lg:w-[95%] xl:w-[95%] w-full bg-[url("/pit-bg-5.png")] bg-cover bg-center'
                               >
                                 <div className='absolute inset-0 bg-black/40 z-10'></div>
@@ -321,46 +324,49 @@ const ProgramsToAccredit = () => {
 
                                 {/* Render program options when option button is clicked */}
                                 {activeProgramID === programId && (
-                                  <div ref={programOptionsRef} className='absolute top-6 right-47 z-20 space-y-2 p-2 '>
-                                    <Dropdown 
-                                      key={id}
-                                      width='h-auto w-50' 
-                                      border='border border-slate-400 rounded-md' 
-                                    >
-                                      {programOptions.map((option, index) => (
-                                        <React.Fragment key={index}>
-                                          {option.label === 'Move to Archive' && (
-                                            <hr className='m-1 text-slate-300'></hr>
-                                          )}
-                                          <div 
-                                            onClick={(e) => (
-                                              handleOptionItemClick(e, { 
-                                                isFromProgram: true,
-                                                optionName: option.label,
-                                                data: {
-                                                  accredInfoUUID,
-                                                  accredTitle,
-                                                  accredYear,
-                                                  level,
-                                                  programUUID,
-                                                  program
-                                                }
-                                              }))}
-                                            key={index} 
-                                            className={`flex items-center p-2 justify-start gap-x-2 cursor-pointer rounded-md active:opacity-60 ${option.label === 'Move to Archive' ? 
-                                            'hover:bg-slate-300' : 'hover:bg-slate-200'}`}
-                                          >
-                                            <i className={option.label === 'Move to Archive' ? 'text-gray-700' : 'text-slate-800'}>
-                                              {option.icon}
-                                            </i>
-                                            <p className={`text-sm ${option.label === 'Move to Archive' ? 'text-gray-700' : 'text-slate-800'}`}>
-                                              {option.label}
-                                            </p>
-                                          </div>
-                                        </React.Fragment>
-                                      ))}
-                                    </Dropdown>
-                                  </div>
+                                  <>
+                                    <div className='absolute inset-0 z-20'></div>
+                                    <div ref={programOptionsRef} className='absolute top-6 right-47 z-20 space-y-2 p-2 '>
+                                      <Dropdown 
+                                        key={id}
+                                        width='h-auto w-50' 
+                                        border='border border-slate-400 rounded-md' 
+                                      >
+                                        {programOptions.map((option, index) => (
+                                          <React.Fragment key={index}>
+                                            {option.label === 'Move to Archive' && (
+                                              <hr className='m-1 text-slate-300'></hr>
+                                            )}
+                                            <div 
+                                              onClick={(e) => (
+                                                handleOptionItemClick(e, { 
+                                                  isFromProgram: true,
+                                                  optionName: option.label,
+                                                  data: {
+                                                    accredInfoUUID,
+                                                    accredTitle,
+                                                    accredYear,
+                                                    level,
+                                                    programUUID,
+                                                    program
+                                                  }
+                                                }))}
+                                              key={index} 
+                                              className={`flex items-center p-2 justify-start gap-x-2 cursor-pointer rounded-md active:opacity-60 ${option.label === 'Move to Archive' ? 
+                                              'hover:bg-slate-300' : 'hover:bg-slate-200'}`}
+                                            >
+                                              <i className={option.label === 'Move to Archive' ? 'text-gray-700' : 'text-slate-800'}>
+                                                {option.icon}
+                                              </i>
+                                              <p className={`text-sm ${option.label === 'Move to Archive' ? 'text-gray-700' : 'text-slate-800'}`}>
+                                                {option.label}
+                                              </p>
+                                            </div>
+                                          </React.Fragment>
+                                        ))}
+                                      </Dropdown>
+                                    </div>
+                                  </>
                                 )}
 
                                 {/* Option button for Program Cards */}

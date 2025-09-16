@@ -312,15 +312,15 @@ export const useProgramsToBeAccredited = () => {
           programName: options.data.programName,
         }));
 
-      } else if (options?.optionName === 'View Areas' && options?.data) {
+      } else if (options?.optionName === 'View Areas') {
         const accredInfoUUID = options?.data?.accredInfoUUID;
         const programUUID = options?.data?.programUUID;
-        const formattedLevel = String(options.data.levelName).toLowerCase().split(' ').join('-');
+        const formattedLevel = String(options.data.level).toLowerCase().split(' ').join('-');
 
         navigate(PROGRAM_AREAS({ 
-          accredInfoId: accredInfoUUID, 
+          accredInfoUUID, 
           level: formattedLevel, 
-          programID: programUUID
+          programUUID
         }));
       }
     }
@@ -377,7 +377,7 @@ export const useProgramsToBeAccredited = () => {
       const formattedLevel = String(level).toLowerCase().split(' ').join('-');
       const accredInfoUUID = options.data.accredInfoUUID;
       const programUUID = options.data.programUUID;
-
+      
       navigate(PROGRAM_AREAS({ 
         accredInfoUUID, 
         level: formattedLevel, 

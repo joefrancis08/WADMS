@@ -11,17 +11,17 @@ const getProgramAreaMapping = async ({ title, year, accredBody, level, program, 
       a.uuid           AS area_uuid,
       a.area_name      AS area
     FROM program_area_mapping pam
-    LEFT JOIN info_level_program_mapping ilpm
+    JOIN info_level_program_mapping ilpm
       ON pam.info_level_program_mapping_id = ilpm.id
-    LEFT JOIN accreditation_info ai
+    JOIN accreditation_info ai
       ON ilpm.accreditation_info_id = ai.id
-    LEFT JOIN accreditation_body ab
+    JOIN accreditation_body ab
       ON ai.accreditation_body_id = ab.id
-    LEFT JOIN accreditation_level al
+    JOIN accreditation_level al
       ON ilpm.level_id = al.id
-    LEFT JOIN program p
+    JOIN program p
       ON ilpm.program_id = p.id
-    LEFT JOIN area a
+    JOIN area a
       ON pam.area_id = a.id
     WHERE ai.title = ?
       AND ai.year = ?
