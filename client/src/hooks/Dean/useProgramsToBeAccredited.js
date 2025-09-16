@@ -8,6 +8,7 @@ import MODAL_TYPE from "../../constants/modalTypes";
 import useOutsideClick from "../useOutsideClick";
 import useAutoFocus from "../useAutoFocus";
 import { useFetchILP } from "../fetch-react-query/useFetchILP";
+import useScrollSaver from "../useScrollSaver";
 
 const { PROGRAM_AREAS } = PATH.DEAN;
 const { 
@@ -19,11 +20,16 @@ const {
 
 export const useProgramsToBeAccredited = () => {
   const navigate = useNavigate();
+  const scrollContainerRef = useRef();
   const accredInfoOptionsRef = useRef();
   const programOptionsRef = useRef();
 
+  
+
   const { accredInfoLevelPrograms, loading, error } = useFetchILP();
   console.log(accredInfoLevelPrograms);
+
+  useScrollSaver(scrollContainerRef);
 
   const [modalType, setModalType] = useState(null);
   const [modalData, setModalData] = useState({
@@ -71,6 +77,17 @@ export const useProgramsToBeAccredited = () => {
     setDuplicateValues(prev => prev.filter(val => programs.includes(val)));
   }, [programs]);
 
+  // Save position of this page when navigating on other page
+  useEffect(() => {
+    const lastId = localStorage.getItem('lastProgramId');
+    if (lastId) {
+      const el = document.getElementById(`program-${lastId}`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'auto', block: 'center' });
+      }
+    }
+  }, []);
+
   const findDuplicate = (value) => {
     const data = accredInfoLevelPrograms.data ?? [];
     return data.some(d => d.program?.program.trim() === value.trim());
@@ -98,8 +115,6 @@ export const useProgramsToBeAccredited = () => {
       );
     }
   };
-
-  console.log(modalData);
 
   const handleAddClick = (options = {}) => {
     setModalType(MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED);
@@ -183,8 +198,6 @@ export const useProgramsToBeAccredited = () => {
       setPrograms(prev => [...prev, program]);
     }
   };
-
-  console.log(formValue.accreditationBody);
 
   const handleProgramChange = (e) => {
     setProgramInput(e.target.value);
@@ -317,11 +330,14 @@ export const useProgramsToBeAccredited = () => {
         const programUUID = options?.data?.programUUID;
         const formattedLevel = String(options.data.level).toLowerCase().split(' ').join('-');
 
-        navigate(PROGRAM_AREAS({ 
-          accredInfoUUID, 
-          level: formattedLevel, 
-          programUUID
-        }));
+        if (options.data?.programId) {
+          localStorage.setItem('lastProgramId', options.data.programId)
+          navigate(PROGRAM_AREAS({ 
+            accredInfoUUID, 
+            level: formattedLevel, 
+            programUUID
+          }));
+        }
       }
     }
   };
@@ -371,18 +387,23 @@ export const useProgramsToBeAccredited = () => {
 
   const handleProgramCardClick = (e, options = {}) => {
     e.stopPropagation();
+    // Check if container is scrolling instead of window
+    console.log(scrollContainerRef);
     
     if (options.data) {
       const level = options.data.level;
       const formattedLevel = String(level).toLowerCase().split(' ').join('-');
       const accredInfoUUID = options.data.accredInfoUUID;
       const programUUID = options.data.programUUID;
-      
-      navigate(PROGRAM_AREAS({ 
-        accredInfoUUID, 
-        level: formattedLevel, 
-        programUUID 
-      }));
+
+      if (options.data?.programId) {
+        localStorage.setItem('lastProgramId', options.data.programId); // Save last program id when navigating
+        navigate(PROGRAM_AREAS({ 
+          accredInfoUUID, 
+          level: formattedLevel, 
+          programUUID 
+        }));
+      }
     }
   };
 
@@ -461,6 +482,7 @@ export const useProgramsToBeAccredited = () => {
       programOptionsRef,
       titleInputRef,
       programInputRef,
+      scrollContainerRef
     },
 
     saveHandler: {

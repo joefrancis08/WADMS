@@ -148,7 +148,26 @@ export const deleteAccreditationPeriod = (startDate, endDate, options = {}) => {
   } else {
     return 'Invalid options.';
   }
-  
-}
+};
+
+export const deletePAM = ({
+  title,
+  year,
+  accredBody,
+  level,
+  program,
+  area
+}) => {
+  return axios.delete(`${API_BASE_URL}/accreditation/delete-program-area`, {
+    params: {
+      title,
+      year,
+      accredBody,
+      level,
+      program,
+      area
+    }
+  });
+};
 
 

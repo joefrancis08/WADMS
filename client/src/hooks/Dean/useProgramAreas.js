@@ -8,7 +8,7 @@ import useAutoFocus from "../useAutoFocus";
 import formatArea from "../../utils/formatArea";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
 import useOutsideClick from "../useOutsideClick";
-import { addProgramAreas } from "../../api/accreditation/accreditationAPI";
+import { addProgramAreas, deletePAM } from "../../api/accreditation/accreditationAPI";
 import { TOAST_MESSAGES } from "../../constants/messages";
 import PATH from "../../constants/path";
 
@@ -33,6 +33,7 @@ const useProgramAreas = () => {
   console.log(data);
 
   const [modalType, setModalType] = useState(null);
+  const [modalData, setModalData] = useState(null);
   const [areas, setAreas] = useState([]);
   const [areaInput, setAreaInput] = useState('');
   const [duplicateValues, setDuplicateValues] = useState([]);
@@ -58,6 +59,7 @@ const useProgramAreas = () => {
   const handleCloseModal = () => {
     setModalType(null);
     setAreas([]);
+    setModalData(null);
   };
 
   const handleAreaInputChange = (e) => {
@@ -124,11 +126,39 @@ const useProgramAreas = () => {
     setActiveAreaId(data?.areaID);
   };
 
-  const handleOptionItemClick = (e, data = {}) => {
+  const handleOptionItemClick = async (e, data = {}) => {
     e.stopPropagation();
     if (data && data.label === 'Remove') {
-      console.log(data.label);
-      // Delete Area API call here
+      setModalType(MODAL_TYPE.REMOVE_AREA);
+      setModalData({
+        title: data.title,
+        year: data.year,
+        accredBody: data.accredBody,
+        level: data.level,
+        program: data.program,
+        area: data.area
+      });
+      
+    }
+  };
+
+  const handleConfirmRemoval = async (data = {}) => {
+    try {
+      const res = await deletePAM({
+        title: data.title,
+        year: data.year,
+        accredBody: data.accredBody,
+        level: data.level,
+        program: data.program,
+        area: data.area
+      });
+
+      if (res.data.success) showSuccessToast(`${data.area} removed successfully!`);
+
+      handleCloseModal();
+
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -144,6 +174,9 @@ const useProgramAreas = () => {
     }, 
 
     datas: {
+      title,
+      year,
+      accredBody,
       areasData,
       data,
       loading,
@@ -169,7 +202,8 @@ const useProgramAreas = () => {
     },
 
     modals: {
-      modalType
+      modalType,
+      modalData
     },
 
     handlers: {
@@ -181,7 +215,8 @@ const useProgramAreas = () => {
       handleSaveAreas,
       handleAreaCardClick,
       handleAreaOptionClick,
-      handleOptionItemClick
+      handleOptionItemClick,
+      handleConfirmRemoval
     }
   }
 };

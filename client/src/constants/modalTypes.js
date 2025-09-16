@@ -13,6 +13,7 @@ const MODAL_TYPES = {
   DELETE_PERIOD: 'delete-period',
 
   ADD_AREA: 'add-area',
+  REMOVE_AREA: 'remove-area',
 
   ADD_PARAMETER: 'add-parameter',
 

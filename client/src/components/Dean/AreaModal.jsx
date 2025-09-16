@@ -2,6 +2,8 @@ import React from 'react';
 import MODAL_TYPE from '../../constants/modalTypes';
 import AreaBaseModal from '../Modals/accreditation/AreaBaseModal';
 import AddField from '../Form/AddField';
+import ConfirmationModal from '../Modals/ConfirmationModal';
+import { TriangleAlert } from 'lucide-react';
 
 const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
   const { areaInputRef } = refs;
@@ -9,6 +11,7 @@ const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
   const { 
     data,
     areas,
+    modalData,
     duplicateValues 
   } = datas;
   const {
@@ -16,9 +19,33 @@ const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
     handleSaveAreas,
     handleAreaInputChange,
     handleAddAreaValue,
-    handleRemoveAreaValue
+    handleRemoveAreaValue,
+    handleConfirmRemoval
   } = handlers;
-  
+
+  function formatAreaName(text) {
+    // Words that should always be lowercase
+    const lowerWords = ['and', 'or'];
+    // Roman numerals that should always stay uppercase
+    const toUpperWords = ['i:', 'ii:', 'iii:', 'iv:', 'v:', 'vi:'];
+
+    return text
+      .toLowerCase()
+      .split(' ')
+      .map(word => {
+        if (lowerWords.includes(word)) {
+          return word; // Keep as lowercase
+        }
+        console.log(word)
+        if (toUpperWords.includes(word)) {
+          return word.toUpperCase(); // Force Roman numerals uppercase
+        }
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      })
+      .join(' ');
+  }
+
+
   switch (modalType) {
     case MODAL_TYPE.ADD_AREA:
       return (
@@ -52,10 +79,51 @@ const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
           }
         />
       );
-      
-  
+    case MODAL_TYPE.REMOVE_AREA:
+      return (
+        <ConfirmationModal 
+          onClose={handleCloseModal}
+          onCancelClick={handleCloseModal}
+          onConfirmClick={() => handleConfirmRemoval({
+            title: modalData.title,
+            year: modalData.year,
+            accredBody: modalData.accredBody,
+            level: modalData.level,
+            program: modalData.program,
+            area: formatAreaName(modalData.area)
+          })}
+          isDelete={true}
+          primaryButton={'Remove'}
+          secondaryButton={'Cancel'}
+          bodyContent={
+            <div className='flex flex-col items-center justify-center pb-4 px-2'>
+              <div className='flex flex-col items-center justify-center pb-4'>
+                <TriangleAlert className='text-red-400 h-24 w-24'/>
+                <p className='flex flex-col px-8 text-md md:text-lg text-center'>
+                  <span className='text-red-500 font-semibold'>
+                    Remove
+                  </span>
+                  <span className='font-semibold'>
+                    {formatAreaName(modalData.area)}
+                  </span>
+                </p>
+              </div>
+              
+              <div className='pb-2 space-y-2'>
+                <p className='px-8 text-center'>
+                  This will permanently delete the parameters and documents under this area. This action cannot be undone.
+                </p>
+                <p className='px-8 text-center'>
+                  Do you want to proceed?
+                </p>
+              </div>
+            </div>
+          }
+        />
+      );
+
     default:
-      break;
+      return null;
   }
 };
 

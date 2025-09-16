@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import DeanLayout from '../../components/Layout/Dean/DeanLayout';
 import { Archive, CalendarArrowUp, ClipboardPlus, EllipsisVertical, Folders, NotebookPen, NotepadText, Plus, Scroll } from 'lucide-react';
 import ContentHeader from '../../components/Dean/ContentHeader';
@@ -29,7 +29,7 @@ const ProgramsToAccredit = () => {
     saveHandler 
   } = useProgramsToBeAccredited();
 
-  const { accredInfoOptionsRef, programOptionsRef, titleInputRef, programInputRef } = ref;
+  const { accredInfoOptionsRef, programOptionsRef, titleInputRef, programInputRef, scrollContainerRef } = ref;
   const { disableButton, handleAddClick } = addButton;
   const { handleChevronClick } = chevron;
   const { handleCloseClick } = close;
@@ -96,8 +96,6 @@ const ProgramsToAccredit = () => {
     return acc;
   }, {});
 
-  console.log(grouped);
-
   // Options for Period
   const accredInfoOptions = [
     { icon: <ClipboardPlus size={24} />, label: 'Add Level and Programs' },
@@ -159,7 +157,8 @@ const ProgramsToAccredit = () => {
             return (
               <React.Fragment key={index}>
                 <div 
-                  className='relative border flex flex-col border-slate-300 bg-slate-200 pb-15 p-2 shadow-lg shadow-slate-300 mb-15'
+                  ref={scrollContainerRef}
+                  className='relative border flex flex-col border-slate-300 bg-slate-200 pb-15 p-2 shadow-lg shadow-slate-300 mb-15 overflow-auto'
                 >
                   <div className='relative w-full h-100 bg-[url("/pit-bg.jpg")] bg-cover bg-center shadow-slate-400 shadow-md'>
                     <div className='absolute inset-0 bg-black/60'></div>
@@ -218,7 +217,7 @@ const ProgramsToAccredit = () => {
                           }
                         }))}
                       title='Options'
-                      className='absolute bottom-2 p-2 right-3 text-white rounded-full hover:shadow hover:text-slate-700 hover:bg-slate-200 active:opacity-50 transition cursor-pointer'>
+                      className='absolute bottom-2 p-2 right-3 text-white rounded-full hover:bg-slate-200/50 active:opacity-50 transition cursor-pointer'>
                       <EllipsisVertical size={28}/>
                     </button>
                     {/* Render period options if the Options button is clicked */}
@@ -283,6 +282,7 @@ const ProgramsToAccredit = () => {
 
                         {/* Program cards */}
                         <div className='relative flex flex-wrap gap-10 justify-center pb-4 px-4'>
+                          {activeProgramID && <div className='absolute inset-0 z-20'></div>}
                           {programs.map((programObj, id) => {
                             /* 
                               Use this id (programId) in passing the data because id is an index
@@ -296,10 +296,10 @@ const ProgramsToAccredit = () => {
                             const programId = `${accredTitle}-${level}-${programObj.program_uuid}`;
                             const programUUID = programObj?.program_uuid;
                             const program = programObj?.program;
-                            console.log(programObj);
                             return (
                               <div
                                 key={programUUID}
+                                id={`program-${programId}`}
                                 onClick={(e) => {
                                   handleProgramCardClick(e, {
                                     data: {
@@ -307,7 +307,8 @@ const ProgramsToAccredit = () => {
                                       level,
                                       accredInfoUUID,
                                       programUUID,
-                                      program
+                                      program,
+                                      programId
                                     }
                                   })}
                                 }
@@ -315,7 +316,6 @@ const ProgramsToAccredit = () => {
                                 className='relative flex items-center justify-center h-75 p-8 shadow hover:shadow-slate-400 hover:shadow-lg active:shadow cursor-pointer transition-all sm:w-[95%] md:w-[95%] lg:w-[95%] xl:w-[95%] w-full bg-[url("/pit-bg-5.png")] bg-cover bg-center'
                               >
                                 <div className='absolute inset-0 bg-black/40 z-10'></div>
-                                
                                 <div className='z-20'>
                                    <p className='text-center leading-normal tracking-widest text-white text-2xl md:text-3xl lg:text-4xl font-bold'>
                                     {programObj.program.toUpperCase()}
@@ -348,7 +348,8 @@ const ProgramsToAccredit = () => {
                                                     accredYear,
                                                     level,
                                                     programUUID,
-                                                    program
+                                                    program,
+                                                    programId
                                                   }
                                                 }))}
                                               key={index} 

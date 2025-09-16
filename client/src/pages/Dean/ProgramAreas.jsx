@@ -22,8 +22,11 @@ const ProgramAreas = () => {
   const { areas, areaInput } = inputs;
   const { areaInputRef, areaOptionsRef } = refs;
   const { duplicateValues } = values;
-  const { modalType } = modals;
+  const { modalType, modalData } = modals;
   const { 
+    title,
+    year,
+    accredBody,
     data, 
     loading, 
     error, 
@@ -40,7 +43,8 @@ const ProgramAreas = () => {
     handleSaveAreas,
     handleAreaCardClick,
     handleAreaOptionClick,
-    handleOptionItemClick
+    handleOptionItemClick,
+    handleConfirmRemoval
   } = handlers
 
   const areaOptions = [
@@ -93,10 +97,15 @@ const ProgramAreas = () => {
               Add Areas
             </button>
           </div>
-          <div className={`flex flex-wrap gap-8 justify-center mb-8 bg-slate-100 shadow-md shadow-slate-400 py-8 px-2 mx-2 rounded
-            ${data.length ? 'items-start' : 'items-center'}
+          <div className={`flex flex-wrap gap-8 justify-center mb-8 py-8 px-2 mx-2 rounded
+            ${data.length ? 'items-start bg-slate-100 shadow-md shadow-slate-400' : 'items-center shadow'}
           `}>
-            {!data.length && <p>No areas to display.</p>}
+            {!data.length && (
+              <div className='flex flex-col items-center justify-center'>
+                <FolderOpen className='text-slate-600' size={200}/>
+                <p className='text-xl font-medium text-slate-800'>No areas to display.</p>
+              </div>
+            )}
 
             {data.map(({ area_uuid, area }) => (
               <div
@@ -148,8 +157,16 @@ const ProgramAreas = () => {
                               <hr className='my-1 mx-auto w-[90%] text-slate-300'></hr>
                             )}
                             <p 
-                              onClick={(e) => handleOptionItemClick(e, { label: item.label })}
-                              className={`flex p-2 rounded-md text-sm
+                              onClick={(e) => handleOptionItemClick(e, { 
+                                label: item.label,
+                                title,
+                                year,
+                                accredBody,
+                                level: formattedLevel,
+                                program,
+                                area 
+                              })}
+                              className={`flex items-center p-2 rounded-md text-sm
                                 ${item.label === 'Remove' 
                                   ? 'hover:bg-red-200 text-red-600' 
                                   : 'hover:bg-slate-200'}`}
@@ -178,7 +195,8 @@ const ProgramAreas = () => {
           data,
           error,
           loading, 
-          areas, 
+          areas,
+          modalData, 
           duplicateValues 
         }}
         handlers={{
@@ -186,7 +204,8 @@ const ProgramAreas = () => {
           handleSaveAreas,
           handleAreaInputChange,
           handleAddAreaValue,
-          handleRemoveAreaValue
+          handleRemoveAreaValue,
+          handleConfirmRemoval
         }}
       />
     </DeanLayout>
