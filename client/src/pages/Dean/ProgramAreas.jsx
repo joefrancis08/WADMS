@@ -98,7 +98,7 @@ const ProgramAreas = () => {
             </button>
           </div>
           <div className={`flex flex-wrap gap-8 justify-center mb-8 py-8 px-2 mx-2 rounded
-            ${data.length ? 'items-start bg-slate-100 shadow-md shadow-slate-400' : 'items-center shadow'}
+            ${data.length ? 'items-start' : 'items-center'}
           `}>
             {!data.length && (
               <div className='flex flex-col items-center justify-center'>

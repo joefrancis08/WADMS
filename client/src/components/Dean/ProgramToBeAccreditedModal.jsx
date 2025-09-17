@@ -168,7 +168,7 @@ const ProgramToBeAccreditedModal = ({
             headerContent={
               <div className='flex items-center justify-center relative gap-x-2'>
                 <p className='ml-5 text-xl font-semibold text-slate-800'>
-                  Add Program to {modalData.level}
+                  Add Programs to {modalData.level}
                 </p>
                 {<CircleQuestionMark 
                   onMouseEnter={null}

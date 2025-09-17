@@ -4,7 +4,6 @@ import ContentHeader from '../../components/Dean/ContentHeader';
 import formatParameterName from '../../utils/formatParameterName';
 import useParamSubparam from '../../hooks/Dean/useParamSubparam';
 import PATH from '../../constants/path';
-import formatAreaName from '../../utils/formatAreaName';
 import SubParamModal from '../../components/Dean/SubParamModal';
 
 const { PROGRAMS_TO_BE_ACCREDITED, AREA_PARAMETERS, PROGRAM_AREAS } = PATH.DEAN;
@@ -34,12 +33,13 @@ const ParamSubparam = () => {
     duplicateValues,
   } = datas;
   const {
-    handleSubparamCardClick,
+    handleAddSubparamClick,
     handleCloseModal,
     handleSubParamChange,
     handleAddSubParamValue,
     handleRemoveSubParamValue,
-    handleSaveSubParams
+    handleSaveSubParams,
+    handleSPCardClick
   } = handlers;
 
   return (
@@ -60,7 +60,7 @@ const ParamSubparam = () => {
               onClick={() => navigate(PROGRAMS_TO_BE_ACCREDITED)}
               className='hover:underline opacity-80 hover:opacity-100 cursor-pointer transition-all'
             >
-              {levelName} - {program}
+              Programs
             </span>
             <ChevronRight className='h-5 w-5'/>
             <span
@@ -72,7 +72,7 @@ const ParamSubparam = () => {
               }))}
               className='hover:underline opacity-80 hover:opacity-100 cursor-pointer transition-all'
             >
-              {formatAreaName(area)}
+              Areas
             </span>
             <ChevronRight className='h-5 w-5'/>
             <span
@@ -85,7 +85,7 @@ const ParamSubparam = () => {
               }))}
               className='hover:underline opacity-80 hover:opacity-100 cursor-pointer transition-all'
             >
-              Parameter {formatParameterName(parameter)}
+              Parameters
             </span>
             <ChevronRight className='h-5 w-5'/>
             <span className='font-semibold'>
@@ -96,7 +96,7 @@ const ParamSubparam = () => {
 
         <div className='flex justify-end px-5 py-3'>
           <button
-            onClick={handleSubparamCardClick} 
+            onClick={handleAddSubparamClick} 
             title='Add Sub-Parameters'
             className='cursor-pointer hover:opacity-80 active:opacity-50'>
             <Plus className='h-8 w-8' />
@@ -110,7 +110,9 @@ const ParamSubparam = () => {
           )}
           {subParamsData.map(({sub_parameter_uuid, sub_parameter}) => (
             <div
-              onClick={(null)}
+              onClick={() => handleSPCardClick({
+                subParameterUUID: sub_parameter_uuid
+              })}
               key={sub_parameter_uuid} 
               className='relative flex items-center justify-start border py-5 px-2 h-20 w-100 max-md:w-full rounded-md transition-all cursor-pointer hover:bg-slate-50 active:opacity-50'
             >

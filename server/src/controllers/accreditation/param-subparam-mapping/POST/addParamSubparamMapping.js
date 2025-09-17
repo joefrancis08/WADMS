@@ -1,6 +1,5 @@
 import insertParamSubparamMapping from "../../../../models/accreditation/param-subparam-mapping/POST/insertParamSubparamMapping.js";
 import sendUpdate from "../../../../services/websocket/sendUpdate.js";
-import isValidDateFormat from "../../../../utils/isValidDateFormat.js";
 
 const addParamSubparamMapping = async (req, res) => {
   const { title, year, accredBody, level, program, area, parameter, subParameterNames } = req.body;

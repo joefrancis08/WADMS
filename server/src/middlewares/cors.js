@@ -10,12 +10,12 @@ const corsMiddleware = cors({
     }
 
     // Allow only if origin is in the list
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin && allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
 
     // Block request if origin is not allowed
-    return callback(new Error('Not allowed by CORS'));
+    return callback(new Error(`Not allowed by CORS: ${origin || 'No Origin'}`));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],

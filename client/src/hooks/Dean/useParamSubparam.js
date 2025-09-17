@@ -8,8 +8,10 @@ import MODAL_TYPE from "../../constants/modalTypes";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
 import { addSubParams } from "../../api/accreditation/accreditationAPI";
 import { TOAST_MESSAGES } from "../../constants/messages";
+import PATH from "../../constants/path";
 
 const { SUBPARAMETER_ADDITION } = TOAST_MESSAGES;
+const { SUBPARAM_INDICATORS } = PATH.DEAN;
 
 const useParamSubparam = () => {
   const navigate = useNavigate();
@@ -83,8 +85,9 @@ const useParamSubparam = () => {
     return subParamsData.some(d => d.sub_parameter.trim() === value.trim());
   };
 
-  const handleSubparamCardClick = () => {
+  const handleAddSubparamClick = () => {
     setModalType(MODAL_TYPE.ADD_SUBPARAMETERS);
+    console.log('clicked');
   };
 
   const handleCloseModal = () => {
@@ -140,6 +143,19 @@ const useParamSubparam = () => {
     }
   };
 
+  const handleSPCardClick = (data = {}) => {
+    console.log('Clicked');
+    const subParameterUUID = data?.subParameterUUID;
+    navigate(SUBPARAM_INDICATORS({
+      accredInfoUUID,
+      level,
+      programUUID,
+      areaUUID,
+      parameterUUID,
+      subParameterUUID
+    }));
+  };
+
   return {
     navigate,
     modalType,
@@ -172,12 +188,13 @@ const useParamSubparam = () => {
     },
 
     handlers: {
-      handleSubparamCardClick,
+      handleAddSubparamClick,
       handleCloseModal,
       handleSubParamChange,
       handleAddSubParamValue,
       handleRemoveSubParamValue,
-      handleSaveSubParams
+      handleSaveSubParams,
+      handleSPCardClick
     }
   };
 };

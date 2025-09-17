@@ -30,6 +30,19 @@ const PATH = {
       `/d/accreditation/programs/${level}/${programUUID}/${accredInfoUUID}/${areaUUID}/${parameterUUID}`
     ),
     PARAM_SUBPARAMS_TEMPLATE: '/d/accreditation/programs/:level/:programUUID/:accredInfoUUID/:areaUUID/:parameterUUID',
+
+    SUBPARAM_INDICATORS: ({
+      accredInfoUUID,
+      level,
+      programUUID,
+      areaUUID,
+      parameterUUID,
+      subParameterUUID
+    }) => (
+      `/d/accreditation/programs/${level}/${programUUID}/${accredInfoUUID}/${areaUUID}/${parameterUUID}/${subParameterUUID}`
+    ),
+    SUBPARAM_INDICATORS_TEMPLATE: '/d/accreditation/programs/:level/:programUUID/:accredInfoUUID/:areaUUID/:parameterUUID/:subParameterUUID',
+    
     DOCUMENTS: '/d/accreditation/documents'
   }
 }

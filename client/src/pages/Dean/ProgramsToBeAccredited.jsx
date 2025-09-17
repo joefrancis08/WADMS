@@ -122,11 +122,11 @@ const ProgramsToAccredit = () => {
 
         {/* Add button */}
         <button 
-          title='Create period, level, and programs to be accredited' 
+          title='Add new accreditation' 
           onClick={handleAddClick} 
-          className='fixed bottom-6 right-10 p-4 rounded-full cursor-pointer transition-all shadow-lg bg-slate-600 hover:bg-slate-700 active:opacity-90 z-50'
+          className='fixed bottom-6 right-10 flex items-center justify-center gap-2 p-4 rounded-full cursor-pointer transition-all shadow-lg bg-slate-600 hover:bg-slate-700 active:opacity-90 z-50'
         >
-          <NotebookPen className='text-white' size={28}/>
+          <Plus className='text-white' size={28}/>
         </button>
 
         {/* Render fallback UI if data is empty */}
@@ -220,6 +220,12 @@ const ProgramsToAccredit = () => {
                       className='absolute bottom-2 p-2 right-3 text-white rounded-full hover:bg-slate-200/50 active:opacity-50 transition cursor-pointer'>
                       <EllipsisVertical size={28}/>
                     </button>
+                    <button
+                      title='Add level and programs'
+                      className='absolute bottom-2 p-2 right-15 text-white rounded-full hover:bg-slate-200/50 active:opacity-50 transition cursor-pointer'
+                    >
+                      <ClipboardPlus size={28}/>
+                    </button>
                     {/* Render period options if the Options button is clicked */}
                     {activeAccredInfoID === accredInfoUUID && (
                       <div ref={accredInfoOptionsRef} className='absolute top-35 right-48 z-10 space-y-2 p-2 '>
@@ -281,7 +287,7 @@ const ProgramsToAccredit = () => {
                         <hr className='w-[50%] bg-green-600 border border-transparent mt-12 h-1 mx-auto'></hr>
 
                         {/* Program cards */}
-                        <div className='relative flex flex-wrap gap-10 justify-center pb-4 px-4'>
+                        <div className='relative flex flex-wrap gap-10 justify-center pb-4 px-4 '>
                           {activeProgramID && <div className='absolute inset-0 z-20'></div>}
                           {programs.map((programObj, id) => {
                             /* 
@@ -313,11 +319,11 @@ const ProgramsToAccredit = () => {
                                   })}
                                 }
                                 
-                                className='relative flex items-center justify-center h-75 p-8 shadow hover:shadow-slate-400 hover:shadow-lg active:shadow cursor-pointer transition-all sm:w-[95%] md:w-[95%] lg:w-[95%] xl:w-[95%] w-full bg-[url("/pit-bg-5.png")] bg-cover bg-center'
+                                className='relative flex items-center justify-center h-100 p-8 shadow hover:shadow-slate-400 hover:shadow-lg active:shadow cursor-pointer transition-all w-100 bg-[url("/pit-bg-5.png")] bg-cover bg-center'
                               >
-                                <div className='absolute inset-0 bg-black/40 z-10'></div>
+                                <div className='absolute inset-0 bg-black/60 z-10'></div>
                                 <div className='z-20'>
-                                   <p className='text-center leading-normal tracking-widest text-white text-2xl md:text-3xl lg:text-4xl font-bold'>
+                                   <p className='text-start leading-normal tracking-widest text-yellow-300 text-xl md:text-2xl lg:text-3xl font-bold'>
                                     {programObj.program.toUpperCase()}
                                   </p>
                                 </div>
@@ -401,12 +407,12 @@ const ProgramsToAccredit = () => {
                               }  
                             })}
                             title='Click to add program'
-                            className='relative flex flex-col items-center justify-center gap-y-2 h-60 p-4 bg-slate-600/80 shadow hover:shadow-slate-700 hover:shadow-md active:shadow cursor-pointer transition-all w-full sm:w-65 md:w-70 lg:w-75 xl:w-80'
+                            className='relative flex flex-col items-center justify-center gap-y-2 h-100 p-4 bg-slate-200/50 shadow hover:shadow-lg active:shadow cursor-pointer transition-all w-100'
                           >
-                            <Plus className='text-white h-16 w-16 rounded-full'/>
-                            <button className='text-xl font-medium text-white py-4 px-6 rounded-full cursor-pointer'>
+                            <Plus className='text-slate-700 h-20 w-20 rounded-full'/>
+                            <p className='text-xl font-medium text-slate-800 py-3 px-8 rounded-full cursor-pointer'>
                               Add Programs
-                            </button>
+                            </p>
                           </div>
                         </div>
                       </div>
