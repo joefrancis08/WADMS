@@ -74,8 +74,6 @@ const addILP = async (req, res) => {
       });
     }
 
-    console.error(error);
-
     // Return other server errors
     res.status(500).json({
       success: false,

@@ -74,7 +74,6 @@ const insertInfoLevelProgramMapping = async ({ title, year, accredBody, level, p
     return { accredInfoId, levelId, programId }; // Return Level, Program, and Period Id (in case of use in the future)
 
   } catch (error) {
-    console.error(error);
     /* 
       If there’s any error in the transaction block, rollback 
       which means undoes all queries in this transaction 

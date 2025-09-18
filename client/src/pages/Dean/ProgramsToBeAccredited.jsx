@@ -16,8 +16,9 @@ const ProgramsToAccredit = () => {
     accredInfoOptionsRef,
     programOptionsRef,
     programCardRef,
-    programNameRef,
     titleInputRef,
+    levelInputRef,
+    levelRef,
     programInputRef,
     scrollContainerRef
   } = refs;
@@ -51,18 +52,23 @@ const ProgramsToAccredit = () => {
     handleProgramCardClick,
     handleOptionClick,
     handleOptionItemClick,
+    handleLevelScroll,
     handleProgramChange,
     handleAddProgramValue,
     handleRemoveProgramValue,
     handleSave
   } = handlers;
 
+  // Function to make input ref dynamic based on the rendered modal
   const getInputRef = () => {
     if (modalType === MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED && !formValue?.title) {
       return titleInputRef;
 
     } else if (modalType === MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED_CARD && !programInput) {
       return programInputRef;
+
+    } else if (modalType === MODAL_TYPE.ADD_LEVEL_PROGRAM && !formValue?.level) {
+      return levelInputRef;
     }
   }
 
@@ -194,7 +200,9 @@ const ProgramsToAccredit = () => {
                         <span className='text-white text-md md:text-lg lg:text-xl font-bold'>
                           {Object.entries(levels).map(([level], index, arr) => (
                             <React.Fragment key={index}>
-                              <span className='hover:underline cursor-pointer tracking-wider'>
+                              <span
+                                onClick={() => handleLevelScroll(`${accredTitle}-${level}`)} 
+                                className='hover:underline cursor-pointer tracking-wider'>
                                 {String(level).toUpperCase()}
                               </span>
                               {/* Only show the dot if it's not the last item */}
@@ -287,10 +295,10 @@ const ProgramsToAccredit = () => {
                   {Object.entries(levels).map(([level, programs]) => (
                     <React.Fragment key={level} >
                       <div
+                        ref={(el) => (levelRef.current[`${accredTitle}-${level}`] = el)} 
                         id={`${accredTitle}-${level}`}
                         className='relative p-4 space-y-6 mb-4 bg-slate-300 border border-slate-300 shadow-md shadow-slate-400'
                       >
-                        {console.log(`${accredTitle}-${level}`)}
                         {/* Level label (ex: Level II, Preliminary, etc.) */}
                         <h2 className='absolute top-3 left-1/2 -translate-x-1/2 flex items-center justify-center w-[60%] md:w-[50%] lg:w-[40%] p-2 text-lg md:text-xl lg:text-2xl text-green-600 rounded font-extrabold tracking-wide'>
                           {level.toUpperCase()}
@@ -315,8 +323,8 @@ const ProgramsToAccredit = () => {
                             const program = programObj?.program;
                             return (
                               <div
-                                ref={programCardRef}
                                 key={programUUID}
+                                ref={programCardRef}
                                 id={`last-program-${programId}`}
                                 onClick={(e) => {
                                   handleProgramCardClick(e, {
@@ -335,7 +343,7 @@ const ProgramsToAccredit = () => {
                               >
                                 <div className='absolute inset-0 bg-black/60 z-10'></div>
                                 <div 
-                                  id={`${accredTitle}-${accredYear}-${level}-${program}`} 
+                                  id={`${accredBody}-${accredYear}-${level}-${program}`}
                                   className='z-20'
                                 >
                                    <p className='text-start leading-normal tracking-widest text-yellow-300 text-xl md:text-2xl lg:text-3xl font-bold'>

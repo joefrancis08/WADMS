@@ -231,6 +231,7 @@ const ProgramToBeAccreditedModal = ({
           bodyContent={
             <div className='relative w-full px-8'>
               <AddField 
+                ref={ref}
                 fieldName='Level'
                 placeholder={levelsArray.length > 0 
                   ? 'Enter new level or select from below...'

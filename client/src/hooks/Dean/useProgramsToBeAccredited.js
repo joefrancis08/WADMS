@@ -23,7 +23,9 @@ export const useProgramsToBeAccredited = () => {
   const navigate = useNavigate();
   const scrollContainerRef = useRef();
   const accredInfoOptionsRef = useRef();
+  const programCardRef = useRef();
   const programOptionsRef = useRef();
+  const levelRef = useRef({});
 
   const { accredInfoLevelPrograms, loading, error } = useFetchILP();
   console.log(accredInfoLevelPrograms);
@@ -65,6 +67,11 @@ export const useProgramsToBeAccredited = () => {
   const programInputRef = useAutoFocus(
     modalType, 
     modalType === MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED_CARD
+  );
+
+  const levelInputRef = useAutoFocus(
+    modalType,
+    modalType === MODAL_TYPE.ADD_LEVEL_PROGRAM
   );
 
   // Reuse useOutsideClick hook to make period and program options disappear
@@ -120,6 +127,13 @@ export const useProgramsToBeAccredited = () => {
         duplicateValues.length > 0 
       );
     }
+  };
+
+  const handleLevelScroll = (id) => {
+    levelRef.current[id]?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
   };
 
   const handleAddClick = (options = {}) => {
@@ -230,7 +244,6 @@ export const useProgramsToBeAccredited = () => {
 
   const handleProgramChange = (e) => {
     setProgramInput(e.target.value);
-    setDuplicateValues([]);
   };
 
   const handleAddProgramValue = (val) => {
@@ -313,9 +326,7 @@ export const useProgramsToBeAccredited = () => {
           showSuccessToast(PROGRAMS_TO_BE_ACCREDITED_ADDITION.SUCCESS);
         } 
 
-        console.log(`${title}-${level}-${programs[0]}`);
-
-        scrollToNewAddition('newProgram', `${title}-${level}-${programs[0]}`);
+        scrollToNewAddition('newProgram', `${accredBody}-${year}-${level}-${programs[0]}`);
       }
 
     } catch (error) {
@@ -474,7 +485,10 @@ export const useProgramsToBeAccredited = () => {
       accredInfoOptionsRef,
       programOptionsRef,
       titleInputRef,
+      levelInputRef,
       programInputRef,
+      programCardRef,
+      levelRef,
       scrollContainerRef
     },
 
@@ -504,6 +518,7 @@ export const useProgramsToBeAccredited = () => {
       handleOptionSelection,
       handleInfoHover,
       handleInputChange,
+      handleLevelScroll,
       handleProgramCardClick,
       handleOptionClick,
       handleOptionItemClick,
