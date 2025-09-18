@@ -19,7 +19,9 @@ const MODAL_TYPES = {
 
   ADD_PARAMETER: 'add-parameter',
 
-  ADD_SUBPARAMETERS: 'add-subparameters'
+  ADD_SUBPARAMETERS: 'add-subparameters',
+
+  ADD_INDICATORS: 'add-indicators'
 };
 
 export default MODAL_TYPES;

@@ -4,6 +4,7 @@ import ContentHeader from '../../components/Dean/ContentHeader';
 import { ChevronRight, EllipsisVertical, File, FileStack, Plus } from 'lucide-react';
 import useSubparamIndicators from '../../hooks/Dean/useSubparamIndicators';
 import PATH from '../../constants/path';
+import IndicatorModal from '../../components/Dean/IndicatorModal';
 
 const { 
   PROGRAMS_TO_BE_ACCREDITED,
@@ -13,7 +14,8 @@ const {
 } = PATH.DEAN;
 
 const SubparamIndicator = () => {
-  const { navigate, params, data } = useSubparamIndicators();
+  const { navigate, refs, params, datas, handlers } = useSubparamIndicators();
+  const { indicatorInputRef } = refs;
   const {
     accredInfoUUID,
     level,
@@ -22,22 +24,36 @@ const SubparamIndicator = () => {
     parameterUUID,
     subParameterUUID
   } = params;
+
   const { 
+    modalType,
+    indicatorInput,
+    inputtedIndicators,
+    duplicateValues,
     subParam,
     indicatorsArr,
     loading,
     error,
     refetch
-   } = data;
+  } = datas;
+
+  const {
+    handleCloseModal,
+    handleAddIndClick,
+    handleIndicatorChange,
+    handleAddIndicatorValue,
+    handleRemoveIndicatorValue
+  } = handlers;
+
   return (
     <DeanLayout>
       <div className='flex-1'>
         <ContentHeader 
           headerIcon={FileStack}
-          headerTitle={'Sub-Parameters'}
-          searchTitle={'Search sub-parameter'}
-          placeholder={'Search sub-parameter...'}
-          condition={false}
+          headerTitle={'Indicators'}
+          searchTitle={'Search indicator'}
+          placeholder={'Search indicator...'}
+          condition={true}
         />
 
         <div className='flex justify-between px-4 pt-4'>
@@ -97,7 +113,7 @@ const SubparamIndicator = () => {
 
         <div className='flex justify-end px-5 py-3'>
           <button
-            onClick={null} 
+            onClick={handleAddIndClick} 
             title='Add Sub-Parameters'
             className='cursor-pointer hover:opacity-80 active:opacity-50'>
             <Plus className='h-8 w-8' />
@@ -124,6 +140,23 @@ const SubparamIndicator = () => {
           ))}
         </div>
       </div>
+      <IndicatorModal 
+        refs={{
+          indicatorInputRef
+        }}
+        datas={{
+          modalType,
+          indicatorInput,
+          inputtedIndicators,
+          duplicateValues
+        }}
+        handlers={{
+          handleCloseModal,
+          handleIndicatorChange,
+          handleAddIndicatorValue,
+          handleRemoveIndicatorValue
+        }}
+      />
     </DeanLayout>
   );
 };

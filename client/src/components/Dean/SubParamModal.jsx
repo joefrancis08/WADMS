@@ -10,8 +10,7 @@ const SubParamModal = ({ refs, modalType, datas, handlers }) => {
     subParameterInput,
     duplicateValues
   } = datas;
-  console.log(subParameterInput);
-  console.log(subParamsArr);
+  
   const { 
     handleCloseModal,
     handleSaveSubParams,
@@ -19,6 +18,7 @@ const SubParamModal = ({ refs, modalType, datas, handlers }) => {
     handleRemoveSubParamValue,
     handleSubParamChange
   } = handlers;
+
   switch (modalType) {
       case MODAL_TYPE.ADD_SUBPARAMETERS:
         return (

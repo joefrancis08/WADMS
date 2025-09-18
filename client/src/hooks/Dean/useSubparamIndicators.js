@@ -2,9 +2,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import formatProgramParams from "../../utils/formatProgramParams";
 import { useAreaParamsDetails, useParamSubparamDetails, useProgramAreaDetails, useProgramToBeAccreditedDetails } from "../useAccreditationDetails";
 import useFetchSubparamIndicators from "../fetch-react-query/useFetchSubparamIndicators";
+import { useEffect, useState } from "react";
+import MODAL_TYPE from "../../constants/modalTypes";
+import useAutoFocus from "../useAutoFocus";
+import { showErrorToast } from "../../utils/toastNotification";
 
 const useSubparamIndicators = () => {
   const navigate = useNavigate();
+
   const { 
     accredInfoUUID, 
     level, 
@@ -61,9 +66,88 @@ const useSubparamIndicators = () => {
 
   const indicatorsArr = indicators?.data ?? [];
 
+  const [modalType, setModalType] = useState(null);
+  const [indicatorInput, setIndicatorInput] = useState('');
+  const [inputtedIndicators, setInputtedIndicators] = useState([]);
+  const [duplicateValues, setDuplicateValues] = useState([]);
+
+  const indicatorInputRef = useAutoFocus(
+    modalType,
+    modalType === MODAL_TYPE.ADD_INDICATORS
+  );
+
+  // Remove duplicate automatically if sub-parameter state changes
+  useEffect(() => {
+    setDuplicateValues(prev => prev.filter(val => inputtedIndicators.includes(val)));
+  }, [inputtedIndicators]);
+
+  const findDuplicate = (value) => {
+    return indicatorsArr.some(i => i.indicator.trim() === value.trim());
+  };
+
+  const handleCloseModal = () => {
+    setModalType(null);
+  };
+
+  const handleAddIndClick = () => {
+    setModalType(MODAL_TYPE.ADD_INDICATORS);
+  };
+
+  const handleIndicatorChange = (e) => {
+    setIndicatorInput(e.target.value)
+  };
+
+  const handleAddIndicatorValue = (val) => {
+    if (findDuplicate(val)) {
+      setDuplicateValues(prev => [...new Set([...prev, val])]);
+      showErrorToast(`${val} already exist.`, 'top-center');
+      return;
+    }
+
+    setInputtedIndicators([...inputtedIndicators, val]);
+    setDuplicateValues(prev => prev.filter(v => v !== val));
+  };
+
+  const handleRemoveIndicatorValue = (index) => {
+    const removedVal = inputtedIndicators[index];
+    setInputtedIndicators(inputtedIndicators.filter((_, i) => i !== index));
+    setDuplicateValues(prev => prev.filter(v => v !== removedVal));
+  };
+
+  // const handleSaveSubParams = async () => {
+  //   try {
+  //     const res = await addSubParams({
+  //       title,
+  //       year,
+  //       accredBody,
+  //       level: levelName,
+  //       program,
+  //       area,
+  //       parameter,
+  //       subParameterNames: subParamsArr
+  //     });
+
+  //     if (res.data.success) {
+  //       showSuccessToast(SUBPARAMETER_ADDITION.SUCCESS);
+  //     }
+
+  //     handleCloseModal();
+
+  //   } catch (error) {
+  //     const duplicateValue = error?.response?.data?.error?.duplicateValue;
+  //     console.log(duplicateValue);
+  //     setDuplicateValues(prev => [...new Set([...prev, duplicateValue])]);
+  //     showErrorToast(`${duplicateValue} already exist.`, 'top-center');
+  //   }
+  // };
+
   return {
     navigate,
-    
+
+    refs: {
+      indicatorInputRef
+    },
+
     params: {
       accredInfoUUID,
       level,
@@ -73,12 +157,24 @@ const useSubparamIndicators = () => {
       subParameterUUID
     },
 
-    data: {
+    datas: {
+      modalType,
+      indicatorInput,
+      inputtedIndicators,
+      duplicateValues,
       subParam,
       indicatorsArr,
       loading,
       error,
       refetch
+    },
+
+    handlers: {
+      handleCloseModal,
+      handleAddIndClick,
+      handleIndicatorChange,
+      handleAddIndicatorValue,
+      handleRemoveIndicatorValue
     }
   };
 };
