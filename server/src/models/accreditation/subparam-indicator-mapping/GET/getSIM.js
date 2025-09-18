@@ -21,6 +21,7 @@ const getSIM = async ({
       a.area_name            AS area,
       pa.parameter_name      AS parameter,
       spa.sub_parameter_name AS sub_parameter,
+      i.uuid                 AS indicator_uuid,
       i.indicator_name       AS indicator
     FROM subparam_indicator_mapping sim
     JOIN parameter_subparameter_mapping pspm

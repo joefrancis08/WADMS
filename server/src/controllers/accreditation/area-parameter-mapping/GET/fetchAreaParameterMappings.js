@@ -2,7 +2,6 @@ import getAreaParameterMappings from "../../../../models/accreditation/area-para
 
 const fetchAreaParameterMappings = async (req, res) => {
   const { title, year, accredBody, level, program, area } = req.query;
-
   try {
     const parameters = await getAreaParameterMappings({
       title,

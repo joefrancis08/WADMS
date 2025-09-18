@@ -44,15 +44,7 @@ const useParamSubparam = () => {
     area,
     parameterUUID
   });
-  console.log({
-    title,
-    year,
-    accredBody,
-    program
-  });
-  console.log('Area name:', area);
-  console.log('Parameter name:', parameter);
-
+  
   const { subParameters, loading, error, refetch } = useFetchParamSubparam({
     title,
     year,

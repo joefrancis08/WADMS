@@ -2,6 +2,7 @@ import getProgramAreaMapping from "../../../../models/accreditation/program-area
 
 const fetchProgramAreaMapping = async (req, res) => {
   const { title, year, accredBody, level, program } = req.query;
+  console.log('Program Area:', { title, year, accredBody, level, program });
   try {
     const areas = await getProgramAreaMapping({
       title,
@@ -10,7 +11,6 @@ const fetchProgramAreaMapping = async (req, res) => {
       level,
       program
     });
-    console.log(areas);
     res.status(200).json({
       success: true,
       data: areas

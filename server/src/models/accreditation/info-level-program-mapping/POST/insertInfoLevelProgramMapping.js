@@ -6,13 +6,12 @@ import insertAccreditationInfo from "../../accreditation-info/POST/insertAccredi
 import { insertProgram } from "../../../programs/POST/insertProgram.js";
 import getAccredInfoBy from '../../accreditation-info/GET/getAccredInfoBy.js';
 
-const insertInfoLevelProgramMapping = async (title, year, accredBody, program, level) => {
+const insertInfoLevelProgramMapping = async ({ title, year, accredBody, level, program }) => {
   /* 
     Get a connection from the database pool
     so we can manually control transaction behavior
   */
   const connection = await db.getConnection();
-
   try {
     /* 
       Start a new transaction,
@@ -29,11 +28,11 @@ const insertInfoLevelProgramMapping = async (title, year, accredBody, program, l
     */
     let programId;
     if (programResult.length > 0) {
-      programId = programResult[0].id;
+      programId = programResult[0]?.id;
 
     } else {
       const newProgram = await insertProgram(program, connection);
-      programId = newProgram.insertId;
+      programId = newProgram?.insertId;
     }
 
     // Logic here is the same as program above this code
@@ -41,11 +40,11 @@ const insertInfoLevelProgramMapping = async (title, year, accredBody, program, l
 
     let levelId;
     if (levelResult.length > 0) {
-      levelId = levelResult[0].id;
+      levelId = levelResult[0]?.id;
 
     } else {
-      const newLevel = await insertLevel(connection, level);
-      levelId = newLevel.insertId;
+      const newLevel = await insertLevel(level, connection);
+      levelId = newLevel?.insertId;
     }
 
     // Logic here is the same as program and level
@@ -53,27 +52,11 @@ const insertInfoLevelProgramMapping = async (title, year, accredBody, program, l
 
     let accredInfoId;
     if (accredInfoResult.length > 0) {
-      accredInfoId = accredInfoResult[0].id;
+      accredInfoId = accredInfoResult[0]?.id;
 
     } else {
-      const newAccredInfo = await insertAccreditationInfo(title, year, accredBody, connection);
-      accredInfoId = newAccredInfo.insertId;
-    }
-
-    // Check if program_level_mapping entry already exist
-    const checkQuery = `
-      SELECT id
-      FROM info_level_program_mapping
-      WHERE program_id = ?
-        AND level_id = ?
-        AND accreditation_info_id = ?
-    `;
-
-    const [exists] = await connection.execute(checkQuery, [programId, levelId, accredInfoId]);
-    if (exists.length > 0) {
-      const error = new Error('DUPLICATE_ENTRY');
-      error.duplicateValue = [title, year, accredBody, level, program];
-      throw error;
+      const newAccredInfo = await insertAccreditationInfo(title, year, accredBody);
+      accredInfoId = newAccredInfo?.insertId;
     }
 
     // Insert programId, levelId, and accredInfoId into Program Level Mapping Table
@@ -91,6 +74,7 @@ const insertInfoLevelProgramMapping = async (title, year, accredBody, program, l
     return { accredInfoId, levelId, programId }; // Return Level, Program, and Period Id (in case of use in the future)
 
   } catch (error) {
+    console.error(error);
     /* 
       If there’s any error in the transaction block, rollback 
       which means undoes all queries in this transaction 

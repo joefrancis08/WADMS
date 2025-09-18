@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import useFetchProgramAreas from "./fetch-react-query/useFetchProgramAreas";
 import useFetchAreaParameters from "./fetch-react-query/useFetchAreaParameters";
 import { useFetchILP } from "./fetch-react-query/useFetchILP";
+import useFetchParamSubparam from "./fetch-react-query/useFetchParamSubparam";
 
 export const useProgramToBeAccreditedDetails = (accredInfoUUID, programUUID) => {
   const { accredInfoLevelPrograms } = useFetchILP();
@@ -9,7 +10,6 @@ export const useProgramToBeAccreditedDetails = (accredInfoUUID, programUUID) => 
 
   return useMemo(() => {
     const programObj = accredILPData.find(p => p.accred_uuid === accredInfoUUID && p.program_uuid === programUUID);
-    console.log(programObj);
 
     return {
       title: programObj?.accred_title,
@@ -34,7 +34,6 @@ export const useProgramAreaDetails = ({ title, year, accredBody, level, program,
   );
 
   const data = useMemo(() => areasData?.data ?? [], [areasData?.data]);
-  console.log(data);
 
   return useMemo(() => {
     const areaObj = data.find(a => a.area_uuid === areaUUID) ?? null;
@@ -76,4 +75,38 @@ export const useAreaParamsDetails = ({
       paramObj
     }
   }, [data, parameterUUID]);
+};
+
+export const useParamSubparamDetails = ({
+  title,
+  year,
+  accredBody,
+  level,
+  program,
+  area,
+  parameter,
+  subParameterUUID
+}) => {
+  const { subParameters } = useFetchParamSubparam(
+    {
+      title,
+      year,
+      accredBody,
+      level,
+      program,
+      area,
+      parameter
+    }, !!parameter
+  );
+
+  const data = useMemo(() => subParameters?.data ?? [], [subParameters?.data]);
+
+  return useMemo(() => {
+    const subParamObj = data.find(sp => sp.sub_parameter_uuid === subParameterUUID) ?? null;
+
+    return {
+      subParam: subParamObj ? subParamObj.sub_parameter : '',
+      subParamObj
+    }
+  }, [data, subParameterUUID]);
 };

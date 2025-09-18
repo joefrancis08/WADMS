@@ -10,52 +10,52 @@ import MODAL_TYPE from '../../constants/modalTypes';
 import formatAccreditationTitle from '../../utils/formatAccreditationTitle';
 
 const ProgramsToAccredit = () => {
-  const { 
-    addButton,
-    chevron,
-    close,
-    confirmation,
-    dropdown,
-    duplicates, 
-    form, 
-    hovers, 
-    inputs, 
-    modal,
-    navigation, 
-    option,
-    program, 
-    programsToBeAccreditedData,
-    ref,
-    saveHandler 
-  } = useProgramsToBeAccredited();
+  const { refs, datas, handlers } = useProgramsToBeAccredited();
 
-  const { accredInfoOptionsRef, programOptionsRef, titleInputRef, programInputRef, scrollContainerRef } = ref;
-  const { disableButton, handleAddClick } = addButton;
-  const { handleChevronClick } = chevron;
-  const { handleCloseClick } = close;
-  const { handleConfirmClick } = confirmation;
-  const { toggleDropdown, handleOptionSelection } = dropdown;
-  const { duplicateValues } = duplicates;
-  const { formValue } = form;
-  const { infoHover, handleInfoHover } = hovers;
-  const { handleInputChange } = inputs;
-  const { modalType, modalData } = modal;
-  const { handleProgramCardClick } = navigation;
-  const { handleSave } = saveHandler;
-  const { accredInfoLevelPrograms, loading, error } = programsToBeAccreditedData;
-  const { 
+  const {
+    accredInfoOptionsRef,
+    programOptionsRef,
+    programCardRef,
+    programNameRef,
+    titleInputRef,
+    programInputRef,
+    scrollContainerRef
+  } = refs;
+
+  const {
+    disableButton,
+    toggleDropdown,
+    duplicateValues,
+    accredInfoLevelPrograms,
+    loading,
+    error,
+    formValue,
+    infoHover,
+    modalType,
+    modalData,
+    activeAccredInfoID,
+    activeProgramID,
     programInput,
-    programs, 
+    programs,
+  } = datas;
+
+  const {
+    handleAddClick,
+    handleClipboardClick,
+    handleCloseClick,
+    handleChevronClick,
+    handleConfirmClick,
+    handleOptionSelection,
+    handleInfoHover,
+    handleInputChange,
+    handleProgramCardClick,
+    handleOptionClick,
+    handleOptionItemClick,
     handleProgramChange,
     handleAddProgramValue,
     handleRemoveProgramValue,
-  } = program;
-  const { 
-    activeAccredInfoID,
-    activeProgramID, 
-    handleOptionClick, 
-    handleOptionItemClick 
-  } = option;
+    handleSave
+  } = handlers;
 
   const getInputRef = () => {
     if (modalType === MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED && !formValue?.title) {
@@ -69,7 +69,7 @@ const ProgramsToAccredit = () => {
   const inputRef = getInputRef();
   
   // Array of Programs To Be Accredited, fallback to empty array if fetch is loading
-  const data = accredInfoLevelPrograms.data || [];
+  const data = accredInfoLevelPrograms?.data ?? [];
 
   // Group by Accreditation Year + Title
   const grouped = data.reduce((acc, item) => {
@@ -98,7 +98,6 @@ const ProgramsToAccredit = () => {
 
   // Options for Period
   const accredInfoOptions = [
-    { icon: <ClipboardPlus size={24} />, label: 'Add Level and Programs' },
     { icon: <CalendarArrowUp size={24} />, label: 'Update info' },
     { icon: <Archive size={24} />, label: 'Move to Archive' },
   ];
@@ -142,7 +141,8 @@ const ProgramsToAccredit = () => {
         ) : (
           /* Render Accreditation Info, Level, and Programs to be accredited */
           Object.entries(grouped).map(([accredTitle, levels], index) => {
-            const [first, rest] = formatAccreditationTitle(accredTitle);
+            console.log(accredTitle);
+            const [first, rest] = formatAccreditationTitle(accredTitle, { isForUI: true });
             // Get the first level
             const firstLevel = Object.keys(levels)[0];
 
@@ -153,6 +153,7 @@ const ProgramsToAccredit = () => {
             const accredInfoUUID = firstProgram.accred_uuid;
             const accredYear = firstProgram.accred_year;
             const accredBody = firstProgram.accred_body_name;
+            console.log(accredTitle);
 
             return (
               <React.Fragment key={index}>
@@ -160,7 +161,7 @@ const ProgramsToAccredit = () => {
                   ref={scrollContainerRef}
                   className='relative border flex flex-col border-slate-300 bg-slate-200 pb-15 p-2 shadow-lg shadow-slate-300 mb-15 overflow-auto'
                 >
-                  <div className='relative w-full h-100 bg-[url("/pit-bg.jpg")] bg-cover bg-center shadow-slate-400 shadow-md'>
+                  <div id={accredTitle} className='relative w-full h-100 bg-[url("/pit-bg.jpg")] bg-cover bg-center shadow-slate-400 shadow-md'>
                     <div className='absolute inset-0 bg-black/60'></div>
                     {/* Content */}
                     <div className='absolute flex top-2 right-2'>
@@ -207,7 +208,7 @@ const ProgramsToAccredit = () => {
                         </span>
                       </p>
                     </div>
-                    {/* Options for Accreditation Period */}
+                    {/* Options for Accreditation Header */}
                     <button 
                       onClick={(e) => (
                         handleOptionClick(e, { 
@@ -221,6 +222,14 @@ const ProgramsToAccredit = () => {
                       <EllipsisVertical size={28}/>
                     </button>
                     <button
+                      onClick={() => {
+                        const [title, year] = formatAccreditationTitle(accredTitle, { isForDB: true });
+                        handleClipboardClick({
+                          title,
+                          year,
+                          accredBody
+                        });
+                      }}
                       title='Add level and programs'
                       className='absolute bottom-2 p-2 right-15 text-white rounded-full hover:bg-slate-200/50 active:opacity-50 transition cursor-pointer'
                     >
@@ -228,7 +237,7 @@ const ProgramsToAccredit = () => {
                     </button>
                     {/* Render period options if the Options button is clicked */}
                     {activeAccredInfoID === accredInfoUUID && (
-                      <div ref={accredInfoOptionsRef} className='absolute top-35 right-48 z-10 space-y-2 p-2 '>
+                      <div ref={accredInfoOptionsRef} className='absolute top-54 right-48 z-10 space-y-2 p-2 '>
                         <Dropdown 
                           key={accredInfoUUID}
                           width='h-auto w-50' 
@@ -277,9 +286,11 @@ const ProgramsToAccredit = () => {
                   {/* Loop through levels inside each period */}
                   {Object.entries(levels).map(([level, programs]) => (
                     <React.Fragment key={level} >
-                      <div 
+                      <div
+                        id={`${accredTitle}-${level}`}
                         className='relative p-4 space-y-6 mb-4 bg-slate-300 border border-slate-300 shadow-md shadow-slate-400'
                       >
+                        {console.log(`${accredTitle}-${level}`)}
                         {/* Level label (ex: Level II, Preliminary, etc.) */}
                         <h2 className='absolute top-3 left-1/2 -translate-x-1/2 flex items-center justify-center w-[60%] md:w-[50%] lg:w-[40%] p-2 text-lg md:text-xl lg:text-2xl text-green-600 rounded font-extrabold tracking-wide'>
                           {level.toUpperCase()}
@@ -304,8 +315,9 @@ const ProgramsToAccredit = () => {
                             const program = programObj?.program;
                             return (
                               <div
+                                ref={programCardRef}
                                 key={programUUID}
-                                id={`program-${programId}`}
+                                id={`last-program-${programId}`}
                                 onClick={(e) => {
                                   handleProgramCardClick(e, {
                                     data: {
@@ -322,9 +334,12 @@ const ProgramsToAccredit = () => {
                                 className='relative flex items-center justify-center h-100 p-8 shadow hover:shadow-slate-400 hover:shadow-lg active:shadow cursor-pointer transition-all w-100 bg-[url("/pit-bg-5.png")] bg-cover bg-center'
                               >
                                 <div className='absolute inset-0 bg-black/60 z-10'></div>
-                                <div className='z-20'>
+                                <div 
+                                  id={`${accredTitle}-${accredYear}-${level}-${program}`} 
+                                  className='z-20'
+                                >
                                    <p className='text-start leading-normal tracking-widest text-yellow-300 text-xl md:text-2xl lg:text-3xl font-bold'>
-                                    {programObj.program.toUpperCase()}
+                                    {program.toUpperCase()}
                                   </p>
                                 </div>
 

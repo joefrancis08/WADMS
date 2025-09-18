@@ -125,6 +125,31 @@ export const fetchParamSubparams = ({
   });
 };
 
+export const fetchSubparamIndicators = ({
+  title,
+  year,
+  accredBody,
+  level,
+  program,
+  area,
+  parameter,
+  subParameter
+}, controller) => {
+  return axios.get(`${API_BASE_URL}/accreditation/fetch-subparameter-indicators`, {
+    params: {
+      title,
+      year,
+      accredBody,
+      level,
+      program,
+      area,
+      parameter,
+      subParameter
+    },
+    signal: controller.signal
+  });
+};
+
 export const deleteProgramToBeAccredited = (startDate, endDate, levelName, programName) => {
   return axios.delete(`${API_BASE_URL}/accreditation/delete-programs-to-be-accredited`, {
     params: {

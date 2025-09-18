@@ -2,18 +2,6 @@ import getSIM from "../../../../models/accreditation/subparam-indicator-mapping/
 
 const fetchSIM = async (req, res) => {
   const { title, year, accredBody, level, program, area, parameter, subParameter } = req.query;
-
-  console.log({ 
-    title, 
-    year, 
-    accredBody, 
-    level, 
-    program, 
-    area, 
-    parameter, 
-    subParameter 
-  });
-
   try {
     const indicators = await getSIM({
       title,

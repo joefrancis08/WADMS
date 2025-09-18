@@ -40,8 +40,6 @@ const useProgramAreas = () => {
 
   const [activeAreaId, setActiveAreaId] = useState(null);
 
-  console.log(activeAreaId);
-
   const areaInputRef = useAutoFocus(modalType, modalType === MODAL_TYPE.ADD_AREA);
 
   // Remove duplicates automatically if areas state changes
@@ -130,6 +128,7 @@ const useProgramAreas = () => {
     e.stopPropagation();
     if (data && data.label === 'Remove') {
       setModalType(MODAL_TYPE.REMOVE_AREA);
+      setActiveAreaId(null);
       setModalData({
         title: data.title,
         year: data.year,
@@ -138,7 +137,6 @@ const useProgramAreas = () => {
         program: data.program,
         area: data.area
       });
-      
     }
   };
 

@@ -142,8 +142,7 @@ const AddField = ({
   } else if (showDropdownOnFocus && showDropdown) {
     dropdownContent = levelDropdownItems;
   }
-
- 
+  
   return (
     <div ref={containerRef} className='relative w-full flex-col pt-4'>
       <div className='pb-4'>
@@ -259,9 +258,10 @@ const AddField = ({
               onFocus={() => handleFocus({ showDropdown: true })}
               className={`text-wrap w-full p-3 rounded-lg border shadow transition
                 ${isClickable && 'cursor-pointer hover:bg-slate-100'}
-                ${!invalid 
+                ${!invalid || !duplicateValues.includes(formValue)
                   ? 'border-gray-400 text-gray-800 focus:outline-0 focus:ring-2 focus:ring-green-600' 
-                  : 'border-red-500 text-red-500 focus:outline-0 focus:ring-1 focus:ring-red-500'  }`}
+                  : 'border-red-500 text-red-500 focus:outline-0 focus:ring-1 focus:ring-red-500'}`
+              }
             />
           )}
 

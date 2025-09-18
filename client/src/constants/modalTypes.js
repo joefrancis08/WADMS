@@ -10,6 +10,8 @@ const MODAL_TYPES = {
   UPDATE_PROGRAM_TO_BE_ACCREDITED: 'update-program-to-accredit',
   DELETE_PROGRAM_TO_BE_ACCREDITED: 'delete-program-to-be-accredited',
 
+  ADD_LEVEL_PROGRAM: 'add-level-and-programs',
+
   DELETE_PERIOD: 'delete-period',
 
   ADD_AREA: 'add-area',

@@ -5,8 +5,16 @@ import db from "../../../../config/db.js";
   Use connection to include this query in a transaction
   with other query like inserting into program.
 */
-export const insertLevel = async (connection = db, levelName) => {
+export const insertLevel = async (levelName, connection = null) => {
   const query = 'INSERT INTO accreditation_level (level_name) VALUES (?)';
-  const [result] = await connection.execute(query, [levelName]);
-  return result;
+
+  try {
+    const executor = connection || db;
+    const [result] = await executor.execute(query, [levelName]);
+    
+    return result;
+
+  } catch (error) {
+    console.error(error);
+  }
 };

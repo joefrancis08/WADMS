@@ -205,6 +205,74 @@ const ProgramToBeAccreditedModal = ({
           />
         );
 
+      case MODAL_TYPE.ADD_LEVEL_PROGRAM:
+       return (
+        <ProgramToBeAccreditedBaseModal
+          mode='add'
+          modalData={modalData}
+          onClose={() => handleClose({ isFromHeader: true })}
+          onCancel={() => handleClose({ isFromHeader: true })}
+          onSave={() => handleSave({ 
+            isFromHeader: true,
+            data: {
+              title: modalData?.title,
+              year: modalData?.year,
+              accredBody: modalData?.accreditationBody
+            }
+          })}
+          primaryButton='Add'
+          secondaryButton='Cancel'
+          disabled={disableButton?.({ isFromHeader: true })}
+          headerContent={
+            <p className='ml-5 text-xl font-semibold text-slate-900'>
+              Add Level and Programs
+            </p>
+          }
+          bodyContent={
+            <div className='relative w-full px-8'>
+              <AddField 
+                fieldName='Level'
+                placeholder={levelsArray.length > 0 
+                  ? 'Enter new level or select from below...'
+                  : 'Enter new level...'
+                }
+                type='text'
+                name='level'
+                formValue={formValue.level}
+                isDropdown={levelsArray.length > 0}
+                onChange={handleInputChange}
+                showDropdownOnFocus={true}
+                dropdownItems={levelsArray}
+                isReadOnly
+                onDropdownMenuClick={handleOptionSelection}
+              />
+              <div className='relative'>
+                <AddField 
+                  fieldName={programs.length > 1 ? 'Programs' : 'Program'}
+                  placeholder={programs.length < programsArray.length && programsArray.length > 0 
+                    ? 'Enter new program or select from below...'
+                    : 'Enter new program...'
+                  }
+                  type='textarea'
+                  name='programInput'
+                  formValue={programInput}
+                  multiValue={true}
+                  multiValues={programs}
+                  dropdownItems={programsArray}
+                  duplicateValues={duplicateValues}
+                  showDropdownOnFocus={true}
+                  isDropdown={programsArray.length > 0 && !programs.length}
+                  onDropdownMenuClick={handleOptionSelection}
+                  onAddValue={(val) => handleAddProgramValue(val)}
+                  onRemoveValue={(index) => handleRemoveProgramValue(index)}
+                  onChange={(e) => handleProgramChange(e)}
+                />
+              </div>
+            </div>
+          }
+        />
+      );
+
       case MODAL_TYPE.DELETE_PROGRAM_TO_BE_ACCREDITED:
         return (
           <ConfirmationModal 

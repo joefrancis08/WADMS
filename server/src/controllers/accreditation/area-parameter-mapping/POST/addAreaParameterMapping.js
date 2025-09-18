@@ -3,16 +3,6 @@ import sendUpdate from "../../../../services/websocket/sendUpdate.js";
 
 const addAreaParameterMapping = async (req, res) => {
   const { title, year, accredBody, level, program, area, parameterNames } = req.body;
-  const numYear = Number(year);
-  console.log({
-    title,
-    year,
-    accredBody,
-    level,
-    program,
-    area,
-    parameterNames
-  });
   try {
     // Validate title, accredBody, level, program, and area
     if (
@@ -27,12 +17,23 @@ const addAreaParameterMapping = async (req, res) => {
     }
 
     // Validate year
-    if (!/^\d{4}$/.test(numYear)) {
+    if (!/^\d{4}$/.test(year)) {
       return res.status(400).json({
         success: false,
         message: 'Year must be a valid 4-digit number.'
       });
     }
+
+    const currentYear = new Date().getFullYear();
+    if (year < 1900 || year > currentYear + 1) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Year must be realistic.' 
+      });
+    }
+
+    // Convert year to number after validation
+    const numYear = Number(year);
 
     /* 
       Ensure parameterNames are always treated as an array

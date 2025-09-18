@@ -3,8 +3,6 @@ import sendUpdate from "../../../../services/websocket/sendUpdate.js";
 
 const addILP = async (req, res) => {
   const { title, year, accredBody, level, programNames } = req.body;
-  const numYear = Number(year);
-
   try {
     // Validate title and accredBody
     if (!title?.trim() || !accredBody?.trim() || !level?.trim()) {
@@ -15,12 +13,14 @@ const addILP = async (req, res) => {
     }
 
     // Validate year
-    if (!/^\d{4}$/.test(numYear)) {
+    if (!/^\d{4}$/.test(year)) {
       return res.status(400).json({
         success: false,
         message: 'Year must be a valid 4-digit number.'
       });
     }
+
+    const numYear = Number(year);
 
     /* 
       Ensure programNames is always treated as an array
@@ -39,13 +39,19 @@ const addILP = async (req, res) => {
       });
     }
 
-    // Store the results of each insertion
-    const results = [];
-    for (const programName of programs) {
-      // Insert each program into the database with its associated levelName
-      const response = await insertInfoLevelProgramMapping(title, numYear, accredBody, programName, level);
-      results.push(response); // Collect the response for reporting back to client
-    }
+    // Map each program to a promise
+    const promises = programs.map(program =>
+      insertInfoLevelProgramMapping({ 
+        title, 
+        year: numYear, 
+        accredBody, 
+        level, 
+        program 
+      })
+    );
+
+    // Wait for all promises to finish
+    const results = await Promise.all(promises);
 
     // Notify frontend via WebSocket
     sendUpdate('info-level-program-update');

@@ -2,16 +2,7 @@ import getParamSubparamMappings from "../../../../models/accreditation/param-sub
 
 const fetchParamSubparamMappings = async (req, res) => {
   const { title, year, accredBody, level, program, area, parameter } = req.query;
-  console.log({
-    title,
-    year,
-    accredBody,
-    level,
-    program,
-    area,
-    parameter
-  })
-
+  console.error('Parameter Subparameter:', { title, year, accredBody, level, program, area, parameter });
   try {
     const subParameters = await getParamSubparamMappings({ 
       title, 

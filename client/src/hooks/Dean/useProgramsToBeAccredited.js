@@ -9,6 +9,7 @@ import useOutsideClick from "../useOutsideClick";
 import useAutoFocus from "../useAutoFocus";
 import { useFetchILP } from "../fetch-react-query/useFetchILP";
 import useScrollSaver from "../useScrollSaver";
+import scrollToNewAddition from "../../utils/scrollToNewAddition";
 
 const { PROGRAM_AREAS } = PATH.DEAN;
 const { 
@@ -24,8 +25,6 @@ export const useProgramsToBeAccredited = () => {
   const accredInfoOptionsRef = useRef();
   const programOptionsRef = useRef();
 
-  
-
   const { accredInfoLevelPrograms, loading, error } = useFetchILP();
   console.log(accredInfoLevelPrograms);
 
@@ -33,11 +32,11 @@ export const useProgramsToBeAccredited = () => {
 
   const [modalType, setModalType] = useState(null);
   const [modalData, setModalData] = useState({
-    title: null,
+    title: '',
     year: null,
-    accreditationBody: null,
-    level: null,
-    program: null
+    accreditationBody: '',
+    level: '',
+    program: ''
   });
 
   const [infoHover, setInfoHover] = useState(false);
@@ -50,10 +49,10 @@ export const useProgramsToBeAccredited = () => {
   const [programInput, setProgramInput] = useState(''); // Temporary input for text area
   const [duplicateValues, setDuplicateValues] = useState([]);
   const [formValue, setFormValue] = useState({
-    title: null,
+    title: '',
     year: null,
-    accreditationBody: null,
-    level: null,
+    accreditationBody: '',
+    level: '',
   });
 
   // Auto-focus on start date to let the user know where to start
@@ -81,7 +80,7 @@ export const useProgramsToBeAccredited = () => {
   useEffect(() => {
     const lastId = localStorage.getItem('lastProgramId');
     if (lastId) {
-      const el = document.getElementById(`program-${lastId}`);
+      const el = document.getElementById(`last-program-${lastId}`);
       if (el) {
         el.scrollIntoView({ behavior: 'auto', block: 'center' });
       }
@@ -113,6 +112,13 @@ export const useProgramsToBeAccredited = () => {
         programs.length === 0 ||
         duplicateValues.length > 0
       );
+
+    } else if (options.isFromHeader) {
+      return (
+        !formValue.level ||
+        programs.length === 0 ||
+        duplicateValues.length > 0 
+      );
     }
   };
 
@@ -128,9 +134,20 @@ export const useProgramsToBeAccredited = () => {
         title: options?.data?.accredTitle,
         year: options?.data?.accredYear,
         accreditationBody: options?.data?.accredBody,
-        level: options?.data?.level,
+        level: options?.data?.level
       });
     }
+  };
+
+  const handleClipboardClick = (data = {}) => {
+    const {title, year, accredBody } = data;
+    setModalType(MODAL_TYPE.ADD_LEVEL_PROGRAM);
+    setModalData(prev => ({
+      ...prev,
+      title,
+      year,
+      accreditationBody: accredBody
+    }));
   };
 
 
@@ -142,12 +159,24 @@ export const useProgramsToBeAccredited = () => {
     if (options.isFromMain) {
       setPrograms([]);
       setModalType(null);
-      setFormValue({
-        title: null,
+      setFormValue(prev => ({
+        ...prev,
+        title: '',
         year: null,
-        accreditationBody: null,
-        level: null
-      });
+        accreditationBody: '',
+        level: ''
+      }));
+
+    } else if (options?.isFromHeader) {
+      setPrograms([]);
+      setModalType(null);
+      setFormValue(prev => ({
+        ...prev,
+        title: '',
+        year: '',
+        accreditationBody: '',
+        level: ''
+      }))
 
     } else if (
       options.isFromCard || 
@@ -220,17 +249,14 @@ export const useProgramsToBeAccredited = () => {
     setDuplicateValues(prev => prev.filter(v => v !== removedVal));
   };
 
-  console.log(formValue.year);
-
   const handleSave = async (options = {}) => {
     try {
-      if (formValue.year && formValue.title && formValue.accreditationBody && formValue.level && programs.length > 0) {
-        console.log(formValue.year);
+      if (formValue?.year && formValue?.title && formValue?.accreditationBody && formValue?.level && programs.length > 0) {
         const res = await addInfoLevelProgram({
-          title: formValue.title,
-          year: formValue.year,
-          accredBody: formValue.accreditationBody, 
-          level: formValue.level, 
+          title: formValue?.title,
+          year: formValue?.year,
+          accredBody: formValue?.accreditationBody, 
+          level: formValue?.level, 
           programNames: programs
         });
 
@@ -238,6 +264,35 @@ export const useProgramsToBeAccredited = () => {
         if (res.data.success) {
           showSuccessToast(PROGRAMS_TO_BE_ACCREDITED_CREATION.SUCCESS);
         } 
+
+        scrollToNewAddition('newAccreditation', `${formValue?.title} ${String(formValue?.year)}`);
+
+        console.log(`${formValue?.title} ${formValue?.year}`);
+      }
+
+      if (options?.isFromHeader && options?.data) {
+        const title = options?.data?.title;
+        const year = options?.data?.year;
+        const accredBody = options?.data?.accredBody;
+        const level = formValue?.level;
+        const programNames = programs;
+
+        console.log(`${title} ${year}-${level}`);
+
+        const res = await addInfoLevelProgram({
+          title,
+          year,
+          accredBody,
+          level,
+          programNames
+        });
+
+        handleCloseClick({ isFromHeader: true });
+        if (res?.data?.success) {
+          showSuccessToast(PROGRAMS_TO_BE_ACCREDITED_ADDITION.SUCCESS);
+        }
+
+        scrollToNewAddition('newLevel', `${title} ${year}-${level}`);
       }
 
       if (options.isFromCard && options.data) {
@@ -257,19 +312,26 @@ export const useProgramsToBeAccredited = () => {
         if (res.data.success) {
           showSuccessToast(PROGRAMS_TO_BE_ACCREDITED_ADDITION.SUCCESS);
         } 
+
+        console.log(`${title}-${level}-${programs[0]}`);
+
+        scrollToNewAddition('newProgram', `${title}-${level}-${programs[0]}`);
       }
 
     } catch (error) {
       const isDuplicate = error?.response?.data?.isDuplicate;
       const duplicates = error?.response?.data?.duplicateValue;
+      const duplicateProgram = error?.response?.data?.duplicateValue[4];
 
       if (options.isFromCard) {
-        const duplicateValue = error?.response?.data?.duplicateValue[4];
-        if (isDuplicate && duplicateValue) {
-          setDuplicateValues(prev => [...new Set([...prev, duplicateValue])]);
-        }
-        showErrorToast(`${duplicateValue} already exist.`, 'top-center', 5000);
-        
+        showErrorToast(`${duplicateProgram} already exist.`, 'top-center', 5000);
+        setDuplicateValues(prev => [...new Set([...prev, duplicateProgram])]);
+
+      } else if (options?.isFromHeader) {
+        const duplicateLevel = error?.response?.data?.duplicateValue[3];
+        setDuplicateValues(prev => [...new Set([...prev, duplicateLevel, duplicateProgram])]);
+        showErrorToast(`${duplicateLevel} and ${duplicateProgram} already exist!`);
+
       } else {
         setDuplicateValues(prev => [...new Set([...prev, duplicates])]);
         showErrorToast('The data entered already exist.', 'top-center', 5000);
@@ -408,76 +470,7 @@ export const useProgramsToBeAccredited = () => {
   };
 
   return {
-    addButton: {
-      disableButton,
-      handleAddClick
-    },
-
-    close: {
-      handleCloseClick
-    },
-
-    chevron: {
-      handleChevronClick
-    },
-
-    confirmation: {
-      handleConfirmClick
-    },
-
-    dropdown: {
-      toggleDropdown,
-      handleOptionSelection
-    },
-
-    duplicates: {
-      duplicateValues
-    },
-
-    programsToBeAccreditedData: {
-      accredInfoLevelPrograms,
-      loading,
-      error
-    },
-
-    form: {
-      formValue
-    },
-
-    hovers: {
-      infoHover,
-      handleInfoHover
-    },
-
-    inputs: {
-      handleInputChange
-    },
-
-    modal: {
-      modalType,
-      modalData
-    },
-
-    navigation: {
-      handleProgramCardClick
-    },
-
-    option: {
-      handleOptionClick,
-      activeAccredInfoID,
-      activeProgramID,
-      handleOptionItemClick
-    },
-
-    program: {
-      programInput,
-      programs,
-      handleProgramChange,
-      handleAddProgramValue,
-      handleRemoveProgramValue,
-    },
-
-    ref: {
+    refs: {
       accredInfoOptionsRef,
       programOptionsRef,
       titleInputRef,
@@ -485,7 +478,38 @@ export const useProgramsToBeAccredited = () => {
       scrollContainerRef
     },
 
-    saveHandler: {
+    datas: {
+      disableButton,
+      toggleDropdown,
+      duplicateValues,
+      accredInfoLevelPrograms,
+      loading,
+      error,
+      formValue,
+      infoHover,
+      modalType,
+      modalData,
+      activeAccredInfoID,
+      activeProgramID,
+      programInput,
+      programs,
+    },
+
+    handlers: {
+      handleAddClick,
+      handleClipboardClick,
+      handleCloseClick,
+      handleChevronClick,
+      handleConfirmClick,
+      handleOptionSelection,
+      handleInfoHover,
+      handleInputChange,
+      handleProgramCardClick,
+      handleOptionClick,
+      handleOptionItemClick,
+      handleProgramChange,
+      handleAddProgramValue,
+      handleRemoveProgramValue,
       handleSave
     }
   };
