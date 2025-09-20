@@ -26,6 +26,10 @@ export const messageHandler = (callback) => {
           case 'accreditation-levels-update':
             callback();
             break;
+
+          case 'area-updates':
+            callback();
+            break;
           
           case 'info-level-program-update':
             callback();

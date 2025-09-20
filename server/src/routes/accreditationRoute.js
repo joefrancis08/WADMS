@@ -8,6 +8,7 @@ import { addParamSubParamController, fetchParamSubParamController } from '../con
 import { addAccredInfoController } from '../models/accreditation/accreditation-info/accreditationInfoController.js';
 import { addILPController, fetchILPController } from '../controllers/accreditation/info-level-program-mapping/ILPController.js';
 import { addSIMController, fetchSIMController } from '../controllers/accreditation/subparam-indicator-mapping/SIMController.js';
+import fetchAreasBy from '../controllers/accreditation/areas/GET/fetchAreasBy.js';
 
 const accreditationRouter = express.Router();
 
@@ -23,6 +24,7 @@ accreditationRouter.get('/fetch-accreditation-levels', fetchLevelsController);
 accreditationRouter.get('/fetch-accreditation-period', fetchPeriodController);
 accreditationRouter.get('/fetch-info-level-programs', fetchILPController);
 accreditationRouter.get('/fetch-program-areas', fetchProgramAreaController);
+accreditationRouter.get('/fetch-program-areas-by', fetchAreasBy);
 accreditationRouter.get('/fetch-area-parameters', fetchAreaParameterController);
 accreditationRouter.get('/fetch-parameter-subparameters', fetchParamSubParamController);
 accreditationRouter.get('/fetch-subparameter-indicators', fetchSIMController);

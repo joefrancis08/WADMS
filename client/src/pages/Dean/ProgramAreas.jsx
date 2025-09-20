@@ -27,7 +27,8 @@ const ProgramAreas = () => {
     title,
     year,
     accredBody,
-    data, 
+    data,
+    areasByLevelData, 
     loading, 
     error, 
     formattedLevel, 
@@ -40,6 +41,7 @@ const ProgramAreas = () => {
     handleCloseModal,
     handleAddAreaValue,
     handleRemoveAreaValue,
+    handleRemoveAllAreas,
     handleSaveAreas,
     handleAreaCardClick,
     handleAreaOptionClick,
@@ -55,17 +57,10 @@ const ProgramAreas = () => {
   ];
   return (
     <DeanLayout>
-      <div className='flex-1'>
-        <ContentHeader
-          headerIcon={FolderOpen}
-          headerTitle='Areas'
-          searchTitle='Search Areas'
-          placeholder='Search Areas...'
-          condition
-        />
-        <div className='rounded-lg border border-white pb-2'>
-          <div className='flex justify-between px-4 pt-4 max-md:hidden'>
-            <p className='flex flex-row items-center'>
+      <div className='flex-1 p-3'>
+        <div className='bg-slate-100 m-2 pb-2 shadow-md shadow-slate-400'>
+          <div className='flex justify-between shadow px-4 pt-4 bg-slate-200 p-4'>
+            <p className='flex flex-row items-center text-lg'>
               <span
                 title='Back to Programs'
                 onClick={() => navigate(PATH.DEAN.PROGRAMS_TO_BE_ACCREDITED)}
@@ -73,22 +68,22 @@ const ProgramAreas = () => {
               >
                 Programs
               </span>
-              <ChevronRight className='h-5 w-5' />
+              <ChevronRight className='h-6 w-6 mx-2 text-slate-500' />
               <span className='font-semibold'>{data.length > 1 ? 'Areas' : 'Area'}</span>
             </p>
           </div>
           <div className='flex items-center justify-center mt-4 max-md:mt-10 w-[85%] md:w-[75%] lg:w-[50%] mx-auto'>
             <p className='relative text-center'>
-              <span className='text-green-600 font-bold text-lg md:text-xl lg:text-2xl tracking-wide text-center'>
+              <span className='text-green-600 font-bold text-xl md:text-2xl lg:text-3xl tracking-wide text-center'>
                 {program}
               </span>
               
-              <span className='absolute -top-7 left-1/2 -translate-x-1/2 text-md px-2 bg-green-700 text-white font-bold'>
+              <span className='absolute -bottom-10 left-1/2 -translate-x-1/2 text-lg px-2 bg-green-700 text-white font-bold'>
                 {formattedLevel}
               </span>
             </p>
           </div>
-          <hr className='mt-4 w-[40%] mx-auto border text-green-500'></hr>
+          <hr className='mt-6 w-[30%] mx-auto border text-green-500'></hr>
           <div className='max-md:hidden flex justify-end px-5 p-2'>
             <button 
               onClick={handleAddAreaClick} 
@@ -97,7 +92,7 @@ const ProgramAreas = () => {
               Add Areas
             </button>
           </div>
-          <div className={`flex flex-wrap gap-8 justify-center mb-8 py-8 px-2 mx-2 rounded
+          <div className={`flex flex-wrap gap-10 justify-center mb-8 py-8 px-2 mx-2 rounded
             ${data.length ? 'items-start' : 'items-center'}
           `}>
             {!data.length && (
@@ -118,16 +113,22 @@ const ProgramAreas = () => {
                   .toUpperCase()
                   .split(/[:-]/)
                   .map((s, i) => (
-                    <div className='flex items-center justify-center z-20'>
+                    <div 
+                      key={i} 
+                      className={`flex ${i === 0 ? '' : 'justify-center'} w-full z-20`}
+                    >
                       <p 
-                        key={i} 
-                        className={`z-20 ${i === 0 
-                        ? 'text-md font-bold text-white bg-yellow-400 py-1 px-5 shadow-md absolute top-3 left-3' 
-                        : 'text-xl p-2 mt-5 tracking-wide text-white font-semibold'}`}>
+                        className={`${
+                          i === 0 
+                            ? 'text-md text-center font-bold text-white bg-yellow-400 py-1 px-5 shadow-md absolute top-10 w-30 left-1/2 -translate-x-1/2' 
+                            : 'text-xl text-center mt-5 tracking-wide text-white font-semibold'
+                        }`}
+                      >
                         {s.trim()}
                       </p>
                     </div>
-                  ))}
+                ))}
+
                 <button
                   onClick={(e) => handleAreaOptionClick(e, { areaID: area_uuid })}
                   title='Options'
@@ -196,6 +197,7 @@ const ProgramAreas = () => {
           error,
           loading, 
           areas,
+          areasByLevelData,
           modalData, 
           duplicateValues 
         }}
@@ -205,6 +207,7 @@ const ProgramAreas = () => {
           handleAreaInputChange,
           handleAddAreaValue,
           handleRemoveAreaValue,
+          handleRemoveAllAreas,
           handleConfirmRemoval
         }}
       />

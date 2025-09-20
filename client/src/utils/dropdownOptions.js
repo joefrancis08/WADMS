@@ -1,4 +1,5 @@
 import { USER_ROLES } from '../constants/user';
+import useFetchAreasByLevel from '../hooks/fetch-react-query/useFetchAreasByLevel';
 
 export const getUserRolesDropdown = (currentValue, options = {}) => {
   return Object.entries(USER_ROLES)

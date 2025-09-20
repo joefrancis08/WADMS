@@ -58,6 +58,11 @@ export const TOAST_MESSAGES = Object.freeze({
   SUBPARAMETER_ADDITION: {
     SUCCESS: 'Added successfully!',
     ERROR: 'Something went wrong while adding sub-parameters.'
+  },
+
+  INDICATORS_ADDITION: {
+    SUCCESS: 'Added successfully!',
+    ERROR: 'Something went wrong while adding indicators.'
   }
 });
 

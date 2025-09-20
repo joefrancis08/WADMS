@@ -57,6 +57,30 @@ export const addSubParams = ({
   });
 };
 
+export const addIndicators = ({
+  title,
+  year,
+  accredBody,
+  level,
+  program,
+  area, 
+  parameter,
+  subParameter,
+  indicatorNames
+}) => {
+  return axios.post(`${API_BASE_URL}/accreditation/add-subparameter-indicators`, {
+    title,
+    year,
+    accredBody,
+    level,
+    program,
+    area,
+    parameter,
+    subParameter,
+    indicatorNames
+  });
+};
+
 export const fetchILP = (controller) => {
   return axios.get(`${API_BASE_URL}/accreditation/fetch-info-level-programs`, {
     signal: controller.signal
@@ -65,6 +89,15 @@ export const fetchILP = (controller) => {
 
 export const fetchAccreditationLevels = (controller) => {
   return axios.get(`${API_BASE_URL}/accreditation/fetch-accreditation-levels`, {
+    signal: controller.signal
+  });
+};
+
+export const fetchAreasByLevel = (level, controller) => {
+  return axios.get(`${API_BASE_URL}/accreditation/fetch-program-areas-by`, {
+    params: {
+      level
+    },
     signal: controller.signal
   });
 };

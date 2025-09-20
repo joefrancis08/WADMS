@@ -11,6 +11,7 @@ const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
   const { 
     data,
     areas,
+    areasByLevelData,
     modalData,
     duplicateValues 
   } = datas;
@@ -20,6 +21,7 @@ const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
     handleAreaInputChange,
     handleAddAreaValue,
     handleRemoveAreaValue,
+    handleRemoveAllAreas,
     handleConfirmRemoval
   } = handlers;
 
@@ -45,7 +47,6 @@ const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
       .join(' ');
   }
 
-
   switch (modalType) {
     case MODAL_TYPE.ADD_AREA:
       return (
@@ -63,13 +64,16 @@ const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
               <AddField
                 ref={areaInputRef}
                 fieldName={areas.length > 1 ? 'Areas' : 'Area'}
-                placeholder={data.length > 0 ? 'Enter a new area or select an existing one...' : 'Enter a new area'}
+                placeholder={areasByLevelData.length > 0 ? 'Enter a new area or select an existing one...' : 'Enter a new area'}
                 type='textarea'
                 name='areaInput'
                 formValue={areaInput}
-                multiValue
+                isDropdown={areasByLevelData.length > 0}
+                dropdownItems={areasByLevelData.map(a => a.area_name)}
+                multiValue={true}
                 multiValues={areas}
-                showDropdownOnFocus
+                dropDownCondition='canSelectAll'
+                showDropdownOnFocus={areasByLevelData.length > 0}
                 duplicateValues={duplicateValues}
                 onAddValue={handleAddAreaValue}
                 onRemoveValue={handleRemoveAreaValue}

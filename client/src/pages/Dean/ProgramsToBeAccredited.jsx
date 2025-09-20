@@ -27,6 +27,7 @@ const ProgramsToAccredit = () => {
     disableButton,
     toggleDropdown,
     duplicateValues,
+    isAllDuplicates,
     accredInfoLevelPrograms,
     loading,
     error,
@@ -39,6 +40,8 @@ const ProgramsToAccredit = () => {
     programInput,
     programs,
   } = datas;
+
+  
 
   const {
     handleAddClick,
@@ -191,7 +194,7 @@ const ProgramsToAccredit = () => {
                         <span className='text-6xl md:text-7xl lg:text-8xl text-yellow-400 font-bold tracking-wide'>
                           {String(first).toUpperCase()}
                         </span>
-                        <span className='text-white text-2xl md:text-3xl lg:text-4xl font-bold tracking-wide'>
+                        <span className='text-white text-2xl md:text-3xl lg:text-5xl font-bold tracking-wide'>
                           {String(rest).toUpperCase()}
                         </span>
                       </p>
@@ -346,8 +349,8 @@ const ProgramsToAccredit = () => {
                                   id={`${accredBody}-${accredYear}-${level}-${program}`}
                                   className='z-20'
                                 >
-                                   <p className='text-start leading-normal tracking-widest text-yellow-300 text-xl md:text-2xl lg:text-3xl font-bold'>
-                                    {program.toUpperCase()}
+                                   <p className='text-center leading-snug tracking-widest text-yellow-300 text-xl md:text-2xl lg:text-4xl font-bold'>
+                                    {program}
                                   </p>
                                 </div>
 
@@ -463,6 +466,7 @@ const ProgramsToAccredit = () => {
         formValue={formValue}
         programs={programs}
         programInput={programInput}
+        isAllDuplicates={isAllDuplicates}
         duplicateValues={duplicateValues}
         disableButton={disableButton}
         handlers={{

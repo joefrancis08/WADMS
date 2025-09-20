@@ -42,7 +42,8 @@ const SubparamIndicator = () => {
     handleAddIndClick,
     handleIndicatorChange,
     handleAddIndicatorValue,
-    handleRemoveIndicatorValue
+    handleRemoveIndicatorValue,
+    handleSaveIndicators
   } = handlers;
 
   return (
@@ -154,7 +155,8 @@ const SubparamIndicator = () => {
           handleCloseModal,
           handleIndicatorChange,
           handleAddIndicatorValue,
-          handleRemoveIndicatorValue
+          handleRemoveIndicatorValue,
+          handleSaveIndicators
         }}
       />
     </DeanLayout>

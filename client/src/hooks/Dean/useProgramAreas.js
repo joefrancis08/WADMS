@@ -11,12 +11,15 @@ import useOutsideClick from "../useOutsideClick";
 import { addProgramAreas, deletePAM } from "../../api/accreditation/accreditationAPI";
 import { TOAST_MESSAGES } from "../../constants/messages";
 import PATH from "../../constants/path";
+import useFetchAreasByLevel from "../fetch-react-query/useFetchAreasByLevel";
 
 const useProgramAreas = () => {
   const navigate = useNavigate();
   const areaOptionsRef = useRef();
   const { accredInfoUUID, level, programUUID } = useParams();
   const { level: formattedLevel } = formatProgramParams(level);
+
+  const { areas: areasByLevel } = useFetchAreasByLevel(formattedLevel);
 
   const { title, year, accredBody, program } = useProgramToBeAccreditedDetails(accredInfoUUID, programUUID);
 
@@ -29,8 +32,7 @@ const useProgramAreas = () => {
     program
   });
   const data = areasData?.data ?? [];
-
-  console.log(data);
+  const areasByLevelData = areasByLevel?.areas ?? [];
 
   const [modalType, setModalType] = useState(null);
   const [modalData, setModalData] = useState(null);
@@ -40,6 +42,9 @@ const useProgramAreas = () => {
 
   const [activeAreaId, setActiveAreaId] = useState(null);
 
+  console.log(areasByLevelData);
+
+  // Auto focus input when 
   const areaInputRef = useAutoFocus(modalType, modalType === MODAL_TYPE.ADD_AREA);
 
   // Remove duplicates automatically if areas state changes
@@ -84,6 +89,13 @@ const useProgramAreas = () => {
     setAreas(prev => prev.filter((_, i) => i !== index));
     setDuplicateValues(prev => prev.filter(v => v !== removedVal));
   };
+
+  // Remove all areas at once
+  const handleRemoveAllAreas = () => {
+    setAreas([]); // clear selected areas
+    setDuplicateValues([]); // reset duplicates
+  };
+
 
   const handleSaveAreas = async () => {
     if (!areas.length) return;
@@ -176,6 +188,7 @@ const useProgramAreas = () => {
       year,
       accredBody,
       areasData,
+      areasByLevelData,
       data,
       loading,
       error,
@@ -210,6 +223,7 @@ const useProgramAreas = () => {
       handleAddAreaClick,
       handleAddAreaValue,
       handleRemoveAreaValue,
+      handleRemoveAllAreas,
       handleSaveAreas,
       handleAreaCardClick,
       handleAreaOptionClick,

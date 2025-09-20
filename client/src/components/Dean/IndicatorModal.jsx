@@ -17,7 +17,8 @@ const IndicatorModal = ({ refs, datas, handlers }) => {
     handleCloseModal,
     handleIndicatorChange,
     handleAddIndicatorValue,
-    handleRemoveIndicatorValue
+    handleRemoveIndicatorValue,
+    handleSaveIndicators
   } = handlers;
 
   switch (modalType) {
@@ -26,7 +27,7 @@ const IndicatorModal = ({ refs, datas, handlers }) => {
         <IndicatorBaseModal 
           onClose={handleCloseModal}
           onCancel={handleCloseModal}
-          onSave={null}
+          onSave={handleSaveIndicators}
           primaryButton={'Add Indicators'}
           disabled={false}
           secondaryButton={'Cancel'}

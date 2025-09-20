@@ -1,5 +1,4 @@
 import DeanLayout from '../../components/Layout/Dean/DeanLayout';
-import ContentHeader from '../../components/Dean/ContentHeader';
 import { ChevronRight, EllipsisVertical, Folder, Plus } from 'lucide-react';
 import PATH from '../../constants/path';
 import formatAreaName from '../../utils/formatAreaName';
@@ -24,17 +23,7 @@ const AreaParameters = () => {
   const { parameterInputRef } = refs;
   const { modalType } = modals;
   const { parameterInput } = inputs;
-  const {
-    levelName,
-    program,
-    area,
-    parameters,
-    loading,
-    error,
-    parameterData,
-    parametersArr,
-    duplicateValues
-  } = datas;
+  const { parameterData, parametersArr, duplicateValues, area, program, formattedLevel } = datas;
   const {
     handleCloseModal,
     handlePlusClick,
@@ -46,83 +35,92 @@ const AreaParameters = () => {
 
   return (
     <DeanLayout>
-      <div className='flex-1'>
-        <ContentHeader 
-          headerIcon={Folder}
-          headerTitle={'Parameters'}
-          searchTitle={'Search parameter'}
-          placeholder={'Search parameter...'}
-          condition={false}
-        />
-
-        <div className='flex justify-between px-4 pt-4'>
-          <p className='flex flex-row items-center'>
-            <span 
-              title='Back to Programs'
-              onClick={() => navigate(PROGRAMS_TO_BE_ACCREDITED)}
-              className='hover:underline opacity-80 hover:opacity-100 cursor-pointer transition-all'
-            >
-              Programs
-            </span>
-            <ChevronRight className='h-5 w-5'/>
-            <span
-              title='Back to Areas'
-              onClick={() => navigate(PROGRAM_AREAS({
-                accredInfoUUID,
-                level,
-                programUUID
-              }))}
-              className='hover:underline opacity-80 hover:opacity-100 cursor-pointer transition-all'
-            >
-              Areas
-            </span>
-            <ChevronRight className='h-5 w-5'/>
-            <span className='font-semibold'>
-              {parameterData.length > 1 ? 'Parameters' : 'Parameter'}
-            </span>
-          </p>
-        </div>
-        <div className='flex justify-end px-5 py-3'>
-          <button
-            onClick={handlePlusClick} 
-            title='Add Parameters'
-            className='cursor-pointer hover:opacity-80 active:opacity-50'>
-            <Plus className='h-8 w-8' />
-          </button>
-        </div>
-        <div className={`flex max-md:flex-col flex-wrap gap-y-2 p-2 mb-8 ${parameterData.length === 0 ? 'justify-center' : 'justify-evenly'}`}>
-          {parameterData.length === 0 && (
-            <p>
-              No parameters to display for {formatAreaName(area)}.
-            </p>
-          )}
-          {parameterData.map(({parameter_uuid, parameter}, index) => (
-            <div
-              onClick={() => navigate(PARAM_SUBPARAMS({ 
-                accredInfoUUID, 
-                level, 
-                programUUID, 
-                areaUUID, 
-                parameterUUID: parameter_uuid 
-              }))}
-              key={index} 
-              className='relative flex items-center justify-start border py-5 px-2 h-20 w-100 max-md:w-full rounded-md transition-all cursor-pointer hover:bg-slate-50 active:opacity-50'
-            >
-              <Folder className='flex shrink-0 mr-2'/>
-              <p className='pr-10'>
-                {parameter}
-              </p>
-              <button
-                onClick={() => console.log('Clicked!')} 
-                title='Options'
-                className='absolute top-1/2 right-3 -translate-y-1/2 flex shrink-0 ml-4'
+      <div className='flex-1 p-3'>
+        {/* Breadcrumb Header */}
+        <div className='bg-slate-100 m-2 pb-2 shadow-md shadow-slate-400'>
+          <div className='flex justify-between shadow px-4 pt-4 bg-slate-200 p-4'>
+            <p className='flex flex-row items-center text-lg'>
+              <span 
+                title='Back to Programs'
+                onClick={() => navigate(PROGRAMS_TO_BE_ACCREDITED)}
+                className='hover:underline opacity-80 hover:opacity-100 cursor-pointer transition-all'
               >
-                <EllipsisVertical className='h-5 w-5' />
-              </button>
-            </div>
-          ))}
+                Programs
+              </span>
+              <ChevronRight className='h-6 w-6 mx-2 text-slate-500'/>
+              <span
+                title='Back to Areas'
+                onClick={() => navigate(PROGRAM_AREAS({ accredInfoUUID, level, programUUID }))}
+                className='hover:underline opacity-80 hover:opacity-100 cursor-pointer transition-all'
+              >
+                Areas
+              </span>
+              <ChevronRight className='h-6 w-6 mx-2 text-slate-500'/>
+              <span className='font-semibold'>{parameterData.length > 1 ? 'Parameters' : 'Parameter'}</span>
+            </p>
+          </div>
+          {/* Program and Level Display */}
+          <div className='flex items-center justify-center mt-4 max-md:mt-10 w-[85%] md:w-[75%] lg:w-[50%] mx-auto'>
+            <p className='relative text-center'>
+              <span className='text-green-600 font-bold text-xl md:text-2xl lg:text-3xl tracking-wide'>
+                {program}
+              </span>
+              <span className='absolute -bottom-10 left-1/2 -translate-x-1/2 text-lg px-2 bg-green-700 text-white font-bold'>
+                {formattedLevel}
+              </span>
+            </p>
+          </div>
+          <hr className='mt-6 w-[30%] mx-auto border text-green-500' />
+
+          {/* Add Parameter Button */}
+          <div className='max-md:hidden flex justify-end px-5 p-2'>
+            <button
+              onClick={handlePlusClick}
+              className='flex gap-2 text-white text-sm lg:text-base justify-center items-center cursor-pointer rounded-full px-4 py-2 hover:opacity-90 active:opacity-80 bg-green-600 shadow hover:shadow-md'
+            >
+              <Plus className='h-6 w-6' />
+              Add Parameter
+            </button>
+          </div>
+
+          {/* Parameters List */}
+          <div className={`flex flex-wrap gap-8 justify-center mb-8 py-8 px-2 mx-2 rounded ${parameterData.length ? 'items-start' : 'items-center'}`}>
+            {!parameterData.length && (
+              <div className='flex flex-col items-center justify-center'>
+                <Folder className='text-slate-600' size={200}/>
+                <p className='text-xl font-medium text-slate-800'>No parameters to display for {formatAreaName(area)}.</p>
+              </div>
+            )}
+
+            {parameterData.map(({ parameter_uuid, parameter }) => (
+              <div
+                key={parameter_uuid}
+                onClick={() => navigate(PARAM_SUBPARAMS({ 
+                  accredInfoUUID, 
+                  level, 
+                  programUUID, 
+                  areaUUID, 
+                  parameterUUID: parameter_uuid 
+                }))}
+                className='relative flex flex-col items-start justify-center px-4 max-sm:w-full md:w-75 lg:w-50 h-48 bg-[url("/cgs-bg-2.png")] bg-cover bg-center shadow-slate-400 shadow hover:shadow-lg transition-all cursor-pointer active:shadow'
+              >
+                <div className='absolute inset-0 bg-black/50'></div>
+                <div className='flex items-center justify-center z-20 w-full h-full'>
+                  <p className='text-white text-lg md:text-xl font-semibold z-20'>{parameter}</p>
+                </div>
+                <button
+                  onClick={(e) => e.stopPropagation()}
+                  title='Options'
+                  className='absolute top-2 right-2 text-white cursor-pointer active:opacity-50 rounded-full hover:bg-yellow-400/50 p-2 z-40'
+                >
+                  <EllipsisVertical className='h-5 w-5' />
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
+
       <ParameterModal 
         modalType={modalType}
         refs={{ parameterInputRef }}

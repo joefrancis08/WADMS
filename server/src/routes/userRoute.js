@@ -1,6 +1,6 @@
 import express from 'express';
 import { registerUser, fetchUserById, fetchAllUsers, updateUser, deleteAllUsers, deleteUser, loginUser, checkEmail, userSession, logoutUser, fetchUserByRole, fetchUserByStatus, addUser, confirmEmail } from '../controllers/user/userController.js';
-import upload from '../middlewares/upload.js';
+import upload from '../middlewares/uploadProfile.js';
 
 const userRouter = express.Router();
 

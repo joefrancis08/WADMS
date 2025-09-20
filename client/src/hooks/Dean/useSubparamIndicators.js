@@ -5,7 +5,11 @@ import useFetchSubparamIndicators from "../fetch-react-query/useFetchSubparamInd
 import { useEffect, useState } from "react";
 import MODAL_TYPE from "../../constants/modalTypes";
 import useAutoFocus from "../useAutoFocus";
-import { showErrorToast } from "../../utils/toastNotification";
+import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
+import { addIndicators } from "../../api/accreditation/accreditationAPI";
+import { TOAST_MESSAGES } from "../../constants/messages";
+
+const { INDICATORS_ADDITION } = TOAST_MESSAGES;
 
 const useSubparamIndicators = () => {
   const navigate = useNavigate();
@@ -114,32 +118,33 @@ const useSubparamIndicators = () => {
     setDuplicateValues(prev => prev.filter(v => v !== removedVal));
   };
 
-  // const handleSaveSubParams = async () => {
-  //   try {
-  //     const res = await addSubParams({
-  //       title,
-  //       year,
-  //       accredBody,
-  //       level: levelName,
-  //       program,
-  //       area,
-  //       parameter,
-  //       subParameterNames: subParamsArr
-  //     });
+  const handleSaveIndicators = async () => {
+    try {
+      const res = await addIndicators({
+        title,
+        year,
+        accredBody,
+        level: levelName,
+        program,
+        area,
+        parameter,
+        subParameter: subParam,
+        indicatorNames: inputtedIndicators
+      });
 
-  //     if (res.data.success) {
-  //       showSuccessToast(SUBPARAMETER_ADDITION.SUCCESS);
-  //     }
+      if (res.data.success) {
+        showSuccessToast(INDICATORS_ADDITION.SUCCESS);
+      }
 
-  //     handleCloseModal();
+      handleCloseModal();
 
-  //   } catch (error) {
-  //     const duplicateValue = error?.response?.data?.error?.duplicateValue;
-  //     console.log(duplicateValue);
-  //     setDuplicateValues(prev => [...new Set([...prev, duplicateValue])]);
-  //     showErrorToast(`${duplicateValue} already exist.`, 'top-center');
-  //   }
-  // };
+    } catch (error) {
+      const duplicateValue = error?.response?.data?.error?.duplicateValue;
+      console.log(duplicateValue);
+      setDuplicateValues(prev => [...new Set([...prev, duplicateValue])]);
+      showErrorToast(`${duplicateValue} already exist.`, 'top-center');
+    }
+  };
 
   return {
     navigate,
@@ -174,7 +179,8 @@ const useSubparamIndicators = () => {
       handleAddIndClick,
       handleIndicatorChange,
       handleAddIndicatorValue,
-      handleRemoveIndicatorValue
+      handleRemoveIndicatorValue,
+      handleSaveIndicators
     }
   };
 };

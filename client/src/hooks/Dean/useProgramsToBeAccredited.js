@@ -10,6 +10,7 @@ import useAutoFocus from "../useAutoFocus";
 import { useFetchILP } from "../fetch-react-query/useFetchILP";
 import useScrollSaver from "../useScrollSaver";
 import scrollToNewAddition from "../../utils/scrollToNewAddition";
+import { set } from "date-fns";
 
 const { PROGRAM_AREAS } = PATH.DEAN;
 const { 
@@ -49,6 +50,7 @@ export const useProgramsToBeAccredited = () => {
   
   const [programs, setPrograms] = useState([]); // Save here the program inputted
   const [programInput, setProgramInput] = useState(''); // Temporary input for text area
+  const [isAllDuplicates, setIsAllDuplicates] = useState(false);
   const [duplicateValues, setDuplicateValues] = useState([]);
   const [formValue, setFormValue] = useState({
     title: '',
@@ -97,7 +99,7 @@ export const useProgramsToBeAccredited = () => {
   const findDuplicate = (value) => {
     const data = accredInfoLevelPrograms.data ?? [];
     return data.some(d => d.program?.program.trim() === value.trim());
-  }
+  };
 
   const disableButton = (options = {}) => {
     if (options.isFromMain) {
@@ -208,6 +210,7 @@ export const useProgramsToBeAccredited = () => {
       const { name, value } = eOrYear.target; // Destructure the field name and value
       setFormValue(prev => ({ ...prev, [name]: value })); // Update the form value for that field
       setDuplicateValues([]);
+      setIsAllDuplicates(false);
 
     } else {
       // Input is a year (from a date picker)
@@ -218,6 +221,7 @@ export const useProgramsToBeAccredited = () => {
           setFormValue(prev => ({ ...prev, year: newYear }));
           // Update year in the form state
           setDuplicateValues([]);
+          setIsAllDuplicates(false);
 
         } else {
           // Year cleared
@@ -233,17 +237,20 @@ export const useProgramsToBeAccredited = () => {
 
   const handleOptionSelection = (level, program, options = {}) => {
     setDuplicateValues([]);
+    setIsAllDuplicates(false);
 
-    if (options.isForAddLevel) {
+    if (options.isForAddLevel && level) {
       setFormValue(prev => ({...prev, level}));
-
-    } else if (options.isForAddProgram) {
+      
+    } else if (options.isForAddProgram && program) {
+      // Make sure we're adding to programs, not level
       setPrograms(prev => [...prev, program]);
     }
   };
 
   const handleProgramChange = (e) => {
     setProgramInput(e.target.value);
+    setIsAllDuplicates(false);
   };
 
   const handleAddProgramValue = (val) => {
@@ -260,6 +267,7 @@ export const useProgramsToBeAccredited = () => {
     const removedVal = programs[index];
     setPrograms(prev => prev.filter((_, i) => i !== index));
     setDuplicateValues(prev => prev.filter(v => v !== removedVal));
+    setIsAllDuplicates(false);
   };
 
   const handleSave = async (options = {}) => {
@@ -279,8 +287,6 @@ export const useProgramsToBeAccredited = () => {
         } 
 
         scrollToNewAddition('newAccreditation', `${formValue?.title} ${String(formValue?.year)}`);
-
-        console.log(`${formValue?.title} ${formValue?.year}`);
       }
 
       if (options?.isFromHeader && options?.data) {
@@ -330,7 +336,6 @@ export const useProgramsToBeAccredited = () => {
       }
 
     } catch (error) {
-      const isDuplicate = error?.response?.data?.isDuplicate;
       const duplicates = error?.response?.data?.duplicateValue;
       const duplicateProgram = error?.response?.data?.duplicateValue[4];
 
@@ -345,7 +350,8 @@ export const useProgramsToBeAccredited = () => {
 
       } else {
         setDuplicateValues(prev => [...new Set([...prev, duplicates])]);
-        showErrorToast('The data entered already exist.', 'top-center', 5000);
+        setIsAllDuplicates(true);
+        showErrorToast('The data entered already exist. Please check your input.', 'top-center', 8000);
       }
     }
   };
@@ -496,6 +502,7 @@ export const useProgramsToBeAccredited = () => {
       disableButton,
       toggleDropdown,
       duplicateValues,
+      isAllDuplicates,
       accredInfoLevelPrograms,
       loading,
       error,

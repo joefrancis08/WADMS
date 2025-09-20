@@ -15,6 +15,7 @@ const ProgramToBeAccreditedModal = ({
   formValue,
   programs,
   programInput,
+  isAllDuplicates,
   duplicateValues,
   disableButton,
   handlers,
@@ -78,6 +79,7 @@ const ProgramToBeAccreditedModal = ({
                     isDropdown={false}
                     onChange={handleInputChange}
                     showDropdownOnFocus={false}
+                    isDuplicate={isAllDuplicates}
                     // dropdownItems={null}
                     // onDropdownMenuClick={handleOptionSelection}
                   />
@@ -89,6 +91,7 @@ const ProgramToBeAccreditedModal = ({
                     formValue={formValue.year ? new Date(formValue.year, 0, 1) : null}
                     minDate={new Date()}
                     onChange={handleInputChange}
+                    isDuplicate={isAllDuplicates}
                   />
                 </div>
                 <AddField 
@@ -100,6 +103,7 @@ const ProgramToBeAccreditedModal = ({
                   isDropdown={false}
                   onChange={handleInputChange}
                   showDropdownOnFocus={false}
+                  isDuplicate={isAllDuplicates}
                   // dropdownItems={levelsArray}
                   // onDropdownMenuClick={handleOptionSelection}
                 />
@@ -118,6 +122,7 @@ const ProgramToBeAccreditedModal = ({
                   dropdownItems={levelsArray}
                   isReadOnly
                   onDropdownMenuClick={handleOptionSelection}
+                  isDuplicate={isAllDuplicates}
                 />
                 <div className='relative'>
                   <AddField 
@@ -139,6 +144,7 @@ const ProgramToBeAccreditedModal = ({
                     onAddValue={(val) => handleAddProgramValue(val)}
                     onRemoveValue={(index) => handleRemoveProgramValue(index)}
                     onChange={(e) => handleProgramChange(e)}
+                    isDuplicate={isAllDuplicates}
                   />
                 </div>
               </div>
