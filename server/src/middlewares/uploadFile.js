@@ -15,7 +15,7 @@ if (!fs.existsSync(uploadDir)) {
 
 // Sanitize filename to prevent path traversal
 const sanitizeName = (name) =>
-  name.replace(/[^a-zA-Z0-9-_.]/g, '-'); // allow dot now
+  name.replace(/[^a-zA-Z0-9-_.]/g, '-');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -46,19 +46,18 @@ const storage = multer.diskStorage({
 
     const uploadPath = path.join(
       uploadDir,
+      `${safeTitle}-${safeYear}`,
+      safeLevel,
       safeProgram,
       safeArea,
-      safeLevel,
-      safeTitle,
-      safeYear,
       safeParam,
       safeSubParam,
-      safeIndicator
+      safeIndicator,
     );
 
     fs.mkdirSync(uploadPath, { recursive: true });
 
-    // Store the path so filename callback can access it
+    // Store the absolute path
     req.uploadPath = uploadPath;
 
     cb(null, uploadPath);
@@ -73,12 +72,20 @@ const storage = multer.diskStorage({
 
       const fullPath = path.join(req.uploadPath, finalName);
 
-      // If file already exists, back it up instead of just deleting
+      // If file already exists, back it up
       if (fs.existsSync(fullPath)) {
         const backupName = `${safeName}-${Date.now()}-old${ext}`;
         const backupPath = path.join(req.uploadPath, backupName);
         await fsp.rename(fullPath, backupPath);
       }
+
+      // Save URL-friendly path for frontend use
+      const relativePath = path
+        .relative(uploadDir, fullPath) // relative path from root upload dir
+        .split(path.sep)              // split by system separator
+        .join('/');                   // join as forward slashes
+
+      req.savedFilePath = `/uploads/accreditation-documents/${relativePath}`;
 
       cb(null, finalName);
     } catch (err) {

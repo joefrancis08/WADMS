@@ -1,35 +1,36 @@
 import db from "../../../../config/db.js";
 import uuidBase64 from "../../../../utils/shortUUID.js";
 
-const insertDocument = async (data = {}) => {
+const insertDocument = async (data = {}, connection = null) => {
   const documentUUID = uuidBase64();
-  const { pamId, apmId, pspmId, simId, uploadedBy, filePath, fileName, uploadedAt } = data;
+  const { pamId, apmId, pspmId, simId, uploadBy, filePath, fileName } = data;
 
   const query = `
     INSERT INTO accreditation_document (
-      document_uuid, 
+      uuid, 
+      file_name,
+      file_path,
+      upload_by,
+      upload_at,
       program_area_mapping_id, 
       area_parameter_mapping_id, 
       param_subparam_mapping_id, 
-      subparam_indicator_mapping_id, 
-      uploaded_by, 
-      file_path, 
-      file_name, 
-      uploaded_at
+      subparam_indicator_mapping_id 
     )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
+    VALUES (?, ?, ?, ?, NOW(), ?, ?, ?, ?)
   `;
 
   try {
-    const [result] = await db.query(query, [
+    const executor = connection || db;
+    const [result] = await executor.query(query, [
       documentUUID, 
+      fileName,
+      filePath, 
+      uploadBy,
       pamId, 
       apmId, 
       pspmId, 
       simId, 
-      uploadedBy, 
-      filePath, 
-      fileName
     ]);
 
     return {

@@ -3,6 +3,7 @@ import db from "../../../../config/db.js";
 const getProgramAreaMapping = async ({ title, year, accredBody, level, program, connection = null }) => {
   const query = `
     SELECT
+      pam.id,
       ai.title,
       ai.year,
       ab.name          AS accred_body,
