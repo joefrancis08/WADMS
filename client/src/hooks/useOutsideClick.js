@@ -10,6 +10,7 @@ import { useEffect } from "react";
 const useOutsideClick = (ref, callback) => {
   useEffect(() => {
     function handleClick(event) {
+      event.stopPropagation();
       if (ref.current && !ref.current.contains(event.target)) {
         callback(); // Call close function
       }

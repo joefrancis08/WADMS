@@ -1,187 +1,46 @@
-import React, { useState } from 'react';
 import DeanLayout from '../../components/Layout/Dean/DeanLayout';
 import { ChevronRight, EllipsisVertical, File, FileStack, Plus } from 'lucide-react';
 import ContentHeader from '../../components/Dean/ContentHeader';
-import { useNavigate, useParams } from 'react-router-dom';
-import PATH from '../../constants/path';
-import formatProgramParams from '../../utils/formatProgramParams';
-import formatAreaName from '../../utils/formatAreaName';
-import useFetchProgramAreas from '../../hooks/fetch-react-query/useFetchProgramAreas';
-import useFetchAreaParameters from '../../hooks/fetch-react-query/useFetchAreaParameters';
 import formatParameterName from '../../utils/formatParameterName';
-import useFetchParamSubparam from '../../hooks/fetch-react-query/useFetchParamSubparam';
-import MODAL_TYPE from '../../constants/modalTypes';
-import SubParameterBaseModal from '../../components/Modals/accreditation/SubParameterBaseModal';
-import AddField from '../../components/Form/Dean/AddField';
-import useAutoFocus from '../../hooks/useAutoFocus';
-import { addSubParams } from '../../api/accreditation/accreditationAPI';
-import { showErrorToast, showSuccessToast } from '../../utils/toastNotification';
-import { TOAST_MESSAGES } from '../../constants/messages';
-import { useProgramAreaDetails, useProgramToBeAccreditedDetails } from '../../hooks/useAccreditationDetails';
+import useParamSubparam from '../../hooks/Dean/useParamSubparam';
+import PATH from '../../constants/path';
+import SubParamModal from '../../components/Dean/SubParamModal';
 
 const { PROGRAMS_TO_BE_ACCREDITED, AREA_PARAMETERS, PROGRAM_AREAS } = PATH.DEAN;
-const { SUBPARAMETER_ADDITION } = TOAST_MESSAGES;
 
 const ParamSubparam = () => {
-  const navigate = useNavigate();
-  const { periodID, level, programID, areaID, parameterID } = useParams();
+  const { navigate,  modalType,  refs,  params, datas, handlers } = useParamSubparam();
 
-  const { level: levelName } = formatProgramParams(level);
-
+  const { subParamInputRef } = refs;
+  const { 
+    accredInfoUUID,
+    level,
+    programUUID,
+    areaUUID,
+    parameterUUID
+  } = params;
   const {
-    startDate,
-    endDate,
-    programName
-  } = useProgramToBeAccreditedDetails(periodID, programID);
-
-  const { areaName } = useProgramAreaDetails({
-    startDate,
-    endDate,
+    loading,
+    error,
+    refetch,
     levelName,
-    programName,
-    areaID
-  });
-
-  const { parameters, loading: paramLoading, error: paramError, refetch: paramRefetch } = useFetchAreaParameters(
-    startDate, 
-    endDate, 
-    levelName, 
-    programName, 
-    areaName ?? ''
-  );
-
-  const parameterData = parameters.data ?? [];
-
-  const parameterObj = parameterData.find(p => p.parameter_uuid === parameterID) ?? null;
-  const parameterName = parameterObj ? parameterObj.parameter : 'Unknown Parameter';
-
-  const { subParameters, loading, error, refetch } = useFetchParamSubparam(
-    startDate,
-    endDate,
-    levelName,
-    programName,
-    areaName,
-    parameterName
-  );
-
-  const subParamsData = subParameters.data ?? [];
-
-  console.log(subParamsData);
-
-  const [modalType, setModalType] = useState(null);
-  const [subParameterInput, setSubParameterInput] = useState('');
-  const [subParamsArr, setSubParamsArr] = useState([]);
-  console.log(modalType);
-
-  // Auto-focus on sub-parameter input
-  const subParamInputRef = useAutoFocus(
-    modalType,
-    modalType === MODAL_TYPE.ADD_SUBPARAMETERS
-  );
-
-  const handleSubparamCardClick = () => {
-    setModalType(MODAL_TYPE.ADD_SUBPARAMETERS);
-  };
-
-  const handleCloseModal = () => {
-    setSubParamsArr([]);
-    setModalType(null);
-  };
-
-  const handleSubParamChange = (e) => {
-    setSubParameterInput(e.target.value)
-  };
-
-  const handleAddSubParamValue = (val) => {
-    setSubParamsArr([...subParamsArr, val]);
-  };
-
-  const handleRemoveSubParamValue = (index) => {
-    setSubParamsArr(subParamsArr.filter((_, i) => i !== index));
-  };
-
-  const handleSaveSubParams = async () => {
-    try {
-      const res = await addSubParams({
-        startDate,
-        endDate,
-        levelName,
-        programName,
-        areaName,
-        parameterName,
-        subParameterNames: subParamsArr
-      });
-
-      if (res.data.success) {
-        showSuccessToast(SUBPARAMETER_ADDITION.SUCCESS);
-      }
-
-      handleCloseModal();
-
-    } catch (error) {
-      if (error.response.data.isDuplicate) {
-        showErrorToast('Duplicate entry.');
-      }
-    }
-  };
-
-  const renderModal = () => {
-    switch (modalType) {
-      case MODAL_TYPE.ADD_SUBPARAMETERS:
-        return (
-          <SubParameterBaseModal 
-            onClose={handleCloseModal}
-            onCancel={handleCloseModal}
-            onSave={handleSaveSubParams}
-            primaryButton={
-              subParamsArr.length > 1 
-                ? 'Add Sub-Parameters'
-                : 'Add Sub-Parameter'
-            }
-            disabled={subParamsArr.length === 0}
-            secondaryButton={'Cancel'}
-            mode={'Add'}
-            headerContent={
-              <div>
-                <p className='text-xl font-semibold'>
-                  Add Sub-Parameters
-                </p>
-              </div>
-            }
-            bodyContent={
-              <div className='relative w-full'>
-                <AddField
-                  ref={subParamInputRef}
-                  fieldName={
-                    subParamsArr.length > 1
-                      ? 'Sub-Parameters'
-                      : 'Sub-Parameter'
-                  }
-                  placeholder={'Enter new sub-parameters...'}
-                  type='textarea'
-                  name='subParamInput'
-                  formValue={subParameterInput}
-                  multiValue={true}
-                  multiValues={subParamsArr}
-                  // dropdownItems={data}
-                  showDropdownOnFocus={true}
-                  // duplicateValues={duplicateValues}
-                  // onDropdownMenuClick={handleOptionSelection}
-                  onAddValue={(val) => handleAddSubParamValue(val)}
-                  onRemoveValue={(index) => handleRemoveSubParamValue(index)}
-                  onChange={(e) => handleSubParamChange(e)}
-                  // onFocus={handleFocus}
-                />
-              </div>
-            }
-          />
-        );
-    
-      default:
-        break;
-    }
-  }
-
+    program,
+    area,
+    parameter,
+    subParamsData,
+    subParameterInput,
+    subParamsArr,
+    duplicateValues,
+  } = datas;
+  const {
+    handleAddSubparamClick,
+    handleCloseModal,
+    handleSubParamChange,
+    handleAddSubParamValue,
+    handleRemoveSubParamValue,
+    handleSaveSubParams,
+    handleSPCardClick
+  } = handlers;
 
   return (
     <DeanLayout>
@@ -201,43 +60,43 @@ const ParamSubparam = () => {
               onClick={() => navigate(PROGRAMS_TO_BE_ACCREDITED)}
               className='hover:underline opacity-80 hover:opacity-100 cursor-pointer transition-all'
             >
-              {levelName} - {programName}
+              Programs
             </span>
             <ChevronRight className='h-5 w-5'/>
             <span
               title='Back to Areas'
               onClick={() => navigate(PROGRAM_AREAS({
-                periodID,
+                accredInfoUUID,
                 level,
-                programID
+                programUUID
               }))}
               className='hover:underline opacity-80 hover:opacity-100 cursor-pointer transition-all'
             >
-              {formatAreaName(areaName)}
+              Areas
             </span>
             <ChevronRight className='h-5 w-5'/>
             <span
               title='Back to Parameters'
               onClick={() => navigate(AREA_PARAMETERS({
-                periodID,
+                accredInfoUUID,
                 level,
-                programID,
-                areaID
+                programUUID,
+                areaUUID
               }))}
               className='hover:underline opacity-80 hover:opacity-100 cursor-pointer transition-all'
             >
-              Parameter {formatParameterName(parameterName)}
+              Parameters
             </span>
             <ChevronRight className='h-5 w-5'/>
             <span className='font-semibold'>
-              {parameterData.length > 1 ? 'Sub-Parameters' : 'Sub-Parameter'}
+              {subParamsData.length > 1 ? 'Sub-Parameters' : 'Sub-Parameter'}
             </span>
           </p>
         </div>
 
         <div className='flex justify-end px-5 py-3'>
           <button
-            onClick={handleSubparamCardClick} 
+            onClick={handleAddSubparamClick} 
             title='Add Sub-Parameters'
             className='cursor-pointer hover:opacity-80 active:opacity-50'>
             <Plus className='h-8 w-8' />
@@ -246,12 +105,14 @@ const ParamSubparam = () => {
         <div className={`flex max-md:flex-col flex-wrap gap-y-2 p-2 mb-8 ${subParamsData.length === 0 ? 'justify-center' : 'justify-evenly'}`}>
           {subParamsData.length === 0 && (
             <p>
-              No sub-parameters to display for Parameter {formatParameterName(parameterName)}.
+              No sub-parameters to display for Parameter {formatParameterName(parameter)}.
             </p>
           )}
-          {subParamsData.map(({sub_parameter_uuid, sub_parameter}, index) => (
+          {subParamsData.map(({sub_parameter_uuid, sub_parameter}) => (
             <div
-              onClick={(null)}
+              onClick={() => handleSPCardClick({
+                subParameterUUID: sub_parameter_uuid
+              })}
               key={sub_parameter_uuid} 
               className='relative flex items-center justify-start border py-5 px-2 h-20 w-100 max-md:w-full rounded-md transition-all cursor-pointer hover:bg-slate-50 active:opacity-50'
             >
@@ -264,7 +125,22 @@ const ParamSubparam = () => {
           ))}
         </div>
       </div>
-      {renderModal()}
+      <SubParamModal 
+        modalType={modalType}
+        refs={{ subParamInputRef }}
+        datas={{ 
+          subParamsArr,
+          subParameterInput,
+          duplicateValues 
+        }}
+        handlers={{
+          handleCloseModal,
+          handleSaveSubParams,
+          handleAddSubParamValue,
+          handleRemoveSubParamValue,
+          handleSubParamChange
+        }}
+      />
     </DeanLayout>
   );
 };

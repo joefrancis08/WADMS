@@ -5,18 +5,18 @@ let socket;
 export const connectWebSocket = () => {
   socket = new WebSocket(VITE_WS_BASE_URL);
 
-  socket.onopen = () => {
-    console.log('WS Client: Connected to the server.')
-  };
+  // socket.onopen = () => {
+  //   console.log('WS Client: Connected to the server.')
+  // };
 
-  socket.onclose = () => {
-    console.log('WS Client: Disconnected from server');
-    // Attempt reconnect here
-  };
+  // socket.onclose = () => {
+  //   console.log('WS Client: Disconnected from server');
+  //   // Attempt reconnect here
+  // };
 
-  socket.onerror = (error) => {
-    console.error('WS Client: Error', error);
-  };
+  // socket.onerror = (error) => {
+  //   console.error('WS Client: Error', error);
+  // };
 
   return socket;
 };

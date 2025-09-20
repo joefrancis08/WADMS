@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from 'react'
-import Dropdown from '../../Dropdown/Dropdown';
-import { USER_ROLES } from '../../../constants/user';
+import Dropdown from '../Dropdown/Dropdown';
+import { USER_ROLES } from '../../constants/user';
 import { Calendar, CalendarDays, ChevronDown, CircleAlert, X } from 'lucide-react';
-import Popover from '../../Popover';
-import DatePickerComponent from '../../DatePickerComponent';
-import { getUserRolesDropdown } from '../../../utils/dropdownOptions';
-import useOutsideClick from '../../../hooks/useOutsideClick';
+import Popover from '../Popover';
+import DatePickerComponent from '../DatePickerComponent';
+import { getUserRolesDropdown } from '../../utils/dropdownOptions';
+import useOutsideClick from '../../hooks/useOutsideClick';
+import { AreaDropdownItems } from '../Dropdown/DropdownOptions';
 
 const AddField = ({
   ref,
@@ -15,8 +16,10 @@ const AddField = ({
   name,
   formValue,
   dropdownItems = [],
+  dropDownCondition,
   multiValue = false, // Enable multi-value mode (for textarea)
   multiValues = [], // Array of existing values (for textarea)
+  isDuplicate,
   duplicateValues = [], 
   onAddValue, // Callback when a value is added (for textarea)
   onRemoveValue, // Callback when a value is removed (for textarea)
@@ -67,14 +70,17 @@ const AddField = ({
 
   const handleFocus = (options = {}) => {
     setIsFocused(true);
-    onFocus?.(); // Calls only if onFocus is a function
-    options.showDropdown && setShowDropdown(true);
+    onFocus?.();
+    // Only show dropdown if there are items to show
+    if (options.showDropdown && dropdownItems.length > 0) {
+      setShowDropdown(true);
+    }
   };
 
   const handleBlur = () => {
     setIsFocused(false);
 
-    if (formValue.trim() !== "") {
+    if (formValue.trim() !== '') {
       onAddValue(formValue.trim()); // Add to multiValues
       onChange({ target: { name, value: '' } }); // Clear formValue
     }
@@ -121,9 +127,9 @@ const AddField = ({
     <p
       key={program}
       onClick={() => {
+        // This should pass the program, not level
         onDropdownMenuClick(null, program, { isForAddProgram: true });
         setAvailablePrograms(prev => prev.filter(item => item !== program));
-        setIsFocused(true);
       }}
       className='p-2 text-gray-800 hover:shadow cursor-pointer hover:bg-gray-200 first:rounded-t-md last:rounded-b-md active:opacity-50'
     >
@@ -131,11 +137,11 @@ const AddField = ({
     </p>
   ));
 
-  let dropdownContent;
+  let dropdownContent = null;
   if (isDropdown && toggleDropdown) {
     dropdownContent = roleDropdownItems;
 
-  } else if (type === 'textarea' && multiValue && showDropdown) {
+  } else if (type === 'textarea' && multiValue && showDropdown && showDropdownOnFocus) {
     // Textarea should take priority over level
     dropdownContent = availablePrograms.length > 0 ? programDropdownItems : null;
 
@@ -143,11 +149,10 @@ const AddField = ({
     dropdownContent = levelDropdownItems;
   }
 
- 
   return (
     <div ref={containerRef} className='relative w-full flex-col pt-4'>
       <div className='pb-4'>
-        <div className='relative flex flex-col items-start'>
+        <div className='relative flex flex-col items-center'>
           <label
             onClick={() => (!datePickerDisabled || multiValues.length > 0) && setIsFocused(true)}
             className={`absolute left-3 px-2 rounded-md transition-all
@@ -157,7 +162,7 @@ const AddField = ({
             {fieldName}
           </label>
           {type === 'date' ? (
-            <div className='relative w-full'>
+            <>
               <DatePickerComponent 
                 selected={formValue}
                 onChange={(date) => {
@@ -165,20 +170,22 @@ const AddField = ({
                   setCalendarOpen(false);
                 }}
                 placeholder={isFloating ? placeholder : ''}
-                className={`w-full p-3 rounded-lg border shadow transition max-sm:text-xs max-md:text-sm
+                className={`w-full p-4 lg:p-3 rounded-lg border shadow transition max-sm:text-xs max-md:text-sm
                   ${datePickerDisabled && 'cursor-not-allowed'}
                   ${isClickable && 'cursor-pointer hover:bg-slate-100'}
                   ${!invalid
                     ? 'border-gray-400 text-gray-800 focus:outline-0 focus:ring-2 focus:ring-green-600' 
-                    : 'border-red-500 text-red-500 focus:outline-0 focus:ring-1 focus:ring-red-500'  }`}
+                    : 'border-red-500 text-red-500 focus:outline-0 focus:ring-1 focus:ring-red-500'}
+                  ${isDuplicate && 'border-red-500 text-red-500 focus:outline-0 focus:ring-1 focus:ring-red-500'}`}
                 open={calendarOpen}
                 onClickOutside={() => setCalendarOpen(false)}
                 onFocus={handleFocus}
                 onBlur={onBlur}
-                dateFormat='MMMM d, yyyy'
+                dateFormat='yyyy'
                 minDate={minDate}
                 disabled={datePickerDisabled}
                 forceClosed={calendarClose}
+
               />
 
               {!datePickerDisabled && (
@@ -188,7 +195,7 @@ const AddField = ({
                   size={20}
                 />
               )}
-            </div>
+            </>
           ) : type === 'textarea'  && multiValue ? (
               <div
                 className={`w-full min-h-[60px] flex flex-wrap items-center gap-2 p-3 rounded-lg border shadow transition max-h-50 overflow-auto
@@ -200,7 +207,7 @@ const AddField = ({
                   const isValueDuplicate = duplicateValues?.includes(val);
 
                   return (
-                    <div key={index} className={`flex items-center justify-center px-2 py-1 rounded border ${isValueDuplicate 
+                    <div key={index} className={`flex items-center justify-center px-2 py-1 rounded border ${isValueDuplicate || formValue === val
                       ? 'border-red-600 text-red-500' 
                       : 'border-slate-300 text-slate-800'}`}
                     >
@@ -259,9 +266,11 @@ const AddField = ({
               onFocus={() => handleFocus({ showDropdown: true })}
               className={`text-wrap w-full p-3 rounded-lg border shadow transition
                 ${isClickable && 'cursor-pointer hover:bg-slate-100'}
-                ${!invalid 
+                ${!invalid
                   ? 'border-gray-400 text-gray-800 focus:outline-0 focus:ring-2 focus:ring-green-600' 
-                  : 'border-red-500 text-red-500 focus:outline-0 focus:ring-1 focus:ring-red-500'  }`}
+                  : 'border-red-500 text-red-500 focus:outline-0 focus:ring-1 focus:ring-red-500'}
+                ${isDuplicate && 'border-red-500 text-red-500 focus:outline-0 focus:ring-1 focus:ring-red-500'}`
+              }
             />
           )}
 
@@ -297,9 +306,29 @@ const AddField = ({
             />
           )}
           {dropdownContent && showDropdown && (
-            <Dropdown width='w-full' border='border border-gray-400 rounded-md'>
-              <div className='transition-all duration-300 max-h-35 overflow-auto'>
-                {dropdownContent}
+            <Dropdown width="w-full" border="border border-gray-400 rounded-md">
+              <div className="transition-all duration-300 max-h-35 overflow-auto">
+                {dropDownCondition !== "canSelectAll" ? (
+                  dropdownContent
+                ) : (
+                  <AreaDropdownItems
+                    areas={dropdownItems}
+                    selected={multiValues}
+                    onChange={(newSelected) => {
+                      if (newSelected.length === 0) {
+                        multiValues.forEach((_, idx) => onRemoveValue(0));
+                        return;
+                      }
+                      const deselected = multiValues.filter(val => !newSelected.includes(val));
+                      deselected.forEach(val => {
+                        const idx = multiValues.indexOf(val);
+                        if (idx !== -1) onRemoveValue(idx);
+                      });
+                      const added = newSelected.filter(val => !multiValues.includes(val));
+                      added.forEach(val => onAddValue(val));
+                    }}
+                  />
+                )}
               </div>
             </Dropdown>
           )}

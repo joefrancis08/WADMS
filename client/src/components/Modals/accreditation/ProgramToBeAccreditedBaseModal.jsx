@@ -38,8 +38,8 @@ const Footer = ({ onCancel, onSave, primaryButton, disabled, secondaryButton }) 
         onClick={onSave}
         disabled={disabled}
         className={disabled 
-          ? 'flex items-center justify-center bg-gray-500 text-white font-semibold py-2 px-6 rounded-full text-sm opacity-50 cursor-not-allowed transition'
-          : 'flex items-center justify-center bg-gradient-to-br from-green-800 to-green-500 text-white px-6 py-2 rounded-full text-sm hover:bg-gradient-to-tr hover:from-green-800 hover:to-green-500 hover:shadow-lg active:opacity-50 transition cursor-pointer'}
+          ? 'min-w-30 flex items-center justify-center bg-gray-500 text-white font-semibold py-2 px-6 rounded-full text-sm opacity-50 cursor-not-allowed transition'
+          : 'min-w-30 flex items-center justify-center bg-gradient-to-br from-green-800 to-green-500 text-white px-6 py-2 rounded-full text-sm hover:bg-gradient-to-tr hover:from-green-800 hover:to-green-500 hover:shadow-lg active:opacity-50 transition cursor-pointer'}
       >
         {primaryButton}
       </button>

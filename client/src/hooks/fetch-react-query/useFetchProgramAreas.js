@@ -3,16 +3,28 @@ import { useEffect, useMemo } from "react";
 import { fetchProgramAreas } from "../../api/accreditation/accreditationAPI";
 import { messageHandler } from "../../services/websocket/messageHandler";
 
-const useFetchProgramAreas = (startDate, endDate, levelName, programName) => {
+const useFetchProgramAreas = ({ title, year, accredBody, level, program }) => {
   const queryClient = useQueryClient();
 
   const queryKey = useMemo(() => [
-    'areas', startDate, endDate, levelName, programName
-  ], [startDate, endDate, levelName, programName]);
+    'areas', title, year, accredBody, level, program
+  ], [title, year, accredBody, level, program]);
   
   const queryFn = async ({ signal }) => {
     try {
-      const res = await fetchProgramAreas(startDate, endDate, levelName, programName, { signal });
+      const res = await fetchProgramAreas(
+        { 
+          title, 
+          year, 
+          accredBody, 
+          level, 
+          program,
+        },
+        {
+          signal
+        }
+      );
+
       return res.data;
 
     } catch (error) {

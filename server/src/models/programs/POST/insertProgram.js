@@ -3,27 +3,13 @@ import uuidBase64 from "../../../utils/shortUUID.js";
 
 /* 
   Insert Program into Program Table.
-  Use connection to include this query in a transaction
-  with other query like inserting into level.
+  Use connection to include this query in a transaction.
 */
 export const insertProgram = async (programName, connection = null) => {
   const programUUID = uuidBase64();
   const query = 'INSERT INTO program (uuid, program_name) VALUES (?, ?)';
 
   try {
-    // Check if program exists
-    const checkQuery = `
-      SELECT id FROM program
-      WHERE program_name = ?
-    `;
-
-    const [exists] = await connection.execute(checkQuery, [programName]);
-    if (exists.length > 0) {
-      const error = new Error('DUPLICATE_ENTRY');
-      error.duplicateValue = programName; // Attach the program name
-      throw error;
-    }
-
     let result;
 
     if (connection) {

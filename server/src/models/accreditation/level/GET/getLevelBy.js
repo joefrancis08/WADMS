@@ -1,6 +1,6 @@
 import db from "../../../../config/db.js";
 
-const getLevelBy = async (column, value, connection = db) => {
+const getLevelBy = async (column, value, connection = null) => {
   const allowedColumns = ['id', 'level_name'];
 
   if (!allowedColumns.includes(column)) {
@@ -8,8 +8,17 @@ const getLevelBy = async (column, value, connection = db) => {
   }
 
   const query = `SELECT id, level_name FROM accreditation_level WHERE ${column} = ?`;
-  const [result] = await connection.execute(query, [value]);
-  return result;
+
+  try {
+    const executor = connection || db;
+    const [result] = await executor.execute(query, [value]);
+
+    return result;
+
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
 
 export default getLevelBy;

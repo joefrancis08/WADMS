@@ -3,7 +3,15 @@ import getAreaBy from "../../areas/GET/getAreaBy.js";
 import getParameterBy from "../../parameters/GET/getParameterBy.js";
 import insertParameter from "../../parameters/POST/insertParameter.js";
 
-const insertAreaParameterMapping = async (startDate, endDate, level, program, area, parameter) => {
+const insertAreaParameterMapping = async ({ 
+  title, 
+  year, 
+  accredBody, 
+  level, 
+  program, 
+  area,
+  parameter
+}) => {
   const connection = await db.getConnection();
 
   try {
@@ -32,24 +40,34 @@ const insertAreaParameterMapping = async (startDate, endDate, level, program, ar
     const programAreaMappingQuery = `
       SELECT pam.id
       FROM program_area_mapping pam
-      JOIN program_level_mapping plm
-        ON pam.program_level_mapping_id = plm.id
-      JOIN accreditation_period ap
-        ON plm.period_id = ap.id
+      JOIN info_level_program_mapping ilpm
+        ON pam.info_level_program_mapping_id = ilpm.id
+      JOIN accreditation_info ai
+        ON ilpm.accreditation_info_id = ai.id
+      JOIN accreditation_body ab
+        ON ai.accreditation_body_id = ab.id
       JOIN accreditation_level al
-        ON plm.level_id = al.id
+        ON ilpm.level_id = al.id
       JOIN program p
-        ON plm.program_id = p.id
+        ON ilpm.program_id = p.id
       JOIN area a
         ON pam.area_id = a.id
-      WHERE ap.start_date = ?
-        AND ap.end_date = ?
+      WHERE ai.title = ?
+        AND ai.year = ?
+        AND ab.name = ?
         AND al.level_name = ?
         AND p.program_name = ?
         AND a.area_name = ?
     `;
 
-    const [rows] = await connection.execute(programAreaMappingQuery, [startDate, endDate, level, program, area]);
+    const [rows] = await connection.execute(programAreaMappingQuery, [
+      title, 
+      year, 
+      accredBody, 
+      level, 
+      program, 
+      area
+    ]);
 
     if (rows.length === 0) {
       throw new Error('PROGRAM_AREA_MAPPING_NOT_FOUND');
@@ -57,19 +75,7 @@ const insertAreaParameterMapping = async (startDate, endDate, level, program, ar
 
     const programAreaMappingId = rows[0].id;
 
-    // Step 3: Check if area_parameter_mapping already exists
-    const checkQuery = `
-      SELECT id FROM area_parameter_mapping
-      WHERE program_area_mapping_id = ? AND parameter_id = ?
-    `;
-    const [exists] = await connection.execute(checkQuery, [programAreaMappingId, parameterId]);
-    if (exists.length > 0) {
-      const error = new Error('Duplicate entry');
-      error.duplicateValue = parameter;
-      throw error;
-    }
-
-    // Step 4: Insert mapping
+    // Step 3: Insert mapping
     const query = `
       INSERT INTO area_parameter_mapping (program_area_mapping_id, parameter_id) VALUES (?, ?)
     `;

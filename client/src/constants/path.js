@@ -16,20 +16,33 @@ const PATH = {
 
     PROGRAMS_TO_BE_ACCREDITED: '/d/accreditation/programs',
 
-    PROGRAM_AREAS: ({ periodID, level, programID }) => (
-      `/d/accreditation/programs/${level}/${programID}/${periodID}`
+    PROGRAM_AREAS: ({ accredInfoUUID, level, programUUID }) => (
+      `/d/accreditation/programs/${level}/${programUUID}/${accredInfoUUID}`
     ),
-    PROGRAM_AREAS_TEMPLATE: '/d/accreditation/programs/:level/:programID/:periodID',
+    PROGRAM_AREAS_TEMPLATE: '/d/accreditation/programs/:level/:programUUID/:accredInfoUUID',
 
-    AREA_PARAMETERS: ({ periodID, level, programID, areaID }) => (
-      `/d/accreditation/programs/${level}/${programID}/${periodID}/${areaID}`
+    AREA_PARAMETERS: ({ accredInfoUUID, level, programUUID, areaUUID }) => (
+      `/d/accreditation/programs/${level}/${programUUID}/${accredInfoUUID}/${areaUUID}`
     ),
-    AREA_PARAMETERS_TEMPLATE: '/d/accreditation/programs/:level/:programID/:periodID/:areaID',
+    AREA_PARAMETERS_TEMPLATE: '/d/accreditation/programs/:level/:programUUID/:accredInfoUUID/:areaUUID',
 
-    PARAM_SUBPARAMS: ({ periodID, level, programID, areaID, parameterID }) => (
-      `/d/accreditation/programs/${level}/${programID}/${periodID}/${areaID}/${parameterID}`
+    PARAM_SUBPARAMS: ({ accredInfoUUID, level, programUUID, areaUUID, parameterUUID }) => (
+      `/d/accreditation/programs/${level}/${programUUID}/${accredInfoUUID}/${areaUUID}/${parameterUUID}`
     ),
-    PARAM_SUBPARAMS_TEMPLATE: '/d/accreditation/programs/:level/:programID/:periodID/:areaID/:parameterID',
+    PARAM_SUBPARAMS_TEMPLATE: '/d/accreditation/programs/:level/:programUUID/:accredInfoUUID/:areaUUID/:parameterUUID',
+
+    SUBPARAM_INDICATORS: ({
+      accredInfoUUID,
+      level,
+      programUUID,
+      areaUUID,
+      parameterUUID,
+      subParameterUUID
+    }) => (
+      `/d/accreditation/programs/${level}/${programUUID}/${accredInfoUUID}/${areaUUID}/${parameterUUID}/${subParameterUUID}`
+    ),
+    SUBPARAM_INDICATORS_TEMPLATE: '/d/accreditation/programs/:level/:programUUID/:accredInfoUUID/:areaUUID/:parameterUUID/:subParameterUUID',
+    
     DOCUMENTS: '/d/accreditation/documents'
   }
 }

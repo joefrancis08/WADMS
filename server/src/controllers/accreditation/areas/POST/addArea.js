@@ -1,5 +1,6 @@
 import insertArea from "../../../../models/accreditation/areas/POST/insertArea.js";
 import getLevelBy from "../../../../models/accreditation/level/GET/getLevelBy.js";
+import sendUpdate from "../../../../services/websocket/sendUpdate.js";
 
 const addArea = async (req, res) => {
   try {
@@ -24,6 +25,8 @@ const addArea = async (req, res) => {
     }
 
     const response = await insertArea(areaName, levelID);
+
+    sendUpdate('area-updates');
     
     res.status(200).json({
       message: 'Area added successfully.',

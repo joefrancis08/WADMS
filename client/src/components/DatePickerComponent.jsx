@@ -17,6 +17,7 @@ const DatePickerComponent = ({ ref, selected, onChange, placeholder, className, 
       disabled={disabled}
       open={open}
       onClickOutside={onClickOutside}
+      showYearPicker
     />
   );
 };

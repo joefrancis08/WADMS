@@ -1,29 +1,33 @@
 import db from "../../../../config/db.js";
 
-const getProgramAreaMapping = async (startDate, endDate, levelName, programName, connection = null) => {
+const getProgramAreaMapping = async ({ title, year, accredBody, level, program, connection = null }) => {
   const query = `
     SELECT
-      a.uuid           AS area_uuid,
-      ap.start_date    AS period_start,
-      ap.end_date      AS period_end,
+      ai.title,
+      ai.year,
+      ab.name          AS accred_body,
       al.level_name    AS level,
-      pr.program_name  AS program,
+      p.program_name   AS program,
+      a.uuid           AS area_uuid,
       a.area_name      AS area
     FROM program_area_mapping pam
-    JOIN program_level_mapping plm
-      ON pam.program_level_mapping_id = plm.id
-    JOIN accreditation_period ap
-      ON plm.period_id = ap.id
+    JOIN info_level_program_mapping ilpm
+      ON pam.info_level_program_mapping_id = ilpm.id
+    JOIN accreditation_info ai
+      ON ilpm.accreditation_info_id = ai.id
+    JOIN accreditation_body ab
+      ON ai.accreditation_body_id = ab.id
     JOIN accreditation_level al
-      ON plm.level_id = al.id
-    JOIN program pr
-      ON plm.program_id = pr.id
+      ON ilpm.level_id = al.id
+    JOIN program p
+      ON ilpm.program_id = p.id
     JOIN area a
       ON pam.area_id = a.id
-    WHERE ap.start_date = ?
-      AND ap.end_date = ?
+    WHERE ai.title = ?
+      AND ai.year = ?
+      AND ab.name = ?
       AND al.level_name = ?
-      AND pr.program_name = ?
+      AND p.program_name = ?
     ORDER BY
       FIELD(
         TRIM(
@@ -56,18 +60,19 @@ const getProgramAreaMapping = async (startDate, endDate, levelName, programName,
   `;
 
   try {
-    let result;
-    if (connection) {
-      [result] = await connection.execute(query, [startDate, endDate, levelName, programName]);
-
-    } else {
-      [result] = await db.execute(query, [startDate, endDate, levelName, programName]);
-    }
-
+    const executor = connection || db;
+    const [result] = await executor.execute(query, [
+      title, 
+      year, 
+      accredBody, 
+      level, 
+      program
+    ]);
+    
     return result;
     
   } catch (error) {
-    console.error("Error fetching programs to be accredited:", error);
+    console.error('Error fetching program areas:', error);
     throw error;
   }
 };

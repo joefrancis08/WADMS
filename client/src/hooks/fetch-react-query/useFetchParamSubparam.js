@@ -3,20 +3,30 @@ import { useEffect, useMemo } from "react";
 import { fetchParamSubparams } from "../../api/accreditation/accreditationAPI";
 import { messageHandler } from "../../services/websocket/messageHandler";
 
-const useFetchParamSubparam = (startDate, endDate, levelName, programName, areaName, parameterName) => {
+const useFetchParamSubparam = ({ title, year, accredBody, level, program, area, parameter }) => {
   const queryClient = useQueryClient();
 
-  const queryKey = useMemo(() => ['sub-parameters', startDate, endDate, levelName, programName, areaName, parameterName], [startDate, endDate, levelName, programName, areaName, parameterName]);
+  const queryKey = useMemo(() => [
+    'sub-parameters', 
+    title, 
+    year, 
+    accredBody, 
+    level, 
+    program, 
+    area, 
+    parameter
+  ], [title, year, accredBody, level, program, area, parameter]);
 
   const queryFn = async ({ signal }) => {
     try {
       const res = await fetchParamSubparams({
-        startDate,
-        endDate,
-        levelName,
-        programName,
-        areaName,
-        parameterName
+        title,
+        year,
+        accredBody,
+        level,
+        program,
+        area,
+        parameter
       }, signal);
 
       return res.data;

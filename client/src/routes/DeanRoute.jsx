@@ -12,6 +12,7 @@ import EmailConfirmation from '../pages/EmailConfirmation';
 import ProgramAreas from '../pages/Dean/ProgramAreas';
 import AreaParameters from '../pages/Dean/AreaParameters';
 import ParamSubparam from '../pages/Dean/ParamSubparam';
+import SubparamIndicator from '../pages/Dean/SubparamIndicator';
 
 const { 
   DASHBOARD, 
@@ -23,6 +24,7 @@ const {
   PROGRAM_AREAS_TEMPLATE, 
   AREA_PARAMETERS_TEMPLATE,
   PARAM_SUBPARAMS_TEMPLATE,
+  SUBPARAM_INDICATORS_TEMPLATE,
   DOCUMENTS
 } = PATH.DEAN;
 
@@ -38,6 +40,7 @@ const protectedRoutes = [
   { path: PROGRAM_AREAS_TEMPLATE, element: <ProgramAreas /> },
   { path: AREA_PARAMETERS_TEMPLATE, element: <AreaParameters /> },
   { path: PARAM_SUBPARAMS_TEMPLATE, element: <ParamSubparam /> },
+  { path: SUBPARAM_INDICATORS_TEMPLATE, element: <SubparamIndicator />},
   { path: DOCUMENTS, element: <Documents /> }
 ];
 

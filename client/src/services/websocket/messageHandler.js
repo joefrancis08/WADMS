@@ -5,9 +5,9 @@ export const messageHandler = (callback) => {
   const socket = connectWebSocket();
 
   // Log when the connection is successfully established
-  socket.addEventListener('open', () => {
-    console.log('Websocket connected!');
-  });
+  // socket.addEventListener('open', () => {
+  //   console.log('Websocket connected!');
+  // });
 
   //  Handles all incoming WebSocket messages
   const messageHandler = (event) => {
@@ -20,21 +20,22 @@ export const messageHandler = (callback) => {
         // Decide what to do based on the "type" field
         switch (data.type) {
           case 'user-update':
-            console.log('User update received');
-            callback(); // Trigger the callback (e.g., refetch data in React Query)
+            callback();
             break;
 
           case 'accreditation-levels-update':
             callback();
             break;
+
+          case 'area-updates':
+            callback();
+            break;
           
-          case 'programs-to-be-accredited-update':
-            console.log('Programs-to-be-accredited update received.');
-            callback(); // Trigger the callback again for this case
+          case 'info-level-program-update':
+            callback();
             break;
 
           case 'accreditation-period-update':
-            console.log('Accreditation period update received.');
             callback();
             break;
 
@@ -47,6 +48,10 @@ export const messageHandler = (callback) => {
             break;
 
           case 'parameter-subparameter-update':
+            callback();
+            break;
+
+          case 'subparam-indicator-update':
             callback();
             break;
 

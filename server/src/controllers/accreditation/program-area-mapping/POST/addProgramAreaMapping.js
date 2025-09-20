@@ -1,41 +1,37 @@
 import insertProgramAreaMapping from "../../../../models/accreditation/program-area-mapping/POST/insertProgramAreaMapping.js";
 import sendUpdate from "../../../../services/websocket/sendUpdate.js";
-import isValidDateFormat from "../../../../utils/isValidDateFormat.js";
 
 const addProgramAreaMapping = async (req, res) => {
-  const { startDate, endDate, levelName, programName, areaNames } = req.body;
+  const { title, year, accredBody, level, program, areaNames } = req.body;
 
   try {
-    // Validate if date is not empty and in valid format (e.g., 2025-08-25)
-    if (!startDate || !endDate) {
+    // Validate title, accredBody, level, and program
+    if (!title?.trim() || !accredBody?.trim() || !level?.trim() || !program?.trim()) {
       return res.status(400).json({
         success: false,
-        message: 'Start and end date must not be empty.'
-      });
-
-    } else if (!isValidDateFormat(startDate) || !isValidDateFormat(endDate)) {
-      return res.status(400).json({
-        success:false,
-        message: 'Invalid date format. Expected format: YYYY-MM-DD'
+        message: 'Title, Accreditation Body, Level, and Programs are required and must not be empty.'
       });
     }
 
-    // Validate if levelName and programName is not empty
-    if (!levelName.trim() || !programName.trim() || 
-      typeof levelName !== 'string' || typeof programName !== 'string') {
+    // Validate year
+    if (!/^\d{4}$/.test(year)) {
       return res.status(400).json({
         success: false,
-        message: 'Level and program name must not be empty.'
+        message: 'Year must be a valid 4-digit number.'
       });
     }
 
-    // Treat areaNames as an array since there might be 2 or more areas
+    /* 
+      Ensure areaNames is always treated as an array
+      If it's already an array, use it as is
+      If it's a single string, wrap it inside an array
+    */
     const areas = (Array.isArray(areaNames) ? areaNames : [areaNames])
       .map(a => a.trim())
       .filter(a => a.length > 0);
 
     // Validate if area names array is not empty
-    if (areas.length === 0 || !areaNames) {
+    if (!areas.length) {
       return res.status(400).json({
         success: false,
         message: 'Area names must not be empty.',
@@ -44,9 +40,16 @@ const addProgramAreaMapping = async (req, res) => {
 
     // Store the results of each insertion
     const results = [];
-    for (const areaName of areas) {
+    for (const area of areas) {
       // Insert each area into the database with its associated period, level, and program
-      const response = await insertProgramAreaMapping(startDate, endDate, levelName, programName, areaName);
+      const response = await insertProgramAreaMapping({ 
+        title, 
+        year, 
+        accredBody, 
+        level,
+        program, 
+        area
+      });
       results.push(response); // Collect the response for reporting back to client
     }
 
@@ -56,11 +59,12 @@ const addProgramAreaMapping = async (req, res) => {
     // Send success response back to the client with all inserted results
     res.status(200).json({
       success: true,
-      message: 'Program to be accredited area added successfully.',
+      message: 'Program areas added successfully.',
       results
     });
 
   } catch (error) {
+    console.error(error);
     // Catch duplicate entry
     if (error.message === 'DUPLICATE_ENTRY') {
       return res.status(409).json({
@@ -75,7 +79,6 @@ const addProgramAreaMapping = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Internal server error.',
-      error
     });
   }
 };

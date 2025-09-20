@@ -1,10 +1,9 @@
 import { CircleQuestionMark, Info, MoveRight, TriangleAlert } from 'lucide-react';
 import MODAL_TYPE from '../../constants/modalTypes';
-import AddField from '../Form/Dean/AddField';
+import AddField from '../Form/AddField';
 import ProgramToBeAccreditedBaseModal from '../Modals/accreditation/ProgramToBeAccreditedBaseModal';
 import Popover from '../Popover';
 import useAccreditationLevel from '../../hooks/fetch-react-query/useAccreditationLevel';
-import useAccreditationPeriod from '../../hooks/fetch-react-query/useAccreditationPeriod';
 import { useState } from 'react';
 import usePrograms from '../../hooks/fetch-react-query/usePrograms';
 import ConfirmationModal from '../Modals/ConfirmationModal';
@@ -16,14 +15,14 @@ const ProgramToBeAccreditedModal = ({
   formValue,
   programs,
   programInput,
+  isAllDuplicates,
   duplicateValues,
   disableButton,
   handlers,
   modalData
 }) => {
-  // Here we store the value of the selected period in the dropdown
-  const [ periodStartValue, setPeriodStartValue] = useState(null); 
-  const [ periodEndValue, setPeriodEndValue ] = useState(null);
+  // Here we store the value of the selected year in the dropdown
+  const [ accredYear, setAccredYear] = useState(null); 
 
   const { levels, loading: levelLoading, error: errorLoading } = useAccreditationLevel();
   const data = levels?.data ?? []; // Fallback to [] if levels.data is null or undefined
@@ -42,13 +41,11 @@ const ProgramToBeAccreditedModal = ({
     handleAddProgramValue,
     handleRemoveProgramValue,
     handleProgramChange,
-    handleInfoHover,
   } = handlers;
 
   const handleClose = () => {
     handleCloseClick({ isFromMain: true });
-    setPeriodStartValue(null);
-    setPeriodEndValue(null);
+    setAccredYear(null);
     handleProgramChange({ target: { name: 'programInput', value: '' } }); // Reset textarea
   };
 
@@ -66,38 +63,50 @@ const ProgramToBeAccreditedModal = ({
             disabled={disableButton?.({ isFromMain: true })}
             headerContent={
               <p className='ml-5 text-xl font-semibold text-slate-900'>
-                Create New Period, Level, and Program
+                Add New Accreditation
               </p>
             }
             bodyContent={
-              <div className='relative w-[90%]'>
-                <p className='text-center text-lg text-slate-800'>
-                  Accreditation Period
-                </p>
+              <div className='relative w-full px-8'>
                 <div className='flex flex-row items-center gap-x-2'>
                   <AddField
-                    ref={ref}
-                    fieldName='Start Date'
-                    placeholder='Enter or select date...'
+                    ref={ref} 
+                    fieldName='Title'
+                    placeholder={'Enter new title...'}
+                    type='text'
+                    name='title'
+                    formValue={formValue?.title}
+                    isDropdown={false}
+                    onChange={handleInputChange}
+                    showDropdownOnFocus={false}
+                    isDuplicate={isAllDuplicates}
+                    // dropdownItems={null}
+                    // onDropdownMenuClick={handleOptionSelection}
+                  />
+                  <AddField
+                    fieldName='Year'
+                    placeholder='Enter or year...'
                     type='date'
-                    name='startDate'
-                    formValue={formValue.startDate || periodStartValue}
+                    name='year'
+                    formValue={formValue.year ? new Date(formValue.year, 0, 1) : null}
                     minDate={new Date()}
                     onChange={handleInputChange}
-                  />
-                  <p className='text-gray-500'>&ndash;</p>
-                  <AddField 
-                    fieldName='End Date'
-                    placeholder='Enter or select date...'
-                    type='date'
-                    name='endDate'
-                    formValue={formValue.endDate || periodEndValue}
-                    datePickerDisabled={!formValue.startDate}
-                    minDate={formValue.startDate}
-                    onChange={handleInputChange}
+                    isDuplicate={isAllDuplicates}
                   />
                 </div>
-                <hr className='w-[60%] mx-auto text-slate-300'></hr>
+                <AddField 
+                  fieldName='Accrediting Agency'
+                  placeholder={'Enter accrediting agency...'}
+                  type='text'
+                  name='accreditationBody'
+                  formValue={formValue?.accreditationBody}
+                  isDropdown={false}
+                  onChange={handleInputChange}
+                  showDropdownOnFocus={false}
+                  isDuplicate={isAllDuplicates}
+                  // dropdownItems={levelsArray}
+                  // onDropdownMenuClick={handleOptionSelection}
+                />
                 <AddField 
                   fieldName='Level'
                   placeholder={levelsArray.length > 0 
@@ -111,7 +120,9 @@ const ProgramToBeAccreditedModal = ({
                   onChange={handleInputChange}
                   showDropdownOnFocus={true}
                   dropdownItems={levelsArray}
+                  isReadOnly
                   onDropdownMenuClick={handleOptionSelection}
+                  isDuplicate={isAllDuplicates}
                 />
                 <div className='relative'>
                   <AddField 
@@ -133,6 +144,7 @@ const ProgramToBeAccreditedModal = ({
                     onAddValue={(val) => handleAddProgramValue(val)}
                     onRemoveValue={(index) => handleRemoveProgramValue(index)}
                     onChange={(e) => handleProgramChange(e)}
+                    isDuplicate={isAllDuplicates}
                   />
                 </div>
               </div>
@@ -149,9 +161,11 @@ const ProgramToBeAccreditedModal = ({
             onSave={() => handleSave({
               isFromCard: true,
               data: {
-                startDate: modalData.startDate,
-                endDate: modalData.endDate,
-                level: modalData.level
+                title: modalData?.title,
+                year: modalData?.year,
+                accredBody: modalData?.accreditationBody,
+                level: modalData?.level,
+                programNames: programs
               }
             })}
             primaryButton={programs.length > 1 ? 'Add Programs' : 'Add Program'}
@@ -160,7 +174,7 @@ const ProgramToBeAccreditedModal = ({
             headerContent={
               <div className='flex items-center justify-center relative gap-x-2'>
                 <p className='ml-5 text-xl font-semibold text-slate-800'>
-                  Add Program to {modalData.level}
+                  Add Programs to {modalData.level}
                 </p>
                 {<CircleQuestionMark 
                   onMouseEnter={null}
@@ -196,6 +210,75 @@ const ProgramToBeAccreditedModal = ({
             }
           />
         );
+
+      case MODAL_TYPE.ADD_LEVEL_PROGRAM:
+       return (
+        <ProgramToBeAccreditedBaseModal
+          mode='add'
+          modalData={modalData}
+          onClose={() => handleClose({ isFromHeader: true })}
+          onCancel={() => handleClose({ isFromHeader: true })}
+          onSave={() => handleSave({ 
+            isFromHeader: true,
+            data: {
+              title: modalData?.title,
+              year: modalData?.year,
+              accredBody: modalData?.accreditationBody
+            }
+          })}
+          primaryButton='Add'
+          secondaryButton='Cancel'
+          disabled={disableButton?.({ isFromHeader: true })}
+          headerContent={
+            <p className='ml-5 text-xl font-semibold text-slate-900'>
+              Add Level and Programs
+            </p>
+          }
+          bodyContent={
+            <div className='relative w-full px-8'>
+              <AddField 
+                ref={ref}
+                fieldName='Level'
+                placeholder={levelsArray.length > 0 
+                  ? 'Enter new level or select from below...'
+                  : 'Enter new level...'
+                }
+                type='text'
+                name='level'
+                formValue={formValue.level}
+                isDropdown={levelsArray.length > 0}
+                onChange={handleInputChange}
+                showDropdownOnFocus={true}
+                dropdownItems={levelsArray}
+                isReadOnly
+                onDropdownMenuClick={handleOptionSelection}
+              />
+              <div className='relative'>
+                <AddField 
+                  fieldName={programs.length > 1 ? 'Programs' : 'Program'}
+                  placeholder={programs.length < programsArray.length && programsArray.length > 0 
+                    ? 'Enter new program or select from below...'
+                    : 'Enter new program...'
+                  }
+                  type='textarea'
+                  name='programInput'
+                  formValue={programInput}
+                  multiValue={true}
+                  multiValues={programs}
+                  dropdownItems={programsArray}
+                  duplicateValues={duplicateValues}
+                  showDropdownOnFocus={true}
+                  isDropdown={programsArray.length > 0 && !programs.length}
+                  onDropdownMenuClick={handleOptionSelection}
+                  onAddValue={(val) => handleAddProgramValue(val)}
+                  onRemoveValue={(index) => handleRemoveProgramValue(index)}
+                  onChange={(e) => handleProgramChange(e)}
+                />
+              </div>
+            </div>
+          }
+        />
+      );
 
       case MODAL_TYPE.DELETE_PROGRAM_TO_BE_ACCREDITED:
         return (
