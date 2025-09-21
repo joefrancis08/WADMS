@@ -10,11 +10,14 @@ export const useProgramToBeAccreditedDetails = (accredInfoUUID, programUUID) => 
 
   return useMemo(() => {
     const programObj = accredILPData.find(p => p.accred_uuid === accredInfoUUID && p.program_uuid === programUUID);
-
+    console.log(programObj?.level_id);
     return {
+      accredInfoId: programObj?.accreditationInfo?.id ?? '',
       title: programObj?.accred_title,
       year: programObj?.accred_year,
       accredBody: programObj?.accred_body_name,
+      levelId: programObj?.level_id,
+      programId: programObj?.program?.id,
       program: programObj?.program?.program ?? '',
       programObj
     };
@@ -37,9 +40,11 @@ export const useProgramAreaDetails = ({ title, year, accredBody, level, program,
 
   return useMemo(() => {
     const areaObj = data.find(a => a.area_uuid === areaUUID) ?? null;
+    console.log(areaObj?.area_id);
 
     return {
-      area: areaObj ? areaObj.area : '',
+      areaId: areaObj ? areaObj?.area_id : '',
+      area: areaObj ? areaObj?.area : '',
       areaObj
     }
   }, [data, areaUUID]);
@@ -69,9 +74,11 @@ export const useAreaParamsDetails = ({
 
   return useMemo(() => {
     const paramObj = data.find(p => p.parameter_uuid === parameterUUID) ?? null;
+    console.log(paramObj?.parameter_id);
 
     return {
-      paramName: paramObj ? paramObj.parameter : '',
+      paramId: paramObj ? paramObj?.parameter_id : '',
+      paramName: paramObj ? paramObj?.parameter : '',
       paramObj
     }
   }, [data, parameterUUID]);
@@ -100,12 +107,14 @@ export const useParamSubparamDetails = ({
   );
 
   const data = useMemo(() => subParameters?.data ?? [], [subParameters?.data]);
+  
 
   return useMemo(() => {
     const subParamObj = data.find(sp => sp.sub_parameter_uuid === subParameterUUID) ?? null;
-
+    console.log(subParamObj?.sub_parameter_id);
     return {
-      subParam: subParamObj ? subParamObj.sub_parameter : '',
+      subParamId: subParamObj ? subParamObj?.sub_parameter_id : '',
+      subParam: subParamObj ? subParamObj?.sub_parameter : '',
       subParamObj
     }
   }, [data, subParameterUUID]);

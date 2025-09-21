@@ -3,21 +3,35 @@ import uuidBase64 from "../../../../utils/shortUUID.js";
 
 const insertDocument = async (data = {}, connection = null) => {
   const documentUUID = uuidBase64();
-  const { pamId, apmId, pspmId, simId, uploadBy, filePath, fileName } = data;
+  const { 
+    fileName, 
+    filePath, 
+    uploadBy,
+    accredInfoId,
+    levelId,
+    programId,
+    areaId,
+    parameterId,
+    subParameterId,
+    indicatorId,
+  } = data;
 
   const query = `
-    INSERT INTO accreditation_document (
+    INSERT INTO accreditation_documents (
       uuid, 
       file_name,
       file_path,
       upload_by,
       upload_at,
-      program_area_mapping_id, 
-      area_parameter_mapping_id, 
-      param_subparam_mapping_id, 
-      subparam_indicator_mapping_id 
+      accred_info_id,
+      level_id,
+      program_id,
+      area_id,
+      parameter_id,
+      subparameter_id,
+      indicator_id
     )
-    VALUES (?, ?, ?, ?, NOW(), ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?)
   `;
 
   try {
@@ -27,10 +41,13 @@ const insertDocument = async (data = {}, connection = null) => {
       fileName,
       filePath, 
       uploadBy,
-      pamId, 
-      apmId, 
-      pspmId, 
-      simId, 
+      accredInfoId,
+      levelId,
+      programId,
+      areaId,
+      parameterId,
+      subParameterId,
+      indicatorId
     ]);
 
     return {

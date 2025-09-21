@@ -81,6 +81,14 @@ export const addIndicators = ({
   });
 };
 
+export const addDocument = async (formData) => {
+  return axios.post(`${API_BASE_URL}/accreditation/add-document`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};
+
 export const fetchILP = (controller) => {
   return axios.get(`${API_BASE_URL}/accreditation/fetch-info-level-programs`, {
     signal: controller.signal
@@ -183,6 +191,67 @@ export const fetchSubparamIndicators = ({
   });
 };
 
+export const fetchDocuments = (data = {}, controller) => {
+  const {
+    title,
+    year,
+    accredBody,
+    level,
+    program,
+    area,
+    parameter,
+    subParameter,
+    indicator
+  } = data;
+
+  return axios.get(`${API_BASE_URL}/accreditation/fetch-documents`, {
+    params: {
+      title,
+      year,
+      accredBody,
+      level,
+      program,
+      area,
+      parameter,
+      subParameter,
+      indicator
+    },
+    signal: controller.signal
+  });
+}
+
+export const fetchDocumentsDynamically = async (data = {}) => {
+  const {
+    accredInfoId,
+    levelId,        // must be numeric id, not string name
+    programId,
+    areaId,
+    parameterId,
+    subParameterId, // pass subParameterId from API response
+    indicatorId
+  } = data;
+
+  return axios.get(`${API_BASE_URL}/accreditation/fetch-documents`, {
+    params: {
+      accredInfoId,
+      levelId,
+      programId,
+      areaId,
+      parameterId,
+      subParameterId,
+      indicatorId
+    }
+  }).then(res => res.data); // React Query expects the resolved data
+};
+
+export const updateDocName = (docId, newFileName) => {
+  return axios.patch(`${API_BASE_URL}/accreditation/rename-document/${docId}`, {
+    newFileName
+  }, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+};
+
 export const deleteProgramToBeAccredited = (startDate, endDate, levelName, programName) => {
   return axios.delete(`${API_BASE_URL}/accreditation/delete-programs-to-be-accredited`, {
     params: {
@@ -224,6 +293,14 @@ export const deletePAM = ({
       level,
       program,
       area
+    }
+  });
+};
+
+export const deleteDoc = (docId) => {
+  return axios.delete(`${API_BASE_URL}/accreditation/delete-document`, {
+    params: {
+      docId
     }
   });
 };

@@ -2,7 +2,7 @@ import db from "../../../../config/db.js";
 
 const getLevel = async (connection = null) => {
   const query = `
-    SELECT level_name AS level 
+    SELECT id, level_name AS level 
     FROM accreditation_level  
     ORDER BY id ASC
   `;

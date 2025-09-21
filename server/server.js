@@ -18,6 +18,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const PROFILE_PIC_PATH = process.env.PROFILE_PIC_PATH;
+const DOCUMENT_PATH = process.env.ACCREDITATION_DOCUMENT_PATH;
 
 // Create the instance of express application which serves as the backbone of the server
 const app = express();
@@ -43,6 +44,9 @@ setupWebSocket(server);
 
 // Serve profile pictures
 app.use('/uploads', express.static(path.join(PROFILE_PIC_PATH)));
+
+// Serve accreditation documents
+app.use('/uploads/accreditation-documents', express.static(path.join(DOCUMENT_PATH)));
 
 // Catch-all route to serve React index.html
 app.get(/^\/(?!users|programs|accreditation).*/, (req, res) => {

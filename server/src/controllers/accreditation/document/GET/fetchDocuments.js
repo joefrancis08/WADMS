@@ -1,89 +1,85 @@
-import getAreaDocument from "../../../../models/accreditation/documents/GET/getAreaDocument.js";
-import getIndicatorDocument from "../../../../models/accreditation/documents/GET/getIndicatorDocument.js";
-import getParameterDocument from "../../../../models/accreditation/documents/GET/getParameterDocument.js";
-import getSubParamDocument from "../../../../models/accreditation/documents/GET/getSubParamDocument.js";
+import getAreaDocuments from "../../../../models/accreditation/documents/GET/getAreaDocuments.js";
+import getParameterDocuments from "../../../../models/accreditation/documents/GET/getParameterDocuments.js";
+import getSubParamDocuments from "../../../../models/accreditation/documents/GET/getSubParamDocuments.js";
+import getIndicatorDocuments from "../../../../models/accreditation/documents/GET/getIndicatorDocuments.js";
 
 const fetchDocuments = async (req, res) => {
-  const { title, year, accredBody, level, program, area, parameter = null, subParameter = null, indicator = null } = req.query;
+  const { 
+    accredInfoId, 
+    levelId, 
+    programId, 
+    areaId, 
+    parameterId = null, 
+    subParameterId = null, 
+    indicatorId = null 
+  } = req.query;
 
-  if (!title || !year || !accredBody || !level || !program || !area) {
-    return res.status(400).json({
-      success: false,
-      message: 'Missing required query parameters.'
-    });
+  console.log({
+    accredInfoId, 
+    levelId, 
+    programId, 
+    areaId, 
+    parameterId, 
+    subParameterId, 
+    indicatorId
+  });
+
+  // Required for all cases
+  if (!accredInfoId || !levelId || !programId || !areaId) {
+    return res.status(400).json({ success: false, message: "Missing required IDs." });
   }
 
   try {
     let data;
-    if (!parameter && !subParameter && !indicator) {
-      // Fetch documents by Area only
-      const documents = await getAreaDocument({
-        title,
-        year,
-        accredBody,
-        level,
-        program,
-        area
-      });
-      data = documents;
 
-    } else if (parameter && !subParameter && !indicator) {
-      // Fetch documents by Parameter
-      const documents = await getParameterDocument({
-        title,
-        year,
-        accredBody,
-        level,
-        program,
-        area,
-        parameter
+    // CASE 1: Area only
+    if (!parameterId && !subParameterId && !indicatorId) {
+      data = await getAreaDocuments({
+        accredInfoId,
+        levelId,
+        programId,
+        areaId
       });
-      data = documents;
-
-    } else if (parameter && subParameter && !indicator) {
-      // Fetch documents by Sub-Parameter
-      const documents = await getSubParamDocument({
-        title,
-        year,
-        accredBody,
-        level,
-        program,
-        area,
-        parameter,
-        subParameter
+    } 
+    // CASE 2: Parameter
+    else if (parameterId && !subParameterId && !indicatorId) {
+      data = await getParameterDocuments({
+        accredInfoId,
+        levelId,
+        programId,
+        areaId,
+        parameterId
       });
-      data = documents;
-    
-    } else if (parameter && subParameter && indicator) {
-      // Fetch documents by Indicator
-      const documents = await getIndicatorDocument({
-        title,
-        year,
-        accredBody,
-        level,
-        program,
-        area,
-        parameter,
-        subParameter,
-        indicator
+    } 
+    // CASE 3: Sub-Parameter
+    else if (parameterId && subParameterId && !indicatorId) {
+      data = await getSubParamDocuments({
+        accredInfoId,
+        levelId,
+        programId,
+        areaId,
+        parameterId,
+        subParameterId
       });
-
-      data = documents;
+    } 
+    // CASE 4: Indicator
+    else if (parameterId && subParameterId && indicatorId) {
+      data = await getIndicatorDocuments({
+        accredInfoId,
+        levelId,
+        programId,
+        areaId,
+        parameterId,
+        subParameterId,
+        indicatorId
+      });
     }
 
-    res.status(200).json({
-      success: true,
-      data
-    });
-
+    res.status(200).json({ success: true, data });
   } catch (error) {
-    console.error('Controller has error in fetching documents:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Failed to fetch documents.'
-    });
+    console.error("Controller has error in fetching documents:", error);
+    res.status(500).json({ success: false, message: "Failed to fetch documents." });
   }
 };
-
 
 export default fetchDocuments;

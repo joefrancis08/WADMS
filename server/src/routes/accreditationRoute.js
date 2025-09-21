@@ -9,7 +9,7 @@ import { addAccredInfoController } from '../models/accreditation/accreditation-i
 import { addILPController, fetchILPController } from '../controllers/accreditation/info-level-program-mapping/ILPController.js';
 import { addSIMController, fetchSIMController } from '../controllers/accreditation/subparam-indicator-mapping/SIMController.js';
 import fetchAreasBy from '../controllers/accreditation/areas/GET/fetchAreasBy.js';
-import { addDocumentController, fetchDocumentController } from '../controllers/accreditation/document/documentController.js';
+import { addDocumentController, deleteDocController, fetchDocumentsController, updateDocController } from '../controllers/accreditation/document/documentController.js';
 import { upload } from '../middlewares/uploadFile.js';
 
 const accreditationRouter = express.Router();
@@ -31,10 +31,13 @@ accreditationRouter.get('/fetch-program-areas-by', fetchAreasBy);
 accreditationRouter.get('/fetch-area-parameters', fetchAreaParameterController);
 accreditationRouter.get('/fetch-parameter-subparameters', fetchParamSubParamController);
 accreditationRouter.get('/fetch-subparameter-indicators', fetchSIMController);
-accreditationRouter.get('/fetch-documents', fetchDocumentController);
+accreditationRouter.get('/fetch-documents', fetchDocumentsController);
+
+accreditationRouter.patch('/rename-document/:docId', updateDocController);
 
 accreditationRouter.delete('/delete-accreditation-period', deletePeriodController);
 accreditationRouter.delete('/delete-programs-to-be-accredited', deleteProgramToBeAccreditedController);
 accreditationRouter.delete('/delete-program-area', deletePAMController);
+accreditationRouter.delete('/delete-document', deleteDocController);
 
 export default accreditationRouter;

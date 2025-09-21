@@ -3,7 +3,6 @@ import db from "../../../../config/db.js";
 const getParamSubparamMappings = async ({ title, year, accredBody, level, program, area, parameter, connection = null }) => {
   const query = `
     SELECT
-      pspm.id,
       ai.title               AS accred_title,
       ai.year                AS accred_year,
       ab.name                AS accred_body_name,
@@ -11,6 +10,7 @@ const getParamSubparamMappings = async ({ title, year, accredBody, level, progra
       pr.program_name        AS program,
       a.area_name            AS area,
       pa.parameter_name      AS parameter,
+      spa.id                 AS sub_parameter_id,
       spa.uuid               AS sub_parameter_uuid,
       spa.sub_parameter_name AS sub_parameter
     FROM parameter_subparameter_mapping pspm

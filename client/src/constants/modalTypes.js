@@ -21,7 +21,9 @@ const MODAL_TYPES = {
 
   ADD_SUBPARAMETERS: 'add-subparameters',
 
-  ADD_INDICATORS: 'add-indicators'
+  ADD_INDICATORS: 'add-indicators',
+
+  DELETE_DOC: 'delete-document'
 };
 
 export default MODAL_TYPES;

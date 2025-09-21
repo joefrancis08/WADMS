@@ -9,6 +9,7 @@ const getProgramAreaMapping = async ({ title, year, accredBody, level, program, 
       ab.name          AS accred_body,
       al.level_name    AS level,
       p.program_name   AS program,
+      a.id             AS area_id,
       a.uuid           AS area_uuid,
       a.area_name      AS area
     FROM program_area_mapping pam
