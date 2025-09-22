@@ -4,7 +4,7 @@ import ContentHeader from '../../components/Dean/ContentHeader';
 import { ChevronRight, EllipsisVertical, File, FileStack, Plus } from 'lucide-react';
 import useSubparamIndicators from '../../hooks/Dean/useSubparamIndicators';
 import PATH from '../../constants/path';
-import IndicatorModal from '../../components/Dean/IndicatorModal';
+import IndicatorModal from '../../components/Dean/Accreditation/Indicator/IndicatorModal';
 
 const { 
   PROGRAMS_TO_BE_ACCREDITED,

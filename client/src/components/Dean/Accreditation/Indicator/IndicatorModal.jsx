@@ -1,7 +1,7 @@
 import React from 'react';
-import MODAL_TYPE from '../../constants/modalTypes';
-import IndicatorBaseModal from '../Modals/accreditation/IndicatorBaseModal';
-import AddField from '../Form/AddField';
+import MODAL_TYPE from '../../../../constants/modalTypes';
+import IndicatorBaseModal from '../../../Modals/accreditation/IndicatorBaseModal';
+import AddField from '../../../Form/AddField';
 
 const IndicatorModal = ({ refs, datas, handlers }) => {
   const { indicatorInputRef } = refs;

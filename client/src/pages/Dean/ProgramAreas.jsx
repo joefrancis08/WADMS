@@ -1,9 +1,8 @@
 import DeanLayout from '../../components/Layout/Dean/DeanLayout';
-import ContentHeader from '../../components/Dean/ContentHeader';
 import { ChevronRight, EllipsisVertical, FileUser, FolderOpen, FolderPen, Folders, Plus, Trash2, Upload } from 'lucide-react';
 import PATH from '../../constants/path';
 import useProgramAreas from '../../hooks/Dean/useProgramAreas';
-import AreaModal from '../../components/Dean/AreaModal';
+import AreaModal from '../../components/Dean/Accreditation/Area/AreaModal';
 import Dropdown from '../../components/Dropdown/Dropdown';
 import React from 'react';
 

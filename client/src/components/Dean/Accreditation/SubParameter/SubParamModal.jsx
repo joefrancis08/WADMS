@@ -1,8 +1,8 @@
 import React from 'react';
-import MODAL_TYPE from '../../constants/modalTypes';
-import SubParameterBaseModal from '../Modals/accreditation/SubParameterBaseModal';
-import AddField from '../Form/AddField';
-import ConfirmationModal from '../Modals/ConfirmationModal';
+import MODAL_TYPE from '../../../../constants/modalTypes';
+import SubParameterBaseModal from '../../../Modals/accreditation/SubParameterBaseModal';
+import AddField from '../../../Form/AddField';
+import ConfirmationModal from '../../../Modals/ConfirmationModal';
 import { File, FileText, Trash2 } from 'lucide-react';
 
 const SubParamModal = ({ refs, modalType, datas, handlers }) => {

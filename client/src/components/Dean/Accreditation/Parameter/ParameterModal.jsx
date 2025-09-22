@@ -1,7 +1,7 @@
 import React from 'react';
-import MODAL_TYPE from '../../constants/modalTypes';
-import ParameterBaseModal from '../Modals/accreditation/ParameterBaseModal';
-import AddField from '../Form/AddField';
+import MODAL_TYPE from '../../../../constants/modalTypes';
+import ParameterBaseModal from '../../../Modals/accreditation/ParameterBaseModal';
+import AddField from '../../../Form/AddField';
 
 const ParameterModal = ({ refs, modalType, datas, inputs, handlers }) => {
   const { parameterInputRef } = refs;

@@ -14,6 +14,7 @@ import { useRef } from "react";
 import { messageHandler } from "../../services/websocket/messageHandler";
 import { useMemo } from "react";
 import useOutsideClick from "../useOutsideClick";
+import { useDocumentsQueries } from "../fetch-react-query/useDocumentsQueries";
 
 const { SUBPARAMETER_ADDITION } = TOAST_MESSAGES;
 const { SUBPARAM_INDICATORS } = PATH.DEAN;
@@ -71,43 +72,25 @@ const useParamSubparam = () => {
   const subParameter = subParamsData.map((sp) => sp.sub_parameter_id);
   console.log(subParameter);
 
-  // useQueries allows fetching multiple queries in parallel.
-  // Here we fetch documents for all sub-parameters dynamically on mount.
-  const documentsQueries = useQueries({
-    queries: subParamsData.map(sp => ({
-      queryKey: [
-        'subparam-documents',
-        sp.sub_parameter_id,           // use subParameterId for caching
-        accredInfoId,
-        levelId,            // careful: make sure this is the numeric levelId (not just "Preliminary")
-        programId,
-        areaId,
-        paramId
-      ],
-      queryFn: () => fetchDocumentsDynamically({
-        accredInfoId,
-        levelId,        // must be numeric id, not string name
-        programId,
-        areaId,
-        parameterId: paramId,
-        subParameterId: sp.sub_parameter_id, // pass subParameterId from API response
-        indicatorId: null
-      }),
-      staleTime: 0 // 5 minutes cache
-    }))
-  });
+  const subParamDocs = useDocumentsQueries(
+    subParamsData,
+    { accredInfoId, levelId, areaId, programId, paramId },
+    fetchDocumentsDynamically,
+    'sub_parameter_id',
+    'subparam'
+  );
 
   const documentsBySubParam = {};
-  documentsQueries.forEach((q, i) => {
+  subParamDocs.forEach((q, i) => {
     const documents = q.data?.data?.documents ?? [];
     documentsBySubParam[subParamsData[i]?.sub_parameter_id] = Array.isArray(documents) ? documents : [];
   });
 
   // Check if any of the document queries are still loading
-  const loadingDocs = documentsQueries.some(q => q.isLoading);
+  const loadingDocs = subParamDocs.some(q => q.isLoading);
 
   // Check if any of the document queries encountered an error
-  const errorDocs = documentsQueries.some(q => q.isError);
+  const errorDocs = subParamDocs.some(q => q.isError);
 
   const [modalType, setModalType] = useState(null);
   const [modalData, setModalData] = useState(null); 
@@ -348,7 +331,7 @@ const useParamSubparam = () => {
 
     if (!subParamId) return;
 
-    // Optimistic UI update: replace the file name immediately
+    // UI update: replace the file name immediately
     const previousDocs = documentsBySubParam[subParamId] || [];
     const updatedDocs = previousDocs.map(doc => 
       doc.doc_id === docId ? { ...doc, file_name: renameInput } : doc

@@ -5,8 +5,8 @@ import DeanLayout from '../../components/Layout/Dean/DeanLayout';
 import { useTaskForce } from '../../hooks/Dean/useTaskForce';
 import VerifiedUserSkeletonLoader from '../../components/Loaders/VerifiedUserSkeletonLoader';
 import getProfilePicPath from '../../utils/getProfilePicPath';
-import TaskForceCard from '../../components/Dean/TaskForceCard';
-import TaskForceModal from '../../components/Dean/TaskForceModal';
+import TaskForceCard from '../../components/Dean/TaskForce/TaskForceCard';
+import TaskForceModal from '../../components/Dean/TaskForce/TaskForceModal';
 import ContentHeader from '../../components/Dean/ContentHeader';
 
 const TaskForce = () => {

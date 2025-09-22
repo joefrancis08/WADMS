@@ -1,13 +1,13 @@
 import { CircleQuestionMark, Info, MoveRight, TriangleAlert } from 'lucide-react';
-import MODAL_TYPE from '../../constants/modalTypes';
-import AddField from '../Form/AddField';
-import ProgramToBeAccreditedBaseModal from '../Modals/accreditation/ProgramToBeAccreditedBaseModal';
-import Popover from '../Popover';
-import useAccreditationLevel from '../../hooks/fetch-react-query/useAccreditationLevel';
+import MODAL_TYPE from '../../../../constants/modalTypes';
+import AddField from '../../../Form/AddField';
+import ProgramToBeAccreditedBaseModal from '../../../Modals/accreditation/ProgramToBeAccreditedBaseModal';
+import Popover from '../../../Popover';
+import useAccreditationLevel from '../../../../hooks/fetch-react-query/useAccreditationLevel';
 import { useState } from 'react';
-import usePrograms from '../../hooks/fetch-react-query/usePrograms';
-import ConfirmationModal from '../Modals/ConfirmationModal';
-import formatAccreditationPeriod from '../../utils/formatAccreditationPeriod';
+import usePrograms from '../../../../hooks/fetch-react-query/usePrograms';
+import ConfirmationModal from '../../../Modals/ConfirmationModal';
+import formatAccreditationPeriod from '../../../../utils/formatAccreditationPeriod';
 
 const ProgramToBeAccreditedModal = ({
   ref,

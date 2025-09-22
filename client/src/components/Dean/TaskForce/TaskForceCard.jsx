@@ -1,6 +1,6 @@
-import { CirclePlus, EllipsisVertical, FileUser, FolderTree, Link, Plus, SquareUserRound, Trash2, UserRoundPen, View } from 'lucide-react';
-import Dropdown from '../Dropdown/Dropdown';
-import ProfilePicture from '../ProfilePicture';
+import { EllipsisVertical, FileUser, FolderTree, Link, Plus, Trash2, UserRoundPen } from 'lucide-react';
+import Dropdown from '../../Dropdown/Dropdown';
+import ProfilePicture from '../../ProfilePicture';
 import React from 'react';
 
 const TaskForceCard = ({ 

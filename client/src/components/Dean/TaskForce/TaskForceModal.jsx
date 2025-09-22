@@ -1,14 +1,14 @@
-import MODAL_TYPE from '../../constants/modalTypes';
+import MODAL_TYPE from '../../../constants/modalTypes';
 import { CircleQuestionMark, Trash2 } from 'lucide-react';
-import ImageUpload from '../Form/Upload/ImageUpload';
-import AddUserModal from '../Modals/user/AddUserModal';
-import UpdateUserModal from '../Modals/user/UpdateUserModal';
-import UpdateField from '../Form/UpdateField';
-import ConfirmationModal from '../Modals/ConfirmationModal';
-import AddField from '../Form/AddField';
-import { emailRegex } from '../../utils/regEx';
-import Tooltip from '../Popover';
-import Popover from '../Popover';
+import ImageUpload from '../../Form/Upload/ImageUpload';
+import AddUserModal from '../../Modals/user/AddUserModal';
+import UpdateUserModal from '../../Modals/user/UpdateUserModal';
+import UpdateField from '../../Form/UpdateField';
+import ConfirmationModal from '../../Modals/ConfirmationModal';
+import AddField from '../../Form/AddField';
+import { emailRegex } from '../../../utils/regEx';
+import Tooltip from '../../Popover';
+import Popover from '../../Popover';
 
 const TaskForceModal = ({
   loading,

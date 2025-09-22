@@ -7,7 +7,7 @@ import useTaskForceDetail from '../../hooks/Dean/useTaskForceDetail';
 import { useTaskForce } from '../../hooks/Dean/useTaskForce';
 import ProfilePicture from '../../components/ProfilePicture';
 import getProfilePicPath from '../../utils/getProfilePicPath';
-import TaskForceModal from '../../components/Dean/TaskForceModal';
+import TaskForceModal from '../../components/Dean/TaskForce/TaskForceModal';
 
 const TaskForceDetail = () => {
   

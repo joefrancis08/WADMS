@@ -3,7 +3,7 @@ import DeanLayout from '../../components/Layout/Dean/DeanLayout';
 import { Archive, CalendarArrowUp, ClipboardPlus, EllipsisVertical, Folders, NotebookPen, NotepadText, Plus, Scroll } from 'lucide-react';
 import ContentHeader from '../../components/Dean/ContentHeader';
 import { useProgramsToBeAccredited } from '../../hooks/Dean/useProgramsToBeAccredited';
-import ProgramToBeAccreditedModal from '../../components/Dean/ProgramToBeAccreditedModal';
+import ProgramToBeAccreditedModal from '../../components/Dean/Accreditation/Programs/ProgramToBeAccreditedModal';
 import ProgramsToBeAccreditedSL from '../../components/Loaders/ProgramsToBeAccreditedSL';
 import Dropdown from '../../components/Dropdown/Dropdown';
 import MODAL_TYPE from '../../constants/modalTypes';

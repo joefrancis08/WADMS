@@ -3,7 +3,7 @@ import { ChevronRight, EllipsisVertical, Folder, Plus } from 'lucide-react';
 import PATH from '../../constants/path';
 import formatAreaName from '../../utils/formatAreaName';
 import useAreaParameters from '../../hooks/Dean/useAreaParameters';
-import ParameterModal from '../../components/Dean/ParameterModal';
+import ParameterModal from '../../components/Dean/Accreditation/Parameter/ParameterModal';
 import formatParameter from '../../utils/formatParameter';
 
 const { PROGRAMS_TO_BE_ACCREDITED, PROGRAM_AREAS, PARAM_SUBPARAMS } = PATH.DEAN;

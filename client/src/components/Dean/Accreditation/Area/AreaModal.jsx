@@ -1,8 +1,8 @@
 import React from 'react';
-import MODAL_TYPE from '../../constants/modalTypes';
-import AreaBaseModal from '../Modals/accreditation/AreaBaseModal';
-import AddField from '../Form/AddField';
-import ConfirmationModal from '../Modals/ConfirmationModal';
+import MODAL_TYPE from '../../../../constants/modalTypes';
+import AreaBaseModal from '../../../Modals/accreditation/AreaBaseModal';
+import AddField from '../../../Form/AddField';
+import ConfirmationModal from '../../../Modals/ConfirmationModal';
 import { TriangleAlert } from 'lucide-react';
 
 const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
