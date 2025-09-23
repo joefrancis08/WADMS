@@ -5,7 +5,7 @@ import { USER_ROLES, USER_STATUS } from '../constants/user';
 import PATH from '../constants/path';
 import LoadSpinner from '../components/Loaders/LoadSpinner';
 
-const { EMAIL_CONFIRMATION, NOT_FOUND_URL } = PATH.PUBLIC;
+const { EMAIL_CONFIRMATION, NOT_FOUND_URL, REGISTER } = PATH.PUBLIC;
 const { UNVERIFIED_USER } = USER_ROLES;
 const { PENDING } = USER_STATUS;
 
@@ -20,7 +20,7 @@ const LandingRedirect = () => {
     if (!user) {
       navigate(EMAIL_CONFIRMATION);
     } else {
-      navigate(NOT_FOUND_URL);
+      navigate(REGISTER);
     }
   }
 }, [user, isLoading, navigate]);

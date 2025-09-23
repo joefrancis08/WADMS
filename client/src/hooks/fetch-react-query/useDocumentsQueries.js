@@ -22,14 +22,16 @@ export function useDocumentsQueries(items, ids, fetchFn, idKey, entityType) {
         ids.programId,
         ids.areaId,
         ids.paramId,
+        ids.subParamId,
+        ids.indicatorId
       ],
       queryFn: () =>
         fetchFn({
           ...ids,
           areaId: entityType === 'area' ? item[idKey] : ids.areaId,
           parameterId: entityType === 'param' ? item[idKey] : ids.paramId,
-          subParameterId: entityType === 'subparam' ? item[idKey] : null,
-          indicatorId: entityType === 'indicator' ? item[idKey] : null,
+          subParameterId: entityType === 'subparam' ? item[idKey] : ids.subParamId,
+          indicatorId: entityType === 'indicator' ? item[idKey] : ids.indicatorId,
         }),
       staleTime: 0,
     })),

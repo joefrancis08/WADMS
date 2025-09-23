@@ -223,11 +223,11 @@ export const fetchDocuments = (data = {}, controller) => {
 export const fetchDocumentsDynamically = async (data = {}) => {
   const {
     accredInfoId,
-    levelId,        // must be numeric id, not string name
+    levelId,      
     programId,
     areaId,
     parameterId,
-    subParameterId, // pass subParameterId from API response
+    subParameterId,
     indicatorId
   } = data;
 

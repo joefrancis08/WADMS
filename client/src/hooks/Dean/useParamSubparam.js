@@ -70,7 +70,6 @@ const useParamSubparam = () => {
 
   const subParamsData = useMemo(() => subParameters?.data ?? [], [subParameters?.data]) ;
   const subParameter = subParamsData.map((sp) => sp.sub_parameter_id);
-  console.log(subParameter);
 
   const subParamDocs = useDocumentsQueries(
     subParamsData,
@@ -85,6 +84,8 @@ const useParamSubparam = () => {
     const documents = q.data?.data?.documents ?? [];
     documentsBySubParam[subParamsData[i]?.sub_parameter_id] = Array.isArray(documents) ? documents : [];
   });
+
+  console.log(documentsBySubParam);
 
   // Check if any of the document queries are still loading
   const loadingDocs = subParamDocs.some(q => q.isLoading);

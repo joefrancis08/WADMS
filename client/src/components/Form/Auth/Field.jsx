@@ -3,7 +3,7 @@ import ValidationMessage from '../../Auth/ValidationMessage';
 import { Eye, EyeOff } from 'lucide-react';
 
 const FieldComponent = ({
-
+  autoFocus = false,
   icon,
   type = 'text',
   name,
@@ -24,6 +24,7 @@ const FieldComponent = ({
           {icon}
         </span>
         <input
+          autoFocus={autoFocus}
           type={isPassword ? (isPasswordVisible ? 'text' : 'password') : type}
           ref={ref}
           placeholder={placeholder}

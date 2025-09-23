@@ -76,6 +76,7 @@ const fetchDocuments = async (req, res) => {
     }
 
     res.status(200).json({ success: true, data });
+    
   } catch (error) {
     console.error("Controller has error in fetching documents:", error);
     res.status(500).json({ success: false, message: "Failed to fetch documents." });

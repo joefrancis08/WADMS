@@ -12,7 +12,8 @@ const getIndicatorDocument = async (data = {}, connection = null) => {
   } = data;
   const query = `
     SELECT 
-      ad.uuid,    
+      ad.id             AS doc_id,
+      ad.uuid           AS doc_uuid,    
       ad.file_name,
       ad.file_path,
       ad.upload_by,
@@ -25,6 +26,7 @@ const getIndicatorDocument = async (data = {}, connection = null) => {
       a.area_name       AS area,
       pa.parameter_name AS parameter,
       spa.sub_parameter_name AS sub_parameter,
+      i.id              AS indicator_id,
       i.uuid            AS indicator_uuid
     FROM accreditation_documents ad
     JOIN accreditation_info ai

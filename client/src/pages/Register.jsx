@@ -22,7 +22,7 @@ function Register() {
     <div className="reg-card-container">
       <div className="reg-card-content">
         <div className="flex justify-center">
-          <img src="/CGS_Logo.png" alt="Logo" className="h-25 mb-4" />
+          <img src="/cgs-logo.png" alt="Logo" className="h-25 mb-4" />
         </div>
         <h2 className="reg-card-header-title">
           Document Management System
@@ -32,6 +32,7 @@ function Register() {
 
         <form onSubmit={handleSubmit} className="space-y-2">
           <Field
+            autoFocus={true}
             icon={<UserRoundPen color='gray' size={24} />}
             ref={fullNameRef}
             name='fullName'

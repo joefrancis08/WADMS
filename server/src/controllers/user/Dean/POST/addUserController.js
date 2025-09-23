@@ -5,7 +5,7 @@ import sendUpdate from '../../../../services/websocket/sendUpdate.js';
 export const addUserController = async (req, res) => {
   
   // Step 1: Get the data from the request body (from frontend)
-  const { fullName, email, role} = req.body;
+  const { fullName, email, password = null, role} = req.body;
   const profilePicPath = req.file ? req.file.filename : null;
 
   // Step 2: Check if there are blank inputs
@@ -25,7 +25,7 @@ export const addUserController = async (req, res) => {
 
     // Step 3.2: Proceed to inserting the user to the database if email does not exist and return the response
     const userUUID = uuidv4();
-    await insertUser(userUUID, profilePicPath, fullName, email, role);
+    await insertUser(userUUID, profilePicPath, fullName, email, password, role);
 
     sendUpdate('user-update');
 
@@ -44,6 +44,7 @@ export const addUserController = async (req, res) => {
         alreadyExists: true, 
       });
     }
+    
     console.error(err);
     return res.status(500).json({ 
       message: "Something went wrong in our server.", err, 

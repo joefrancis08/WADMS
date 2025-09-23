@@ -5,6 +5,7 @@ import { validateForm } from '../utils/validateForm';
 import { checkUserEmail, registerUser } from '../api/Users/userAPI';
 import { showErrorToast, showSuccessToast } from '../utils/toastNotification';
 import { TOAST_MESSAGES } from '../constants/messages';
+import usePageTitle from './usePageTitle';
 
 const { REGISTRATION } = TOAST_MESSAGES;
 
@@ -46,6 +47,8 @@ export const useRegister = () => {
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
+
+  usePageTitle('Register');
 
   // Create function to handle input changes
   // Updates the corresponding state based on the input field changes

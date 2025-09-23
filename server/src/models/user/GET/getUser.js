@@ -8,14 +8,24 @@ export const getAllUsersModel = async () => {
 
 // GET User(s) By
 export const getUserBy = async (column, value, single = true) => {
-  const allowedColumns = ['user_uuid', 'email', 'role', 'is_active'];
+  const allowedColumns = ['id', 'user_uuid', 'email', 'full_name', 'role', 'status'];
 
   if (!allowedColumns.includes(column)) {
     throw new Error('Invalid column specified');
   }
 
   const query = `
-    SELECT user_uuid, profile_pic_path, full_name, email, role, created_at FROM user WHERE ${column} = ? 
+    SELECT 
+      id AS user_id,
+      user_uuid, 
+      profile_pic_path, 
+      full_name, 
+      email,
+      password, 
+      role,
+      status,
+      created_at 
+    FROM user WHERE ${column} = ? 
     ORDER BY created_at DESC
   `;
   const [rows] = await db.execute(query, [value]);
