@@ -5,6 +5,12 @@ export const TOAST_MESSAGES = Object.freeze({
     ERROR: 'Something went wrong. Please try again later.'
   },
 
+  LOGIN: {
+    SUCCESS: 'Logged in successfully!',
+    UNSUCCESSFUL: 'Unsuccessful login. Try again.',
+    ERROR: 'Something went wrong. Please try again later.'
+  },
+
   UNVERIFIED_USER_UPDATE: {
     SUCCESS: 'Verified successfully.',
     ERROR: 'Something went wrong while verifying user. Try again.'

@@ -1,3 +1,4 @@
+
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
@@ -11,6 +12,7 @@ import { useFetchILP } from "../fetch-react-query/useFetchILP";
 import useScrollSaver from "../useScrollSaver";
 import scrollToNewAddition from "../../utils/scrollToNewAddition";
 import { set } from "date-fns";
+import usePageTitle from "../usePageTitle";
 
 const { PROGRAM_AREAS } = PATH.DEAN;
 const { 
@@ -79,6 +81,7 @@ export const useProgramsToBeAccredited = () => {
   // Reuse useOutsideClick hook to make period and program options disappear
   useOutsideClick(accredInfoOptionsRef, () => setActiveAccredInfoID(null));
   useOutsideClick(programOptionsRef, () => setActiveProgramID(null));
+  usePageTitle('Accreditation | WDMS');
 
   // Remove duplicates automatically if programs state changes
   useEffect(() => {

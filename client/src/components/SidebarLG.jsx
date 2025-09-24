@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, ChevronDown } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const { user, isLoading } = useAuth();
 
   // Sidebar collapsed state (stored in localStorage)
   const savedState = localStorage.getItem('sidebar-collapsed');
@@ -142,8 +145,8 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
           <div className={`flex items-center overflow-hidden transition-all ${isCollapsed ? 'gap-0' : 'gap-3'}`}>
             <img className='rounded-full w-8 h-8' src={'/sample-profile-picture.webp'} alt="User Profile" />
             <div className={`${isCollapsed ? 'opacity-0 max-w-0' : 'opacity-100 max-w-[300px]'}`}>
-              <p className="text-sm font-semibold">Sample User</p>
-              <p className="text-xs text-gray-400">Dean</p>
+              <p className="text-sm font-semibold">{user.fullName}</p>
+              <p className="text-xs text-gray-400">{user.role}</p>
             </div>
           </div>
         </div>

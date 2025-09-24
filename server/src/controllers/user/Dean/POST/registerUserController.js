@@ -48,6 +48,7 @@ export const registerUserController = async (req, res) => {
     });
 
     const userResult = await getUserBy('id', insertResult.insertId, true);
+    console.log(userResult);
 
     // Save user to session temporarily after registration
     req.session.user = {

@@ -4,8 +4,8 @@ import { insertUserModel } from "./user/POST/postUser.js";
 import { updateUserModel } from "./user/UPDATE/updateUserModel.js";
 
 // POST/INSERT
-export const insertUser = (userUUID, profilePicPath, fullName, email, role) => (
-  insertUserModel(userUUID, profilePicPath, fullName, email, role)
+export const insertUser = (userUUID, profilePicPath, fullName, email, password, role,status) => (
+  insertUserModel({ userUUID, profilePicPath, fullName, email, password, role, status })
 );
 
 // GET

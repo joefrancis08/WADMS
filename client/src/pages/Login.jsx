@@ -1,85 +1,56 @@
 import { Link } from 'react-router-dom';
-import { ArrowLeft, AtSign, LockKeyhole } from 'lucide-react';
-import { useRegister } from '../hooks/useRegister';
+import { ArrowLeft, AtSign, LoaderCircle, LockKeyhole } from 'lucide-react';
 import SubmitButton from '../components/Auth/SubmitButton';
 import LoadSpinner from '../components/Loaders/LoadSpinner';
 import Field from '../components/Form/Auth/Field';
-import { useState, useEffect } from 'react';
 import OTPField from '../components/Auth/OTPField';
-import usePageTitle from '../hooks/usePageTitle';
+import useLogin from '../hooks/useLogin';
+import { useAuth } from '../contexts/AuthContext';
+import { useState } from 'react';
 
 const Login = () => {
-  const { formValues, formErrors, refs, passwordVisibility, loading, actions } = useRegister();
+  const { user } = useAuth();
+  const { refs, datas, utils, handlers } = useLogin();
 
-  const { values } = formValues;
-  const { errors } = formErrors;
   const { emailRef, passwordRef } = refs;
-  const { isPasswordVisible, togglePasswordVisibility } = passwordVisibility;
-  const { isLoading } = loading;
-  const { handleChange } = actions;
+  const { formatTime } = utils;
+  const {
+    values,
+    isLoading, 
+    errors,  
+    isPasswordVisible, 
+    togglePasswordVisibility,
+    nextStep,
+    otp,
+    timeLeft,
+    otpExpired
+  } = datas;
 
-  const [nextStep, setNextStep] = useState(1);
-
-  // 🕒Timer states for OTP
-  const [timeLeft, setTimeLeft] = useState(5 * 60); // 5 minutes in seconds
-  const [otpExpired, setOtpExpired] = useState(false);
-
-  useEffect(() => {
-    let timer;
-    if (nextStep === 2 && timeLeft > 0) {
-      timer = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
-      }, 1000);
-    }
-    if (timeLeft <= 0) {
-      setOtpExpired(true);
-    }
-    return () => clearInterval(timer);
-  }, [timeLeft, nextStep]);
-
-  const formatTime = (seconds) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m}:${s < 10 ? '0' : ''}${s}`;
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Call backend to verify credentials and send OTP
-    setNextStep(2);
-    setTimeLeft(5 * 60); // reset timer
-    setOtpExpired(false);
-  };
-
-  const handleResendOtp = () => {
-    setTimeLeft(5 * 60);
-    setOtpExpired(false);
-    // 🔑 Call backend to send new OTP here
-    alert('New OTP sent!');
-  };
-
-  usePageTitle('Login');
+  const { 
+    handleChange,
+    handleSubmit,
+    handleBackToLogin,
+    handleOtpChange,
+    handleVerifyOtp,
+    handleResendOtp
+  } = handlers;
   
   return (
     <div className='flex items-center justify-center w-full h-dvh bg-[url("/pit-bg.jpg")] bg-cover bg-center'>
       <div className='absolute inset-0 bg-black/60'></div>
       <div className="bg-slate-200 shadow-md shadow-slate-600 p-8 z-20">
         <div className='flex gap-x-15'>
-          <div className='flex flex-col items-center justify-between'>
-            <div className="flex justify-center items-center p-5 rounded-md bg-slate-100 shadow-md">
-              <img src="/pit-logo-outlined.png" alt="Logo" className="h-14 -ml-3 mr-3" />
-              <div className='flex flex-col items-center justify-center'>
-                <p className='max-w-[300px]'>Palompon Institute of Technology</p>
-                <p className='max-w-[300px]'>College of Graduate Studies</p>
-              </div>
-              <img src="/cgs-logo.png" alt="Logo" className="h-14 -mr-5 ml-3" />
+          <div className='flex flex-col items-start'>
+            <div className="relative flex justify-center items-center p-8 h-20 w-20">
+              <img src="/pit-logo-outlined.png" alt="Logo" className="h-14 absolute top-0 left-0 z-10" />
+              <img src="/cgs-logo.png" alt="Logo" className="h-14 -mr-10 absolute bottom-6 right-0" />
             </div>
-            <h2 className="text-green-700 text-2xl max-w-[300px] font-bold text-center">
+            <h2 className="text-green-700 text-2xl max-w-[300px] font-bold">
               Document Management System
             </h2>
-            <div className='w-[50%] h-0.5 bg-slate-400'></div>
+            <div className='w-[50%] h-0.5 bg-slate-400 my-15'></div>
             <div className='flex items-center justify-center w-full'>
-              <p className='max-w-[300px] text-center'>
+              <p className='max-w-[300px]'>
                 {nextStep === 1
                   ? `After verifying your credentials, you'll be redirected to One-Time Password (OTP) Verification.`
                   : `After successful OTP verification, you can access the system based on your role set by administrator.`
@@ -89,11 +60,11 @@ const Login = () => {
           </div>
 
           {/* Right Side Form */}
-          <div className='bg-slate-100 p-8 rounded-md shadow-md shadow-slate-300 min-w-100 min-h-90 max-w-100 max-h-90 relative'>
+          <div className='bg-slate-100 p-8 rounded-md shadow-md shadow-slate-300 min-w-110 min-h-100 max-w-100 max-h-90 relative'>
             {nextStep === 1 ? (
               <>
                 <h2 className="reg-form-title">LOGIN</h2>
-                <form onSubmit={handleSubmit} className="space-y-2">
+                <form onSubmit={(e) => handleSubmit(e)} className="space-y-2">
                   <Field
                     autoFocus={true}
                     icon={<AtSign color='gray' size={24} />}
@@ -117,9 +88,11 @@ const Login = () => {
                     togglePasswordVisibility={togglePasswordVisibility}
                   />
                   <div className='flex justify-center'>
-                    <SubmitButton disabled={isLoading}>
+                    <SubmitButton 
+                      disabled={isLoading} 
+                    >
                       {isLoading 
-                        ? <LoadSpinner height={'h-5'} width={'w-5'}>Verifying</LoadSpinner> 
+                        ? <LoaderCircle className='h-5 w-5 animate-spin'/> 
                         : 'Login'
                       }
                     </SubmitButton>
@@ -135,11 +108,7 @@ const Login = () => {
             ) : (
               <>
                 <button
-                  onClick={() => {
-                    setNextStep(1);
-                    setTimeLeft(5 * 60);
-                    setOtpExpired(false);
-                  }} 
+                  onClick={handleBackToLogin} 
                   title='Back to Login'
                   className='absolute top-3 left-1 flex flex-row justify-center items-center gap-x-2 py-1 px-3 hover:bg-slate-200 rounded-full cursor-pointer text-slate-600'
                 >
@@ -149,15 +118,22 @@ const Login = () => {
                 <h2 className="reg-form-title">OTP Verification</h2>
                 <p className='text-center'>
                   Enter the 6-digit code we've sent to {' '}
-                  <span className='font-semibold'>{values.email || "your email"}</span>
+                  <span className='font-semibold'>{user.email || "your email"}</span>
                 </p>
                 <div className='flex gap-x-4 py-4 items-center justify-center mb-4'>
-                  {[...Array(6)].map((_, i) => <OTPField key={i} autoFocus={i===0} />)}
+                  {otp.map((digit, i) => (
+                    <OTPField 
+                      key={i}
+                      value={digit} 
+                      autoFocus={i===0}
+                      onChange={(val) => handleOtpChange(val, i)} 
+                    />
+                  ))}
                 </div>
                 <div className='flex flex-col justify-center items-center'>
                   {!otpExpired ? (
                     <>
-                      <SubmitButton>
+                      <SubmitButton onClick={(e) => handleVerifyOtp(e, user)}>
                         <p>Verify OTP</p>
                       </SubmitButton>
                       <p className='mt-4 text-sm'>
@@ -168,7 +144,7 @@ const Login = () => {
                     <>
                       <p className='text-red-600 font-semibold mb-3'>OTP expired!</p>
                       <button
-                        onClick={handleResendOtp}
+                        onClick={() => handleResendOtp(user.email)}
                         className="bg-green-600 text-white px-4 py-2 rounded"
                       >
                         Resend

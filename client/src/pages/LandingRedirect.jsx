@@ -5,20 +5,20 @@ import { USER_ROLES, USER_STATUS } from '../constants/user';
 import PATH from '../constants/path';
 import LoadSpinner from '../components/Loaders/LoadSpinner';
 
-const { EMAIL_CONFIRMATION, NOT_FOUND_URL, REGISTER } = PATH.PUBLIC;
+const { EMAIL_CONFIRMATION, NOT_FOUND_URL, REGISTER, LOGIN } = PATH.PUBLIC;
 const { UNVERIFIED_USER } = USER_ROLES;
 const { PENDING } = USER_STATUS;
 
 const LandingRedirect = () => {
   // 
-  const user = { email: "test@test.com", role: "Dean" }; // mock data
-  const isLoading = false;
+  const { user, isLoading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
   if (!isLoading) {
     if (!user) {
-      navigate(EMAIL_CONFIRMATION);
+      navigate(LOGIN);
+
     } else {
       navigate(REGISTER);
     }

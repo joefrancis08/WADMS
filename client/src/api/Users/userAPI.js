@@ -37,6 +37,13 @@ export const registerUser = async (values) => {
   }
 }
 
+export const loginUser = async ({ email, password }) => {
+  return axios.post(`${API_BASE_URL}/users/login`, 
+    { email, password }, 
+    { withCredentials: true }
+  );
+};
+
 export const getUserSession = async () => {
   try {
     const res = await axios.get(`${API_BASE_URL}/users/session`, { withCredentials: true });

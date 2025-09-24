@@ -13,8 +13,8 @@ export const AuthProvider = ({ children }) => {
     setUser({ email, fullName, role, status });
   }
 
-  const login = (email, fullName, role, status) => {
-    setUser({ email, fullName, role, status });
+  const login = (email, fullName, profilePicPath, role, status) => {
+    setUser({ email, fullName, profilePicPath, role, status });
   };
 
   const logout = () => {

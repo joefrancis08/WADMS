@@ -13,6 +13,9 @@ import ProgramAreas from '../pages/Dean/ProgramAreas';
 import AreaParameters from '../pages/Dean/AreaParameters';
 import ParamSubparam from '../pages/Dean/ParamSubparam';
 import SubparamIndicator from '../pages/Dean/SubparamIndicator';
+import { USER_ROLES } from '../constants/user';
+import Login from '../pages/Login';
+import NotFound from '../pages/NotFound';
 
 const { 
   DASHBOARD, 
@@ -56,9 +59,9 @@ const deanRoutes = protectedRoutes.map(({ path, element }) => (
     path={path}
     element={
       <ProtectedRoute 
-        allowedRoles={[]} // Allowed Role: Dean
+        allowedRoles={[USER_ROLES.DEAN]} // Allowed Role: Dean
         loader={Loader} 
-        fallbackRoute={<EmailConfirmation />}
+        fallbackRoute={<NotFound />}
       >
         {element}
       </ProtectedRoute>

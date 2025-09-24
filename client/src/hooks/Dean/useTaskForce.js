@@ -10,6 +10,7 @@ import { showErrorToast, showSuccessToast } from "../../utils/toastNotification"
 import { emailRegex } from "../../utils/regEx";
 import { useRef } from "react";
 import useOutsideClick from "../useOutsideClick";
+import usePageTitle from "../usePageTitle";
 
 export const useTaskForce = () => {
   const { users, loading, error } = useUsersBy();
@@ -58,6 +59,7 @@ export const useTaskForce = () => {
 
   // Reuse useOutsideClick hook to make dropdown gone when clicking outside
   useOutsideClick(dropdownRef, () => setActiveDropdownId(null));
+  usePageTitle('Task Force | WDMS');
 
   // Check real-time if email already exist
   useEffect(() => {

@@ -17,9 +17,10 @@ export const insertUserModel = async (data = {}) => {
     VALUES (?, ?, ?, ?, ?, ?, ?)  
   `;
 
-
+  console.log('To be inserted user data:', {userUUID, profilePicPath, fullName, email, password, role, status})
 
   try {
+    
     const [result] = await db.execute(sql, [userUUID, profilePicPath, fullName, email, password, role, status]);
 
    

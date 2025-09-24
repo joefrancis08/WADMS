@@ -7,7 +7,7 @@ export const getAllUsersModel = async () => {
 };
 
 // GET User(s) By
-export const getUserBy = async (column, value, single = true) => {
+export const getUserBy = async (column, value, single = true, isLogin = false) => {
   const allowedColumns = ['id', 'user_uuid', 'email', 'full_name', 'role', 'status'];
 
   if (!allowedColumns.includes(column)) {
@@ -26,6 +26,10 @@ export const getUserBy = async (column, value, single = true) => {
       status,
       created_at 
     FROM user WHERE ${column} = ? 
+      ${isLogin 
+        ? "AND status = 'Verified'"
+        : "AND role <> 'Unverified User'"
+      }
     ORDER BY created_at DESC
   `;
   const [rows] = await db.execute(query, [value]);
