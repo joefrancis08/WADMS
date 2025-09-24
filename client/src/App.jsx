@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import deanRoutes from './routes/DeanRoute';
 import publicRoute from './routes/PublicRoute';
+import taskForceRoutes from './routes/TaskForceRoute';
 
 function App() {
   return (
@@ -9,6 +10,7 @@ function App() {
       <Routes>
         {publicRoute}
         {deanRoutes}
+        {taskForceRoutes}
       </Routes>
       <ToastContainer />
     </BrowserRouter>

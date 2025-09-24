@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, ChevronDown, LogOut, User, UserRound } from 'lucide-react';
+import { Menu, X, ChevronDown, LogOut, UserRound } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import useOutsideClick from '../hooks/useOutsideClick';
 import MODAL_TYPE from '../constants/modalTypes';
 import ConfirmationModal from './Modals/ConfirmationModal';
-import { loginUser, logoutUser } from '../api-calls/Users/userAPI';
+import { logoutUser } from '../api-calls/Users/userAPI';
 import { showErrorToast, showSuccessToast } from '../utils/toastNotification';
 
 const SidebarLG = ({ menuItems, unverifiedUserCount }) => {

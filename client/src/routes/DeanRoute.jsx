@@ -16,7 +16,7 @@ import SubparamIndicator from '../pages/Dean/SubparamIndicator';
 import { USER_ROLES } from '../constants/user';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
-import PrivateRouteWrapper from './PrivateRouteWrapper';
+import PrivateRouteWrapper from '../wrapper/PrivateRouteWrapper';
 
 const { 
   DASHBOARD, 
@@ -35,10 +35,7 @@ const {
 const { NOT_FOUND_URL, LOGIN } = PATH.PUBLIC;
 
 const protectedRoutes = [
-  { 
-    path: DASHBOARD, 
-    element: <Dashboard />
-  },
+  { path: DASHBOARD, element: <Dashboard />},
   { path: TASK_FORCE, element: <TaskForce /> },
   { path: UNVERIFIED_USERS, element: <UnverifiedUsers /> },
   { path: TASK_FORCE_DETAIL_TEMPLATE, element: <TaskForceDetail /> },

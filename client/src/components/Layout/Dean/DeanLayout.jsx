@@ -5,7 +5,7 @@ import PATH from '../../../constants/path';
 import SidebarLG from '../../SidebarLG';
 import SidebarSM from '../../SidebarSM';
 import MobileHeader from '../../MobileHeader';
-import { Archive, ArchiveRestore, BookCopy, BookTextIcon, Calendar, CalendarDays, FolderArchive, Group, LayoutDashboard, NotepadText, ShieldUser, SquareUserRound, UserRoundCog, UserRoundCogIcon, UsersRound } from 'lucide-react';
+import { BookCopy, CalendarDays, FolderArchive, LayoutDashboard, NotepadText, ShieldUser, SquareUserRound, UserRoundCog, UsersRound } from 'lucide-react';
 import { useUsersBy } from '../../../hooks/fetch-react-query/useUsers';
 
 const DeanLayout = ({ children, ref }) => {

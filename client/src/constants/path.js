@@ -45,6 +45,11 @@ const PATH = {
     SUBPARAM_INDICATORS_TEMPLATE: '/d/accreditation/programs/:level/:programUUID/:accredInfoUUID/:areaUUID/:parameterUUID/:subParameterUUID',
     
     DOCUMENTS: '/d/accreditation/documents'
+  },
+
+  TASK_FORCE: {
+    DASHBOARD: '/t',
+    ACCREDITATION: '/t/accreditation'
   }
 }
 
