@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
-import { fetchAreasByLevel } from "../../api/accreditation/accreditationAPI";
+import { fetchAreasByLevel } from "../../api-calls/accreditation/accreditationAPI";
 import { messageHandler } from "../../services/websocket/messageHandler";
 
 const useFetchAreasByLevel = (level) => {

@@ -1,15 +1,11 @@
 import { Link } from 'react-router-dom';
-import { ArrowLeft, AtSign, LoaderCircle, LockKeyhole } from 'lucide-react';
+import { ArrowLeft, AtSign, LoaderCircle, LockKeyhole, Mail } from 'lucide-react';
 import SubmitButton from '../components/Auth/SubmitButton';
-import LoadSpinner from '../components/Loaders/LoadSpinner';
 import Field from '../components/Form/Auth/Field';
 import OTPField from '../components/Auth/OTPField';
 import useLogin from '../hooks/useLogin';
-import { useAuth } from '../contexts/AuthContext';
-import { useState } from 'react';
 
 const Login = () => {
-  const { user } = useAuth();
   const { refs, datas, utils, handlers } = useLogin();
 
   const { emailRef, passwordRef } = refs;
@@ -20,6 +16,7 @@ const Login = () => {
     errors,  
     isPasswordVisible, 
     togglePasswordVisibility,
+    tempUser,
     nextStep,
     otp,
     timeLeft,
@@ -36,9 +33,9 @@ const Login = () => {
   } = handlers;
   
   return (
-    <div className='flex items-center justify-center w-full h-dvh bg-[url("/pit-bg.jpg")] bg-cover bg-center'>
+    <div className='flex items-center justify-center w-full h-dvh bg-[url("/pit-bg-1.jpg")] bg-cover bg-center'>
       <div className='absolute inset-0 bg-black/60'></div>
-      <div className="bg-slate-200 shadow-md shadow-slate-600 p-8 z-20">
+      <div className="bg-slate-200 shadow-md shadow-slate-700 p-8 z-20 rounded">
         <div className='flex gap-x-15'>
           <div className='flex flex-col items-start'>
             <div className="relative flex justify-center items-center p-8 h-20 w-20">
@@ -67,7 +64,7 @@ const Login = () => {
                 <form onSubmit={(e) => handleSubmit(e)} className="space-y-2">
                   <Field
                     autoFocus={true}
-                    icon={<AtSign color='gray' size={24} />}
+                    icon={<Mail color='gray' size={24} />}
                     ref={emailRef}
                     name='email'
                     placeholder='Email Address'
@@ -75,19 +72,25 @@ const Login = () => {
                     onChange={handleChange}
                     error={errors.email}
                   />
-                  <Field
-                    icon={<LockKeyhole color='gray' size={24} />}
-                    ref={passwordRef}
-                    name='password'
-                    placeholder='Password'
-                    value={values.password}
-                    onChange={handleChange}
-                    error={errors.password}
-                    isPassword={true}
-                    isPasswordVisible={isPasswordVisible}
-                    togglePasswordVisibility={togglePasswordVisibility}
-                  />
-                  <div className='flex justify-center'>
+                  <div className='relative'>
+                    <Field
+                      icon={<LockKeyhole color='gray' size={24} />}
+                      ref={passwordRef}
+                      name='password'
+                      placeholder='Password'
+                      value={values.password}
+                      onChange={handleChange}
+                      error={errors.password}
+                      isPassword={true}
+                      isPasswordVisible={isPasswordVisible}
+                      togglePasswordVisibility={togglePasswordVisibility}
+                    />
+                    <p className='text-green-600 text-sm absolute bottom-0 right-0 hover:cursor-pointer active:text-blue-400 hover:underline'>
+                      Forgot password?
+                    </p>
+                  </div>
+                  
+                  <div className='flex justify-center mt-5'>
                     <SubmitButton 
                       disabled={isLoading} 
                     >
@@ -118,7 +121,7 @@ const Login = () => {
                 <h2 className="reg-form-title">OTP Verification</h2>
                 <p className='text-center'>
                   Enter the 6-digit code we've sent to {' '}
-                  <span className='font-semibold'>{user.email || "your email"}</span>
+                  <span className='font-semibold'>{tempUser?.email || "your email"}</span>
                 </p>
                 <div className='flex gap-x-4 py-4 items-center justify-center mb-4'>
                   {otp.map((digit, i) => (
@@ -133,7 +136,7 @@ const Login = () => {
                 <div className='flex flex-col justify-center items-center'>
                   {!otpExpired ? (
                     <>
-                      <SubmitButton onClick={(e) => handleVerifyOtp(e, user)}>
+                      <SubmitButton onClick={(e) => handleVerifyOtp(e)}>
                         <p>Verify OTP</p>
                       </SubmitButton>
                       <p className='mt-4 text-sm'>
@@ -144,7 +147,7 @@ const Login = () => {
                     <>
                       <p className='text-red-600 font-semibold mb-3'>OTP expired!</p>
                       <button
-                        onClick={() => handleResendOtp(user.email)}
+                        onClick={() => handleResendOtp(tempUser.email)}
                         className="bg-green-600 text-white px-4 py-2 rounded"
                       >
                         Resend

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
 import { TOAST_MESSAGES } from "../../constants/messages";
-import { addInfoLevelProgram, deleteAccreditationPeriod, deleteProgramToBeAccredited } from "../../api/accreditation/accreditationAPI";
+import { addInfoLevelProgram, deleteAccreditationPeriod, deleteProgramToBeAccredited } from "../../api-calls/accreditation/accreditationAPI";
 import PATH from "../../constants/path";
 import MODAL_TYPE from "../../constants/modalTypes";
 import useOutsideClick from "../useOutsideClick";

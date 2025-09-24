@@ -8,7 +8,7 @@ import useAutoFocus from "../useAutoFocus";
 import formatArea from "../../utils/formatArea";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
 import useOutsideClick from "../useOutsideClick";
-import { addProgramAreas, deletePAM } from "../../api/accreditation/accreditationAPI";
+import { addProgramAreas, deletePAM } from "../../api-calls/accreditation/accreditationAPI";
 import { TOAST_MESSAGES } from "../../constants/messages";
 import PATH from "../../constants/path";
 import useFetchAreasByLevel from "../fetch-react-query/useFetchAreasByLevel";

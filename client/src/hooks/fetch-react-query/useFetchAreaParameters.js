@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchAreaParameters } from "../../api/accreditation/accreditationAPI";
+import { fetchAreaParameters } from "../../api-calls/accreditation/accreditationAPI";
 import { useEffect, useMemo } from "react";
 import { messageHandler } from "../../services/websocket/messageHandler";
 

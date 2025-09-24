@@ -44,6 +44,12 @@ export const loginUser = async ({ email, password }) => {
   );
 };
 
+export const logoutUser = async () => {
+  return axios.post(`${API_BASE_URL}/users/logout`, {},
+    { withCredentials: true }
+  );
+};
+
 export const getUserSession = async () => {
   try {
     const res = await axios.get(`${API_BASE_URL}/users/session`, { withCredentials: true });
@@ -116,4 +122,5 @@ export const deleteUser = async (selectedUserId) => {
   } catch (error) {
     console.log('Error deleting user:', error);
   }
-}
+};
+

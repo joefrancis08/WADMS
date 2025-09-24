@@ -3,12 +3,12 @@ import { useAuth } from "../contexts/AuthContext";
 import { useState } from "react";
 import { useRef } from "react";
 import { validateForm } from "../utils/validateForm";
-import { loginUser } from "../api/Users/userAPI";
+import { loginUser } from "../api-calls/Users/userAPI";
 import { showErrorToast, showSuccessToast } from "../utils/toastNotification";
 import { TOAST_MESSAGES } from "../constants/messages";
 import { useEffect } from "react";
 import usePageTitle from "./usePageTitle";
-import { verifyOTP } from "../api/auth/otpAPI";
+import { verifyOTP } from "../api-calls/auth/otpAPI";
 import { USER_ROLES } from "../constants/user";
 
 const { LOGIN } = TOAST_MESSAGES;
@@ -35,6 +35,9 @@ const useLogin = () => {
 
   // Set state for password visibility
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  // Set temporary user data to use for OTP verification
+  const [tempUser, setTempUser] = useState(null);
 
   // Set state for the next step after login
   const [nextStep, setNextStep] = useState(1);
@@ -146,8 +149,8 @@ const useLogin = () => {
         return;
       }
 
-      // Step 3.2: Save the data of the logged in user to the context so that it can be used in other components
-      login(email, fullName, profile_pic_path,  role, status);
+      // Step 3.2: Save the data of the logged in user temporarily so that it can be use in creating session after OTP verification
+      setTempUser(data.user);
 
       // Step 3.4: Reset field values after successful form submission
       setValues({
@@ -202,14 +205,16 @@ const useLogin = () => {
     setOtp(newOtp);
   };
 
-  const handleVerifyOtp = async (e, user) => {
+  const handleVerifyOtp = async (e) => {
     e.preventDefault(); // prevent default form submit
 
     const otpCode = otp.join(''); // combine all OTP digits
 
+    if (!tempUser) return;
+
     try {
       const { data } = await verifyOTP(
-        user.email, // or user.email if saved in context
+        tempUser.email, // or user.email if saved in context
         otpCode
       );
 
@@ -219,26 +224,37 @@ const useLogin = () => {
         showErrorToast(data.message || 'OTP verification failed', 'top-center', 5000);
         return;
       }
+
+      // Now save the user in the context to be use by other components
+      const { email, fullName, profile_pic_path, role, status } = tempUser;
+      login(email, fullName, profile_pic_path, role, status);
       
       showSuccessToast('Verified successfully!', 'top-center', 5000);
 
       // Navigate to dashboard or home page after OTP verification
-      if (user.role === USER_ROLES.DEAN) {
-        navigate('/d');
+      if (tempUser.role === USER_ROLES.DEAN) {
+        navigate('/d', { replace: true });
+      } else {
+        navigate('/');
       }
+
     } catch (error) {
       console.error(error);
       showErrorToast(error.response?.data?.message || 'OTP verification error', 'top-center', 5000);
+
+    } finally {
+      setTempUser(null);
     }
   };
-
 
   const handleResendOtp = async (email) => {
     setTimeLeft(5 * 60);
     setOtpExpired(false);
-    // API call here
-    await verifyOTP(email)
+
+    await verifyOTP(email);
+
     showSuccessToast('New OTP sent!', 'top-center');
+
     console.log(email);
   };
 
@@ -254,6 +270,7 @@ const useLogin = () => {
       errors,
       isPasswordVisible,
       togglePasswordVisibility,
+      tempUser,
       nextStep,
       otp,
       timeLeft,

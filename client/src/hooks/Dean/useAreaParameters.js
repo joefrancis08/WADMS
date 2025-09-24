@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import useAutoFocus from "../useAutoFocus";
 import MODAL_TYPE from "../../constants/modalTypes";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
-import { addAreaParameters } from "../../api/accreditation/accreditationAPI";
+import { addAreaParameters } from "../../api-calls/accreditation/accreditationAPI";
 
 const { PARAMETER_ADDITION } = TOAST_MESSAGES;
 

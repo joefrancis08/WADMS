@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
-import { fetchParamSubparams } from "../../api/accreditation/accreditationAPI";
+import { fetchParamSubparams } from "../../api-calls/accreditation/accreditationAPI";
 import { messageHandler } from "../../services/websocket/messageHandler";
 
 const useFetchParamSubparam = ({ title, year, accredBody, level, program, area, parameter }) => {

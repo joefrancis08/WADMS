@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import MODAL_TYPE from "../../constants/modalTypes";
 import useAutoFocus from "../useAutoFocus";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
-import { addIndicators, fetchDocumentsDynamically } from "../../api/accreditation/accreditationAPI";
+import { addIndicators, fetchDocumentsDynamically } from "../../api-calls/accreditation/accreditationAPI";
 import { TOAST_MESSAGES } from "../../constants/messages";
 import { useDocumentsQueries } from "../fetch-react-query/useDocumentsQueries";
 

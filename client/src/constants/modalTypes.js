@@ -23,7 +23,9 @@ const MODAL_TYPES = {
 
   ADD_INDICATORS: 'add-indicators',
 
-  DELETE_DOC: 'delete-document'
+  DELETE_DOC: 'delete-document',
+
+  LOGOUT: 'logout-user'
 };
 
 export default MODAL_TYPES;

@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import useAutoFocus from "../useAutoFocus";
 import MODAL_TYPE from "../../constants/modalTypes";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
-import { addDocument, addSubParams, deleteDoc, fetchDocumentsDynamically, updateDocName } from "../../api/accreditation/accreditationAPI";
+import { addDocument, addSubParams, deleteDoc, fetchDocumentsDynamically, updateDocName } from "../../api-calls/accreditation/accreditationAPI";
 import { TOAST_MESSAGES } from "../../constants/messages";
 import PATH from "../../constants/path";
 import { useQueries, useQueryClient } from "@tanstack/react-query";
