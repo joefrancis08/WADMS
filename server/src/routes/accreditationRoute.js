@@ -11,6 +11,7 @@ import { addSIMController, fetchSIMController } from '../controllers/accreditati
 import fetchAreasBy from '../controllers/accreditation/areas/GET/fetchAreasBy.js';
 import { addDocumentController, deleteDocController, fetchDocumentsController, updateDocController } from '../controllers/accreditation/document/documentController.js';
 import { upload } from '../middlewares/uploadFile.js';
+import { addAssignmentController, fetchAssignmentController } from '../controllers/accreditation/assignments/assignmentController.js';
 
 const accreditationRouter = express.Router();
 
@@ -22,6 +23,7 @@ accreditationRouter.post('/add-area-parameters', addAreaParameterController);
 accreditationRouter.post('/add-parameter-subparameters', addParamSubParamController);
 accreditationRouter.post('/add-subparameter-indicators', addSIMController);
 accreditationRouter.post('/add-document', upload.single('file'), addDocumentController);
+accreditationRouter.post('/add-assignment', addAssignmentController);
 
 accreditationRouter.get('/fetch-accreditation-levels', fetchLevelsController);
 accreditationRouter.get('/fetch-accreditation-period', fetchPeriodController);
@@ -32,6 +34,7 @@ accreditationRouter.get('/fetch-area-parameters', fetchAreaParameterController);
 accreditationRouter.get('/fetch-parameter-subparameters', fetchParamSubParamController);
 accreditationRouter.get('/fetch-subparameter-indicators', fetchSIMController);
 accreditationRouter.get('/fetch-documents', fetchDocumentsController);
+accreditationRouter.get('/fetch-assignments', fetchAssignmentController);
 
 accreditationRouter.patch('/rename-document/:docId', updateDocController);
 

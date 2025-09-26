@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Menu, X, Bell, Pen, LogOut } from "lucide-react";
+import { Menu, X, Bell, Pen, LogOut, Sun, Moon } from "lucide-react";
 import PATH from "../../../constants/path";
 import { Link, useLocation } from "react-router-dom";
 import useOutsideClick from "../../../hooks/useOutsideClick";
@@ -16,10 +16,15 @@ const TaskForceLayout = ({ children }) => {
   const profileOptionRef = useRef();
   const location = useLocation();
 
+  const [isDark, setIsDark] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [showProfileOption, setShowProfileOption] = useState(false);
 
   useOutsideClick(profileOptionRef, () => setShowProfileOption(false));
+
+  const toggleDarkMode = () => {
+    setIsDark(!isDark);
+  };
 
   const handleProfileClick = () => {
     setShowProfileOption(!showProfileOption);
@@ -61,6 +66,16 @@ const TaskForceLayout = ({ children }) => {
 
             {/* Right: Actions */}
             <div className="absolute -right-24 flex items-center space-x-4">
+              <button
+                title={isDark ? 'Light Mode' : 'Dark Mode'}
+                onClick={toggleDarkMode}
+                className="p-2 rounded-full hover:bg-slate-700 cursor-pointer"
+              >
+                {isDark 
+                  ? <Sun className="h-6 w-6 text-slate-100"/> 
+                  : <Moon className="h-6 w-6 text-slate-100"/>
+                }
+              </button>
               <button 
                 title="3 notifications"
                 className="relative p-2 rounded-full hover:bg-slate-700 cursor-pointer"
