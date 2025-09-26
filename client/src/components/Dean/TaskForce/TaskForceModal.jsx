@@ -10,17 +10,21 @@ import { emailRegex } from '../../../utils/regEx';
 import Tooltip from '../../Popover';
 import Popover from '../../Popover';
 
-const TaskForceModal = ({
-  loading,
-  modalType,
-  formValue,
-  emailAlreadyExist,
-  updatedValue,
-  selectedUser,
-  infoClick,
-  handlers,
-  isUpdateBtnDisabled,
-}) => {
+const TaskForceModal = ({ data, handlers }) => {
+  const {
+    loading,
+    modalType,
+    modalData,
+    formValue,
+    emailAlreadyExist,
+    updatedValue,
+    selectedUser,
+    infoClick,
+    isUpdateBtnDisabled,
+    taskForceChair,
+    taskForceMember
+  } = data;
+
   const {
     handleCloseModal,
     handleInfoClick,
@@ -39,12 +43,12 @@ const TaskForceModal = ({
   } = handlers;
 
   switch (modalType) {
-    case MODAL_TYPE.ADD_USER:
+    case MODAL_TYPE.ADD_TF:
       return (
         <AddUserModal
           onClose={() => handleCloseModal({ isForAddUser: true, untoggleDropdown: true, clearForm: true })}
           onCancel={() => handleCloseModal({ isForAddUser: true, untoggleDropdown: true, clearForm: true })}
-          onSaveAdded={handleSaveAdded}
+          onSaveAdded={(e) => handleSaveAdded(e, { from: 'main'})}
           disabled={
             formValue.fullName.trim() === '' ||
             formValue.email.trim() === '' ||
@@ -57,7 +61,12 @@ const TaskForceModal = ({
           secondaryButton="Cancel"
           headerContent={
             <div className='relative flex items-center transition-all duration-300'>
-              <p className='mr-2 text-2xl font-bold text-slate-700'>Create Task Force</p>
+              <p className='mr-2 text-2xl font-bold text-slate-700'>
+                {taskForceChair.length > 0 || taskForceMember.length > 0 
+                  ? 'Add Task Force'
+                  : 'Create Task Force'
+                }
+              </p>
               <CircleQuestionMark 
                 onClick={handleInfoClick}
                 className='text-slate-500 hover:text-slate-600 cursor-pointer' size={20}
@@ -86,7 +95,56 @@ const TaskForceModal = ({
           }
         />
       );
-    case MODAL_TYPE.UPDATE_USER:
+
+    case MODAL_TYPE.ADD_TF_CARD:
+      return (
+        <AddUserModal
+          onClose={() => handleCloseModal({ clearForm: true })}
+          onCancel={() => handleCloseModal({ clearForm: true })}
+          onSaveAdded={(e) => handleSaveAdded(e, { from: 'card', data: { role: modalData.role }})}
+          disabled={
+            formValue.fullName.trim() === '' ||
+            formValue.email.trim() === '' ||
+            loading ||
+            emailAlreadyExist ||
+            !emailRegex.test(formValue.email)
+          }
+          primaryButton={`Add ${modalData.role}`}
+          secondaryButton="Cancel"
+          headerContent={
+            <div className='relative flex items-center transition-all duration-300'>
+              <p className='mr-2 text-2xl font-bold text-slate-700'>
+                Add {modalData.role}
+              </p>
+              <CircleQuestionMark 
+                onClick={handleInfoClick}
+                className='text-slate-500 hover:text-slate-600 cursor-pointer' size={20}
+              />
+              {infoClick && (
+                <Popover 
+                  handleInfoClick={handleInfoClick}
+                  position='top-2 left-1/2 translate-x-1/2'
+                  content={
+                    <p className='text-slate-100 text-xs p-2'>
+                      The "Create" button is enabled only if all mandatory fields (excluding the profile picture) are completed and the email is correctly formatted and not already taken.
+                    </p>
+                  }
+                />
+              ) }
+            </div>
+          }
+          bodyContent={
+            <>
+              <ImageUpload onChange={handleProfilePic} setProfilePic={setProfilePic}/>
+              <AddField fieldName='Full Name' type='text' name='fullName' formValue={formValue.fullName} onChange={handleAddUserInputChange} />
+              <AddField fieldName='Email Address' type='text' name='email' formValue={formValue.email} onChange={handleAddUserInputChange} invalid={emailAlreadyExist}/>
+              <hr className='text-gray-300 mt-2'></hr>
+            </>
+          }
+        />
+      );
+
+    case MODAL_TYPE.UPDATE_TF:
       return (
         <UpdateUserModal
           onClose={() => handleCloseModal({ untoggleDropdown: true, removeSelectedUser: true })}
@@ -112,7 +170,8 @@ const TaskForceModal = ({
           }
         />
       );
-    case MODAL_TYPE.USER_DELETION_CONFIRMATION:
+
+    case MODAL_TYPE.TF_DELETION_CONFIRMATION:
       return (
         <ConfirmationModal
           onClose={() => handleCloseModal({ removeActiveDropdownId: true, removeSelectedUser: true })}
@@ -125,18 +184,21 @@ const TaskForceModal = ({
             <>
               <div className='flex flex-col justify-center'>
                 <div className='flex justify-center px-4'>
-                  <div className='p-4 bg-red-400/20 rounded-full'>
-                    <Trash2 className='text-red-500/80' size={24}/>
+                  <div className='p-6 bg-red-400/20 rounded-full'>
+                    <Trash2 className='text-red-500/80 h-12 w-12'/>
                   </div>
                 </div>
-                <div className='pb-6 pt-1'>
-                  <p className='text-center text-xl text-red-500 font-medium'>
+                <div className='pb-4 pt-1 flex flex-col items-center justify-center gap-y-2'>
+                  <p className='text-center text-2xl text-red-500 font-semibold'>
                     Delete
+                  </p>
+                  <p className='text-lg font-medium text-slate-900'>
+                    {selectedUser?.full_name}
                   </p>
                 </div>
                 <div>
                   <p className='pb-6 text-lg text-slate-800 text-center'>
-                    Are you sure you want to delete <span className='font-medium text-slate-900'>{selectedUser?.full_name}</span>?
+                    Are you sure you want to delete this user?
                   </p>
                 </div>
               </div>

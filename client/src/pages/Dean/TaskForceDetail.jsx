@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import AdminLayout from '../../components/Layout/Dean/DeanLayout';
-import { ArrowLeft, CalendarDays, ChevronLeft, Mail, Pen, Trash2 } from 'lucide-react';
+import { ArrowLeft, CalendarDays, Mail, Pen, Trash2 } from 'lucide-react';
 import TimeAgo from '../../components/TimeAgo';
 import VerifiedUserDetailSkeletonLoader from '../../components/Loaders/VerifiedUserDetailSkeletonLoader';
 import useTaskForceDetail from '../../hooks/Dean/useTaskForceDetail';
@@ -11,17 +11,27 @@ import TaskForceModal from '../../components/Dean/TaskForce/TaskForceModal';
 
 const TaskForceDetail = () => {
   
-  const { chevron, confirmDelete, dropdown, form, modal, profilePic, 
-    saveButton, userDelete, userUpdate } = useTaskForce();
-  const { handleChevronClick } = chevron;
-  const { handleConfirmDelete } = confirmDelete;
-  const { handleDropdownMenuClick, toggleDropdown } = dropdown;
-  const { updatedValue, handleChange } = form;
-  const { modalType, handleCloseModal } = modal;
-  const { setUpdatedProfilePic, handleProfilePicUpdate } = profilePic;
-  const { isUpdateBtnDisabled } = saveButton;
-  const { handleDelete } = userDelete;
-  const { handleUpdate, handleSaveUpdate } = userUpdate;
+  const { states, datas, handlers } = useTaskForce();
+  const { 
+    toggleDropdown,
+    setUpdatedProfilePic
+  } = states;
+  const { 
+    updatedValue,
+    modalType,
+    isUpdateBtnDisabled
+  } = datas;
+  const {
+    handleChevronClick,
+    handleConfirmDelete,
+    handleDropdownMenuClick,
+    handleChange,
+    handleCloseModal,
+    handleProfilePicUpdate,
+    handleDelete,
+    handleUpdate,
+    handleSaveUpdate
+  } = handlers;
 
   const { constant, data, state } = useTaskForceDetail();
   const { TASK_FORCE } = constant;
@@ -32,15 +42,18 @@ const TaskForceDetail = () => {
   
   return (
     <AdminLayout>
-      <main className="px-4 py-6 md:px-8 w-full max-w-screen-xl mx-auto">
+      <main className="px-4 py-6 w-full max-w-screen-xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-2 mb-3">
-          <Link to={TASK_FORCE} className="flex items-center gap-4 text-slate-700">
-            <ArrowLeft className='hover:opacity-75 active:opacity-50' size={32}/>
-            <p className='text-lg md:text-2xl'>
-              {selectedUser?.full_name ?? 'User'}'s Info
-            </p>
+          <Link to={TASK_FORCE} className='flex items-center gap-4 text-slate-900 dark:text-slate-100'>
+            <button className='p-2 hover:bg-slate-900 rounded-full active:scale-98 cursor-pointer'>
+              <ArrowLeft />
+            </button>
+            
           </Link>
+          <p className='text-lg md:text-2xl text-slate-900 dark:text-slate-100'>
+            {selectedUser?.full_name ?? 'User'}'s Info
+          </p>
         </div>
         {loading 
           ? (
@@ -49,25 +62,25 @@ const TaskForceDetail = () => {
               </div>
             )
           : (
-            <div className='flex flex-col w-full h-full bg-slate-800 px-8 rounded-xl border border-gray-100 shadow'>
-              <div className='flex justify-end px-2 md:p-1'>
+            <div className='flex flex-col w-full h-full bg-slate-900 px-8 rounded-xl border border-slate-700 shadow'>
+              <div className='flex justify-end gap-2 md:p-1'>
                 <button
                   title='Update Info'
                   onClick={(e) => handleUpdate(e, selectedUser)}
-                  className='text-white rounded-full p-4 cursor-pointer transition-all duration-300 hover:bg-slate-600 active:opacity-20'
+                  className='text-white rounded-full p-3 cursor-pointer transition-all duration-300 hover:bg-slate-800 active:opacity-20 active:scale-95'
                 >
                   <Pen />
                 </button>
                 <button
                   title='Delete'
                   onClick={(e) => handleDelete(e, selectedUser)}
-                  className='text-red-400 rounded-full p-4 cursor-pointer transition-all duration-300  hover:bg-slate-600 active:opacity-20'
+                  className='text-red-400 rounded-full p-3 cursor-pointer transition-all duration-300  hover:bg-slate-800 active:opacity-20 active:scale-95'
                 >
                   <Trash2 />
                 </button>
               </div>
-              <div className='bg-gradient-to-b from-green-700 to-amber-300 rounded-xl shadow-md mb-8'>
-                <div className='flex max-lg:flex-col items-center px-5 pb-5 pt-8 lg:flex-row md:px-20 md:pb-5 justify-evenly'>
+              <div className='bg-gradient-to-b from-green-700 to-amber-300 rounded-xl shadow-md shadow-slate-800 mb-8'>
+                <div className='flex max-lg:flex-col items-center px-5 pb-5 pt-8 lg:flex-row md:px-15 md:pb-5 justify-evenly'>
                   <div className='rounded-full shadow-md'>
                     <ProfilePicture
                       name={selectedUser?.full_name} 
@@ -79,10 +92,14 @@ const TaskForceDetail = () => {
                   </div>
                   <div className='flex flex-col items-center gap-y-5'>
                     <div className='flex items-center w-auto text-wrap text-center h-auto pt-8'>
-                      <p className='max-sm:text-4xl max-lg:text-5xl lg:text-7xl text-white font-bold'>{selectedUser?.full_name}</p>
+                      <p className='max-sm:text-4xl max-lg:text-5xl lg:text-7xl text-white font-bold'>
+                        {selectedUser?.full_name}
+                      </p>
                     </div>
                     <div className='flex justify-center w-auto h-auto pb-4'>
-                      <p className='max-sm:text-xl max-lg:text-2xl lg:text-3xl font-bold text-slate-100'>{selectedUser?.role}</p>
+                      <p className='max-sm:text-xl max-lg:text-2xl lg:text-3xl font-bold text-green-700 bg-slate-100 px-4 py-2 rounded'>
+                        {selectedUser?.role}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -111,10 +128,12 @@ const TaskForceDetail = () => {
         }
       </main>
       <TaskForceModal 
-        modalType={modalType}
-        updatedValue={updatedValue}
-        selectedUser={selectedUser}
-        isUpdateBtnDisabled={isUpdateBtnDisabled}
+        data={{
+          modalType,
+          updatedValue,
+          selectedUser,
+          isUpdateBtnDisabled
+        }}
         handlers={{
           toggleDropdown,
           handleChevronClick,

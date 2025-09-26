@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import PATH from "../../constants/path";
 import MODAL_TYPES from '../../constants/modalTypes';
 import { useUsersBy } from "../fetch-react-query/useUsers";
+import usePageTitle from '../usePageTitle';
 
 const useVerifiedUserDetail = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ const useVerifiedUserDetail = () => {
   const { USER_DELETION_CONFIRMATION } = MODAL_TYPES;
   const { users, loading, error } = useUsersBy();
   const taskForce = useMemo(() => users, [users]);
+  usePageTitle('Task Force Details | WDMS');
 
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalType, setModalType] = useState(null);

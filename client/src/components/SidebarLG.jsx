@@ -7,6 +7,41 @@ import MODAL_TYPE from '../constants/modalTypes';
 import ConfirmationModal from './Modals/ConfirmationModal';
 import { logoutUser } from '../api-calls/Users/userAPI';
 import { showErrorToast, showSuccessToast } from '../utils/toastNotification';
+import { logoutIcon } from '../assets/icons';
+
+const profileOptions = [
+  { id: 'view-profile', label: 'View Profile', icon: UserRound },
+  { id: 'logout', label: 'Logout', icon: LogOut },
+];
+
+const ProfileAction = ({ onViewProfile, onLogout }) => (
+  profileOptions.map((item) => {
+    const Icon = item.icon;
+
+    const handleClick = () => {
+      if (item.id === 'view-profile') {
+        onViewProfile();
+      } else if (item.id === 'logout') {
+        onLogout();
+      }
+    };
+
+    return (
+      <>
+        {item.id === 'logout' && <hr className='text-slate-700 my-1 w-[90%] mx-auto'></hr>}
+        <button
+          key={item.id}
+          onClick={handleClick}
+          className='flex items-center w-full px-4 py-3 text-sm text-slate-100 hover:bg-slate-800 rounded-md transition cursor-pointer'
+        >
+          <Icon className='w-5 h-5 mr-2'/>
+          {item.label}
+        </button>
+      </>
+    );
+  })
+);
+
 
 const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
   const navigate = useNavigate();
@@ -83,7 +118,7 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
   };
 
   return (
-    <aside className={`sidebar-container ${isCollapsed ? 'w-20' : 'w-64'} bg-slate-900 text-white h-screen flex flex-col shadow-lg`}>
+    <aside className={`sidebar-container ${isCollapsed ? 'w-20' : 'w-65'} bg-slate-900 text-white h-screen flex flex-col shadow-lg`}>
       {/* Header */}
       <header className="relative flex items-center justify-between px-2 py-2 border-b border-gray-600 h-20 shadow-lg">
         {!isCollapsed && (
@@ -96,10 +131,23 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
             </div>
           </div>
         )}
-        <button onClick={toggleSidebar} className="text-white hover:text-slate-100 hover:opacity-90 active:opacity:90 cursor-pointer bg-slate-700 transition-all duration-1000">
+        <button onClick={toggleSidebar} className="text-white hover:text-slate-100 active:opacity:90 cursor-pointer bg-slate-700 transition-all duration-1000">
           {isCollapsed 
-            ? <Menu className='absolute top-8 left-7' /> 
-            : <X className='absolute top-2 right-2 transition-all' />}
+            ? (
+              <span
+                title='Expand Sidebar' 
+                className='absolute top-1/2 left-1/2 -translate-1/2 p-2 hover:bg-slate-700 rounded-full cursor-pointer'>
+                <Menu />
+              </span>
+            )
+            : (
+              <span 
+                title='Collapse Sidebar'
+                className='absolute top-1 right-1 p-2 hover:bg-slate-700 rounded-full cursor-pointer'>
+                <X className='h-5 w-5' />
+              </span>
+            )
+          }
         </button>
       </header>
 
@@ -127,7 +175,7 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
                     }
                   }}
                   className={`relative flex items-center space-x-5 px-5 py-3 cursor-pointer transition-all ${
-                    isActive ? 'bg-slate-700 text-white font-semibold rounded-md' : 'hover:bg-slate-800 rounded-md'
+                    isActive ? 'bg-slate-700 text-white font-semibold rounded-md' : 'hover:bg-slate-700 rounded-md'
                   }`}
                 >
                   <Icon
@@ -143,8 +191,8 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
                   </span>
                   {hasChildren && !isCollapsed && (
                     <ChevronDown 
-                      className={`absolute right-2 transition-all duration-200 ${openDropdowns[item.id] && '-rotate-180'}`} 
-                      size={25} />
+                      className={`absolute right-2 transition-all duration-200 h-5 w-5 ${openDropdowns[item.id] && '-rotate-180'}`} 
+                    />
                   )}
                 </div>
 
@@ -157,10 +205,10 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
                       const childActive = location.pathname === child.link;
                       return (
                         <React.Fragment key={child.id}>
-                          {child.hasHR && <hr className='mt-5 mb-2 text-slate-600'></hr>}
+                          {child.hasHR && <hr className='my-2 text-slate-600'></hr>}
                           <Link
                             to={child.link}
-                            className={`relative flex items-center space-x-3 px-4 py-2 rounded-md transition ${
+                            className={`relative text-sm flex items-center space-x-3 px-4 py-2 rounded-md transition ${
                               childActive ? 'bg-slate-700 text-white' : 'hover:bg-slate-800'
                             }`}
                           >
@@ -187,46 +235,40 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
       </nav>
 
       {/* Logged-in User Info */}
-      <div className='relative px-5 py-4 border-t border-gray-700'>
-        <div
-          onClick={handleOpenUserMenu}
-          className='flex items-center justify-between cursor-pointer hover:opacity-80'
-        >
-          {/* User Info */}
-          <div className={`flex items-center overflow-hidden transition-all ${isCollapsed ? 'gap-0' : 'gap-3'}`}>
-            <img className='rounded-full w-8 h-8' src='/sample-profile-picture.webp' alt='User Profile' />
-            <div className={`${isCollapsed ? 'opacity-0 max-w-0' : 'opacity-100 max-w-[200px]'}`}>
-              <p className='text-sm font-semibold'>{user?.fullName || 'Sample User'}</p>
-              <p className='text-xs text-gray-400'>{user?.role || 'Sample Role'}</p>
+      <div className='relative' ref={userMenuRef}>
+        <hr className='text-slate-600 w-[94%] mx-auto mt-2'></hr>
+        <div className='relative p-2'>
+          <div
+            onClick={handleOpenUserMenu}
+            className='flex items-center justify-between cursor-pointer active:opacity-80 hover:bg-slate-800 py-2 pl-4 rounded-md overflow-hidden'
+          >
+            {/* User Info */}
+            <div className={`flex items-center overflow-hidden transition-all ${isCollapsed ? 'gap-0' : 'gap-3'}`}>
+              <img className='rounded-full w-8 h-8' src='/sample-profile-picture.webp' alt='User Profile' />
+              <div className={`${isCollapsed ? 'opacity-0 max-w-0' : 'opacity-100 max-w-[200px]'}`}>
+                <p className='text-sm font-semibold'>{'Sample User'}</p>
+                <p className='text-xs text-gray-400'>{'Sample Role'}</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Popover Menu outside sidebar */}
-      {openUserMenu && (
-        <div
-          ref={userMenuRef} 
-          className={`fixed bottom-2 ${isCollapsed ? 'left-[6rem]' : 'left-[17rem]'} w-48 px-4 py-3 bg-slate-900 rounded-md shadow-lg z-50 transition-all`}
-        >
-          <button
-            onClick={() => {
-              console.log('View Profile clicked');
-              setOpenUserMenu(false);
-            }}
-            className='flex items-center w-full px-4 py-2 text-sm text-slate-100 hover:bg-slate-800 rounded-md transition cursor-pointer'
+        {/* Popover Menu outside sidebar */}
+        {openUserMenu && (
+          <div
+            onClick={() => setOpenUserMenu(false)} 
+            className={`fixed bottom-2 ${isCollapsed ? 'left-[6rem]' : 'left-[17rem]'} p-2 bg-slate-900 rounded-md shadow-lg z-50 transition-all outline outline-slate-700`}
           >
-            <UserRound className='w-5 h-5 mr-2' /> View Profile
-          </button>
-          <hr className='my-2 text-slate-600 w-[90%] mx-auto'></hr>
-          <button
-            onClick={handleLogoutClick}
-            className='flex items-center w-full px-4 py-2 text-sm text-slate-100 hover:bg-slate-800 rounded-md transition cursor-pointer'
-          >
-            <LogOut className='w-5 h-5 mr-2' /> Logout
-          </button>
-        </div>
-      )}
+            <ProfileAction 
+              onViewProfile={() => {
+                console.log('View Profile clicked');
+                setOpenUserMenu(false);
+              }}
+              onLogout={handleLogoutClick}
+            />
+          </div>
+        )}
+      </div>
       {modalType === MODAL_TYPE.LOGOUT && (
         <ConfirmationModal 
           onClose={handleCloseModal}
@@ -236,9 +278,7 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
           secondaryButton={'Cancel'}
           bodyContent={
             <div className='flex flex-col items-center justify-center gap-y-5 mb-5'>
-              <p className='p-8 bg-slate-800 rounded-full'>
-                <LogOut className='h-12 w-12 text-slate-100 font-bold'/>
-              </p>
+              <img src={logoutIcon} alt="Log out Icon" className='h-28 w-28 text-white' loading='lazy' />
               <p className='text-lg text-black'>
                 Are you sure you want to logout?
               </p>

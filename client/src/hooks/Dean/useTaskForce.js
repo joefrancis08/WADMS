@@ -5,24 +5,29 @@ import PATH from "../../constants/path";
 import { useUsersBy } from "../fetch-react-query/useUsers";
 import MODAL_TYPES from "../../constants/modalTypes";
 import { TOAST_MESSAGES } from "../../constants/messages";
-import { checkUserEmail, deleteUser, postUser, updateUser } from "../../api-calls/users/userAPI";
+import { checkUserEmail, deleteUser, postUser, updateUser } from "../../api-calls/Users/userAPI";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
 import { emailRegex } from "../../utils/regEx";
 import { useRef } from "react";
 import useOutsideClick from "../useOutsideClick";
 import usePageTitle from "../usePageTitle";
 
+const { 
+  ADD_TF, 
+  ADD_TF_CARD, 
+  UPDATE_TF,
+  TF_DELETION_CONFIRMATION 
+} = MODAL_TYPES;
+const { TASK_FORCE, TASK_FORCE_DETAIL } = PATH.DEAN;
+const { TASK_FORCE_CREATION, TASK_FORCE_UPDATE, TASK_FORCE_DELETION } = TOAST_MESSAGES;
+const { TASK_FORCE_CHAIR, TASK_FORCE_MEMBER } = USER_ROLES;
+const { VERIFIED } = USER_STATUS;
+
 export const useTaskForce = () => {
   const { users, loading, error } = useUsersBy();
 
   const navigate = useNavigate();
   const dropdownRef = useRef();
-
-  const { ADD_USER, UPDATE_USER, USER_DELETION_CONFIRMATION } = MODAL_TYPES;
-  const { TASK_FORCE, TASK_FORCE_DETAIL } = PATH.DEAN;
-  const { TASK_FORCE_CREATION, TASK_FORCE_UPDATE, TASK_FORCE_DELETION } = TOAST_MESSAGES;
-  const { TASK_FORCE_CHAIR, TASK_FORCE_MEMBER } = USER_ROLES;
-  const { VERIFIED } = USER_STATUS;
 
   const taskForceChair = users.filter(u => u.role === TASK_FORCE_CHAIR);
   const taskForceMember = users.filter(u => u.role === TASK_FORCE_MEMBER);
@@ -31,6 +36,7 @@ export const useTaskForce = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [emailAlreadyExist, setEmailAlreadyExist] = useState(false);
   const [modalType, setModalType] = useState(null);
+  const [modalData, setModalData] = useState(null);
   const [toggleDropdown, setToggleDropdown] = useState(false);
   const [infoClick, setInfoClick] = useState(false);
   const [searchClick, setSearchClick] = useState(false);
@@ -41,6 +47,7 @@ export const useTaskForce = () => {
     email: '',
     role: '',
   });
+ 
   const [updatedValue, setUpdatedValue] = useState({
     fullName: '',
     email: '',
@@ -108,7 +115,7 @@ export const useTaskForce = () => {
 
   const handleAddUser = () => {
     activeDropdownId && setActiveDropdownId(null);
-    setModalType(ADD_USER);
+    setModalType(ADD_TF);
   };
 
   const handleAddUserInputChange = (e) => {
@@ -123,14 +130,22 @@ export const useTaskForce = () => {
     setInfoClick(!infoClick);
   };
 
-  const handleSaveAdded =  async (e) => {
+  const handleSaveAdded =  async (e, options = {}) => {
     e.preventDefault();
     try {
       const data = new FormData();
-      data.append('fullName', formValue.fullName);
-      data.append('email', formValue.email);
-      data.append('role', formValue.role);
-      if (profilePic) data.append('profilePic', profilePic);
+      if (options && options.from === 'main') {
+        data.append('fullName', formValue.fullName);
+        data.append('email', formValue.email);
+        data.append('role', formValue.role);
+        if (profilePic) data.append('profilePic', profilePic);
+
+      } else if (options && options.from === 'card' && options?.data?.role) {
+        data.append('fullName', formValue.fullName);
+        data.append('email', formValue.email);
+        data.append('role', options?.data?.role);
+        if (profilePic) data.append('profilePic', profilePic);
+      }
 
       const res = await postUser(data);
 
@@ -171,14 +186,15 @@ export const useTaskForce = () => {
   };
 
   const handleUpdate = (e, selectedUser) => {
+    console.log('Update');
     e.stopPropagation();
     setSelectedUser(selectedUser);
-    setModalType(UPDATE_USER);
+    setModalType(UPDATE_TF);
   };
 
   const handleProfilePicUpdate = (newFile) => {
     newFile && setUpdatedProfilePic(newFile);
-  }
+  };
 
   const handleSaveUpdate = async () => {
     const { fullName, email, role } = updatedValue;
@@ -207,7 +223,7 @@ export const useTaskForce = () => {
     e.stopPropagation();
 
     setSelectedUser(selectedUser);
-    setModalType(USER_DELETION_CONFIRMATION);
+    setModalType(TF_DELETION_CONFIRMATION);
   };
 
   const handleConfirmDelete = async (selectedUserId, options = {}) => {
@@ -250,97 +266,67 @@ export const useTaskForce = () => {
     options.isForUpdateUser && setUpdatedValue(prev => ({...prev, role}));
   };
 
+  const handleAddCardClick = (data) => {
+    if (data && data.role && data.from) {
+      setModalType(ADD_TF_CARD);
+      setModalData({
+        role: data.role,
+        from: data.from
+      });
+    }
+  };
+
   return {
-    chevron: {
-      handleChevronClick
-    },
-
-    data: {
-      taskForceChair,
-      taskForceMember
-    },
-
-    confirmDelete: {
-      handleConfirmDelete
-    },
-
-    dropdown: {
-      activeDropdownId,
-      setActiveDropdownId,
-      handleDropdown,
-      handleDropdownMenuClick,
-      toggleDropdown,
-      setToggleDropdown
-    },
-
-    ellipsis: {
-      handleEllipsisClick
-    },
-
-    form: {
-      updatedValue,
-      emailAlreadyExist,
-      handleChange
-    },
-
-    info: {
-      infoClick,
-      handleInfoClick
-    },
-
-    modal: {
-      modalType,
-      handleCloseModal
-    },
-
-    navigation: {
-      navigate,
-    },
-
-    profilePic: {
-      setProfilePic,
-      updatedProfilePic,
-      setUpdatedProfilePic,
-      handleProfilePicUpdate,
-      handleProfilePic
-    },
-
-    ref: {
+    navigate,
+    refs: {
       dropdownRef
     },
 
-    saveButton: {
-      isUpdateBtnDisabled
+    states: {
+      activeDropdownId,
+      setActiveDropdownId,
+      toggleDropdown,
+      setToggleDropdown,
+      setProfilePic,
+      updatedProfilePic,
+      setUpdatedProfilePic,
     },
 
-    search: {
-      handleSearchClick,
-      searchClick
-    },
-
-    state: {
+    datas: {
+      taskForceChair,
+      taskForceMember,
+      updatedValue,
+      emailAlreadyExist,
+      modalType,
+      modalData,
+      isUpdateBtnDisabled,
+      searchClick,
       loading, 
-      error
-    },
-
-    user: {
-      selectedUser
-    },
-
-    userAdd: {
+      error,
+      selectedUser,
       formValue,
+      infoClick,
+    },
+
+    handlers: {
+      handleChevronClick,
+      handleConfirmDelete,
+      handleDropdown,
+      handleDropdownMenuClick,
+      handleEllipsisClick,
+      handleChange,
+      handleInfoClick,
+      handleCloseModal,
+      handleProfilePicUpdate,
+      handleProfilePic,
+      handleSearchClick,
       handleAddUser,
       handleAddUserInputChange,
-      handleSaveAdded
-    },
-
-    userDelete: {
-      handleDelete
-    },
-
-    userUpdate: {
+      handleSaveAdded,
+      handleDelete,
       handleUpdate,
-      handleSaveUpdate
-    },
+      handleSaveUpdate,
+      handleAddCardClick
+    }
   };
 };

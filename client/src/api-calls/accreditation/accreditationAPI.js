@@ -244,6 +244,8 @@ export const fetchDocumentsDynamically = async (data = {}) => {
   }).then(res => res.data); // React Query expects the resolved data
 };
 
+export const fetchAssignments = ()
+
 export const updateDocName = (docId, newFileName) => {
   return axios.patch(`${API_BASE_URL}/accreditation/rename-document/${docId}`, {
     newFileName

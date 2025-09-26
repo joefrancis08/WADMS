@@ -11,7 +11,8 @@ const TaskForceCard = ({
   navigation, 
   profilePic, 
   handleDropdown, 
-  handleEllipsisClick 
+  handleEllipsisClick,
+  handleAddCardClick 
 }) => {
   const renderDropdown = (user) => {
     
@@ -58,16 +59,16 @@ const TaskForceCard = ({
           <div
             onClick={() => navigation(user)}
             key={user.user_uuid} 
-            className={`relative p-4 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl shadow hover:shadow-md hover:shadow-slate-400 active:shadow cursor-pointer transition
-              ${label === 'Chair' && 'w-45 sm:w-50 md:w-55 lg:w-60 xl:w-65'}
-              ${label === 'Member' && 'w-36 sm:w-40 md:w-44 lg:w-48 xl:w-52'}
+            className={`relative p-4 h-65 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl shadow hover:shadow-md hover:shadow-slate-700 active:shadow cursor-pointer transition
+              ${label === 'Chair' && 'w-70'}
+              ${label === 'Member' && 'w-60'}
             `}
           >
             <div 
               onClick={(e) => {
                 handleEllipsisClick(e, user);
               }} 
-              className='absolute top-1 p-2 right-1 text-slate-100 rounded-bl-xl rounded-tr-lg hover:shadow hover:text-slate-200 hover:bg-slate-100/20 active:opacity-50 transition'>
+              className='absolute top-1 p-2 right-1 text-slate-100 rounded-full hover:shadow hover:text-slate-200 hover:bg-slate-100/20 active:opacity-50 transition'>
               <EllipsisVertical size={20}/>
             </div>
             {renderDropdown(user)}
@@ -89,19 +90,22 @@ const TaskForceCard = ({
                   border='rounded-full border-3 border-green-700' 
                 />
               )}
-              
-              <p className='bg-gradient-to-b from-green-800 to-green-600 w-full text-sm max-md:text-md md:text-lg text-slate-100 shadow font-semibold mt-3 py-0.5'>
-                {user.full_name}
-              </p>
-              <p className='w-1/2 text-neutral-900 shadow max-md:text-xs md:text-sm'>
-                {user.role}
-              </p>
+              <div className='flex flex-col gap-y-1 items-center justify-center'>
+                <p className='bg-slate-900 rounded-md min-w-50 text-sm max-md:text-md md:text-lg text-slate-100 shadow font-semibold mt-3 py-1.5 leading-6'>
+                  {user.full_name}
+                </p>
+                <p className='w-1/2 bg-slate-100 p-1 border border-green-700 rounded text-green-700 font-semibold shadow max-md:text-xs md:text-sm'>
+                  {user.role}
+                </p>
+              </div>
             </div>
           </div>
         ))}
-        <div className={`flex items-center justify-center bg-slate-700 p-4 rounded-xl shadow hover:shadow-md hover:shadow-slate-400 cursor-pointer transition active:shadow
-        ${label === 'Chair' && 'w-45 sm:w-50 md:w-55 lg:w-60 xl:w-65'}
-        ${label === 'Member' && 'w-36 sm:w-40 md:w-44 lg:w-48 xl:w-52'}`}>
+        <div 
+          onClick={() => handleAddCardClick({ role: label, from: `${label}-section`})}
+          className={`flex items-center justify-center bg-slate-700 p-4 rounded-xl shadow hover:shadow-md hover:shadow-slate-700 cursor-pointer transition active:shadow active:scale-95 border border-slate-600
+        ${label === 'Chair' && 'w-70 h-65'}
+        ${label === 'Member' && 'w-60 h-65'}`}>
           <div className='flex flex-col items-center justify-center gap-2'>
             <Plus className='text-white' size={60}/>
             <p className='text-white font-medium text-lg text-center'>
@@ -113,7 +117,6 @@ const TaskForceCard = ({
           </div>
         </div>
       </div>
-      
     </div>
   );
 };

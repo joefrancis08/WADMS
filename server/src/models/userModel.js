@@ -1,5 +1,5 @@
 import { deleteAllUsersModel, deleteUserByIdModel } from "./user/DELETE/deleteUserModel.js";
-import { getAllUsersModel, getUserBy } from "./user/GET/getUser.js";
+import { getUserBy, getUsers } from "./user/GET/getUser.js";
 import { insertUserModel } from "./user/POST/postUser.js";
 import { updateUserModel } from "./user/UPDATE/updateUserModel.js";
 
@@ -9,7 +9,7 @@ export const insertUser = (userUUID, profilePicPath, fullName, email, password, 
 );
 
 // GET
-export const getAllUsers = () => getAllUsersModel(); // GET ALL Users
+export const getUsersModel = (condition = {}) => getUsers(condition); // GET ALL Users
 export const getUserById = (id) => getUserBy('user_uuid', id); // GET User by ID
 export const getUserByEmail = (email) => getUserBy('email', email); // GET User by email
 export const getUsersByRole = (role) => getUserBy('role', role, false); // GET Users by role

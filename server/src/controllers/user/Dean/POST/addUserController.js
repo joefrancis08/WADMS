@@ -6,8 +6,8 @@ import { insertUserModel } from '../../../../models/user/POST/postUser.js';
 
 export const addUserController = async (req, res) => {
   
-  // Step 1: Get the data from the request body (from frontend)
-  const { fullName, email, password = null, role = 'Unverified User', status = 'Pending'} = req.body;
+  // Step 1: Get the data from the request body (from frontend) - Dean & SuperAdmin
+  const { fullName, email, password = null, role, status = 'Verified'} = req.body;
   const profilePicPath = req.file ? req.file.filename : null;
 
   // Step 2: Check if there are blank inputs

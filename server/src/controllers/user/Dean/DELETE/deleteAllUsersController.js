@@ -1,9 +1,9 @@
-import { deleteAllUsers, getAllUsers } from "../../../../models/userModel.js";
+import { deleteAllUsers, getUsersModel } from "../../../../models/userModel.js";
 import sendUpdate from "../../../../services/websocket/sendUpdate.js";
 
 export const deleteAllUsersController = async (req, res) => {
   try {
-    const users = await getAllUsers(); // Get users directly from model
+    const users = await getUsersModel(); // Get users directly from model
 
     if (!users || users.length === 0) {
       return res.status(200).json({

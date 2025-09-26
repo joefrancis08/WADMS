@@ -1,10 +1,35 @@
 import db from "../../../config/db.js";
 
 // GET ALL Users
-export const getAllUsersModel = async () => {
-  const [rows] = await db.execute('SELECT * FROM user ORDER BY created_at DESC');
-  return rows;
+export const getUsers = async (condition = {}) => {
+  const { forTaskForce } = condition;
+
+  let whereClause = '1=1'; // Default (no filter)
+
+  if (forTaskForce) {
+    // Only Chairs and Members
+    whereClause = `
+      role IN ('Chair', 'Member') AND 
+      status = 'Verified'
+    `;
+  }
+
+  const query = `
+    SELECT * FROM user
+    WHERE ${whereClause}
+    ORDER BY created_at DESC
+  `;
+
+  try {
+    const [rows] = await db.execute(query);
+    return rows;
+
+  } catch (error) {
+    console.error("Error getting users:", error);
+    throw error;
+  }
 };
+
 
 // GET User(s) By
 export const getUserBy = async (column, value, single = true, isLogin = false) => {

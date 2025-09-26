@@ -1,9 +1,10 @@
-const MODAL_TYPES = {
-  USER_PROFILE: 'user-profile',
-  USER_VERIFICATION_CONFIRMATION: 'confirm-user-verification',
-  USER_DELETION_CONFIRMATION: 'confirm-deletion',
-  ADD_USER: 'add-user',
-  UPDATE_USER: 'update-user',
+const MODAL_TYPES = Object.freeze({
+  UU_PROFILE: 'unverified-user-profile',
+  UU_VERIFICATION_CONFIRMATION: 'confirm-unverified-user-verification',
+  TF_DELETION_CONFIRMATION: 'task-force-confirm-deletion',
+  ADD_TF: 'add-task-force',
+  ADD_TF_CARD: 'add-task-force-from-card',
+  UPDATE_TF: 'update-user',
 
   ADD_PROGRAM_TO_BE_ACCREDITED_CARD: 'add-program-to-be-accredited-card',
   ADD_PROGRAM_TO_BE_ACCREDITED: 'add-program-to-be-accredited',
@@ -26,6 +27,6 @@ const MODAL_TYPES = {
   DELETE_DOC: 'delete-document',
 
   LOGOUT: 'logout-user'
-};
+});
 
 export default MODAL_TYPES;

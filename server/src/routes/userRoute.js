@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerUser, fetchUserById, fetchAllUsers, updateUser, deleteAllUsers, deleteUser, loginUser, checkEmail, userSession, logoutUser, fetchUserByRole, fetchUserByStatus, addUser, confirmEmail, loginController } from '../controllers/user/userController.js';
+import { registerUser, fetchUserById, updateUser, deleteAllUsers, deleteUser, loginUser, checkEmail, userSession, logoutUser, fetchUserByRole, fetchUserByStatus, addUser, confirmEmail, loginController, fetchUsersController } from '../controllers/user/userController.js';
 import upload from '../middlewares/uploadProfile.js';
 
 const userRouter = express.Router();
@@ -11,7 +11,7 @@ userRouter.post('/login', loginController);
 userRouter.post('/logout', logoutUser);
 userRouter.get('/check-email', checkEmail);
 userRouter.get('/session', userSession);
-userRouter.get('/', fetchAllUsers);
+userRouter.get('/', fetchUsersController);
 userRouter.get('/by-role', fetchUserByRole);
 userRouter.get('/by-status', fetchUserByStatus);
 userRouter.get('/:id', fetchUserById);

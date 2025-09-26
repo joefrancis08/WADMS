@@ -5,7 +5,7 @@ import PATH from '../../../constants/path';
 import SidebarLG from '../../SidebarLG';
 import SidebarSM from '../../SidebarSM';
 import MobileHeader from '../../MobileHeader';
-import { BookCopy, CalendarDays, FolderArchive, LayoutDashboard, NotepadText, ShieldUser, SquareUserRound, UserRoundCog, UsersRound } from 'lucide-react';
+import { BookCopy, CalendarDays, FolderArchive, LayoutDashboard, NotepadText, ShieldUser, SquareUserRound, UserRoundCog, UserRoundX, UsersRound } from 'lucide-react';
 import { useUsersBy } from '../../../hooks/fetch-react-query/useUsers';
 
 const DeanLayout = ({ children, ref }) => {
@@ -58,6 +58,13 @@ const DeanLayout = ({ children, ref }) => {
           icon: ShieldUser, 
           label: 'Accreditor',
           link: ''
+        },
+        {
+          id: 'unverified',
+          icon: UserRoundX,
+          label: 'Unverified',
+          link: '',
+          hasHR: true
         }
       ]
     },
@@ -97,7 +104,7 @@ const DeanLayout = ({ children, ref }) => {
           unverifiedUserCount={unverifiedUserCount}
         />
       </div>
-      <div className='overflow-y-auto h-screen'>
+      <div className='overflow-y-auto min-h-screen bg-slate-800'>
         <MobileHeader onMenuClick={setMenuIsClicked}/>
         <div className='flex-1 p-0 space-y-3'>
           {children}

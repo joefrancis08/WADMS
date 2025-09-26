@@ -1,8 +1,21 @@
-import { getAllUsers } from "../../../../models/userModel.js";
+import { getUsersModel } from "../../../../models/userModel.js";
 
-export const fetchAllUsersController = async (req, res) => {
+export const fetchUsers = async (req, res) => {
+  const conditions = Object.freeze({
+    forTaskForce: true
+  });
+
+  const { 
+    forTaskForce 
+  } = conditions;
+
   try {
-    const users = await getAllUsers();
+    let users;
+
+    if (forTaskForce) {
+      users = await getUsersModel({ forTaskForce });
+    }
+    
     res.status(200).json({
       success: true,
       data: users || []

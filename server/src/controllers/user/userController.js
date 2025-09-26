@@ -4,7 +4,7 @@ import { checkEmailController } from './Dean/GET/checkEmailController.js';
 import { loginUserController } from './Dean/GET/loginUserController.js';
 import { userSessionController } from './Dean/GET/userSessionController.js';
 import { logoutUserController } from './Dean/POST/logoutUserController.js';
-import { fetchAllUsersController, fetchUserController } from './Dean/GET/fetchUserController.js';
+import { fetchUserController, fetchUsers } from './Dean/GET/fetchUsers.js';
 import { updateUserController } from './Dean/PATCH/updateUserController.js';
 import { deleteAllUsersController } from './Dean/DELETE/deleteAllUsersController.js';
 import { deleteUserByIdController } from './Dean/DELETE/deleteUserByIdController.js';
@@ -20,7 +20,7 @@ export const loginUser = (req, res) => loginUserController(req, res); // Login u
 export const loginController = (req, res) => login(req, res); // Login V2
 export const userSession = (req, res) => userSessionController(req, res); // Get session info
 export const logoutUser = (req, res) => logoutUserController(req, res); // Logout user
-export const fetchAllUsers = (req, res) => fetchAllUsersController(req, res); // Fetch all users
+export const fetchUsersController = (req, res) => fetchUsers(req, res); // Fetch all users
 export const updateUser = (req, res) => updateUserController(req, res); // Update user
 export const deleteAllUsers = (req, res) => deleteAllUsersController(req, res); // Delete all users
 export const deleteUser = (req, res) => deleteUserByIdController(req, res); // Delete user by ID
