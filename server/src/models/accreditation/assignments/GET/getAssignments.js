@@ -1,20 +1,71 @@
 import db from "../../../../config/db.js";
 
-const getAssignments = async (data, connection = null) => {
+const getAssignments = async (accredData = {}, userData = {}, condition = {}, connection = null) => {
   const {
-    accredInfoId,
-    levelId,
-    programId,
-    areaId,
-    parameterId,
-    subParameterId,
-    indicatorId
-  } = data;
+    accredInfoId = null,
+    levelId = null,
+    programId = null,
+    areaId = null,
+    parameterId = null,
+    subParameterId = null,
+    indicatorId = null
+  } = accredData;
+
+  const {
+    userId = null
+  } = userData;
+
+  const {
+    forDeanTaskForceDetailPage,
+    forDeanAssignmentPage
+  } = condition;
+
+  // Build WHERE clause dynamically
+  let whereClause = [];
+  let params = [];
+
+  if (forDeanTaskForceDetailPage) {
+    whereClause.push("aa.user_id = ?");
+    params.push(userId);
+  }
+
+  if (forDeanAssignmentPage) {
+    if (accredInfoId !== null) {
+      whereClause.push("aa.accred_info_id = ?");
+      params.push(accredInfoId);
+    }
+    if (levelId !== null) {
+      whereClause.push("aa.level_id = ?");
+      params.push(levelId);
+    }
+    if (programId !== null) {
+      whereClause.push("aa.program_id = ?");
+      params.push(programId);
+    }
+    if (areaId !== null) {
+      whereClause.push("aa.area_id = ?");
+      params.push(areaId);
+    }
+    if (parameterId !== null) {
+      whereClause.push("aa.parameter_id = ?");
+      params.push(parameterId);
+    }
+    if (subParameterId !== null) {
+      whereClause.push("aa.sub_parameter_id = ?");
+      params.push(subParameterId);
+    }
+    if (indicatorId !== null) {
+      whereClause.push("aa.indicator_id = ?");
+      params.push(indicatorId);
+    }
+  }
 
   const query = `
     SELECT
       aa.id                        AS assignment_id,
-      u.full_name                  AS assigned,
+      u.id                         AS task_force_id,
+      u.user_uuid                  AS task_force_uuid,
+      u.full_name                  AS task_force,
       u.role                       AS role,
       ai.id                        AS accred_id,
       ai.uuid                      AS accred_uuid,
@@ -57,31 +108,15 @@ const getAssignments = async (data, connection = null) => {
       ON aa.sub_parameter_id = spa.id
     LEFT JOIN indicator i
       ON aa.indicator_id = i.id
-    WHERE aa.accred_info_id = ?
-      AND aa.level_id = ?
-      AND aa.program_id = ?
-      AND aa.area_id = ?
-      AND (? IS NULL OR aa.parameter_id = ?)
-      AND (? IS NULL OR aa.sub_parameter_id = ?)
-      AND (? IS NULL OR aa.indicator_id = ?)
+    ${whereClause.length ? `WHERE ${whereClause.join(" AND ")}` : ""}
   `;
 
   try {
     const executor = connection || db;
-    const [rows] = await executor.execute(query, [
-      accredInfoId,
-      levelId,
-      programId,
-      areaId,
-      parameterId, parameterId,
-      subParameterId, subParameterId,
-      indicatorId, indicatorId
-    ]);
-
+    const [rows] = await executor.execute(query, params);
     return rows;
-
   } catch (error) {
-    console.error('Error getting assignments:', error);
+    console.error("Error getting assignments:", error);
     throw error;
   }
 };

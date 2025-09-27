@@ -135,11 +135,11 @@ const TaskForce = () => {
                         label='Chair'
                         taskForce={taskForceChair}
                         navigation={(user) =>
-                          navigate(TASK_FORCE_DETAIL(user.user_uuid), {
+                          navigate(TASK_FORCE_DETAIL(user.uuid), {
                             state: { fromSection: 'Chair' },
                           })
                         }
-                        profilePic={(user) => getProfilePicPath(user.profile_pic_path)}
+                        profilePic={(user) => getProfilePicPath(user.profilePicPath)}
                         handleDropdown={handleDropdown}
                         handleEllipsisClick={handleEllipsisClick}
                         handleAddCardClick={handleAddCardClick}
@@ -162,11 +162,11 @@ const TaskForce = () => {
                         label='Member'
                         taskForce={taskForceMember}
                         navigation={(user) =>
-                          navigate(TASK_FORCE_DETAIL(user.user_uuid), {
+                          navigate(TASK_FORCE_DETAIL(user.uuid), {
                             state: { fromSection: 'Member' },
                           })
                         }
-                        profilePic={(user) => getProfilePicPath(user.profile_pic_path)}
+                        profilePic={(user) => getProfilePicPath(user.profilePicPath)}
                         handleDropdown={handleDropdown}
                         handleEllipsisClick={handleEllipsisClick}
                         handleAddCardClick={handleAddCardClick}
@@ -194,11 +194,11 @@ const TaskForce = () => {
                       label={label}
                       taskForce={data}
                       navigation={(user) =>
-                        navigate(TASK_FORCE_DETAIL(user.user_uuid), {
+                        navigate(TASK_FORCE_DETAIL(user.uuid), {
                           state: { fromSection: label },
                         })
                       }
-                      profilePic={(user) => getProfilePicPath(user.profile_pic_path)}
+                      profilePic={(user) => getProfilePicPath(user.profilePicPath)}
                       handleDropdown={handleDropdown}
                       handleEllipsisClick={handleEllipsisClick}
                       handleAddCardClick={handleAddCardClick}

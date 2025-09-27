@@ -38,7 +38,7 @@ const TaskForceDetail = () => {
   const { selectedUser } = data;
   const { loading } = state;
 
-  const profile_pic_path = getProfilePicPath(selectedUser?.profile_pic_path);
+  const profilePicPath = getProfilePicPath(selectedUser?.profilePicPath);
   
   return (
     <AdminLayout>
@@ -52,7 +52,7 @@ const TaskForceDetail = () => {
             
           </Link>
           <p className='text-lg md:text-2xl text-slate-900 dark:text-slate-100'>
-            {selectedUser?.full_name ?? 'User'}'s Info
+            {selectedUser?.fullName ?? 'User'}'s Info
           </p>
         </div>
         {loading 
@@ -63,28 +63,33 @@ const TaskForceDetail = () => {
             )
           : (
             <div className='flex flex-col w-full h-full bg-slate-900 px-8 rounded-xl border border-slate-700 shadow'>
-              <div className='flex justify-end gap-2 md:p-1'>
-                <button
-                  title='Update Info'
-                  onClick={(e) => handleUpdate(e, selectedUser)}
-                  className='text-white rounded-full p-3 cursor-pointer transition-all duration-300 hover:bg-slate-800 active:opacity-20 active:scale-95'
-                >
-                  <Pen />
-                </button>
-                <button
-                  title='Delete'
-                  onClick={(e) => handleDelete(e, selectedUser)}
-                  className='text-red-400 rounded-full p-3 cursor-pointer transition-all duration-300  hover:bg-slate-800 active:opacity-20 active:scale-95'
-                >
-                  <Trash2 />
-                </button>
+              <div className='flex justify-between items-center gap-2 md:p-1'>
+                <p className='text-2xl font-semibold dark:text-slate-100'>
+                  Profile
+                </p>
+                <div>
+                  <button
+                    title='Update Info'
+                    onClick={(e) => handleUpdate(e, selectedUser)}
+                    className='text-white rounded-full p-3 cursor-pointer transition-all duration-300 hover:bg-slate-800 active:opacity-20 active:scale-95'
+                  >
+                    <Pen size={20}/>
+                  </button>
+                  <button
+                    title='Delete'
+                    onClick={(e) => handleDelete(e, selectedUser)}
+                    className='text-red-400 rounded-full p-3 cursor-pointer transition-all duration-300  hover:bg-slate-800 active:opacity-20 active:scale-95'
+                  >
+                    <Trash2 size={20}/>
+                  </button>
+                </div>
               </div>
               <div className='bg-gradient-to-b from-green-700 to-amber-300 rounded-xl shadow-md shadow-slate-800 mb-8'>
                 <div className='flex max-lg:flex-col items-center px-5 pb-5 pt-8 lg:flex-row md:px-15 md:pb-5 justify-evenly'>
                   <div className='rounded-full shadow-md'>
                     <ProfilePicture
-                      name={selectedUser?.full_name} 
-                      profilePic={profile_pic_path}
+                      name={selectedUser?.fullName} 
+                      profilePic={profilePicPath}
                       textSize={'text-5xl'}
                       height={'h-40 md:h-65 lg:h-70'} 
                       width={'w-40 md:w-65 lg:w-70'} 
@@ -93,7 +98,7 @@ const TaskForceDetail = () => {
                   <div className='flex flex-col items-center gap-y-5'>
                     <div className='flex items-center w-auto text-wrap text-center h-auto pt-8'>
                       <p className='max-sm:text-4xl max-lg:text-5xl lg:text-7xl text-white font-bold'>
-                        {selectedUser?.full_name}
+                        {selectedUser?.fullName}
                       </p>
                     </div>
                     <div className='flex justify-center w-auto h-auto pb-4'>
@@ -126,6 +131,68 @@ const TaskForceDetail = () => {
             </div>
           )
         }
+        <div className='flex flex-col w-full h-full bg-slate-900 px-8 mt-4 rounded-xl border border-slate-700 shadow'>
+          <div className='flex justify-end gap-2 md:p-1'>
+            <button
+              title='Update Info'
+              onClick={(e) => handleUpdate(e, selectedUser)}
+              className='text-white rounded-full p-3 cursor-pointer transition-all duration-300 hover:bg-slate-800 active:opacity-20 active:scale-95'
+            >
+              <Pen />
+            </button>
+            <button
+              title='Delete'
+              onClick={(e) => handleDelete(e, selectedUser)}
+              className='text-red-400 rounded-full p-3 cursor-pointer transition-all duration-300  hover:bg-slate-800 active:opacity-20 active:scale-95'
+            >
+              <Trash2 />
+            </button>
+          </div>
+          <div className='bg-gradient-to-b from-green-700 to-amber-300 rounded-xl shadow-md shadow-slate-800 mb-8'>
+            <div className='flex max-lg:flex-col items-center px-5 pb-5 pt-8 lg:flex-row md:px-15 md:pb-5 justify-evenly'>
+              <div className='rounded-full shadow-md'>
+                <ProfilePicture
+                  name={selectedUser?.fullName} 
+                  profilePic={profilePicPath}
+                  textSize={'text-5xl'}
+                  height={'h-40 md:h-65 lg:h-70'} 
+                  width={'w-40 md:w-65 lg:w-70'} 
+                  border={'rounded-full border-4 border-green-800'}/>
+              </div>
+              <div className='flex flex-col items-center gap-y-5'>
+                <div className='flex items-center w-auto text-wrap text-center h-auto pt-8'>
+                  <p className='max-sm:text-4xl max-lg:text-5xl lg:text-7xl text-white font-bold'>
+                    {selectedUser?.fullName}
+                  </p>
+                </div>
+                <div className='flex justify-center w-auto h-auto pb-4'>
+                  <p className='max-sm:text-xl max-lg:text-2xl lg:text-3xl font-bold text-green-700 bg-slate-100 px-4 py-2 rounded'>
+                    {selectedUser?.role}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <hr className='max-lg:block hidden max-lg:w-1/3 max-md:w-5/10 mx-auto text-gray-400'></hr>
+            <div className='px-5'>
+              <div className='flex flex-col py-5 justify-center lg:flex-row items-center  max-lg:gap-6 lg:justify-between'>
+                <div className='flex max-md:flex-col items-center gap-1 text-gray-500'>
+                  <Mail color='green' size={32}/>
+                  <p className='text-md text-center md:text-xl text-slate-800 font-medium'>
+                    {selectedUser?.email}
+                  </p>
+                </div>
+                <div className='flex max-md:flex-col items-center gap-1'>
+                  <CalendarDays color='green' size={32}/>
+                  <p className='text-md md:text-xl text-center text-gray-800 font-medium '>
+                    {selectedUser?.created_at && (
+                      <TimeAgo date={selectedUser?.created_at} action='Created'/>
+                    )}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </main>
       <TaskForceModal 
         data={{

@@ -58,6 +58,10 @@ export const messageHandler = (callback) => {
           case 'document-update':
             callback();
             break;
+          
+          case 'assignment-update':
+            callback();
+            break;
 
           // For any unrecognized message type
           default:

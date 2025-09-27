@@ -1,4 +1,5 @@
 import insertAssignment from "../../../../models/accreditation/assignments/POST/insertAssignment.js";
+import sendUpdate from "../../../../services/websocket/sendUpdate.js";
 
 const addAssignment = async (req, res) => {
   const {
@@ -30,6 +31,8 @@ const addAssignment = async (req, res) => {
       subParameterId,
       indicatorId
     });
+
+    sendUpdate('assignment-update');
 
     res.status(200).json({
       message: 'Assignment added successfully!.',

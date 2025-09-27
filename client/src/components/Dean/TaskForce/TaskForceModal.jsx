@@ -150,7 +150,7 @@ const TaskForceModal = ({ data, handlers }) => {
           onClose={() => handleCloseModal({ untoggleDropdown: true, removeSelectedUser: true })}
           onCancelClick={() => handleCloseModal({ untoggleDropdown: true, removeSelectedUser: true })}
           onSaveClick={handleSaveUpdate}
-          headerContent={`Update ${selectedUser.full_name}'s Info`}
+          headerContent={`Update ${selectedUser.fullName}'s Info`}
           primaryButton="Save Update"
           disabled={isUpdateBtnDisabled}
           secondaryButton="Cancel"
@@ -159,7 +159,7 @@ const TaskForceModal = ({ data, handlers }) => {
               <ImageUpload
                 onChange={handleProfilePicUpdate}
                 setUpdatedProfilePic={setUpdatedProfilePic} 
-                imageValue={selectedUser?.profile_pic_path} 
+                imageValue={selectedUser?.profilePicPath} 
                 allowRemove={false}
               />
               <UpdateField fieldName='Full Name' type='text' name='fullName' formValue={updatedValue.fullName} onChange={handleChange} />
@@ -176,7 +176,7 @@ const TaskForceModal = ({ data, handlers }) => {
         <ConfirmationModal
           onClose={() => handleCloseModal({ removeActiveDropdownId: true, removeSelectedUser: true })}
           onCancelClick={() => handleCloseModal({ removeActiveDropdownId: true, removeSelectedUser: true })}
-          onConfirmClick={() => handleConfirmDelete(selectedUser?.user_uuid)}
+          onConfirmClick={() => handleConfirmDelete(selectedUser?.uuid)}
           isDelete
           primaryButton="Delete"
           secondaryButton="Cancel"
@@ -193,7 +193,7 @@ const TaskForceModal = ({ data, handlers }) => {
                     Delete
                   </p>
                   <p className='text-lg font-medium text-slate-900'>
-                    {selectedUser?.full_name}
+                    {selectedUser?.fullName}
                   </p>
                 </div>
                 <div>

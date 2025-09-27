@@ -25,7 +25,7 @@ const TaskForceCard = ({
     ];
 
     return (
-      activeDropdownId === user.user_uuid && (
+      activeDropdownId === user.uuid && (
         <div ref={dropdownRef} className='absolute top-8 left-15 max-sm:left-10 transition'>
           <Dropdown width='w-50' border='border border-gray-300 rounded-md'>
             {dropDownMenu.map((menu, index) => (
@@ -55,10 +55,10 @@ const TaskForceCard = ({
   return (
     <div>
       <div className='flex flex-wrap gap-10 pb-6 justify-center'>
-        {taskForce?.map(user => (
+        {taskForce?.map((user, index) => (
           <div
             onClick={() => navigation(user)}
-            key={user.user_uuid} 
+            key={index} 
             className={`relative p-4 h-65 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl shadow hover:shadow-md hover:shadow-slate-700 active:shadow cursor-pointer transition
               ${label === 'Chair' && 'w-70'}
               ${label === 'Member' && 'w-60'}
@@ -75,7 +75,7 @@ const TaskForceCard = ({
             <div className='flex flex-col items-center text-center'>
               {label === 'Chair' && (
                 <ProfilePicture
-                  name={user.full_name} 
+                  name={user.fullName} 
                   profilePic={profilePic(user)}
                   height='h-36' width='w-36' 
                   border='rounded-full border-3 border-green-800' 
@@ -84,7 +84,7 @@ const TaskForceCard = ({
 
               {label === 'Member' && (
                 <ProfilePicture
-                  name={user.full_name} 
+                  name={user.fullName} 
                   profilePic={profilePic(user)}
                   height='h-28' width='w-28' 
                   border='rounded-full border-3 border-green-700' 
@@ -92,7 +92,7 @@ const TaskForceCard = ({
               )}
               <div className='flex flex-col gap-y-1 items-center justify-center'>
                 <p className='bg-slate-900 rounded-md min-w-50 text-sm max-md:text-md md:text-lg text-slate-100 shadow font-semibold mt-3 py-1.5 leading-6'>
-                  {user.full_name}
+                  {user.fullName}
                 </p>
                 <p className='w-1/2 bg-slate-100 p-1 border border-green-700 rounded text-green-700 font-semibold shadow max-md:text-xs md:text-sm'>
                   {user.role}

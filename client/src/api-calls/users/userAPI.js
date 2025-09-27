@@ -82,7 +82,14 @@ export const fetchUserBy = async (key, value, controller) => {
   } catch (error) {
     console.log(`Error fetching user by ${key}:`, error);
   }
-}
+};
+
+export const fetchUserAssignments = async (userId, signal) => {
+  return await axios.get(`${API_BASE_URL}/accreditation/fetch-assignments`, {
+    params: { userId },
+    signal
+  });
+};
 
 export const updateUser = async (updatedData, uuid) => {
   try {
@@ -111,7 +118,7 @@ export const updateUserRole = async (selectedUserId, newRole) => {
   } catch (error) {
     console.log('Error:', error);
   }
-}
+};
 
 export const deleteUser = async (selectedUserId) => {
   try {

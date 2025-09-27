@@ -57,7 +57,7 @@ export const useTaskForce = () => {
   useEffect(() => {
     if(selectedUser) {
       setUpdatedValue({
-        fullName: selectedUser.full_name || '',
+        fullName: selectedUser.fullName || '',
         email: selectedUser.email || '',
         role: selectedUser.role || ''
       })
@@ -84,7 +84,7 @@ export const useTaskForce = () => {
 
         console.log(res.data.alreadyExist);
       } catch (err) {
-        console.error("Error checking email:", err);
+        console.error('Error checking email:', err);
       }
     }, 500);
 
@@ -93,7 +93,7 @@ export const useTaskForce = () => {
 
   const isUpdateBtnDisabled = useMemo(() => {
     const unchanged = 
-      selectedUser?.full_name.trim() === updatedValue.fullName.trim() &&
+      selectedUser?.fullName.trim() === updatedValue.fullName.trim() &&
       selectedUser?.email.trim() === updatedValue.email.trim() &&
       selectedUser?.role.trim() === updatedValue.role.trim();
 
@@ -165,15 +165,16 @@ export const useTaskForce = () => {
 
   const handleEllipsisClick = (e, user) => {
     e.stopPropagation();
-    setActiveDropdownId(prev => prev === user.user_uuid ? null : user.user_uuid);
+    setActiveDropdownId(prev => prev === user.uuid ? null : user.uuid);
   };
 
   const handleDropdown = (e, menu, user) => {
     e.stopPropagation();
 
     if (menu?.label === 'View Details') {
-      navigate(TASK_FORCE_DETAIL(user?.user_uuid));
+      navigate(TASK_FORCE_DETAIL(user?.uuid));
       setActiveDropdownId(null);
+      console.log(user?.uuid);
 
     } else if (menu?.label === 'Update') {
       handleUpdate(e, user);
@@ -238,7 +239,7 @@ export const useTaskForce = () => {
 
     options.navigateBack && navigate(-1);
 
-    handleCloseModal({removeActiveDropdownId: true, removeSelectedUser: true});
+    handleCloseModal({ removeActiveDropdownId: true, removeSelectedUser: true });
   };
 
   const handleCloseModal = (options = {}) => {

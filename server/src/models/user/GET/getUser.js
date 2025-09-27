@@ -15,7 +15,16 @@ export const getUsers = async (condition = {}) => {
   }
 
   const query = `
-    SELECT * FROM user
+    SELECT 
+      id,
+      user_uuid         AS uuid,
+      profile_pic_path  AS profilePicPath,
+      full_name         AS fullName,
+      email,
+      role,
+      status,
+      created_at
+    FROM user
     WHERE ${whereClause}
     ORDER BY created_at DESC
   `;

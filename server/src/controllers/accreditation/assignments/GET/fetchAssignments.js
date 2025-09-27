@@ -9,12 +9,7 @@ const fetchAssignments = async (req, res) => {
   const subParameterId = req.query.subParameterId ? Number(req.query.subParameterId) : null;
   const indicatorId = req.query.indicatorId ? Number(req.query.indicatorId) : null;
 
-  if (!accredInfoId || !levelId || !programId || !areaId) {
-    return res.status(400).json({
-      message: 'accredInfoId, levelId, programId, and areaId are required.',
-      success: false
-    });
-  }
+  const userId = Number(req.query.userId);
 
   console.table({
     accredInfoId,
@@ -23,18 +18,29 @@ const fetchAssignments = async (req, res) => {
     areaId,
     parameterId,
     subParameterId,
-    indicatorId
+    indicatorId,
+    userId
   });
+
   try {
-    const data = await getAssignments({
-      accredInfoId,
-      levelId,
-      programId,
-      areaId,
-      parameterId,
-      subParameterId,
-      indicatorId
-    });
+    const data = await getAssignments(
+      {
+        accredInfoId,
+        levelId,
+        programId,
+        areaId,
+        parameterId,
+        subParameterId,
+        indicatorId
+      },
+      {
+        userId
+      },
+      {
+        forDeanTaskForceDetailPage: !!userId, // Only true if userId exists
+        forDeanAssignmentPage: !!(accredInfoId && levelId && programId && areaId) // Only true if these are given
+      }
+    );
 
     return res.status(200).json({
       success: true,
