@@ -11,6 +11,13 @@ const insertInfoLevelProgramMapping = async ({ title, year, accredBody, level, p
     Get a connection from the database pool
     so we can manually control transaction behavior
   */
+ console.table('From ILP Model:', {
+    title,
+    year,
+    accredBody,
+    level,
+    program
+  });
   const connection = await db.getConnection();
   try {
     /* 
@@ -74,6 +81,7 @@ const insertInfoLevelProgramMapping = async ({ title, year, accredBody, level, p
     return { accredInfoId, levelId, programId }; // Return Level, Program, and Period Id (in case of use in the future)
 
   } catch (error) {
+    console.error(error);
     /* 
       If there’s any error in the transaction block, rollback 
       which means undoes all queries in this transaction 

@@ -1,4 +1,4 @@
-import { EllipsisVertical, FileUser, FolderTree, Link, Plus, Trash2, UserRoundPen } from 'lucide-react';
+import { EllipsisVertical, FileUser, FolderTree, Link, Plus, PlusCircle, Trash2, UserRoundPen } from 'lucide-react';
 import Dropdown from '../../Dropdown/Dropdown';
 import ProfilePicture from '../../ProfilePicture';
 import React from 'react';
@@ -59,7 +59,7 @@ const TaskForceCard = ({
           <div
             onClick={() => navigation(user)}
             key={index} 
-            className={`relative p-4 h-65 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl shadow hover:shadow-md hover:shadow-slate-700 active:shadow cursor-pointer transition
+            className={`relative p-4 h-65 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl shadow hover:shadow-md hover:shadow-slate-700 hover:scale-105 active:shadow cursor-pointer transition
               ${label === 'Chair' && 'w-70'}
               ${label === 'Member' && 'w-60'}
             `}
@@ -103,11 +103,11 @@ const TaskForceCard = ({
         ))}
         <div 
           onClick={() => handleAddCardClick({ role: label, from: `${label}-section`})}
-          className={`flex items-center justify-center bg-slate-700 p-4 rounded-xl shadow hover:shadow-md hover:shadow-slate-700 cursor-pointer transition active:shadow active:scale-95 border border-slate-600
+          className={`flex items-center justify-center bg-slate-700 p-4 rounded-xl shadow hover:shadow-md hover:shadow-slate-700 cursor-pointer transition active:shadow hover:scale-105 active:scale-95 border border-slate-600
         ${label === 'Chair' && 'w-70 h-65'}
         ${label === 'Member' && 'w-60 h-65'}`}>
           <div className='flex flex-col items-center justify-center gap-2'>
-            <Plus className='text-white' size={60}/>
+            <PlusCircle className='text-white' size={60}/>
             <p className='text-white font-medium text-lg text-center'>
               Add
               {

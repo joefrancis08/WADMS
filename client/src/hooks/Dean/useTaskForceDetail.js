@@ -23,9 +23,11 @@ const useVerifiedUserDetail = () => {
     refetch: refetchAssignments
   } = useFetchAssignments(userId);
 
-  console.log(assignments);
+  
+  const assignmentData = assignments.assignmentData ?? [];
+  console.log(assignmentData);
 
-  usePageTitle('Task Force Details | WDMS');
+  usePageTitle('Task Force Details');
 
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalType, setModalType] = useState(null);
@@ -51,26 +53,30 @@ const useVerifiedUserDetail = () => {
   }
 
   return {
-    actions: {
-      handleDelete
+    params: {
+      uuid
+    },
+
+    states: {
+      loading,
+      loadingAssignments,
+      errorAssignments
+    },
+
+    datas: {
+      modalType,
+      selectedUser,
+      taskForce,
+      assignmentData
+    },
+    
+    handlers: {
+      handleDelete,
+      refetchAssignments
     },
 
     constant: {
       TASK_FORCE
-    }, 
-
-    data: {
-      selectedUser,
-      taskForce
-    }, 
-
-    param: {
-      uuid
-    },
-
-    state: {
-      loading,
-      modalType
     }
   }
 };

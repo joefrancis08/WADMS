@@ -26,3 +26,7 @@ export { default as usersIcon } from './icons/users-icon.svg';
 export { default as verifiedUserIconDark } from './icons/verified-user-icon-dark.svg';
 export { default as verifiedUserIconLight } from './icons/verified-user-icon-light.svg';
 export { default as searchUser } from './icons/search-user.png';
+export { default as deleteUser } from './icons/delete-user.png';
+export { default as toga } from './icons/toga.png';
+export { default as notAssigned } from './icons/denied.png';
+export { default as notAssignedDM } from './icons/denied-darkmode.png';

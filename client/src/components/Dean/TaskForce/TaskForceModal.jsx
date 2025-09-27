@@ -9,6 +9,7 @@ import AddField from '../../Form/AddField';
 import { emailRegex } from '../../../utils/regEx';
 import Tooltip from '../../Popover';
 import Popover from '../../Popover';
+import { deleteUser } from '../../../assets/icons';
 
 const TaskForceModal = ({ data, handlers }) => {
   const {
@@ -184,21 +185,11 @@ const TaskForceModal = ({ data, handlers }) => {
             <>
               <div className='flex flex-col justify-center'>
                 <div className='flex justify-center px-4'>
-                  <div className='p-6 bg-red-400/20 rounded-full'>
-                    <Trash2 className='text-red-500/80 h-12 w-12'/>
-                  </div>
-                </div>
-                <div className='pb-4 pt-1 flex flex-col items-center justify-center gap-y-2'>
-                  <p className='text-center text-2xl text-red-500 font-semibold'>
-                    Delete
-                  </p>
-                  <p className='text-lg font-medium text-slate-900'>
-                    {selectedUser?.fullName}
-                  </p>
+                  <img src={deleteUser} alt="Delete User Icon" className='h-20 w-20' />
                 </div>
                 <div>
-                  <p className='pb-6 text-lg text-slate-800 text-center'>
-                    Are you sure you want to delete this user?
+                  <p className='my-6 text-lg text-slate-800 text-center'>
+                    Do you want to delete this user?
                   </p>
                 </div>
               </div>
