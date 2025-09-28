@@ -13,6 +13,10 @@ import ProgramAreas from '../pages/Dean/ProgramAreas';
 import AreaParameters from '../pages/Dean/AreaParameters';
 import ParamSubparam from '../pages/Dean/ParamSubparam';
 import SubparamIndicator from '../pages/Dean/SubparamIndicator';
+import { USER_ROLES } from '../constants/user';
+import Login from '../pages/Login';
+import NotFound from '../pages/NotFound';
+import PrivateRouteWrapper from '../wrapper/PrivateRouteWrapper';
 
 const { 
   DASHBOARD, 
@@ -28,10 +32,10 @@ const {
   DOCUMENTS
 } = PATH.DEAN;
 
-const { NOT_FOUND_URL } = PATH.PUBLIC;
+const { NOT_FOUND_URL, LOGIN } = PATH.PUBLIC;
 
 const protectedRoutes = [
-  { path: DASHBOARD, element: <Dashboard /> },
+  { path: DASHBOARD, element: <Dashboard />},
   { path: TASK_FORCE, element: <TaskForce /> },
   { path: UNVERIFIED_USERS, element: <UnverifiedUsers /> },
   { path: TASK_FORCE_DETAIL_TEMPLATE, element: <TaskForceDetail /> },
@@ -56,9 +60,9 @@ const deanRoutes = protectedRoutes.map(({ path, element }) => (
     path={path}
     element={
       <ProtectedRoute 
-        allowedRoles={[]} // Allowed Role: Dean
+        allowedRoles={[USER_ROLES.DEAN]} // Allowed Role: Dean
         loader={Loader} 
-        fallbackRoute={<EmailConfirmation />}
+        fallbackRoute={LOGIN}
       >
         {element}
       </ProtectedRoute>

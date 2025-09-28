@@ -1,21 +1,75 @@
 import db from "../../../config/db.js";
 
 // GET ALL Users
-export const getAllUsersModel = async () => {
-  const [rows] = await db.execute('SELECT * FROM user ORDER BY created_at DESC');
-  return rows;
+export const getUsers = async (condition = {}) => {
+  const { forTaskForce } = condition;
+
+  let whereClause = '1=1'; // Default (no filter)
+
+  if (forTaskForce) {
+    // Only Chairs and Members
+    whereClause = `
+      role IN ('Chair', 'Member') AND 
+      status = 'Verified'
+    `;
+  }
+
+  const query = `
+    SELECT 
+      id,
+      user_uuid         AS uuid,
+      profile_pic_path  AS profilePicPath,
+      full_name         AS fullName,
+      email,
+      role,
+      status,
+      created_at
+    FROM user
+    WHERE ${whereClause}
+    ORDER BY 
+    CASE 
+      WHEN role = 'Chair' THEN 1
+      WHEN role = 'Member' THEN 2
+      ELSE 3
+    END,
+    created_at DESC
+  `;
+
+  try {
+    const [rows] = await db.execute(query);
+    return rows;
+
+  } catch (error) {
+    console.error("Error getting users:", error);
+    throw error;
+  }
 };
 
+
 // GET User(s) By
-export const getUserBy = async (column, value, single = true) => {
-  const allowedColumns = ['user_uuid', 'email', 'role', 'is_active'];
+export const getUserBy = async (column, value, single = true, isLogin = false) => {
+  const allowedColumns = ['id', 'user_uuid', 'email', 'full_name', 'role', 'status'];
 
   if (!allowedColumns.includes(column)) {
     throw new Error('Invalid column specified');
   }
 
   const query = `
-    SELECT user_uuid, profile_pic_path, full_name, email, role, created_at FROM user WHERE ${column} = ? 
+    SELECT 
+      id AS user_id,
+      user_uuid, 
+      profile_pic_path, 
+      full_name, 
+      email,
+      password, 
+      role,
+      status,
+      created_at 
+    FROM user WHERE ${column} = ? 
+      ${isLogin 
+        ? "AND status = 'Verified'"
+        : "AND role <> 'Unverified User'"
+      }
     ORDER BY created_at DESC
   `;
   const [rows] = await db.execute(query, [value]);

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUsersBy } from "./fetch-react-query/useUsers";
-import { deleteUser, updateUserRole } from "../api/users/userAPI";
+import { deleteUser, updateUserRole } from "../api-calls/Users/userAPI";
 import { USER_ROLES } from "../constants/user";
 import { TOAST_MESSAGES } from "../constants/messages";
 import MODAL_TYPE from "../constants/modalTypes";

@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
-import { fetchProgramAreas } from "../../api/accreditation/accreditationAPI";
+import { fetchProgramAreas } from "../../api-calls/accreditation/accreditationAPI";
 import { messageHandler } from "../../services/websocket/messageHandler";
 
 const useFetchProgramAreas = ({ title, year, accredBody, level, program }) => {

@@ -3,6 +3,13 @@ import sendUpdate from "../../../../services/websocket/sendUpdate.js";
 
 const addILP = async (req, res) => {
   const { title, year, accredBody, level, programNames } = req.body;
+  console.table({
+    title: title.trim(),
+    year,
+    accredBody,
+    level,
+    programNames
+  })
   try {
     // Validate title and accredBody
     if (!title?.trim() || !accredBody?.trim() || !level?.trim()) {
@@ -64,6 +71,7 @@ const addILP = async (req, res) => {
     });
 
   } catch (error) {
+    console.error(error);
     // Catch duplicate entry
     if (error.message === 'DUPLICATE_ENTRY') {
       return res.status(409).json({

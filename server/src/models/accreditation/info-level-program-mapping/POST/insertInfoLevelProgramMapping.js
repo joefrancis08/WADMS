@@ -55,9 +55,11 @@ const insertInfoLevelProgramMapping = async ({ title, year, accredBody, level, p
       accredInfoId = accredInfoResult[0]?.id;
 
     } else {
-      const newAccredInfo = await insertAccreditationInfo(title, year, accredBody);
-      accredInfoId = newAccredInfo?.insertId;
+      const newAccredInfo = await insertAccreditationInfo(title, year, accredBody, connection);
+      accredInfoId = newAccredInfo?.id;
     }
+
+    console.table({ programId, levelId, accredInfoId });
 
     // Insert programId, levelId, and accredInfoId into Program Level Mapping Table
     const query = `
@@ -65,6 +67,7 @@ const insertInfoLevelProgramMapping = async ({ title, year, accredBody, level, p
       VALUES (?, ?, ?)
     `;
     await connection.execute(query, [programId, levelId, accredInfoId])
+    console.log({ programId, levelId, accredInfoId });
 
     /* 
       If everything is successful, commit the transaction
@@ -74,6 +77,7 @@ const insertInfoLevelProgramMapping = async ({ title, year, accredBody, level, p
     return { accredInfoId, levelId, programId }; // Return Level, Program, and Period Id (in case of use in the future)
 
   } catch (error) {
+    console.error(error);
     /* 
       If there’s any error in the transaction block, rollback 
       which means undoes all queries in this transaction 

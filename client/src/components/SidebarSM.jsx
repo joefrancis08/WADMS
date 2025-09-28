@@ -1,5 +1,4 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { logoutIcon, userProfileIcon } from '../assets/icons';
 import { LayoutDashboard, Users, UsersRound, X } from 'lucide-react';
 
 const SidebarSM = ({ sideBarOpen, setSideBarOpen }) => {
@@ -78,7 +77,7 @@ const SidebarSM = ({ sideBarOpen, setSideBarOpen }) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <img
-                src={userProfileIcon}
+                src={null}
                 alt="User"
                 className="w-8 h-8 rounded-full cursor-pointer hover:opacity-85"
               />
@@ -88,7 +87,7 @@ const SidebarSM = ({ sideBarOpen, setSideBarOpen }) => {
               </div>
             </div>
             <button className="flex flex-col items-center justify-center pl-4 border-l border-gray-500">
-              <img src={logoutIcon} alt="Logout" className="w-6 h-6 hover:opacity-75" />
+              <img src={null} alt="Logout" className="w-6 h-6 hover:opacity-75" />
               <p className="text-xs text-gray-400 hover:opacity-75">Logout</p>
             </button>
           </div>

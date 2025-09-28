@@ -7,24 +7,24 @@ const ProtectedRoute = ({
   fallbackRoute,
   loader
 }) => {
-  // const { user, isLoading } = useAuth();
+  const { user, isLoading } = useAuth();
 
   // 1. Wait for loading
-  // if (isLoading) {
-  //   return <div>{loader}</div>;
-  // }
+  if (isLoading) {
+    return <div>{loader}</div>;
+  }
 
   // 2. Redirect if no user
-  // if (!user) {
-  //   return <Navigate to={fallbackRoute} replace />;
-  // }
+  if (!user) {
+    return <Navigate to={fallbackRoute} replace />;
+  }
 
   // 3. Safe to read status and role
-  // const isRoleAllowed = allowedRoles.length === 0 || allowedRoles.includes(user.role);
+  const isRoleAllowed = allowedRoles.length === 0 || allowedRoles.includes(user.role);
 
-  // if (!isRoleAllowed) {
-  //   return <Navigate to={fallbackRoute} replace />;
-  // }
+  if (!isRoleAllowed) {
+    return <Navigate to={fallbackRoute} replace />;
+  }
 
   // 4. Render protected content
   return children;

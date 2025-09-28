@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { fetchAllUsers, fetchUserBy } from '../../api/users/userAPI';
+import { fetchAllUsers, fetchUserBy } from '../../api-calls/Users/userAPI';
 import { messageHandler } from '../../services/websocket/messageHandler';
 import { useEffect, useMemo } from 'react';
 

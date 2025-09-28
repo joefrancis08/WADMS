@@ -1,11 +1,33 @@
 import db from "../../../config/db.js";
 
-export const insertUserModel = async (userUUID, profilePicPath, fullName, email, role) => {
+export const insertUserModel = async (data = {}) => {
+  const { 
+    userUUID, 
+    profilePicPath, 
+    fullName, 
+    email, 
+    password, 
+    role, 
+    status 
+  } = data;
+  
+   console.log('To be inserted user data:', {userUUID, profilePicPath, fullName, email, password, role, status})
   const sql = `
-    INSERT INTO user (user_uuid, profile_pic_path, full_name, email, role)
-    VALUES (?, ?, ?, ?, ?)  
+    INSERT INTO user (user_uuid, profile_pic_path, full_name, email, password, role, status)
+    VALUES (?, ?, ?, ?, ?, ?, ?)  
   `;
 
-  const [result] = await db.execute(sql, [userUUID, profilePicPath, fullName, email, role]);
-  return result;
+  console.log('To be inserted user data:', {userUUID, profilePicPath, fullName, email, password, role, status})
+
+  try {
+    
+    const [result] = await db.execute(sql, [userUUID, profilePicPath, fullName, email, password, role, status]);
+
+   
+    return result;
+
+  } catch (error) {
+    console.error('Error inserting user:', error);
+    throw error;
+  }
 };

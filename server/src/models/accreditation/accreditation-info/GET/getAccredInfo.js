@@ -3,6 +3,7 @@ import db from "../../../../config/db.js";
 const getAccredInfo = async (connection = null) => {
   const query = `
     SELECT 
+      ai.id,
       ai.uuid    AS accred_uuid,
       ai.title   AS accred_title,
       ai.year    AS accred_year,

@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import DeanLayout from '../../components/Layout/Dean/DeanLayout';
-import { Archive, CalendarArrowUp, ClipboardPlus, EllipsisVertical, Folders, NotebookPen, NotepadText, Plus, Scroll } from 'lucide-react';
+import { Archive, CalendarArrowUp, ClipboardPlus, EllipsisVertical, Folders, NotebookPen, NotepadText, Plus, PlusCircle, Scroll } from 'lucide-react';
 import ContentHeader from '../../components/Dean/ContentHeader';
 import { useProgramsToBeAccredited } from '../../hooks/Dean/useProgramsToBeAccredited';
-import ProgramToBeAccreditedModal from '../../components/Dean/ProgramToBeAccreditedModal';
+import ProgramToBeAccreditedModal from '../../components/Dean/Accreditation/Programs/ProgramToBeAccreditedModal';
 import ProgramsToBeAccreditedSL from '../../components/Loaders/ProgramsToBeAccreditedSL';
 import Dropdown from '../../components/Dropdown/Dropdown';
 import MODAL_TYPE from '../../constants/modalTypes';
@@ -142,9 +142,9 @@ const ProgramsToAccredit = () => {
           <ProgramsToBeAccreditedSL /> 
         ) : Object.entries(grouped).length === 0 ? (
           <div className='flex flex-col items-center justify-center h-100'>
-            <Scroll className='text-slate-700 h-40 w-40 md:h-60 md:w-60'/>
-            <p className='text-center font-medium text-slate-700 text-lg md:text-xl'>
-              No data to display at the moment.
+            <Scroll className='text-slate-400 h-40 w-40 md:h-60 md:w-60'/>
+            <p className='text-center font-medium text-slate-100 text-lg md:text-xl'>
+              No accreditation data yet. Click '+' to add
             </p>
           </div>
         ) : (
@@ -168,10 +168,10 @@ const ProgramsToAccredit = () => {
               <React.Fragment key={index}>
                 <div 
                   ref={scrollContainerRef}
-                  className='relative border flex flex-col border-slate-300 bg-slate-200 pb-15 p-2 shadow-lg shadow-slate-300 mb-15 overflow-auto'
+                  className='relative border rounded-lg flex flex-col bg-slate-900 m-4 pb-15 p-4 shadow-lg overflow-auto border-slate-700 '
                 >
-                  <div id={accredTitle} className='relative w-full h-100 bg-[url("/pit-bg.jpg")] bg-cover bg-center shadow-slate-400 shadow-md'>
-                    <div className='absolute inset-0 bg-black/60'></div>
+                  <div id={accredTitle} className='relative w-full h-100 bg-[url("/pit-bg.jpg")] bg-cover bg-center rounded-lg'>
+                    <div className='absolute inset-0 bg-black/70 rounded-lg border border-slate-700 shadow shadow-slate-800'></div>
                     {/* Content */}
                     <div className='absolute flex top-2 right-2'>
                       <img 
@@ -288,9 +288,9 @@ const ProgramsToAccredit = () => {
                       </div>
                     )}
                   </div>
-                  <hr className='w-[75%] bg-green-600 border border-transparent h-3 my-10 mx-auto'></hr>
-                  <div className='mx-auto my-4'>
-                    <p className='text-xl md:text-2xl lg:text-3xl text-center tracking-wider font-extrabold text-green-700'>
+                  <hr className='w-[75%] bg-slate-600 border border-transparent my-16 mx-auto'></hr>
+                  <div className='mx-auto'>
+                    <p className='text-xl md:text-2xl lg:text-3xl text-center tracking-wider font-extrabold text-yellow-400 mb-4'>
                       PROGRAMS TO BE ACCREDITED
                     </p>
                   </div>
@@ -300,13 +300,13 @@ const ProgramsToAccredit = () => {
                       <div
                         ref={(el) => (levelRef.current[`${accredTitle}-${level}`] = el)} 
                         id={`${accredTitle}-${level}`}
-                        className='relative p-4 space-y-6 mb-4 bg-slate-300 border border-slate-300 shadow-md shadow-slate-400'
+                        className='relative p-4 space-y-6 mb-4 bg-slate-800 border border-slate-700 rounded-lg'
                       >
                         {/* Level label (ex: Level II, Preliminary, etc.) */}
-                        <h2 className='absolute top-3 left-1/2 -translate-x-1/2 flex items-center justify-center w-[60%] md:w-[50%] lg:w-[40%] p-2 text-lg md:text-xl lg:text-2xl text-green-600 rounded font-extrabold tracking-wide'>
+                        <h2 className='absolute top-3 left-1/2 -translate-x-1/2 flex items-center justify-center w-[60%] md:w-[50%] lg:w-[40%] p-2 text-lg md:text-xl lg:text-2xl text-slate-100 rounded font-extrabold tracking-wide'>
                           {level.toUpperCase()}
                         </h2>
-                        <hr className='w-[50%] bg-green-600 border border-transparent mt-12 h-1 mx-auto'></hr>
+                        <hr className='w-[50%] bg-green-500 border border-transparent mt-12 h-1 mx-auto'></hr>
 
                         {/* Program cards */}
                         <div className='relative flex flex-wrap gap-10 justify-center pb-4 px-4 '>
@@ -342,9 +342,9 @@ const ProgramsToAccredit = () => {
                                   })}
                                 }
                                 
-                                className='relative flex items-center justify-center h-100 p-8 shadow hover:shadow-slate-400 hover:shadow-lg active:shadow cursor-pointer transition-all w-100 bg-[url("/pit-bg-5.png")] bg-cover bg-center'
+                                className='relative flex items-center justify-center h-100 p-8 shadow-md border border-slate-600 hover:shadow-slate-700 transition w-100 bg-[url("/pit-bg-5.png")] bg-cover bg-center rounded-lg cursor-pointer'
                               >
-                                <div className='absolute inset-0 bg-black/60 z-10'></div>
+                                <div className='absolute inset-0 bg-black/60 z-10 rounded-lg'></div>
                                 <div 
                                   id={`${accredBody}-${accredYear}-${level}-${program}`}
                                   className='z-20'
@@ -433,10 +433,10 @@ const ProgramsToAccredit = () => {
                               }  
                             })}
                             title='Click to add program'
-                            className='relative flex flex-col items-center justify-center gap-y-2 h-100 p-4 bg-slate-200/50 shadow hover:shadow-lg active:shadow cursor-pointer transition-all w-100'
+                            className='relative flex flex-col items-center justify-center gap-y-2 h-100 p-4 bg-slate-900 shadow-slate-700 hover:shadow-md active:shadow cursor-pointer transition-all w-100 rounded-lg border border-slate-700 active:scale-95'
                           >
-                            <Plus className='text-slate-700 h-20 w-20 rounded-full'/>
-                            <p className='text-xl font-medium text-slate-800 py-3 px-8 rounded-full cursor-pointer'>
+                            <PlusCircle className='text-slate-100 h-20 w-20 rounded-full'/>
+                            <p className='text-xl font-medium text-slate-100 py-3 px-8 rounded-full cursor-pointer'>
                               Add Programs
                             </p>
                           </div>

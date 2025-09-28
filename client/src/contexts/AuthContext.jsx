@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { getUserSession } from '../api/Users/userAPI';
+import { getUserSession } from '../api-calls/Users/userAPI';
 
 // Create Context
 const AuthContext = createContext();
@@ -13,8 +13,8 @@ export const AuthProvider = ({ children }) => {
     setUser({ email, fullName, role, status });
   }
 
-  const login = (email, fullName, role, status) => {
-    setUser({ email, fullName, role, status });
+  const login = (email, fullName, profilePicPath, role, status) => {
+    setUser({ email, fullName, profilePicPath, role, status });
   };
 
   const logout = () => {

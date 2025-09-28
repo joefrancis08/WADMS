@@ -13,6 +13,7 @@ const getILP = async (connection = db) => {
         ai.title          AS accred_title,                            -- title of accreditation
         ai.year           AS accred_year,                             -- year of accreditation
         ab.name           AS accred_body_name,                        -- name of accreditation body(AACCUP, etc.)
+        l.id              AS level_id,                                -- level id from level table
         l.level_name      AS level,                                   -- level name from level table
         p.uuid            AS program_uuid,                            -- program_uuid from program table
         p.program_name    AS program                                  -- program name from program table

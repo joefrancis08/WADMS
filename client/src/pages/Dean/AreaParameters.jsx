@@ -3,7 +3,8 @@ import { ChevronRight, EllipsisVertical, Folder, Plus } from 'lucide-react';
 import PATH from '../../constants/path';
 import formatAreaName from '../../utils/formatAreaName';
 import useAreaParameters from '../../hooks/Dean/useAreaParameters';
-import ParameterModal from '../../components/Dean/ParameterModal';
+import ParameterModal from '../../components/Dean/Accreditation/Parameter/ParameterModal';
+import formatParameter from '../../utils/formatParameter';
 
 const { PROGRAMS_TO_BE_ACCREDITED, PROGRAM_AREAS, PARAM_SUBPARAMS } = PATH.DEAN;
 
@@ -23,7 +24,7 @@ const AreaParameters = () => {
   const { parameterInputRef } = refs;
   const { modalType } = modals;
   const { parameterInput } = inputs;
-  const { parameterData, parametersArr, duplicateValues, area, program, formattedLevel } = datas;
+  const { parameterData, parametersArr, duplicateValues, area, program, levelName } = datas;
   const {
     handleCloseModal,
     handlePlusClick,
@@ -65,8 +66,8 @@ const AreaParameters = () => {
               <span className='text-green-600 font-bold text-xl md:text-2xl lg:text-3xl tracking-wide'>
                 {program}
               </span>
-              <span className='absolute -bottom-10 left-1/2 -translate-x-1/2 text-lg px-2 bg-green-700 text-white font-bold'>
-                {formattedLevel}
+              <span className='absolute -bottom-10 left-1/2 -translate-x-1/2 text-lg px-4 bg-yellow-400 text-white font-bold'>
+                {formatAreaName(area)}
               </span>
             </p>
           </div>
@@ -92,31 +93,40 @@ const AreaParameters = () => {
               </div>
             )}
 
-            {parameterData.map(({ parameter_uuid, parameter }) => (
-              <div
-                key={parameter_uuid}
-                onClick={() => navigate(PARAM_SUBPARAMS({ 
-                  accredInfoUUID, 
-                  level, 
-                  programUUID, 
-                  areaUUID, 
-                  parameterUUID: parameter_uuid 
-                }))}
-                className='relative flex flex-col items-start justify-center px-4 max-sm:w-full md:w-75 lg:w-50 h-48 bg-[url("/cgs-bg-2.png")] bg-cover bg-center shadow-slate-400 shadow hover:shadow-lg transition-all cursor-pointer active:shadow'
-              >
-                <div className='absolute inset-0 bg-black/50'></div>
-                <div className='flex items-center justify-center z-20 w-full h-full'>
-                  <p className='text-white text-lg md:text-xl font-semibold z-20'>{parameter}</p>
-                </div>
-                <button
-                  onClick={(e) => e.stopPropagation()}
-                  title='Options'
-                  className='absolute top-2 right-2 text-white cursor-pointer active:opacity-50 rounded-full hover:bg-yellow-400/50 p-2 z-40'
+            {parameterData.map(({ parameter_uuid, parameter }) => {
+              const { label, content } = formatParameter(parameter);
+
+              return (
+                <div
+                  key={parameter_uuid}
+                  onClick={() => navigate(PARAM_SUBPARAMS({ 
+                    accredInfoUUID, 
+                    level, 
+                    programUUID, 
+                    areaUUID, 
+                    parameterUUID: parameter_uuid 
+                  }))}
+                  className='relative flex flex-col items-start justify-center px-4 max-sm:w-full md:w-75 lg:w-50 h-48 bg-[url("/cgs-bg-2.png")] bg-cover bg-center shadow-slate-400 shadow hover:shadow-lg transition-all cursor-pointer active:shadow'
                 >
-                  <EllipsisVertical className='h-5 w-5' />
-                </button>
-              </div>
-            ))}
+                  <div className='absolute inset-0 bg-black/50'></div>
+                  <div className='flex flex-col items-center justify-center z-20 w-full h-full'>
+                    <span className='text-white bg-yellow-400 min-w-12 text-center font-bold text-md md:text-lg mt-4'>
+                      {label}
+                    </span>
+                    <span className='text-white text-lg md:text-xl text-center font-semibold'>
+                      {content}
+                    </span>
+                  </div>
+                  <button
+                    onClick={(e) => e.stopPropagation()}
+                    title='Options'
+                    className='absolute top-2 right-2 text-white cursor-pointer active:opacity-50 rounded-full hover:bg-yellow-400/50 p-2 z-40'
+                  >
+                    <EllipsisVertical className='h-5 w-5' />
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

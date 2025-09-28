@@ -1,10 +1,9 @@
 import { AlertCircle, Check, CircleCheck, CircleX, Info, Mail} from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Popover from '../components/Popover';
 import SubmitButton from '../components/Auth/SubmitButton';
 import { emailRegex } from '../utils/regEx';
-import { confirmEmail } from '../api/Users/userAPI';
-import { showSuccessToast } from '../utils/toastNotification';
+import { confirmEmail } from '../api-calls/Users/userAPI';
 
 const EmailConfirmation = () => {
   const [loading, setLoading] = useState(null);
@@ -88,7 +87,7 @@ const EmailConfirmation = () => {
         <div className='flex flex-col items-center w-100 h-100 max-md:w-100 max-md:h-100 bg-gradient-to-r from-slate-200 to-white rounded shadow-lg'>
           <div className='flex flex-col gap-4'>
             <div className='flex flex-col items-center justify-center pt-3'>
-              <img className='w-24 h-auto' src="/CGS_Logo.png" alt="CGS Logo" />
+              <img className='w-24 h-auto' src="/cgs-logo.png" alt="CGS Logo" />
               <p className='text-green-700 text-md font-bold'>PIT-College of Graduate Studies</p>
             </div>
             <hr className='text-slate-400 w-1/2 mx-auto pt-3'></hr>

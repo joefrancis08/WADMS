@@ -13,6 +13,7 @@ const getSIM = async ({
 }) => {
   const query = `
     SELECT 
+      sim.id,
       ai.title               AS accred_title,
       ai.year                AS accred_year,
       ab.name                AS accred_body_name,
@@ -21,6 +22,7 @@ const getSIM = async ({
       a.area_name            AS area,
       pa.parameter_name      AS parameter,
       spa.sub_parameter_name AS sub_parameter,
+      i.id                   AS indicator_id,
       i.uuid                 AS indicator_uuid,
       i.indicator_name       AS indicator
     FROM subparam_indicator_mapping sim

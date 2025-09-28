@@ -2,6 +2,7 @@ const PATH = {
   PUBLIC: {
     DEFAULT_PATH: '/',
     REGISTER: '/register',
+    LOGIN: '/login',
     EMAIL_CONFIRMATION: '/email-confirmation',
     NOT_FOUND_DEFAULT: '*',
     NOT_FOUND_URL: '/page-not-found'
@@ -11,8 +12,8 @@ const PATH = {
     DASHBOARD: '/d',
 
     TASK_FORCE: '/d/task-force',
-    TASK_FORCE_DETAIL: (id) => `/d/task-force/${id}`,
-    TASK_FORCE_DETAIL_TEMPLATE: '/d/task-force/:id',
+    TASK_FORCE_DETAIL: (uuid) => `/d/task-force/${uuid}`,
+    TASK_FORCE_DETAIL_TEMPLATE: '/d/task-force/:uuid',
 
     PROGRAMS_TO_BE_ACCREDITED: '/d/accreditation/programs',
 
@@ -44,6 +45,11 @@ const PATH = {
     SUBPARAM_INDICATORS_TEMPLATE: '/d/accreditation/programs/:level/:programUUID/:accredInfoUUID/:areaUUID/:parameterUUID/:subParameterUUID',
     
     DOCUMENTS: '/d/accreditation/documents'
+  },
+
+  TASK_FORCE: {
+    DASHBOARD: '/t',
+    ACCREDITATION: '/t/accreditation'
   }
 }
 

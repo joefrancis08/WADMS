@@ -10,13 +10,14 @@ const getAreaParameterMappings = async ({
   connection = null
 }) => {
   const query = `
-    SELECT 
+    SELECT
       ai.title          AS accred_title,
       ai.year           AS accred_year,
       ab.name           AS accred_body_name,
       al.level_name     AS level,
       pr.program_name   AS program,
       a.area_name       AS area,
+      pa.id             AS parameter_id,
       pa.uuid           AS parameter_uuid,
       pa.parameter_name AS parameter
     FROM area_parameter_mapping apm

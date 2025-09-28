@@ -10,7 +10,7 @@ export { default as emailIcon } from './icons/email-icon.svg';
 export { default as eyeCloseIcon } from './icons/eye-close-icon.svg';
 export { default as eyeOpenIcon } from './icons/eye-open-icon.svg';
 export { default as keyIcon } from './icons/key-icon.svg';
-export { default as logoutIcon } from './icons/logout-icon.svg';
+export { default as logoutIcon } from './icons/logout.png'
 export { default as menuIconLight } from './icons/menu-icon.svg';
 export { default as menuIconDark } from './icons/menu-icon-black.svg';
 export { default as notFoundIcon } from './icons/not-found-icon.png';
@@ -25,3 +25,9 @@ export { default as userProfileIcon } from './icons/user-profile-icon.svg';
 export { default as usersIcon } from './icons/users-icon.svg';
 export { default as verifiedUserIconDark } from './icons/verified-user-icon-dark.svg';
 export { default as verifiedUserIconLight } from './icons/verified-user-icon-light.svg';
+export { default as searchUser } from './icons/search-user.png';
+export { default as deleteUser } from './icons/delete-user.png';
+export { default as toga } from './icons/toga.png';
+export { default as notAssigned } from './icons/denied.png';
+export { default as notAssignedDM } from './icons/denied-darkmode.png';
+export { default as deleteFolder } from './icons/delete-folder.png';

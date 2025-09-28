@@ -1,11 +1,13 @@
+import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { getUserByEmail, insertUser } from '../../../../models/userModel.js';
 import sendUpdate from '../../../../services/websocket/sendUpdate.js';
+import { insertUserModel } from '../../../../models/user/POST/postUser.js';
 
 export const addUserController = async (req, res) => {
   
-  // Step 1: Get the data from the request body (from frontend)
-  const { fullName, email, role} = req.body;
+  // Step 1: Get the data from the request body (from frontend) - Dean & SuperAdmin
+  const { fullName, email, password = null, role, status = 'Verified'} = req.body;
   const profilePicPath = req.file ? req.file.filename : null;
 
   // Step 2: Check if there are blank inputs
@@ -23,9 +25,23 @@ export const addUserController = async (req, res) => {
       });
     }
 
+    // Step 3.4: Hash the password
+    let hashedPassword = null;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10); // 10 salt rounds
+    }
+
     // Step 3.2: Proceed to inserting the user to the database if email does not exist and return the response
     const userUUID = uuidv4();
-    await insertUser(userUUID, profilePicPath, fullName, email, role);
+    await insertUser(
+      userUUID, 
+      profilePicPath, 
+      fullName, 
+      email, 
+      hashedPassword, 
+      role, 
+      status
+    );
 
     sendUpdate('user-update');
 
@@ -44,6 +60,7 @@ export const addUserController = async (req, res) => {
         alreadyExists: true, 
       });
     }
+    
     console.error(err);
     return res.status(500).json({ 
       message: "Something went wrong in our server.", err, 

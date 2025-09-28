@@ -6,8 +6,9 @@ import { useEffect, useState } from "react";
 import MODAL_TYPE from "../../constants/modalTypes";
 import useAutoFocus from "../useAutoFocus";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
-import { addIndicators } from "../../api/accreditation/accreditationAPI";
+import { addIndicators, fetchDocumentsDynamically } from "../../api-calls/accreditation/accreditationAPI";
 import { TOAST_MESSAGES } from "../../constants/messages";
+import { useDocumentsQueries } from "../fetch-react-query/useDocumentsQueries";
 
 const { INDICATORS_ADDITION } = TOAST_MESSAGES;
 
@@ -25,9 +26,17 @@ const useSubparamIndicators = () => {
 
   const { level: levelName } = formatProgramParams(level);
 
-  const { title, year, accredBody, program } = useProgramToBeAccreditedDetails(accredInfoUUID, programUUID);
+  const {
+    accredInfoId,
+    title, 
+    year, 
+    accredBody, 
+    levelId,
+    programId,
+    program
+  } = useProgramToBeAccreditedDetails(accredInfoUUID, programUUID);
 
-  const { area } = useProgramAreaDetails({
+  const { areaId, area } = useProgramAreaDetails({
     title,
     year,
     accredBody,
@@ -36,7 +45,7 @@ const useSubparamIndicators = () => {
     areaUUID
   });
 
-  const { paramName: parameter } = useAreaParamsDetails({
+  const { paramName: parameter, paramId } = useAreaParamsDetails({
     title,
     year,
     accredBody,
@@ -46,7 +55,7 @@ const useSubparamIndicators = () => {
     parameterUUID
   });
 
-  const { subParam } = useParamSubparamDetails({
+  const { subParamId, subParam } = useParamSubparamDetails({
     title,
     year,
     accredBody,
@@ -68,7 +77,31 @@ const useSubparamIndicators = () => {
     subParameter: subParam
   });
 
+  console.log("Fetching indicators with:", {
+    title, year, accredBody, level, program, area, parameter, subParameter: subParam
+  });
+
   const indicatorsArr = indicators?.data ?? [];
+
+  console.log(indicatorsArr);
+
+  const indicatorDocs = useDocumentsQueries(
+    indicatorsArr,
+    { accredInfoId, levelId, programId, areaId, paramId, subParamId },
+    fetchDocumentsDynamically,
+    'indicator_id',
+    'indicator'
+  );
+
+  console.log(indicatorDocs?.data);
+
+  const documentsByIndicator = {};
+  indicatorDocs.forEach((ind, i) => {
+    const documents = ind.data?.data?.documents ?? [];
+    documentsByIndicator[indicatorsArr[i]?.indicator_id] = Array.isArray(documents) ? documents : [];
+  });
+
+  console.log(documentsByIndicator);
 
   const [modalType, setModalType] = useState(null);
   const [indicatorInput, setIndicatorInput] = useState('');

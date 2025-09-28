@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
-import { fetchPrograms } from "../../api/programs/programAPI";
+import { fetchPrograms } from "../../api-calls/programs/programAPI";
 import { messageHandler } from "../../services/websocket/messageHandler";
 
 const usePrograms = () => {

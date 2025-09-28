@@ -4,8 +4,10 @@ import LandingRedirect from "../pages/LandingRedirect";
 import Register from "../pages/Register";
 import NotFound from "../pages/NotFound";
 import EmailConfirmation from "../pages/EmailConfirmation";
+import Login from "../pages/Login";
+import PublicRouteWrapper from "../wrapper/PublicRouteWrapper";
 
-const { DEFAULT_PATH, REGISTER, EMAIL_CONFIRMATION, NOT_FOUND_DEFAULT, NOT_FOUND_URL } = PATH.PUBLIC;
+const { DEFAULT_PATH, REGISTER, LOGIN, EMAIL_CONFIRMATION, NOT_FOUND_DEFAULT, NOT_FOUND_URL } = PATH.PUBLIC;
 
 const publicRouteArray = [
   {
@@ -14,11 +16,24 @@ const publicRouteArray = [
   },
   {
     path: REGISTER,
-    element: <Register />
+    element: 
+      <PublicRouteWrapper restricted={true}>
+        <Register />
+      </PublicRouteWrapper>
+  },
+  {
+    path: LOGIN,
+    element:
+      <PublicRouteWrapper restricted={true}>
+         <Login />
+      </PublicRouteWrapper> 
   },
   {
     path: EMAIL_CONFIRMATION,
-    element: <EmailConfirmation />
+    element:
+    <PublicRouteWrapper>
+      <EmailConfirmation />
+    </PublicRouteWrapper> 
   },
   {
     path: NOT_FOUND_URL,
