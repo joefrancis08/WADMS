@@ -24,6 +24,8 @@ const MODAL_TYPES = Object.freeze({
 
   ADD_INDICATORS: 'add-indicators',
 
+  ASSIGN_TASK_FORCE: 'assign-task-force',
+
   DELETE_DOC: 'delete-document',
 
   LOGOUT: 'logout-user'

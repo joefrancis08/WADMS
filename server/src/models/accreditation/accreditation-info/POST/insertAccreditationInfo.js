@@ -6,13 +6,10 @@ import insertAccredBody from "../../bodies/POST/insertAccredBody.js";
 /* 
   Insert title, year, accreditation body id into Accreditation Info Table.
 */
-const insertAccreditationInfo = async (title, year, accredBody) => {
+const insertAccreditationInfo = async (title, year, accredBody, connection) => {
   const accredUUID = uuidBase64();
-  const connection = await db.getConnection();
 
   try {
-    await connection.beginTransaction();
-
     // Check if accreditation body already exist
     const accredBodyResult = await getAccredBodyBy('name', accredBody, connection);
 
@@ -48,12 +45,9 @@ const insertAccreditationInfo = async (title, year, accredBody) => {
 
     const [result] = await connection.execute(query, [accredUUID, title, year, accredBodyId]);
 
-    await connection.commit();
-
     return { id: result.insertId, UUID: accredUUID};
 
   } catch (error) {
-    await connection.rollback();
 
     if (error.code === 'ER_DUP_ENTRY') {
       const duplicateError = new Error('DUPLICATE_ENTRY');
@@ -64,10 +58,7 @@ const insertAccreditationInfo = async (title, year, accredBody) => {
     console.error(error)
 
     throw error;
-
-  } finally {
-    connection.release();
-  }
+  } 
 };
 
 export default insertAccreditationInfo;

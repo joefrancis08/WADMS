@@ -26,7 +26,13 @@ export const getUsers = async (condition = {}) => {
       created_at
     FROM user
     WHERE ${whereClause}
-    ORDER BY created_at DESC
+    ORDER BY 
+    CASE 
+      WHEN role = 'Chair' THEN 1
+      WHEN role = 'Member' THEN 2
+      ELSE 3
+    END,
+    created_at DESC
   `;
 
   try {

@@ -3,7 +3,10 @@ import MODAL_TYPE from '../../../../constants/modalTypes';
 import AreaBaseModal from '../../../Modals/accreditation/AreaBaseModal';
 import AddField from '../../../Form/AddField';
 import ConfirmationModal from '../../../Modals/ConfirmationModal';
-import { TriangleAlert } from 'lucide-react';
+import { LoaderCircle, Plus, TriangleAlert, UserRoundX, UserX } from 'lucide-react';
+import { deleteFolder, notAssignedDM, userIcon } from '../../../../assets/icons';
+
+const PROFILE_PIC_PATH = import.meta.env.VITE_PROFILE_PIC_PATH;
 
 const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
   const { areaInputRef } = refs;
@@ -13,7 +16,11 @@ const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
     areas,
     areasByLevelData,
     modalData,
-    duplicateValues 
+    duplicateValues,
+    taskForce,
+    taskForceLoading,
+    taskForceError,
+    selectedTaskForce
   } = datas;
   const {
     handleCloseModal,
@@ -22,7 +29,10 @@ const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
     handleAddAreaValue,
     handleRemoveAreaValue,
     handleRemoveAllAreas,
-    handleConfirmRemoval
+    handleConfirmRemoval,
+    handleCheckboxChange,
+    handleSelectAll,
+    handleAssignTaskForce
   } = handlers;
 
   function formatAreaName(text) {
@@ -83,6 +93,99 @@ const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
           }
         />
       );
+
+    case MODAL_TYPE.ASSIGN_TASK_FORCE:
+      return (
+        <AreaBaseModal 
+          mode='add'
+          onClose={handleCloseModal}
+          onCancel={handleCloseModal}
+          onSave={() => handleAssignTaskForce({
+            accredInfoId: modalData.accredId,
+            levelId: modalData.levelId,
+            programId: modalData.programId,
+            areaId: modalData.areaId
+          })}
+          primaryButton={'Assign'}
+          disabled={selectedTaskForce.length === 0}
+          secondaryButton={'Cancel'}
+          headerContent={
+            <p className='text-xl font-semibold'>
+              Assign Task Force to {modalData.area}
+            </p>
+          }
+          bodyContent={
+            <div className='relative w-full border min-h-50 max-h-75 overflow-auto border-slate-500 rounded-lg px-4 pb-2'>
+              <div className='sticky top-0 bg-white flex items-center justify-between py-2'>
+                <h2>Select or Add Task Force</h2>
+                <button 
+                  title='Add Task Force'
+                  className='p-1 hover:bg-slate-200 rounded-full cursor-pointer active:scale-95'>
+                  <Plus className='active:scale-95'/>
+                </button>
+              </div>
+              <hr className='text-slate-200'></hr>
+              <div className='flex flex-col p-2'>
+                {taskForce.length > 0 && (
+                  <div className='flex gap-2 mb-2'>
+                    <input 
+                      type="checkbox"  
+                      id="select-all" 
+                      checked={selectedTaskForce.length === taskForce.length}
+                      onChange={handleSelectAll}
+                    />
+                    <label htmlFor="select-all">Select All</label>
+                  </div>
+                )}
+                {taskForceLoading 
+                  ? (
+                      <div className='flex gap-y-4 flex-col items-center justify-center h-40 w-full'>
+                        <LoaderCircle className='h-12 w-12 animate-spin text-slate-800'/>
+                        <p className='text-slate-900'>Loading task force data...</p>
+                      </div>
+                    ) 
+                  : (
+                      taskForce.length > 0 ? taskForce.map((data, index) => (
+                      <div 
+                        key={index} 
+                        className='flex bg-slate-100 py-3 px-2 -ml-2 mb-1 hover:bg-slate-200 cursor-pointer justify-between items-center rounded-lg active:scale-99'
+                      >
+                        <div className='flex gap-3 items-center'>
+                          <input 
+                            type="checkbox" 
+                            id={`user-${data.id}`}
+                            checked={selectedTaskForce.includes(data.id)} 
+                            onChange={() => handleCheckboxChange(data.id)}
+                            className="cursor-pointer"
+                          />
+                          <img 
+                            src={`${PROFILE_PIC_PATH}/${data.profilePicPath || '/default-profile-picture.png'}`} 
+                            alt="Profile Picture" 
+                            loading='lazy' 
+                            className='h-12 w-12 p-0.5 rounded-full border-2 border-green-600'
+                          />
+                          <label htmlFor={`user-${data.id}`}>{data.fullName}</label>
+                        </div>
+                        <p className='text-sm text-slate-600 italic mr-4'>
+                          {data.role}
+                        </p>
+                      </div>
+                    )) 
+                  : (
+                      <div className='flex gap-y-4 flex-col items-center justify-center h-40 w-full'>
+                        <UserRoundX className='h-16 w-16 text-slate-600'/>
+                        <p className='text-sm text-slate-800'>
+                          No task force yet.
+                        </p>
+                      </div>
+                    )
+                  )}
+              </div>
+            </div>
+          }
+        />
+      );
+
     case MODAL_TYPE.REMOVE_AREA:
       return (
         <ConfirmationModal 
@@ -97,25 +200,22 @@ const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
             area: formatAreaName(modalData.area)
           })}
           isDelete={true}
-          primaryButton={'Remove'}
+          primaryButton={'Delete'}
           secondaryButton={'Cancel'}
           bodyContent={
             <div className='flex flex-col items-center justify-center pb-4 px-2'>
               <div className='flex flex-col items-center justify-center pb-4'>
-                <TriangleAlert className='text-red-400 h-24 w-24'/>
+                <img src={deleteFolder} alt="Folder Delete" className='h-24 w-24 opacity-80' />
                 <p className='flex flex-col px-8 text-md md:text-lg text-center'>
-                  <span className='text-red-500 font-semibold'>
-                    Remove
-                  </span>
-                  <span className='font-semibold'>
-                    {formatAreaName(modalData.area)}
+                  <span className='text-red-500 text-2xl font-semibold mt-2'>
+                    Delete
                   </span>
                 </p>
               </div>
               
               <div className='pb-2 space-y-2'>
                 <p className='px-8 text-center'>
-                  This will permanently delete the parameters and documents under this area. This action cannot be undone.
+                  This action will permanently delete the parameters and documents under this area. This action cannot be undone.
                 </p>
                 <p className='px-8 text-center'>
                   Do you want to proceed?
@@ -126,9 +226,10 @@ const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
         />
       );
 
+
     default:
       return null;
   }
 };
 
-export default AreaModal
+export default AreaModal;

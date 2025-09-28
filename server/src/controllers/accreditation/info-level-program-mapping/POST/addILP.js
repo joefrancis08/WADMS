@@ -71,6 +71,7 @@ const addILP = async (req, res) => {
     });
 
   } catch (error) {
+    console.error(error);
     // Catch duplicate entry
     if (error.message === 'DUPLICATE_ENTRY') {
       return res.status(409).json({

@@ -1,10 +1,12 @@
 import DeanLayout from '../../components/Layout/Dean/DeanLayout';
-import { ChevronRight, EllipsisVertical, FileUser, FolderOpen, FolderPen, Folders, Plus, PlusCircle, Trash2, Upload } from 'lucide-react';
+import { Archive, ChevronRight, EllipsisVertical, FileUser, FolderOpen, FolderPen, Folders, Plus, PlusCircle, Trash2, Upload } from 'lucide-react';
 import PATH from '../../constants/path';
 import useProgramAreas from '../../hooks/Dean/useProgramAreas';
 import AreaModal from '../../components/Dean/Accreditation/Area/AreaModal';
 import Dropdown from '../../components/Dropdown/Dropdown';
 import React from 'react';
+import formatArea from '../../utils/formatArea';
+import formatAreaName from '../../utils/formatAreaName';
 
 const ProgramAreas = () => {
   const {
@@ -32,7 +34,11 @@ const ProgramAreas = () => {
     error, 
     formattedLevel, 
     program,
-    activeAreaId
+    activeAreaId,
+    taskForce,
+    taskForceLoading,
+    taskForceError,
+    selectedTaskForce
   } = datas;
   const {
     handleAreaInputChange,
@@ -45,14 +51,18 @@ const ProgramAreas = () => {
     handleAreaCardClick,
     handleAreaOptionClick,
     handleOptionItemClick,
-    handleConfirmRemoval
+    handleConfirmRemoval,
+    handleCheckboxChange,
+    handleSelectAll,
+    handleAssignTaskForce
   } = handlers
 
   const areaOptions = [
     { icon: <Folders />, label: 'View Parameters' },
     { icon: <FileUser />, label: 'Assign Task Force'},
     { icon: <FolderPen />, label: 'Rename'},
-    { icon: <Trash2 />, label: 'Remove'}
+    { icon: <Archive />, label: 'Move to Archive'},
+    { icon: <Trash2 />, label: 'Delete'},
   ];
   return (
     <DeanLayout>
@@ -101,90 +111,93 @@ const ProgramAreas = () => {
               </div>
             )}
 
-            {data.map(({ area_uuid, area }) => (
-              <>
-                <div
-                  key={area_uuid}
-                  onClick={() => !activeAreaId && handleAreaCardClick(area_uuid)}
-                  className='relative flex flex-col items-start justify-center px-2 max-sm:w-full md:w-75 lg:w-50 h-60 bg-[url("/cgs-bg-2.png")] bg-cover bg-center shadow-slate-800 border border-slate-600 hover:shadow hover:scale-105 transition cursor-pointer active:shadow'
-                >
-                  <div className='absolute inset-0 bg-black/50'></div>
-                  {String(area)
-                    .toUpperCase()
-                    .split(/[:-]/)
-                    .map((s, i) => (
-                      <div 
-                        key={i} 
-                        className={`flex ${i === 0 ? '' : 'justify-center'} w-full z-20`}
+            {data.map((data, index) => (
+              <div
+                key={index}
+                onClick={() => !activeAreaId && handleAreaCardClick(data.area_uuid)}
+                className='relative flex flex-col items-start justify-center px-2 max-sm:w-full md:w-75 lg:w-50 h-60 bg-[url("/cgs-bg-2.png")] bg-cover bg-center shadow-slate-800 border border-slate-600 hover:shadow hover:scale-105 transition cursor-pointer active:shadow'
+              >
+                <div className='absolute inset-0 bg-black/50'></div>
+                {String(data.area)
+                  .toUpperCase()
+                  .split(/[:-]/)
+                  .map((s, i) => (
+                    <div 
+                      key={i} 
+                      className={`flex ${i === 0 ? '' : 'justify-center'} w-full z-20`}
+                    >
+                      <p 
+                        className={`${
+                          i === 0 
+                            ? 'text-md text-center font-bold text-white bg-yellow-400 py-1 px-5 shadow-md absolute top-10 w-30 left-1/2 -translate-x-1/2' 
+                            : 'text-xl text-center mt-5 tracking-wide text-white font-semibold'
+                        }`}
                       >
-                        <p 
-                          className={`${
-                            i === 0 
-                              ? 'text-md text-center font-bold text-white bg-yellow-400 py-1 px-5 shadow-md absolute top-10 w-30 left-1/2 -translate-x-1/2' 
-                              : 'text-xl text-center mt-5 tracking-wide text-white font-semibold'
-                          }`}
-                        >
-                          {s.trim()}
-                        </p>
-                      </div>
-                  ))}
+                        {s.trim()}
+                      </p>
+                    </div>
+                ))}
 
-                  <button
-                    onClick={(e) => handleAreaOptionClick(e, { areaID: area_uuid })}
-                    title='Options'
-                    className='absolute top-2 right-1 text-white cursor-pointer active:opacity-50 rounded-full hover:bg-slate-200/20 p-2 z-10'
-                  >
-                    <EllipsisVertical className='h-5 w-5' />
-                  </button>
-                  <button
-                    onClick={(e) => e.stopPropagation()}
-                    title='Upload document'
-                    className='absolute bottom-2 right-1 text-white cursor-pointer active:opacity-50 rounded-full hover:bg-white/20 p-2'
-                  >
-                    <Upload />
-                  </button>
-                  {activeAreaId && <div className='absolute inset-0 z-20'></div>}
-                  {activeAreaId === area_uuid && (
-                    <>
-                      <div className='absolute inset-0 z-20'></div>
-                      <div ref={areaOptionsRef} className='absolute top-10 -left-2 flex items-center shadow-md z-30'>
-                        <Dropdown 
-                          width={'w-50'} 
-                          border={'border border-slate-300 rounded-lg bg-slate-800'}
-                        >
-                          {areaOptions.map((item, index) => (
-                            <React.Fragment key={index}>
-                              {item.label === 'Remove' && (
-                                <hr className='my-1 mx-auto w-[90%] text-slate-300'></hr>
-                              )}
-                              <p 
-                                onClick={(e) => handleOptionItemClick(e, { 
-                                  label: item.label,
-                                  title,
-                                  year,
-                                  accredBody,
-                                  level: formattedLevel,
-                                  program,
-                                  area 
-                                })}
-                                className={`flex items-center p-2 rounded-md text-sm
-                                  ${item.label === 'Remove' 
-                                    ? 'hover:bg-red-200 text-red-600' 
-                                    : 'hover:bg-slate-200'}`}
-                              >
-                                {item.icon}
-                                <span className='ml-2'>
-                                  {item.label}
-                                </span>
-                              </p>
-                            </React.Fragment>
-                          ))}
-                        </Dropdown>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </>
+                <button
+                  onClick={(e) => handleAreaOptionClick(e, { areaID: data.area_uuid })}
+                  title='Options'
+                  className='absolute top-0 right-0 text-white cursor-pointer active:opacity-50 rounded-full hover:bg-slate-200/20 p-2 z-10'
+                >
+                  <EllipsisVertical className='h-5 w-5' />
+                </button>
+                <button
+                  onClick={(e) => e.stopPropagation()}
+                  title='Upload document'
+                  className='absolute bottom-2 right-1 text-white cursor-pointer active:opacity-50 rounded-full hover:bg-white/20 p-2'
+                >
+                  <Upload />
+                </button>
+                {activeAreaId && <div className='absolute inset-0 z-20'></div>}
+                {activeAreaId === data.area_uuid && (
+                  <>
+                    <div className='absolute inset-0 z-20'></div>
+                    <div ref={areaOptionsRef} className='absolute top-8 -left-2 flex items-center shadow-md z-30'>
+                      <Dropdown 
+                        width={'w-50'} 
+                        border={'border border-slate-300 rounded-lg bg-slate-800'}
+                      >
+                        {areaOptions.map((item, index) => (
+                          <React.Fragment key={index}>
+                            {item.label === 'Delete' && (
+                              <hr className='my-1 mx-auto w-[90%] text-slate-300'></hr>
+                            )}
+                            <p 
+                              onClick={(e) => handleOptionItemClick(e, { 
+                                label: item.label,
+                                accredId: data.accredId,
+                                title,
+                                year,
+                                accredBody,
+                                levelId: data.levelId,
+                                level: formattedLevel,
+                                programId: data.programId,
+                                program,
+                                areaId: data.area_id,
+                                areaUUID: data.area_uuid,
+                                area: formatAreaName(data.area)
+                              })}
+                              className={`flex items-center p-2 rounded-md text-sm
+                                ${item.label === 'Delete' 
+                                  ? 'hover:bg-red-200 text-red-600' 
+                                  : 'hover:bg-slate-200'}`}
+                            >
+                              {item.icon}
+                              <span className='ml-2'>
+                                {item.label}
+                              </span>
+                            </p>
+                          </React.Fragment>
+                        ))}
+                      </Dropdown>
+                    </div>
+                  </>
+                )}
+              </div>
             ))}
             {data.length > 0 && (
               <button
@@ -209,7 +222,11 @@ const ProgramAreas = () => {
           areas,
           areasByLevelData,
           modalData, 
-          duplicateValues 
+          duplicateValues,
+          taskForce,
+          taskForceLoading,
+          taskForceError,
+          selectedTaskForce
         }}
         handlers={{
           handleCloseModal,
@@ -218,7 +235,10 @@ const ProgramAreas = () => {
           handleAddAreaValue,
           handleRemoveAreaValue,
           handleRemoveAllAreas,
-          handleConfirmRemoval
+          handleConfirmRemoval,
+          handleCheckboxChange,
+          handleSelectAll,
+          handleAssignTaskForce
         }}
       />
     </DeanLayout>

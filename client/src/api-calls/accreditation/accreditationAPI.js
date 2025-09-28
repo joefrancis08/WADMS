@@ -89,6 +89,19 @@ export const addDocument = async (formData) => {
   });
 };
 
+export const addAssignment = async (data = {}, condition = {}) => {
+  return axios.post(`${API_BASE_URL}/accreditation/add-assignment`, {
+    userIDList: data.userIDList,
+    accredInfoId: data.accredInfoId,
+    levelId: data.levelId,
+    programId: data.programId,
+    areaId: data.areaId,
+    parameterId: condition.includeParameter ? data.parameterId : null,
+    subParameterId: condition.includeSubParameter ? data.subParameterId : null,
+    indicatorId: condition.includeIndicator ? data.indicatorId : null
+  })
+};
+
 export const fetchILP = (controller) => {
   return axios.get(`${API_BASE_URL}/accreditation/fetch-info-level-programs`, {
     signal: controller.signal

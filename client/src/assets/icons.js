@@ -30,3 +30,4 @@ export { default as deleteUser } from './icons/delete-user.png';
 export { default as toga } from './icons/toga.png';
 export { default as notAssigned } from './icons/denied.png';
 export { default as notAssignedDM } from './icons/denied-darkmode.png';
+export { default as deleteFolder } from './icons/delete-folder.png';
