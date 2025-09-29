@@ -29,6 +29,7 @@ export const useProgramsToBeAccredited = () => {
   const programCardRef = useRef();
   const programOptionsRef = useRef();
   const levelRef = useRef({});
+  usePageTitle('Programs To Be Accredited');
 
   const { accredInfoLevelPrograms, loading, error } = useFetchILP();
   console.log(accredInfoLevelPrograms);
@@ -81,7 +82,6 @@ export const useProgramsToBeAccredited = () => {
   // Reuse useOutsideClick hook to make period and program options disappear
   useOutsideClick(accredInfoOptionsRef, () => setActiveAccredInfoID(null));
   useOutsideClick(programOptionsRef, () => setActiveProgramID(null));
-  usePageTitle('Accreditation | WDMS');
 
   // Remove duplicates automatically if programs state changes
   useEffect(() => {

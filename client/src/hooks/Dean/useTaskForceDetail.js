@@ -21,7 +21,7 @@ const useVerifiedUserDetail = () => {
     loading: loadingAssignments,
     error: errorAssignments,
     refetch: refetchAssignments
-  } = useFetchAssignments(userId);
+  } = useFetchAssignments({ userId });
 
   
   const assignmentData = assignments.assignmentData ?? [];

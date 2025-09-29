@@ -13,18 +13,38 @@ import { TOAST_MESSAGES } from "../../constants/messages";
 import PATH from "../../constants/path";
 import useFetchAreasByLevel from "../fetch-react-query/useFetchAreasByLevel";
 import { useUsersBy } from "../fetch-react-query/useUsers";
+import usePageTitle from "../usePageTitle";
+import useFetchAssignments from "../fetch-react-query/useFetchAssignments";
 
 const { AREA_PARAMETERS } = PATH.DEAN;
+const { ASSIGNMENT } = TOAST_MESSAGES;
+function getFullNameById (dataset, id) {
+  const data = dataset.find(d => d.id === id);
+  return data ? data.fullName : null;
+};
 
 const useProgramAreas = () => {
   const navigate = useNavigate();
   const areaOptionsRef = useRef();
+  usePageTitle('Areas');
   const { accredInfoUUID, level, programUUID } = useParams();
   const { level: formattedLevel } = formatProgramParams(level);
 
   const { areas: areasByLevel } = useFetchAreasByLevel(formattedLevel);
 
-  const { title, year, accredBody, program } = useProgramToBeAccreditedDetails(accredInfoUUID, programUUID);
+  const { 
+    accredInfoId, title, year, accredBody, 
+    levelId, programId, program 
+  } = useProgramToBeAccreditedDetails(accredInfoUUID, programUUID);
+
+  const { 
+    assignments, 
+    loading: loadingAssignments, 
+    error: errorAssignments,
+    refetch: refetchAssignments 
+  } = useFetchAssignments({ accredInfoId, levelId, programId });
+  console.log(assignments.assignmentData);
+  const assignmentData = assignments.assignmentData;
 
   // Only fetch areas if programObj is ready
   const { areas: areasData, loading, error, refetch } = useFetchProgramAreas({
@@ -34,6 +54,7 @@ const useProgramAreas = () => {
     level: formattedLevel,
     program
   });
+
   const { 
     users: taskForce, 
     loading: taskForceLoading, 
@@ -45,6 +66,9 @@ const useProgramAreas = () => {
   const data = areasData?.data ?? [];
   const areasByLevelData = areasByLevel?.areas ?? [];
   console.log(data);
+  const areaArray = data.map((item) => {
+    return item.area_id;
+  });
 
   const [modalType, setModalType] = useState(null);
   const [modalData, setModalData] = useState(null);
@@ -67,6 +91,7 @@ const useProgramAreas = () => {
   // Reuse useOutsideClick hook to make area options disappear
   useOutsideClick(areaOptionsRef, () => setActiveAreaId(null));
 
+
   const findDuplicate = (value) => {
     return data.some(d => d.area.toUpperCase().trim() === value.toUpperCase().trim());
   };
@@ -75,6 +100,7 @@ const useProgramAreas = () => {
     setModalType(null);
     setAreas([]);
     setModalData(null);
+    setSelectedTaskForce([]);
   };
 
   const handleAreaInputChange = (e) => {
@@ -224,7 +250,7 @@ const useProgramAreas = () => {
 
   // Pass selectedTaskForce to backend on save (AreaModal)
   const handleAssignTaskForce = async (data = {}) => {
-    const { accredInfoId, levelId, programId, areaId } = data;
+    const { accredInfoId, levelId, programId, areaId, area } = data;
     const userIDList = selectedTaskForce;
     console.log("Selected users:", selectedTaskForce);
     console.log(data);
@@ -239,11 +265,33 @@ const useProgramAreas = () => {
       });
 
       console.log(res);
+      if (res?.data?.success) {
+        showSuccessToast(ASSIGNMENT.SUCCESS);
+      }
+
+      handleCloseModal();
 
     } catch (error) {
-      console.error('Error assigning taskforce:', error);
+      const userId = error?.response?.data?.error?.user;
+      const user = getFullNameById(taskForce, userId);
+      
+      if (userId && user) {
+        showErrorToast(`${user} was already assigned to ${area}.`);
+
+      } else {
+        showErrorToast(ASSIGNMENT.ERROR);
+      }
+
       throw error;
     }
+  };
+
+  const handleProfileStackClick = (e, data = {}) => {
+    e.stopPropagation();
+    setModalType();
+    setModalData();
+    console.log('Profile stack is clicked!')
+    console.log(data);
   };
 
   return {
@@ -272,7 +320,12 @@ const useProgramAreas = () => {
       taskForce,
       taskForceLoading,
       taskForceError,
-      selectedTaskForce
+      taskForceRefetch,
+      selectedTaskForce,
+      assignmentData,
+      loadingAssignments,
+      errorAssignments,
+      refetchAssignments
     },
 
     inputs: {
@@ -309,7 +362,8 @@ const useProgramAreas = () => {
       handleConfirmRemoval, 
       handleCheckboxChange,
       handleSelectAll,
-      handleAssignTaskForce
+      handleAssignTaskForce,
+      handleProfileStackClick
     }
   }
 };

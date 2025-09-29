@@ -83,12 +83,12 @@ const TaskForce = () => {
   return (
     <DeanLayout>
       <div className='flex-1 h-full bg-slate-800'>
-        <div className='sticky top-0 flex items-center justify-between p-4 bg-slate-900 border-l border-b border-slate-700 z-50 mb-8'>
-          <h2 className='text-3xl text-slate-100 font-bold'>
+        <div className='sticky top-0 flex items-center justify-between py-2 px-4 bg-slate-900 border-l border-b border-slate-700 z-50 mb-8'>
+          <h2 className='text-xl text-slate-100 font-bold'>
             Task Force
           </h2>
           <button className='text-slate-100 p-2 hover:bg-slate-700 rounded-full cursor-pointer active:scale-95'>
-            <Search className='h-8 w-8'/>
+            <Search className='h-6 w-6'/>
           </button>
         </div>
         <div className='relative px-4 flex justify-between ml-4'>

@@ -65,7 +65,8 @@ const addAssignment = async (req, res) => {
       return res.status(409).json({
         message: 'Duplicate entry.',
         success: false,
-        isDuplicate: true
+        isDuplicate: true,
+        error
       });
     }
 

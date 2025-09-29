@@ -257,7 +257,24 @@ export const fetchDocumentsDynamically = async (data = {}) => {
   }).then(res => res.data); // React Query expects the resolved data
 };
 
-export const fetchAssignments = null;
+export const fetchAssignments = (data = {}, signal) => {
+  const { 
+    accredInfoId, levelId, programId, areaId, 
+    parameterId, subParameterId, indicatorId
+  } = data;
+  return axios.get(`${API_BASE_URL}/accreditation/fetch-assignments`, {
+    params: {
+      accredInfoId,
+      levelId,
+      programId,
+      areaId,
+      parameterId,
+      subParameterId,
+      indicatorId
+    },
+    signal
+  });
+};
 
 export const updateDocName = (docId, newFileName) => {
   return axios.patch(`${API_BASE_URL}/accreditation/rename-document/${docId}`, {

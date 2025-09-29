@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import AdminLayout from '../../components/Layout/Dean/DeanLayout';
-import { ArrowLeft, CalendarDays, ChevronDown, EllipsisVertical, LoaderCircle, Mail, Pen, Trash2 } from 'lucide-react';
+import { ArrowLeft, CalendarDays, ChevronDown, EllipsisVertical, File, FileStack, FileText, Folder, FolderOpen, LoaderCircle, Mail, Pen, Trash2 } from 'lucide-react';
 import TimeAgo from '../../components/TimeAgo';
 import VerifiedUserDetailSkeletonLoader from '../../components/Loaders/VerifiedUserDetailSkeletonLoader';
 import useTaskForceDetail from '../../hooks/Dean/useTaskForceDetail';
@@ -9,10 +9,11 @@ import ProfilePicture from '../../components/ProfilePicture';
 import getProfilePicPath from '../../utils/getProfilePicPath';
 import TaskForceModal from '../../components/Dean/TaskForce/TaskForceModal';
 import { notAssigned, notAssignedDM, toga } from '../../assets/icons';
+import { useState } from 'react';
 
 const AssignmentCard = ({ children }) => {
   return (
-    <div className='bg-slate-900 min-w-85 min-h-65 rounded-xl p-2 pb-4 border border-slate-700'>
+    <div className='bg-slate-900 w-full md:w-[800px] min-h-65 rounded-xl p-2 pb-4 border border-slate-700'>
       {children}
     </div>
   );
@@ -48,7 +49,145 @@ const TaskForceDetail = () => {
   const { selectedUser, assignmentData } = datas;
   const { refetchAssignments } = handlers;
 
+  const [showParameters, setShowParameters] = useState(false);
+  const [showSubParam, setShowSubParam] = useState(false);
+  const [showIndicator, setShowIndicator] = useState(false);
+
+  const handleDropdownClick = (condition = {}) => {
+    const { isShowParameter, isShowSubParam, isShowIndicator } = condition;
+
+    if (isShowParameter) {
+      setShowParameters(!showParameters);
+
+    } else if (isShowSubParam) {
+      setShowSubParam(!showSubParam);
+
+    } else if (isShowIndicator) {
+      setShowIndicator(!showIndicator);
+    }
+  };
+
   const profilePicPath = getProfilePicPath(selectedUser?.profilePicPath);
+
+  const groupedAssignments = assignmentData.reduce((acc, item) => {
+    // Only include assignments related to the selected task force
+    if (item.taskForceID !== selectedUser?.id) {
+      return acc; // Skip unrelated data
+    }
+
+    const accredKey = `${item.accredTitle} ${item.accredYear}`;
+    const levelKey = item.level;
+    const programKey = item.programUUID;
+
+    if (!acc[accredKey]) acc[accredKey] = {};
+    if (!acc[accredKey][levelKey]) acc[accredKey][levelKey] = {};
+    if (!acc[accredKey][levelKey][programKey]) {
+      acc[accredKey][levelKey][programKey] = {
+        program: item.program,
+        accredTitle: item.accredTitle,
+        accredYear: item.accredYear,
+        level: item.level,
+        accredUUID: item.accredUUID,
+        areas: {}
+      };
+    }
+
+    // ---------- AREA ----------
+    if (item.areaID) {
+      if (!acc[accredKey][levelKey][programKey].areas[item.areaID]) {
+        acc[accredKey][levelKey][programKey].areas[item.areaID] = {
+          areaID: item.areaID,
+          area: item.area,
+          taskForces: [],
+          parameters: {}
+        };
+      }
+
+      const areaObj = acc[accredKey][levelKey][programKey].areas[item.areaID];
+
+      // Add Task Force
+      if (!areaObj.taskForces.some(tf => tf.taskForceID === item.taskForceID)) {
+        areaObj.taskForces.push({
+          taskForceID: item.taskForceID,
+          taskForce: item.taskForce,
+          role: item.role,
+          assignmentID: item.assignmentID
+        });
+      }
+
+      // ---------- PARAMETER ----------
+      if (item.parameterID) {
+        if (!areaObj.parameters[item.parameterID]) {
+          areaObj.parameters[item.parameterID] = {
+            parameterID: item.parameterID,
+            parameter: item.parameter,
+            taskForces: [],
+            subParameters: {}
+          };
+        }
+
+        const paramObj = areaObj.parameters[item.parameterID];
+
+        if (!paramObj.taskForces.some(tf => tf.taskForceID === item.taskForceID)) {
+          paramObj.taskForces.push({
+            taskForceID: item.taskForceID,
+            taskForce: item.taskForce,
+            role: item.role,
+            assignmentID: item.assignmentID
+          });
+        }
+
+        // ---------- SUB-PARAMETER ----------
+        if (item.sub_parameterID) {
+          if (!paramObj.subParameters[item.sub_parameterID]) {
+            paramObj.subParameters[item.sub_parameterID] = {
+              subParameterID: item.sub_parameterID,
+              subParameter: item.sub_parameter,
+              taskForces: [],
+              indicators: {}
+            };
+          }
+
+          const subObj = paramObj.subParameters[item.sub_parameterID];
+
+          if (!subObj.taskForces.some(tf => tf.taskForceID === item.taskForceID)) {
+            subObj.taskForces.push({
+              taskForceID: item.taskForceID,
+              taskForce: item.taskForce,
+              role: item.role,
+              assignmentID: item.assignmentID
+            });
+          }
+
+          // ---------- INDICATOR ----------
+          if (item.indicatorID) {
+            if (!subObj.indicators[item.indicatorID]) {
+              subObj.indicators[item.indicatorID] = {
+                indicatorID: item.indicatorID,
+                indicator: item.indicator,
+                taskForces: []
+              };
+            }
+
+            const indObj = subObj.indicators[item.indicatorID];
+
+            if (!indObj.taskForces.some(tf => tf.taskForceID === item.taskForceID)) {
+              indObj.taskForces.push({
+                taskForceID: item.taskForceID,
+                taskForce: item.taskForce,
+                role: item.role,
+                assignmentID: item.assignmentID
+              });
+            }
+          }
+        }
+      }
+    }
+
+    return acc;
+  }, {});
+
+  console.log(groupedAssignments);
   
   return (
     <AdminLayout>
@@ -164,44 +303,151 @@ const TaskForceDetail = () => {
                 <p className='text-slate-300'>Loading assignment data...</p>
               </div>
             ) : (
-              assignmentData.length > 0 ? assignmentData.map((data) => (
-                <div className='flex flex-col items-center px-5 pb-5 pt-8 gap-y-6 md:px-15 md:pb-5 justify-evenly'>
-                  <div className='flex flex-col gap-y-1 items-center justify-center'>
-                    <h2 className='text-3xl dark:text-slate-100 font-bold tracking-wide'>
-                      {data?.accredTitle} {data?.accredYear}
-                    </h2>
-                    <h4 className='text-xl dark:text-green-800 font-extrabold dark:bg-slate-100 px-4 py-1 rounded-md'>
-                      {data?.level}
-                    </h4>
-                  </div>
-                  <div className='flex flex-wrap justify-center gap-10'>
-                    <AssignmentCard>
-                      <div className='flex flex-col items-center justify-center'>
-                        <h4 className='text-slate-100 text-xl p-2 font-bold'>
-                          Assigned Program
+              Object.keys(groupedAssignments).length > 0 ? (
+                Object.entries(groupedAssignments).map(([accredKey, levels]) => (
+                  <div key={accredKey} className='flex flex-col items-center px-5 pb-5 pt-8 gap-y-6 md:px-15 md:pb-5 justify-evenly'>
+                    
+                    {/* Accred Title + Year */}
+                    <div className='flex flex-col gap-y-1 items-center justify-center'>
+                      <h2 className='text-3xl dark:text-slate-100 font-bold tracking-wide'>
+                        {accredKey}
+                      </h2>
+                    </div>
+
+                    {/* Levels */}
+                    {Object.entries(levels).map(([levelKey, programs]) => (
+                      <div key={levelKey} className='flex flex-col gap-y-4 items-center'>
+                        <h4 className='text-xl dark:text-green-800 font-extrabold dark:bg-slate-100 px-4 py-1 rounded-md'>
+                          {levelKey}
                         </h4>
-                        <div className='bg-gradient-to-b from-green-700 to-amber-300 min-w-80 min-h-40 m-4 rounded-lg'>
-                          <div className='relative flex items-center justify-center'>
-                            <img src={toga} alt="Toga Icon" loading='lazy' className='opacity-10 h-60 w-60'/>
-                            <p className='absolute top-1/2 left-1/2 -translate-1/2 text-center text-3xl text-white font-bold'>
-                              {data?.program}
-                            </p>
-                          </div>
-                        </div>
-                        <div className='pb-2 flex justify-between items-center'>
-                          <button className='bg-slate-800 text-slate-100 px-4 py-2 rounded-md text-md cursor-pointer hover:bg-slate-700 transition active:scale-95 max-w-75'>
-                            View Areas & Parameters
-                          </button>
-                        </div>
+
+                        {/* Programs */}
+                        {Object.values(programs).map((program) => (
+                          <AssignmentCard key={program.program}>
+                            <div className='flex flex-col gap-y-2 items-center justify-center'>
+                              <h4 className='text-slate-100 text-xl pt-2 font-bold'>
+                                Assigned Program
+                              </h4>
+                              <div className='bg-gradient-to-b from-green-700 to-amber-300 w-[47rem] m-2 rounded-lg'>
+                                <div className='relative flex items-center justify-center'>
+                                  <img src={toga} alt="Toga Icon" loading='lazy' className='opacity-10 h-40 w-40'/>
+                                  <p className='absolute top-1/2 left-1/2 -translate-1/2 text-center text-3xl text-white font-bold'>
+                                    {program.program}
+                                  </p>
+                                </div>
+                              </div>
+
+                              {/* Areas */}
+                              <div className='flex flex-col gap-4 w-full px-4'>
+                                {Object.values(program.areas).map((area) => (
+                                  <div key={area.areaID} className='border border-slate-700 rounded-lg p-4 bg-slate-800'>
+                                    <div
+                                      onClick={() => handleDropdownClick({ isShowParameter: true })} 
+                                      className='flex items-center gap-x-2 p-2 hover:bg-slate-700 rounded-lg cursor-pointer'
+                                    >
+                                      <FolderOpen className='text-yellow-500 fill-yellow-500'/>
+                                      <h5 className='text-lg font-semibold text-slate-100'>
+                                        {area.area}
+                                      </h5>
+                                      {Object.values(area.parameters).length > 0 && (
+                                        <button 
+                                          onClick={() => handleDropdownClick({ isShowParameter: true })}
+                                          className='p-1 hover:bg-slate-700 cursor-pointer rounded-full'>
+                                          <ChevronDown className={`text-slate-100 transition ${showParameters && 'rotate-180'}`}/>
+                                        </button>
+                                      )}
+                                    </div>
+                                    {/* <ul className='list-disc list-inside text-slate-300'>
+                                      {area.taskForces.map(tf => (
+                                        <li key={tf.assignmentID}>
+                                          {tf.taskForce} <span className="italic">({tf.role})</span>
+                                        </li>
+                                      ))}
+                                    </ul> */}
+
+                                    {/* Parameters */}
+                                    {showParameters && Object.values(area.parameters).map((param) => (
+                                      <div key={param.parameterID} className='ml-8'>
+                                        <div
+                                          onClick={() => handleDropdownClick({ isShowSubParam: true })} 
+                                          className='flex items-center gap-x-2 p-2 hover:bg-slate-700 rounded-lg cursor-pointer'>
+                                          <Folder className='text-yellow-500 fill-yellow-500'/>
+                                          <p className='font-medium text-slate-200'>{param.parameter}</p>
+                                          {Object.values(param.subParameters).length > 0 && (
+                                            <button 
+                                              onClick={() => handleDropdownClick({ isShowSubParam: true })}
+                                              className='p-1 hover:bg-slate-700 cursor-pointer rounded-full'>
+                                              <ChevronDown className={`text-slate-100 transition ${showSubParam && 'rotate-180'}`}/>
+                                            </button>
+                                          )}
+                                        </div>
+                                        {/* <ul className='list-disc list-inside text-slate-400'>
+                                          {param.taskForces.map(tf => (
+                                            <li key={tf.assignmentID}>
+                                              {tf.taskForce} <span className="italic">({tf.role})</span>
+                                            </li>
+                                          ))}
+                                        </ul> */}
+
+                                        {/* Sub-Parameters */}
+                                        {showSubParam && Object.values(param.subParameters).map((sub) => (
+                                          <div key={sub.subParameterID} className='ml-8'>
+                                            <div 
+                                              onClick={() => handleDropdownClick({ isShowIndicator: true })}
+                                              className='flex items-center gap-x-2 p-2 hover:bg-slate-700 rounded-lg cursor-pointer'>
+                                              <Folder className='text-yellow-500 fill-yellow-500'/>
+                                              <p className='text-slate-200'>{sub.subParameter}</p>
+                                              {Object.values(sub.indicators).length > 0 && (
+                                                <button 
+                                                  onClick={() => handleDropdownClick({ isShowIndicator: true })}
+                                                  className='p-1 hover:bg-slate-700 cursor-pointer rounded-full'>
+                                                  <ChevronDown className={`text-slate-100 transition ${showIndicator && 'rotate-180'}`}/>
+                                                </button>
+                                              )}
+                                            </div>
+                                            {/* <ul className='list-disc list-inside text-slate-400'>
+                                              {sub.taskForces.map(tf => (
+                                                <li key={tf.assignmentID}>
+                                                  {tf.taskForce} <span className="italic">({tf.role})</span>
+                                                </li>
+                                              ))}
+                                            </ul> */}
+
+                                            {/* Indicators */}
+                                            {showIndicator && Object.values(sub.indicators).map((ind) => (
+                                              <div key={ind.indicatorID} className='ml-8'>
+                                                <div className='flex items-center gap-x-2 p-2 hover:bg-slate-700 rounded-lg cursor-pointer'>
+                                                  <Folder className='text-yellow-500 fill-yellow-500'/>
+                                                  <p className='text-slate-200'>{ind.indicator}</p>
+                                                </div>
+                                                <ul className='list-disc list-inside text-slate-400'>
+                                                  {ind.taskForces.map(tf => (
+                                                    <li key={tf.assignmentID}>
+                                                      {tf.taskForce} <span className="italic">({tf.role})</span>
+                                                    </li>
+                                                  ))}
+                                                </ul>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        ))}
+                                      </div>
+                                    ))}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </AssignmentCard>
+                        ))}
                       </div>
-                    </AssignmentCard>
+                    ))}
                   </div>
-                </div>
-              )) : (
+                ))
+              ) : (
                 <div className='flex gap-y-4 flex-col items-center justify-center h-100 w-full'>
                   <img src={notAssignedDM} alt="Denied Icon" className='h-60 w-60 opacity-50' loading='lazy'/>
                   <p className='text-lg text-slate-300'>
-                    Not assigned. {' '}
+                    Not assigned.{' '}
                     <span className='text-slate-100 font-semibold hover:underline cursor-pointer active:opacity-80'>
                       Assign
                     </span>

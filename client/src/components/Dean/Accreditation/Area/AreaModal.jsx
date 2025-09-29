@@ -104,7 +104,8 @@ const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
             accredInfoId: modalData.accredId,
             levelId: modalData.levelId,
             programId: modalData.programId,
-            areaId: modalData.areaId
+            areaId: modalData.areaId,
+            area: modalData.area
           })}
           primaryButton={'Assign'}
           disabled={selectedTaskForce.length === 0}
@@ -125,7 +126,7 @@ const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
                 </button>
               </div>
               <hr className='text-slate-200'></hr>
-              <div className='flex flex-col p-2'>
+              <div className='flex flex-col p-4'>
                 {taskForce.length > 0 && (
                   <div className='flex gap-2 mb-2'>
                     <input 
@@ -134,7 +135,12 @@ const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
                       checked={selectedTaskForce.length === taskForce.length}
                       onChange={handleSelectAll}
                     />
-                    <label htmlFor="select-all">Select All</label>
+                    <label htmlFor="select-all">
+                      {selectedTaskForce.length === taskForce.length 
+                        ? 'Deselect all' 
+                        : 'Select all'
+                      }
+                    </label>
                   </div>
                 )}
                 {taskForceLoading 
@@ -147,7 +153,8 @@ const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
                   : (
                       taskForce.length > 0 ? taskForce.map((data, index) => (
                       <div 
-                        key={index} 
+                        key={index}
+                        onClick={() => handleCheckboxChange(data.id)} 
                         className='flex bg-slate-100 py-3 px-2 -ml-2 mb-1 hover:bg-slate-200 cursor-pointer justify-between items-center rounded-lg active:scale-99'
                       >
                         <div className='flex gap-3 items-center'>
@@ -155,6 +162,7 @@ const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
                             type="checkbox" 
                             id={`user-${data.id}`}
                             checked={selectedTaskForce.includes(data.id)} 
+                            onClick={(e) => e.stopPropagation()}
                             onChange={() => handleCheckboxChange(data.id)}
                             className="cursor-pointer"
                           />
@@ -164,7 +172,7 @@ const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
                             loading='lazy' 
                             className='h-12 w-12 p-0.5 rounded-full border-2 border-green-600'
                           />
-                          <label htmlFor={`user-${data.id}`}>{data.fullName}</label>
+                          <p>{data.fullName}</p>
                         </div>
                         <p className='text-sm text-slate-600 italic mr-4'>
                           {data.role}

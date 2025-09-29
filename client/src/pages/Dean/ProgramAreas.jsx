@@ -8,6 +8,8 @@ import React from 'react';
 import formatArea from '../../utils/formatArea';
 import formatAreaName from '../../utils/formatAreaName';
 
+const PROFILE_PIC_PATH = import.meta.env.VITE_PROFILE_PIC_PATH;
+
 const ProgramAreas = () => {
   const {
     navigation,
@@ -38,7 +40,12 @@ const ProgramAreas = () => {
     taskForce,
     taskForceLoading,
     taskForceError,
-    selectedTaskForce
+    taskForceRefetch,
+    selectedTaskForce,
+    assignmentData,
+    loadingAssignments,
+    errorAssignments,
+    refetchAssignments
   } = datas;
   const {
     handleAreaInputChange,
@@ -54,7 +61,8 @@ const ProgramAreas = () => {
     handleConfirmRemoval,
     handleCheckboxChange,
     handleSelectAll,
-    handleAssignTaskForce
+    handleAssignTaskForce,
+    handleProfileStackClick
   } = handlers
 
   const areaOptions = [
@@ -115,7 +123,7 @@ const ProgramAreas = () => {
               <div
                 key={index}
                 onClick={() => !activeAreaId && handleAreaCardClick(data.area_uuid)}
-                className='relative flex flex-col items-start justify-center px-2 max-sm:w-full md:w-75 lg:w-50 h-60 bg-[url("/cgs-bg-2.png")] bg-cover bg-center shadow-slate-800 border border-slate-600 hover:shadow hover:scale-105 transition cursor-pointer active:shadow'
+                className='relative flex flex-col items-start justify-center px-2 max-sm:w-full md:w-75 lg:w-50 h-60 bg-[url("/cgs-bg-2.png")] bg-cover bg-center shadow-slate-800 border border-slate-600 hover:shadow hover:scale-105 transition duration-300 cursor-pointer active:shadow'
               >
                 <div className='absolute inset-0 bg-black/50'></div>
                 {String(data.area)
@@ -152,6 +160,51 @@ const ProgramAreas = () => {
                 >
                   <Upload />
                 </button>
+                {console.log(data.area_id)}
+                <div className='absolute bottom-3 left-2 flex hover:bg-slate-200/20 items-center rounded-full p-1'>
+                  {assignmentData.map((assignment, index, array) => {
+                    const isAreaMatch = assignment.areaID === data.area_id;
+
+                    return taskForce.map((tf) => {
+                      const isTaskForceMatch = assignment.taskForceID === tf.id;
+                      return (
+                        <>
+                          {isAreaMatch && isTaskForceMatch && (
+                            <div
+                              key={index}
+                              title='Assigned Task Force (Click to see details)'
+                              onClick={(e) => {
+                                const assignedTaskForces = assignmentData
+                                  .filter(a => a.areaID === data.area_id) // All assignments for this area
+                                  .map(a => {
+                                    const tfMatch = taskForce.find(tf => tf.id === a.taskForceID);
+                                    return {
+                                      id: tfMatch?.id,
+                                      fullName: tfMatch?.fullName || a.taskForce,
+                                      role: a.role,
+                                      profilePic: tfMatch?.profilePicPath || '/default-profile-picture.png',
+                                    };
+                                  });
+
+                                handleProfileStackClick(e, {
+                                  areaId: data.area_id,
+                                  area: data.area,
+                                  taskForces: assignedTaskForces, // Array of task forces
+                                });
+                              }}
+                              className={`first:m-0 -ml-2 flex items-center justify-start`}>
+                              <img 
+                                src={`${PROFILE_PIC_PATH}/${tf.profilePicPath || '/default-profile-picture.png'}`}  
+                                alt="Task Force Profile Picture"
+                                className='h-5 w-5 rounded-full border-l border-white/80' 
+                              />
+                            </div>
+                          )}
+                        </>
+                      );
+                    });
+                  })}
+                </div>
                 {activeAreaId && <div className='absolute inset-0 z-20'></div>}
                 {activeAreaId === data.area_uuid && (
                   <>
@@ -173,6 +226,7 @@ const ProgramAreas = () => {
                                 title,
                                 year,
                                 accredBody,
+                    
                                 levelId: data.levelId,
                                 level: formattedLevel,
                                 programId: data.programId,
