@@ -18,6 +18,7 @@ import useFetchAssignments from "../fetch-react-query/useFetchAssignments";
 
 const { AREA_PARAMETERS } = PATH.DEAN;
 const { ASSIGNMENT } = TOAST_MESSAGES;
+
 function getFullNameById (dataset, id) {
   const data = dataset.find(d => d.id === id);
   return data ? data.fullName : null;
@@ -26,6 +27,7 @@ function getFullNameById (dataset, id) {
 const useProgramAreas = () => {
   const navigate = useNavigate();
   const areaOptionsRef = useRef();
+  const assignedTaskForceRef = useRef();
   usePageTitle('Areas');
   const { accredInfoUUID, level, programUUID } = useParams();
   const { level: formattedLevel } = formatProgramParams(level);
@@ -77,8 +79,9 @@ const useProgramAreas = () => {
   const [duplicateValues, setDuplicateValues] = useState([]);
   const [activeAreaId, setActiveAreaId] = useState(null);
   const [selectedTaskForce, setSelectedTaskForce] = useState([]); // State for selected checkboxes (AreaModal)
+  const [activeTaskForceId, setActiveTaskForceId] = useState(null);
 
-  console.log(areasByLevelData);
+  console.log('Active Task Force ID:', activeTaskForceId);
 
   // Auto focus input when 
   const areaInputRef = useAutoFocus(modalType, modalType === MODAL_TYPE.ADD_AREA);
@@ -90,6 +93,9 @@ const useProgramAreas = () => {
 
   // Reuse useOutsideClick hook to make area options disappear
   useOutsideClick(areaOptionsRef, () => setActiveAreaId(null));
+
+  // Reuse useOutsideClick hook to make assigned task force options disappear
+  useOutsideClick(assignedTaskForceRef, () => setActiveTaskForceId(null));
 
 
   const findDuplicate = (value) => {
@@ -288,10 +294,34 @@ const useProgramAreas = () => {
 
   const handleProfileStackClick = (e, data = {}) => {
     e.stopPropagation();
-    setModalType();
-    setModalData();
+    const { areaId, area, taskForces } = data;
+    setModalType(MODAL_TYPE.VIEW_ASSIGNED_TASK_FORCE);
+    setModalData({
+      areaId,
+      area,
+      taskForces
+    });
     console.log('Profile stack is clicked!')
     console.log(data);
+  };
+
+  console.log({ modalType, modalData });
+
+  // For AreaModal.jsx
+  const handleEllipsisClick = (data = {}) => {
+    const { taskForceId } = data;
+    console.log('ellipsis clicked!');
+    setActiveTaskForceId(prev => prev === taskForceId ? null : taskForceId);
+  };
+
+  // For AreaModal.jsx
+  const handleAddTaskForceClick = () => {
+    setModalType(MODAL_TYPE.ASSIGN_TASK_FORCE);
+  };
+
+  // For AreaModal.jsx
+  const handleUnassignedAllClick = () => {
+    console.log('unassigned all clicked!')
   };
 
   return {
@@ -325,7 +355,8 @@ const useProgramAreas = () => {
       assignmentData,
       loadingAssignments,
       errorAssignments,
-      refetchAssignments
+      refetchAssignments,
+      activeTaskForceId
     },
 
     inputs: {
@@ -336,7 +367,8 @@ const useProgramAreas = () => {
 
     refs: {
       areaInputRef,
-      areaOptionsRef
+      areaOptionsRef,
+      assignedTaskForceRef
     },
 
     values: {
@@ -363,7 +395,10 @@ const useProgramAreas = () => {
       handleCheckboxChange,
       handleSelectAll,
       handleAssignTaskForce,
-      handleProfileStackClick
+      handleProfileStackClick,
+      handleEllipsisClick,
+      handleAddTaskForceClick,
+      handleUnassignedAllClick,
     }
   }
 };

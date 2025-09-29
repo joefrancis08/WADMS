@@ -3,15 +3,23 @@ import MODAL_TYPE from '../../../../constants/modalTypes';
 import AreaBaseModal from '../../../Modals/accreditation/AreaBaseModal';
 import AddField from '../../../Form/AddField';
 import ConfirmationModal from '../../../Modals/ConfirmationModal';
-import { LoaderCircle, Plus, TriangleAlert, UserRoundX, UserX } from 'lucide-react';
+import { Ellipsis, LoaderCircle, Plus, TriangleAlert, UserRoundX, UserX, X } from 'lucide-react';
 import { deleteFolder, notAssignedDM, userIcon } from '../../../../assets/icons';
+import Popover from '../../../Popover';
+import { MENU_OPTIONS } from '../../../../constants/user';
+import PATH from '../../../../constants/path';
+import { replace } from 'react-router-dom';
 
 const PROFILE_PIC_PATH = import.meta.env.VITE_PROFILE_PIC_PATH;
 
-const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
-  const { areaInputRef } = refs;
+const AreaModal = ({ navigation, refs, modalType, datas, inputs, handlers }) => {
+  const { navigate } = navigation;
+  const { areaInputRef, assignedTaskForceRef } = refs;
   const { areaInput } = inputs;
-  const { 
+  const {
+    accredInfoUUID,
+    level,
+    programUUID, 
     data,
     areas,
     areasByLevelData,
@@ -20,7 +28,8 @@ const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
     taskForce,
     taskForceLoading,
     taskForceError,
-    selectedTaskForce
+    selectedTaskForce,
+    activeTaskForceId
   } = datas;
   const {
     handleCloseModal,
@@ -32,7 +41,10 @@ const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
     handleConfirmRemoval,
     handleCheckboxChange,
     handleSelectAll,
-    handleAssignTaskForce
+    handleAssignTaskForce,
+    handleEllipsisClick,
+    handleAddTaskForceClick,
+    handleUnassignedAllClick,
   } = handlers;
 
   function formatAreaName(text) {
@@ -172,11 +184,15 @@ const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
                             loading='lazy' 
                             className='h-12 w-12 p-0.5 rounded-full border-2 border-green-600'
                           />
-                          <p>{data.fullName}</p>
+                          <div className='flex flex-col'>
+                            <p className='text-semibold'>
+                              {data.fullName}
+                            </p>
+                            <p className='text-xs text-slate-600 italic mr-4'>
+                              {data.role}
+                            </p>
+                          </div>
                         </div>
-                        <p className='text-sm text-slate-600 italic mr-4'>
-                          {data.role}
-                        </p>
                       </div>
                     )) 
                   : (
@@ -192,6 +208,97 @@ const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
             </div>
           }
         />
+      );
+
+    case MODAL_TYPE.VIEW_ASSIGNED_TASK_FORCE:
+      return (
+        <div className="h-full fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs overflow-hidden">
+          <div className="w-full md:max-w-xl min-h-80 max-md:mx-4 bg-white rounded shadow-2xl px-6 pt-4 animate-fadeIn ">
+            <div className='flex text-slate-800 justify-between items-center max-md:items-center'>
+              <h1 className='font-semibold text-lg'>Assigned Task Force for {modalData.area}</h1>
+              <button 
+                onClick={handleCloseModal}
+                className='p-2 hover:bg-slate-200 rounded-full cursor-pointer -mr-2'>
+                <X className='h-5 w-5' />
+              </button>
+            </div>
+            <p className='text-sm -mt-2'>
+              {modalData.taskForces.length} {' '} 
+              {modalData.taskForces.length > 1 ? 'people' : 'person'} {' '}
+              assigned
+            </p>
+            <hr className='text-slate-400 mt-3 mx-auto'></hr>
+            <div className='flex flex-col gap-2 mb-4 min-h-50 max-h-80 overflow-auto py-4'>
+              {modalData.taskForces.map((tf) => (
+                <div className='relative flex justify-between bg-slate-100 px-3 py-2 rounded-lg hover:bg-slate-200'>
+                  <div className='flex items-center gap-3'>
+                    <img 
+                      src={`${PROFILE_PIC_PATH}/${tf.profilePic}`} 
+                      alt="Profile Picture" 
+                      loading='lazy' 
+                      className='h-10 w-10 border-green-800 border-2 rounded-full'
+                    />
+                    <div>
+                      <p>{tf.fullName}</p>
+                      <p className='text-xs text-slate-500 italic'>
+                        {tf.role}
+                      </p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => handleEllipsisClick({ taskForceId: tf.id })}
+                    className='cursor-pointer hover:bg-slate-300 px-2 rounded-full active:scale-95'>
+                    <Ellipsis className='h-5 w-5'/>
+                  </button>
+                  {activeTaskForceId === tf.id && (
+                    <div ref={assignedTaskForceRef} className='absolute top-12 right-3 border border-slate-700 min-w-50 min-h-25 bg-slate-800 rounded-lg z-20 p-2'>
+                      <div className='flex flex-col gap-2 items-start text-slate-100 text-sm'>
+                        {MENU_OPTIONS.DEAN.ASSIGNED_TASK_FORCE.map((item, index) => {
+                          const Icon = item.icon;
+
+                          return (
+                            <>
+                              {item.label === 'View Profile' && (
+                                <hr className='text-slate-700 w-[90%] mx-auto'></hr>
+                              )}
+                              <button
+                                onClick={() => {
+                                  if (item.label === 'View Profile') {
+                                    navigate(PATH.DEAN.TASK_FORCE_DETAIL(tf.uuid), {
+                                      state: { from: PATH.DEAN.PROGRAM_AREAS({ accredInfoUUID, level, programUUID }) } 
+                                    })
+                                  }
+                                }}
+                                key={index} 
+                                className='flex items-center justify-start gap-x-2 rounded-lg p-2 hover:bg-slate-700 w-full cursor-pointer active:scale-98'>
+                                <Icon />
+                                <span>{item.label}</span>
+                              </button>
+                            </>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+              <button 
+                onClick={handleAddTaskForceClick}
+                className='flex items-center gap-2 py-2 justify-center bg-green-600 text-slate-100 mt-4 rounded-lg cursor-pointer hover:bg-green-700 active:scale-95 transition'>
+                <Plus />
+                <span>Add</span>
+              </button>
+              {modalData.taskForces.length > 1 && (
+                <button
+                  onClick={handleUnassignedAllClick} 
+                  className='flex items-center justify-center gap-2 py-2 bg-red-400 cursor-pointer hover:bg-red-500 text-slate-100 rounded-lg active:scale-95 transition'>
+                  <X className='w-5'/>
+                  <span>Unassigned all</span>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
       );
 
     case MODAL_TYPE.REMOVE_AREA:

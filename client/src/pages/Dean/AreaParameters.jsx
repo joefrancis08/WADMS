@@ -24,7 +24,10 @@ const AreaParameters = () => {
   const { parameterInputRef } = refs;
   const { modalType } = modals;
   const { parameterInput } = inputs;
-  const { parameterData, parametersArr, duplicateValues, area, program, levelName } = datas;
+  const { 
+    parameterData, parametersArr, duplicateValues, title, 
+    year, area, program, levelName 
+  } = datas;
   const {
     handleCloseModal,
     handlePlusClick,
@@ -40,15 +43,23 @@ const AreaParameters = () => {
         {/* Breadcrumb Header */}
         <div className='bg-slate-100 m-2 pb-2 shadow-md shadow-slate-400'>
           <div className='flex justify-between shadow px-4 pt-4 bg-slate-200 p-4'>
-            <p className='flex flex-row items-center text-lg'>
+            <p className='flex flex-row items-center text-sm gap-1'>
               <span 
                 title='Back to Programs'
                 onClick={() => navigate(PROGRAMS_TO_BE_ACCREDITED)}
                 className='hover:underline opacity-80 hover:opacity-100 cursor-pointer transition-all'
               >
-                Programs
+                {`${title} ${year}`}
               </span>
-              <ChevronRight className='h-6 w-6 mx-2 text-slate-500'/>
+              <ChevronRight className='h-4 w-4 text-slate-500'/>
+              <span 
+                title='Back to Programs'
+                onClick={() => navigate(PROGRAMS_TO_BE_ACCREDITED)}
+                className='hover:underline opacity-80 hover:opacity-100 cursor-pointer transition-all'
+              >
+                {program}
+              </span>
+              <ChevronRight className='h-4 w-4 text-slate-500'/>
               <span
                 title='Back to Areas'
                 onClick={() => navigate(PROGRAM_AREAS({ accredInfoUUID, level, programUUID }))}
@@ -56,8 +67,8 @@ const AreaParameters = () => {
               >
                 Areas
               </span>
-              <ChevronRight className='h-6 w-6 mx-2 text-slate-500'/>
-              <span className='font-semibold'>{parameterData.length > 1 ? 'Parameters' : 'Parameter'}</span>
+              <ChevronRight className='h-4 w-4 text-slate-500'/>
+              <span className='font-semibold text-lg'>{parameterData.length > 1 ? 'Parameters' : 'Parameter'}</span>
             </p>
           </div>
           {/* Program and Level Display */}

@@ -21,7 +21,7 @@ const AssignmentCard = ({ children }) => {
 
 const TaskForceDetail = () => {
   
-  const { states: TFStates, datas: TFDatas, handlers: TFHandlers } = useTaskForce();
+  const { navigate, states: TFStates, datas: TFDatas, handlers: TFHandlers } = useTaskForce();
   const { 
     toggleDropdown,
     setUpdatedProfilePic
@@ -40,14 +40,15 @@ const TaskForceDetail = () => {
     handleProfilePicUpdate,
     handleDelete,
     handleUpdate,
-    handleSaveUpdate
+    handleSaveUpdate,
+    navigateBack
   } = TFHandlers;
 
   const { states, datas, handlers, constant } = useTaskForceDetail();
   const { TASK_FORCE } = constant;
   const { loading, loadingAssignments, errorAssignments } = states;
   const { selectedUser, assignmentData } = datas;
-  const { refetchAssignments } = handlers;
+  const { refetchAssignments, handleBack } = handlers;
 
   const [showParameters, setShowParameters] = useState(false);
   const [showSubParam, setShowSubParam] = useState(false);
@@ -194,12 +195,11 @@ const TaskForceDetail = () => {
       <main className="px-4 py-6 w-full max-w-screen-xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-2 mb-3">
-          <Link to={TASK_FORCE} className='flex items-center gap-4 text-slate-900 dark:text-slate-100'>
-            <button className='p-2 hover:bg-slate-700 rounded-full active:scale-98 cursor-pointer'>
-              <ArrowLeft />
-            </button>
-            
-          </Link>
+          <button 
+            onClick={handleBack}
+            className='p-2 hover:bg-slate-700 text-slate-100 rounded-full active:scale-98 cursor-pointer'>
+            <ArrowLeft />
+          </button>
           <p className='text-lg md:text-2xl text-slate-900 dark:text-slate-100'>
             {selectedUser?.fullName ?? 'User'}'s Info
           </p>

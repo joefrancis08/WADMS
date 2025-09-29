@@ -147,6 +147,8 @@ const useAreaParameters = () => {
     },
 
     datas: {
+      title,
+      year,
       levelName,
       program,
       area,

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo} from 'react';
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import PATH from "../../constants/path";
 import MODAL_TYPES from '../../constants/modalTypes';
 import { useUsersBy } from "../fetch-react-query/useUsers";
@@ -7,6 +7,7 @@ import usePageTitle from '../usePageTitle';
 import useFetchAssignments from '../fetch-react-query/useFetchAssignments';
 
 const useVerifiedUserDetail = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const { uuid } = useParams();
   const { TASK_FORCE } = PATH.DEAN;
@@ -50,9 +51,19 @@ const useVerifiedUserDetail = () => {
   const handleDelete = (e) => {
     e.stopPropagation();
     setModalType(USER_DELETION_CONFIRMATION);
-  }
+  };
+
+  const handleBack = () => {
+    if (location.state?.from) {
+      navigate(location.state.from);
+
+    } else {
+      navigate(-1);
+    }
+  };
 
   return {
+    navigate, 
     params: {
       uuid
     },
@@ -72,7 +83,8 @@ const useVerifiedUserDetail = () => {
     
     handlers: {
       handleDelete,
-      refetchAssignments
+      refetchAssignments,
+      handleBack
     },
 
     constant: {

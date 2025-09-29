@@ -172,7 +172,7 @@ export const useTaskForce = () => {
     e.stopPropagation();
 
     if (menu?.label === 'View Details') {
-      navigate(TASK_FORCE_DETAIL(user?.uuid));
+      navigate(TASK_FORCE_DETAIL(user?.uuid), { state: { from: TASK_FORCE }});
       setActiveDropdownId(null);
       console.log(user?.uuid);
 

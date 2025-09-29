@@ -13,6 +13,7 @@ const PROFILE_PIC_PATH = import.meta.env.VITE_PROFILE_PIC_PATH;
 const ProgramAreas = () => {
   const {
     navigation,
+    params,
     datas,
     inputs,
     refs,
@@ -22,8 +23,9 @@ const ProgramAreas = () => {
   } = useProgramAreas();
 
   const { navigate } = navigation;
+  const { accredInfoUUID, programUUID, level } = params;
   const { areas, areaInput } = inputs;
-  const { areaInputRef, areaOptionsRef } = refs;
+  const { areaInputRef, areaOptionsRef, assignedTaskForceRef } = refs;
   const { duplicateValues } = values;
   const { modalType, modalData } = modals;
   const { 
@@ -45,7 +47,8 @@ const ProgramAreas = () => {
     assignmentData,
     loadingAssignments,
     errorAssignments,
-    refetchAssignments
+    refetchAssignments,
+    activeTaskForceId
   } = datas;
   const {
     handleAreaInputChange,
@@ -62,7 +65,10 @@ const ProgramAreas = () => {
     handleCheckboxChange,
     handleSelectAll,
     handleAssignTaskForce,
-    handleProfileStackClick
+    handleProfileStackClick,
+    handleEllipsisClick,
+    handleAddTaskForceClick,
+    handleUnassignedAllClick,
   } = handlers
 
   const areaOptions = [
@@ -77,16 +83,20 @@ const ProgramAreas = () => {
       <div className='flex-1 p-3'>
         <div className='bg-slate-900 m-2 pb-2 border border-slate-700 rounded-lg'>
           <div className='flex justify-between shadow px-4 pt-4 bg-black/40 p-4 rounded-t-lg'>
-            <p className='flex flex-row items-center text-lg text-slate-100 '>
+            <p className='flex flex-row items-center gap-1 text-sm text-slate-100 '>
+              <span>
+                {`${title} ${year}`}
+              </span>
+              <ChevronRight className='h-4 w-4 text-slate-100' />
               <span
                 title='Back to Programs'
                 onClick={() => navigate(PATH.DEAN.PROGRAMS_TO_BE_ACCREDITED)}
                 className='hover:underline cursor-pointer transition-all'
               >
-                Programs
+                {program}
               </span>
-              <ChevronRight className='h-6 w-6 mx-2 text-slate-100' />
-              <span className='font-semibold'>{data.length > 1 ? 'Areas' : 'Area'}</span>
+              <ChevronRight className='h-4 w-4 text-slate-100' />
+              <span className='font-semibold text-lg'>{data.length > 1 ? 'Areas' : 'Area'}</span>
             </p>
           </div>
           <div className='flex items-center justify-center mt-4 max-md:mt-10 w-[85%] md:w-[75%] lg:w-[50%] mx-auto'>
@@ -165,13 +175,12 @@ const ProgramAreas = () => {
                   {assignmentData.map((assignment, index, array) => {
                     const isAreaMatch = assignment.areaID === data.area_id;
 
-                    return taskForce.map((tf) => {
+                    return taskForce.map((tf, index) => {
                       const isTaskForceMatch = assignment.taskForceID === tf.id;
                       return (
-                        <>
+                        <React.Fragment key={index}>
                           {isAreaMatch && isTaskForceMatch && (
                             <div
-                              key={index}
                               title='Assigned Task Force (Click to see details)'
                               onClick={(e) => {
                                 const assignedTaskForces = assignmentData
@@ -179,6 +188,7 @@ const ProgramAreas = () => {
                                   .map(a => {
                                     const tfMatch = taskForce.find(tf => tf.id === a.taskForceID);
                                     return {
+                                      uuid: tfMatch?.uuid,
                                       id: tfMatch?.id,
                                       fullName: tfMatch?.fullName || a.taskForce,
                                       role: a.role,
@@ -188,7 +198,7 @@ const ProgramAreas = () => {
 
                                 handleProfileStackClick(e, {
                                   areaId: data.area_id,
-                                  area: data.area,
+                                  area: formatAreaName(data.area),
                                   taskForces: assignedTaskForces, // Array of task forces
                                 });
                               }}
@@ -200,7 +210,7 @@ const ProgramAreas = () => {
                               />
                             </div>
                           )}
-                        </>
+                        </React.Fragment>
                       );
                     });
                   })}
@@ -265,11 +275,15 @@ const ProgramAreas = () => {
           </div>
         </div>
       </div>
-      <AreaModal 
+      <AreaModal
+        navigation={{ navigate }} 
         modalType={modalType}
-        refs={{ areaInputRef }}
+        refs={{ areaInputRef, assignedTaskForceRef }}
         inputs={{ areaInput }}
-        datas={{ 
+        datas={{
+          accredInfoUUID,
+          level,
+          programUUID, 
           data,
           error,
           loading, 
@@ -280,7 +294,8 @@ const ProgramAreas = () => {
           taskForce,
           taskForceLoading,
           taskForceError,
-          selectedTaskForce
+          selectedTaskForce,
+          activeTaskForceId
         }}
         handlers={{
           handleCloseModal,
@@ -292,7 +307,10 @@ const ProgramAreas = () => {
           handleConfirmRemoval,
           handleCheckboxChange,
           handleSelectAll,
-          handleAssignTaskForce
+          handleAssignTaskForce,
+          handleEllipsisClick,
+          handleAddTaskForceClick,
+          handleUnassignedAllClick,
         }}
       />
     </DeanLayout>
