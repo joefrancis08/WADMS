@@ -337,4 +337,22 @@ export const deleteDoc = (docId) => {
   });
 };
 
+export const deleteAssignment = (data = {}) => {
+  const { 
+    accredInfoId, levelId, programId, areaId, parameterId, subParameterId, indicatorId 
+  } = data;
+
+  return axios.delete(`${API_BASE_URL}/delete-assignment`, {
+    params: {
+      accredInfoId, 
+      levelId, 
+      programId, 
+      areaId, 
+      parameterId, 
+      subParameterId, 
+      indicatorId 
+    }
+  })
+};
+
 

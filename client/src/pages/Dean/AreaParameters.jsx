@@ -65,7 +65,7 @@ const AreaParameters = () => {
                 onClick={() => navigate(PROGRAM_AREAS({ accredInfoUUID, level, programUUID }))}
                 className='hover:underline opacity-80 hover:opacity-100 cursor-pointer transition-all'
               >
-                Areas
+                {formatAreaName(area)}
               </span>
               <ChevronRight className='h-4 w-4 text-slate-500'/>
               <span className='font-semibold text-lg'>{parameterData.length > 1 ? 'Parameters' : 'Parameter'}</span>
@@ -73,12 +73,12 @@ const AreaParameters = () => {
           </div>
           {/* Program and Level Display */}
           <div className='flex items-center justify-center mt-4 max-md:mt-10 w-[85%] md:w-[75%] lg:w-[50%] mx-auto'>
-            <p className='relative text-center'>
+            <p className='relative text-center gap-2 w-full'>
               <span className='text-green-600 font-bold text-xl md:text-2xl lg:text-3xl tracking-wide'>
                 {program}
               </span>
-              <span className='absolute -bottom-10 left-1/2 -translate-x-1/2 text-lg px-4 bg-yellow-400 text-white font-bold'>
-                {formatAreaName(area)}
+              <span className='absolute -bottom-10 right-1/2 translate-x-1/2 text-lg px-4 bg-yellow-400 text-white font-bold'>
+                {levelName} &#8226; {formatAreaName(area)}
               </span>
             </p>
           </div>

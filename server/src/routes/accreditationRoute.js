@@ -11,7 +11,8 @@ import { addSIMController, fetchSIMController } from '../controllers/accreditati
 import fetchAreasBy from '../controllers/accreditation/areas/GET/fetchAreasBy.js';
 import { addDocumentController, deleteDocController, fetchDocumentsController, updateDocController } from '../controllers/accreditation/document/documentController.js';
 import { upload } from '../middlewares/uploadFile.js';
-import { addAssignmentController, fetchAssignmentController } from '../controllers/accreditation/assignments/assignmentController.js';
+import { addAssignmentController, deleteAssignmentController, fetchAssignmentController } from '../controllers/accreditation/assignments/assignmentController.js';
+import deleteAssignment from '../models/accreditation/assignments/DELETE/deleteAssignment.js';
 
 const accreditationRouter = express.Router();
 
@@ -42,5 +43,6 @@ accreditationRouter.delete('/delete-accreditation-period', deletePeriodControlle
 accreditationRouter.delete('/delete-programs-to-be-accredited', deleteProgramToBeAccreditedController);
 accreditationRouter.delete('/delete-program-area', deletePAMController);
 accreditationRouter.delete('/delete-document', deleteDocController);
+accreditationRouter.delete('/delete-assignment', deleteAssignmentController);
 
 export default accreditationRouter;

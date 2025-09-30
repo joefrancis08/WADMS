@@ -46,7 +46,7 @@ const useProgramAreas = () => {
     refetch: refetchAssignments 
   } = useFetchAssignments({ accredInfoId, levelId, programId });
   console.log(assignments.assignmentData);
-  const assignmentData = assignments.assignmentData;
+  const assignmentData = assignments?.assignmentData ?? [];
 
   // Only fetch areas if programObj is ready
   const { areas: areasData, loading, error, refetch } = useFetchProgramAreas({

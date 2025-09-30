@@ -120,14 +120,14 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
   return (
     <aside className={`sidebar-container ${isCollapsed ? 'w-20' : 'w-65'} bg-slate-900 text-white h-screen flex flex-col shadow-lg`}>
       {/* Header */}
-      <header className="relative flex items-center justify-between px-2 py-2 border-b border-gray-600 h-20 shadow-lg">
+      <header className="relative flex items-center justify-between px-2 py-2 border-b border-gray-600 h-14 shadow-lg">
         {!isCollapsed && (
-          <div className="h-10 flex items-center transition-all duration-300">
-            <img className="h-14 w-auto" src="/cgs-logo.png" alt="Logo" />
+          <div className="h-8 flex items-center transition-all duration-300">
+            <img className="h-10 w-auto" src="/cgs-logo.png" alt="Logo" />
             <div className="ml-2 overflow-hidden">
-              <p className="text-2xl font-bold whitespace-nowrap">DMS</p>
-              <p className="text-[8px] leading-none whitespace-nowrap">Document</p>
-              <p className="text-[8px] leading-none whitespace-nowrap">Management System</p>
+              <p className="text-xl font-bold whitespace-nowrap">DMS</p>
+              <p className="text-[6px] leading-none whitespace-nowrap">Document</p>
+              <p className="text-[6px] leading-none whitespace-nowrap">Management System</p>
             </div>
           </div>
         )}
@@ -240,7 +240,7 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
         <div className='relative p-2'>
           <div
             onClick={handleOpenUserMenu}
-            className='flex items-center justify-between cursor-pointer active:opacity-80 hover:bg-slate-800 py-2 pl-4 rounded-md overflow-hidden'
+            className='flex items-center justify-between cursor-pointer active:opacity-80 hover:bg-slate-800 py-2 pl-2 rounded-md overflow-hidden'
           >
             {/* User Info */}
             <div className={`flex items-center overflow-hidden transition-all ${isCollapsed ? 'gap-0' : 'gap-3'}`}>
