@@ -326,7 +326,7 @@ const TaskForceDetail = () => {
                           <AssignmentCard key={program.program}>
                             <div className='flex flex-col gap-y-2 items-center justify-center'>
                               <h4 className='text-slate-100 text-xl pt-2 font-bold'>
-                                Assigned Program
+                                Assigned Program, Areas, & Parameters
                               </h4>
                               <div className='bg-gradient-to-b from-green-700 to-amber-300 w-[47rem] m-2 rounded-lg'>
                                 <div className='relative flex items-center justify-center'>

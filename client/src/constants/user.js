@@ -1,4 +1,4 @@
-import { FileUser, UserRoundX } from "lucide-react";
+import { Archive, CircleUserRound, FileUser, FolderPen, Folders, Trash2, UserRoundX } from "lucide-react";
 
 export const USER_ROLES = {
   DEAN: 'Dean',
@@ -16,8 +16,24 @@ export const USER_STATUS = {
 export const MENU_OPTIONS = {
   DEAN: {
     ASSIGNED_TASK_FORCE: [
-      { id: 'unassigned', icon: UserRoundX, label: 'Unassigned' },
+      { id: 'unassign', icon: UserRoundX, label: 'Unassign' },
       { id: 'view-profile', icon: FileUser, label: 'View Profile'}
+    ],
+
+    AREA_OPTIONS: [
+      { id: 'view-parameters', icon: Folders, label: 'View Parameters' },
+      { id: 'assign-task-force', icon: CircleUserRound, label: 'Assign Task Force'},
+      { id: 'rename', icon: FolderPen, label: 'Rename'},
+      { id: 'move-to-archive',icon: Archive, label: 'Move to Archive'},
+      { id: 'delete', icon: Trash2, label: 'Delete'},
+    ],
+
+    PARAMETER_OPTIONS: [
+      { id: 'view-sub-parameters', icon: Folders, label: 'View Sub-Parameters' },
+      { id: 'assign-task-force', icon: CircleUserRound, label: 'Assign Task Force'},
+      { id: 'rename', icon: FolderPen, label: 'Rename'},
+      { id: 'move-to-archive',icon: Archive, label: 'Move to Archive'},
+      { id: 'delete', icon: Trash2, label: 'Delete'},
     ]
   }
 }

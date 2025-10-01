@@ -74,6 +74,11 @@ export const TOAST_MESSAGES = Object.freeze({
   ASSIGNMENT: {
     SUCCESS: 'Assigned successfully!',
     ERROR: 'Something went wrong while assigning. Try again.'
+  },
+
+  UNASSIGN: {
+    SUCCESS: 'Unassigned successfully!',
+    ERROR: 'Something went wrong while unassigning. Try again'
   }
 });
 

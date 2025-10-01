@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import DeanLayout from '../../components/Layout/Dean/DeanLayout';
-import { Archive, CalendarArrowUp, ClipboardPlus, EllipsisVertical, Folders, NotebookPen, NotepadText, Plus, PlusCircle, Scroll } from 'lucide-react';
+import { Archive, CalendarArrowUp, ClipboardPlus, EllipsisVertical, Folders, NotebookPen, NotepadText, Plus, PlusCircle, Scroll, Search } from 'lucide-react';
 import ContentHeader from '../../components/Dean/ContentHeader';
 import { useProgramsToBeAccredited } from '../../hooks/Dean/useProgramsToBeAccredited';
 import ProgramToBeAccreditedModal from '../../components/Dean/Accreditation/Programs/ProgramToBeAccreditedModal';
@@ -120,13 +120,14 @@ const ProgramsToAccredit = () => {
     <DeanLayout>
       <div className='flex-1'>
         {/* Header */}
-        <ContentHeader 
-          headerIcon={NotepadText}
-          headerTitle='Programs For Accreditation'
-          searchTitle='Search Program to be Accredited'
-          placeholder='Search program to be accredited...'
-          condition={Object.entries(grouped).length > 0}
-        />
+        <div className='sticky top-0 flex items-center justify-between py-2 px-4 bg-slate-900 border-l border-b border-slate-700 z-50 mb-8'>
+          <h2 className='text-xl text-slate-100 font-bold'>
+            Programs
+          </h2>
+          <button className='text-slate-100 p-2 hover:bg-slate-700 rounded-full cursor-pointer active:scale-95'>
+            <Search className='h-6 w-6'/>
+          </button>
+        </div>
 
         {/* Add button */}
         <button 
@@ -150,7 +151,6 @@ const ProgramsToAccredit = () => {
         ) : (
           /* Render Accreditation Info, Level, and Programs to be accredited */
           Object.entries(grouped).map(([accredTitle, levels], index) => {
-            console.log(accredTitle);
             const [first, rest] = formatAccreditationTitle(accredTitle, { isForUI: true });
             // Get the first level
             const firstLevel = Object.keys(levels)[0];

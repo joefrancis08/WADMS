@@ -10,7 +10,18 @@ const deleteAssignment = async (req, res) => {
   const subParameterId = req.query.subParameterId ? Number(req.query.subParameterId) : null;
   const indicatorId = req.query.indicatorId ? Number(req.query.indicatorId) : null;
 
-  const userId = Number(req.query.userId);
+  const taskForceId = Number(req.query.taskForceId);
+
+  console.log({ 
+    accredInfoId, 
+    levelId, 
+    programId, 
+    areaId, 
+    parameterId, 
+    subParameterId, 
+    indicatorId,
+    taskForceId
+  });
 
   try {
     const result = await deleteAssignmentModel(
@@ -24,10 +35,10 @@ const deleteAssignment = async (req, res) => {
         indicatorId
       }, 
       {
-        userId
+        taskForceId
       },
       {
-        forDeanTaskForceDetailPage: !!userId, // Only true if userId exists
+        forDeanTaskForceDetailPage: !!taskForceId, // Only true if userId exists
         forDeanAssignmentPage: !! (accredInfoId && levelId && programId && areaId) // Only true if these are given
       }
     );

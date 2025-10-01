@@ -165,7 +165,7 @@ const useLogin = () => {
       setOtpExpired(false);
 
     } catch (error) {
-      console.error(error.response.data.error);
+      console.error(error.message);
       const { response } = error;
       const { data } = response;
       const { emailNotFound, wrongPassword } = data;
@@ -186,9 +186,10 @@ const useLogin = () => {
         showErrorToast("Can't send OTP to your email. Please check your internet connection and try again.", 'top-center', 8000);
       }
 
-    } finally {
-      setIsLoading(false);
-    }
+      if (error.code === 'ERR_NETWORK') {
+        showErrorToast("Something went wrong. Please check your internet connection and try again.", 'top-center', 8000);
+      }
+    } 
   };
 
   const handleBackToLogin = () => {

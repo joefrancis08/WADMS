@@ -12,8 +12,16 @@ const deleteAssignment = async (accredData = {}, userData = {}, condition = {}, 
   } = accredData;
 
   const {
-    userId = null
+    taskForceId = null
   } = userData;
+
+  console.log('From model:', { accredInfoId, 
+    levelId, 
+    programId, 
+    areaId, 
+    parameterId, 
+    subParameterId, 
+    indicatorId, taskForceId })
 
   const {
     forDeanTaskForceDetailPage,
@@ -26,7 +34,7 @@ const deleteAssignment = async (accredData = {}, userData = {}, condition = {}, 
 
   if (forDeanTaskForceDetailPage) {
     whereClause.push('user_id = ?');
-    params.push(userId);
+    params.push(taskForceId);
   }
 
   if (forDeanAssignmentPage) {

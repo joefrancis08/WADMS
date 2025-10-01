@@ -66,7 +66,7 @@ export const useTaskForce = () => {
 
   // Reuse useOutsideClick hook to make dropdown gone when clicking outside
   useOutsideClick(dropdownRef, () => setActiveDropdownId(null));
-  usePageTitle('Task Force | WDMS');
+  usePageTitle('Task Force');
 
   // Check real-time if email already exist
   useEffect(() => {

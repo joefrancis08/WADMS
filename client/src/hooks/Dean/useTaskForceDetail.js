@@ -54,12 +54,7 @@ const useVerifiedUserDetail = () => {
   };
 
   const handleBack = () => {
-    if (location.state?.from) {
-      navigate(location.state.from);
-
-    } else {
-      navigate(-1);
-    }
+    navigate(-1);
   };
 
   return {

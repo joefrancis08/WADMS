@@ -91,10 +91,18 @@ export const useProgramsToBeAccredited = () => {
   // Save position of this page when navigating on other page
   useEffect(() => {
     const lastId = localStorage.getItem('lastProgramId');
+    const accredTitle = localStorage.getItem('accreditation-title');
     if (lastId) {
       const el = document.getElementById(`last-program-${lastId}`);
       if (el) {
         el.scrollIntoView({ behavior: 'auto', block: 'center' });
+      }
+    }
+
+    if (accredTitle) {
+      const el = document.getElementById(accredTitle);
+      if (el) {
+        el.scrollIntoView({ behavior: 'auto', block: 'center'})
       }
     }
   }, []);
