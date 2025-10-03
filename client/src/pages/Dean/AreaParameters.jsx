@@ -5,15 +5,14 @@ import formatAreaName from '../../utils/formatAreaName';
 import useAreaParameters from '../../hooks/Dean/useAreaParameters';
 import ParameterModal from '../../components/Dean/Accreditation/Parameter/ParameterModal';
 import formatParameter from '../../utils/formatParameter';
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import { MENU_OPTIONS } from '../../constants/user';
 import Dropdown from '../../components/Dropdown/Dropdown';
-import useOutsideClick from '../../hooks/useOutsideClick';
+import Popover from '../../components/Popover';
 
 const { PROGRAMS_TO_BE_ACCREDITED, PROGRAM_AREAS, PARAM_SUBPARAMS } = PATH.DEAN;
 
 const AreaParameters = () => {
-  const paramOptionRef = useRef();
   const { 
     params,
     navigation, 
@@ -24,14 +23,15 @@ const AreaParameters = () => {
     handlers 
   } = useAreaParameters();
 
-  const { accredInfoUUID, level, programUUID, areaUUID }  = params;
+  const { accredInfoUUID, level, programUUID, areaUUID, paramOptionRef }  = params;
   const { navigate } = navigation;
   const { parameterInputRef } = refs;
-  const { modalType } = modals;
+  const { modalType, modalData } = modals;
   const { parameterInput } = inputs;
   const { 
-    parameterData, parametersArr, duplicateValues, title, 
-    year, area, program, levelName 
+    parameterData, parametersArr, duplicateValues, title, year, area, program, levelName,
+    isEllipsisClick, activeParamId, hoveredId, taskForce, taskForceLoading, 
+    taskForceError, taskForceRefetch
   } = datas;
   const {
     handleCloseModal,
@@ -39,21 +39,14 @@ const AreaParameters = () => {
     handleParameterChange,
     handleAddParameterValue,
     handleRemoveParameterValue,
-    handleSaveParameters
+    handleSaveParameters,
+    handleEllipsisClick,
+    handleParamOptionClick,
+    handleOptionItem,
+    handleConfirmDelete,
+    handleMouseEnter,
+    handleMouseLeave
   } = handlers;
-
-  
-
-  const [isEllipsisClick, setIsEllipsisClick] = useState(false);
-  const [activeParamId, setActiveParamId] = useState(null);
-
-  useOutsideClick(paramOptionRef, () => setActiveParamId(null));
-
-  const handleParamOptionClick = (e, data = {}) => {
-    e.stopPropagation();
-    setActiveParamId(prev => prev !== data.paramId ? data.paramId : null);
-    console.log('Clicked!', data.paramId);
-  };
 
   return (
     <DeanLayout>
@@ -73,7 +66,7 @@ const AreaParameters = () => {
                 {`${title} ${year}`}
               </span>
               <ChevronRight className='h-4 w-4 text-slate-100'/>
-              <span onClick={() => setIsEllipsisClick(!isEllipsisClick)} className=' rounded-full text-slate-100 cursor-pointer'>
+              <span onClick={(e) => handleEllipsisClick(e)} className=' rounded-full text-slate-100 cursor-pointer'>
                 <Ellipsis className='h-4 w-4 -mb-2 hover:bg-slate-700 rounded-lg'/>
               </span>
               <ChevronRight className='h-4 w-4 text-slate-100'/>
@@ -136,13 +129,12 @@ const AreaParameters = () => {
                 </div>
               </div>
             )}
-            {parameterData.map(({ parameter_uuid, parameter }) => {
+            {parameterData.map(({ apmId, parameter_uuid, parameter }) => {
               const { label, content } = formatParameter(parameter);
 
               return (
                 <div
                   key={parameter_uuid}
-                  title={parameter}
                   onClick={() => navigate(PARAM_SUBPARAMS({ 
                     accredInfoUUID, 
                     level, 
@@ -152,14 +144,26 @@ const AreaParameters = () => {
                   }))}
                   className='relative w-60 h-50 bg-[url("/src/assets/icons/folder.png")] bg-cover bg-center rounded-lg cursor-pointer transition'
                 >
+                  <div className='absolute inset-0'></div>
+                  <div>
                     <p className='absolute -top-3 left-5 text-white min-w-12 text-center font-bold text-md md:text-md mt-4'>
                       {label}
                     </p>
-                    <div className='absolute top-30 left-1/2 -translate-1/2 w-full px-5 '>
+                    <div
+                      onMouseEnter={(e) => handleMouseEnter(e, parameter_uuid)} 
+                      onMouseLeave={(e) => handleMouseLeave(e)}
+                      className='absolute top-30 left-1/2 -translate-1/2 w-full px-5 '
+                    >
                       <p className='text-white text-lg md:text-lg w-full text-center font-semibold max-w-[500px] truncate'>
                         {content}
                       </p>
+                      {hoveredId === parameter_uuid && (
+                        <Popover 
+                          content={content}
+                        />
+                      )}
                     </div>
+                  </div>
                   
                   <button
                     onClick={(e) => handleParamOptionClick(e, { paramId: parameter_uuid })}
@@ -185,8 +189,13 @@ const AreaParameters = () => {
                                   <hr className='my-1 mx-auto w-[90%] text-slate-300'></hr>
                                 )}
                                 <p 
-                                  onClick={(e) => e.stopPropagation()}
-                                  className={`flex items-center p-2 rounded-md text-sm
+                                  onClick={(e) => handleOptionItem(e, {
+                                    label: item.label,
+                                    apmId,
+                                    paramUUID: parameter_uuid,
+                                    parameter
+                                  })}
+                                  className={`flex items-center p-2 rounded-md text-sm active:scale-99 transition
                                     ${item.label === 'Delete' 
                                       ? 'hover:bg-red-200 text-red-600' 
                                       : 'hover:bg-slate-200'}`}
@@ -225,13 +234,17 @@ const AreaParameters = () => {
         modalType={modalType}
         refs={{ parameterInputRef }}
         inputs={{ parameterInput }}
-        datas={{ parametersArr, duplicateValues }}
+        datas={{ 
+          parametersArr, duplicateValues, modalData, taskForce,
+          taskForceLoading, taskForceError, taskForceRefetch 
+        }}
         handlers={{
           handleCloseModal,
           handleSaveParameters,
           handleAddParameterValue,
           handleRemoveParameterValue,
-          handleParameterChange
+          handleParameterChange,
+          handleConfirmDelete
         }}
       />
     </DeanLayout>

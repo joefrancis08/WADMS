@@ -329,6 +329,17 @@ export const deletePAM = ({
   });
 };
 
+export const deleteAPM = (data = {}) => {
+  const { id, parameter } = data;
+  
+  return axios.delete(`${API_BASE_URL}/accreditation/delete-area-parameter`, {
+    params: {
+      id,
+      parameter
+    }
+  });
+};
+
 export const deleteDoc = (docId) => {
   return axios.delete(`${API_BASE_URL}/accreditation/delete-document`, {
     params: {

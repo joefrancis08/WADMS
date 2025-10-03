@@ -19,6 +19,7 @@ const MODAL_TYPES = Object.freeze({
   REMOVE_AREA: 'remove-area',
 
   ADD_PARAMETER: 'add-parameter',
+  DELETE_PARAM: 'delete-parameter',
 
   ADD_SUBPARAMETERS: 'add-subparameters',
 
