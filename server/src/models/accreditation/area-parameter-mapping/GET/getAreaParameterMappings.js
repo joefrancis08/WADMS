@@ -11,6 +11,7 @@ const getAreaParameterMappings = async ({
 }) => {
   const query = `
     SELECT
+      apm.id            AS apm_id,
       ai.title          AS accred_title,
       ai.year           AS accred_year,
       ab.name           AS accred_body_name,
