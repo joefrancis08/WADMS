@@ -5,10 +5,11 @@ import useProgramAreas from '../../hooks/Dean/useProgramAreas';
 import AreaModal from '../../components/Dean/Accreditation/Area/AreaModal';
 import Dropdown from '../../components/Dropdown/Dropdown';
 import React from 'react';
-import formatArea from '../../utils/formatArea';
 import formatAreaName from '../../utils/formatAreaName';
 import LEVEL from '../../constants/accreditationLevels';
 import { MENU_OPTIONS } from '../../constants/user';
+import ProfileStack from '../../components/ProfileStack';
+import deduplicateAssignments from '../../utils/deduplicateAssignments';
 
 const PROFILE_PIC_PATH = import.meta.env.VITE_PROFILE_PIC_PATH;
 
@@ -77,6 +78,22 @@ const ProgramAreas = () => {
     handleAssignedOptionsClick,
     handleConfirmUnassign
   } = handlers
+
+  // Suppose 'assignmentData' is your fetched data
+  const uniqueAssignments = [];
+
+  const seen = new Set();
+
+  assignmentData.forEach((item) => {
+    // Use a combination of taskForceID + areaID to check uniqueness
+    const key = `${item.taskForceID}-${item.areaID}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      uniqueAssignments.push(item);
+    }
+  });
+
+  console.log(uniqueAssignments);
 
   return (
     <DeanLayout>
@@ -200,55 +217,15 @@ const ProgramAreas = () => {
                   className='absolute bottom-2.5 right-1 text-white cursor-pointer active:opacity-50 rounded-full hover:bg-white/20 p-1'>
                   <CircleUserRound />
                 </button>
-                {console.log(data.area_id)}
-                <div className='absolute bottom-3 left-2 flex hover:bg-slate-200/20 items-center rounded-full p-1'>
-                  {assignmentData.map((assignment, index, array) => {
-                    const isAreaMatch = assignment.areaID === data.area_id;
-
-                    return taskForce.map((tf, index) => {
-                      const isTaskForceMatch = assignment.taskForceID === tf.id;
-                      return (
-                        <React.Fragment key={index}>
-                          {isAreaMatch && isTaskForceMatch && (
-                            <div
-                              title='Assigned Task Force (Click to see details)'
-                              onClick={(e) => {
-                                const assignedTaskForces = assignmentData
-                                  .filter(a => a.areaID === data.area_id) // All assignments for this area
-                                  .map(a => {
-                                    const tfMatch = taskForce.find(tf => tf.id === a.taskForceID);
-                                    return {
-                                      uuid: tfMatch?.uuid,
-                                      id: tfMatch?.id,
-                                      fullName: tfMatch?.fullName || a.taskForce,
-                                      role: a.role,
-                                      profilePic: tfMatch?.profilePicPath || '/default-profile-picture.png',
-                                    };
-                                  });
-
-                                handleProfileStackClick(e, {
-                                  accredInfoId: assignment.accredID,
-                                  levelId: assignment.levelID,
-                                  programId: assignment.programID,
-                                  areaId: assignment.areaID,
-                                  area: formatAreaName(data.area),
-                                  taskForces: assignedTaskForces, // Array of task forces
-                                });
-                              }}
-                              className={`first:m-0 -ml-2 flex items-center justify-start`}>
-                              <img 
-                                src={`${PROFILE_PIC_PATH}/${tf.profilePicPath || '/default-profile-picture.png'}`}  
-                                alt="Task Force Profile Picture"
-                                className='h-5 w-5 rounded-full border-l border-white/80'
-                                loading='lazy' 
-                              />
-                            </div>
-                          )}
-                        </React.Fragment>
-                      );
-                    });
-                  })}
-                </div>
+                <ProfileStack 
+                  data={{ 
+                    assignmentData: uniqueAssignments,
+                    taskForce, 
+                    area_id: data.area_id, 
+                    area: formatAreaName(data.area )}}
+                  handlers={{ handleProfileStackClick }}
+                  scope='area'
+                />
                 {activeAreaId && <div className='absolute inset-0 z-20'></div>}
                 {activeAreaId === data.area_uuid && (
                   <>

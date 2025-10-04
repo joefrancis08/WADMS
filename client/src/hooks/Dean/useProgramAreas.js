@@ -16,14 +16,10 @@ import { useUsersBy } from "../fetch-react-query/useUsers";
 import usePageTitle from "../usePageTitle";
 import useFetchAssignments from "../fetch-react-query/useFetchAssignments";
 import formatAreaName from "../../utils/formatAreaName";
+import { getFullNameById } from "../../utils/getUserInfo";
 
 const { AREA_PARAMETERS } = PATH.DEAN;
 const { ASSIGNMENT, UNASSIGN } = TOAST_MESSAGES;
-
-function getFullNameById (dataset, id) {
-  const data = dataset.find(d => d.id === id);
-  return data ? data.fullName : null;
-};
 
 const useProgramAreas = () => {
   const navigate = useNavigate();
@@ -234,6 +230,8 @@ const useProgramAreas = () => {
     setActiveAreaId(null);
     if (data && data.label === 'View Parameters' && data.areaUUID) {
       const areaUUID = data.areaUUID;
+      localStorage.removeItem('modal-type');
+      localStorage.removeItem('modal-data');
       navigate(AREA_PARAMETERS({ accredInfoUUID, level, programUUID, areaUUID }));
 
     } else if (data && data.label === 'Assign Task Force') {

@@ -1,5 +1,5 @@
 import DeanLayout from '../../components/Layout/Dean/DeanLayout';
-import { ChevronRight, CirclePlus, Ellipsis, EllipsisVertical, Folder, FolderOpen, Plus } from 'lucide-react';
+import { ChevronRight, CirclePlus, CircleUserRound, Ellipsis, EllipsisVertical, Folder, FolderOpen, Plus } from 'lucide-react';
 import PATH from '../../constants/path';
 import formatAreaName from '../../utils/formatAreaName';
 import useAreaParameters from '../../hooks/Dean/useAreaParameters';
@@ -9,6 +9,7 @@ import React from 'react';
 import { MENU_OPTIONS } from '../../constants/user';
 import Dropdown from '../../components/Dropdown/Dropdown';
 import Popover from '../../components/Popover';
+import ProfileStack from '../../components/ProfileStack';
 
 const { PROGRAMS_TO_BE_ACCREDITED, PROGRAM_AREAS, PARAM_SUBPARAMS } = PATH.DEAN;
 
@@ -25,13 +26,14 @@ const AreaParameters = () => {
 
   const { accredInfoUUID, level, programUUID, areaUUID, paramOptionRef }  = params;
   const { navigate } = navigation;
-  const { parameterInputRef } = refs;
+  const { parameterInputRef, assignedTaskForceRef } = refs;
   const { modalType, modalData } = modals;
   const { parameterInput } = inputs;
   const { 
     parameterData, parametersArr, duplicateValues, title, year, area, program, levelName,
     isEllipsisClick, activeParamId, hoveredId, taskForce, taskForceLoading, 
-    taskForceError, taskForceRefetch, selectedTaskForce
+    taskForceError, taskForceRefetch, selectedTaskForce, assignmentData, activeTaskForceId,
+    showConfirmUnassign
   } = datas;
   const {
     handleCloseModal,
@@ -47,7 +49,15 @@ const AreaParameters = () => {
     handleMouseEnter,
     handleMouseLeave,
     handleCheckboxChange,
-    handleSelectAll
+    handleSelectAll,
+    handleAssignTaskForce,
+    handleUserCircleClick,
+    handleProfileStackClick,
+    handleATFEllipsisClick,
+    handleAddTaskForceClick,
+    handleUnassignedAllClick,
+    handleAssignedOptionsClick,
+    handleConfirmUnassign
   } = handlers;
 
   return (
@@ -74,7 +84,11 @@ const AreaParameters = () => {
               <ChevronRight className='h-4 w-4 text-slate-100'/>
               <span
                 title='Back to Areas'
-                onClick={() => navigate(PROGRAM_AREAS({ accredInfoUUID, level, programUUID }))}
+                onClick={() => {
+                  localStorage.removeItem('modal-type');
+                  localStorage.removeItem('modal-data');
+                  navigate(PROGRAM_AREAS({ accredInfoUUID, level, programUUID }));
+                }}
                 className='hover:underline cursor-pointer transition-all'
               >
                 {formatAreaName(area)}
@@ -131,90 +145,110 @@ const AreaParameters = () => {
                 </div>
               </div>
             )}
-            {parameterData.map(({ apmId, parameter_uuid, parameter }) => {
-              const { label, content } = formatParameter(parameter);
+            {console.log(parameterData)}
+            {parameterData.map((data, index) => {
+              const { label, content } = formatParameter(data.parameter);
 
               return (
-                <div
-                  key={parameter_uuid}
-                  onClick={() => navigate(PARAM_SUBPARAMS({ 
-                    accredInfoUUID, 
-                    level, 
-                    programUUID, 
-                    areaUUID, 
-                    parameterUUID: parameter_uuid 
-                  }))}
-                  className='relative w-60 h-50 bg-[url("/src/assets/icons/folder.png")] bg-cover bg-center rounded-lg cursor-pointer transition'
-                >
-                  <div className='absolute inset-0'></div>
-                  <div>
-                    <p className='absolute -top-3 left-5 text-white min-w-12 text-center font-bold text-md md:text-md mt-4'>
-                      {label}
-                    </p>
-                    <div
-                      onMouseEnter={(e) => handleMouseEnter(e, parameter_uuid)} 
-                      onMouseLeave={(e) => handleMouseLeave(e)}
-                      className='absolute top-30 left-1/2 -translate-1/2 w-full px-5 '
-                    >
-                      <p className='text-white text-lg md:text-lg w-full text-center font-semibold max-w-[500px] truncate'>
-                        {content}
+                <React.Fragment key={index}>
+                  <div
+                    onClick={() => navigate(PARAM_SUBPARAMS({ 
+                      accredInfoUUID, 
+                      level, 
+                      programUUID, 
+                      areaUUID, 
+                      parameterUUID: data.parameter_uuid 
+                    }))}
+                    className='relative w-60 h-50 bg-[url("/src/assets/icons/folder.png")] bg-cover bg-center rounded-lg cursor-pointer transition'
+                  >
+                    <div className='absolute inset-0'></div>
+                    <div>
+                      <p className='absolute -top-3 left-5 text-white min-w-12 text-center font-bold text-md md:text-md mt-4'>
+                        {label}
                       </p>
-                      {hoveredId === parameter_uuid && (
-                        <Popover 
-                          content={content}
-                        />
-                      )}
+                      <div
+                        onMouseEnter={(e) => handleMouseEnter(e, data.parameter_uuid)} 
+                        onMouseLeave={(e) => handleMouseLeave(e)}
+                        className='absolute top-25 left-0 w-full px-5 '
+                      >
+                        <p className='text-white text-lg md:text-xl w-full text-center font-semibold max-w-[500px] truncate'>
+                          {content}
+                        </p>
+                        <div className='z-40'>
+                          {hoveredId === data.parameter_uuid && (
+                            <Popover 
+                              content={content}
+                            />
+                          )}
+                        </div>
+                      </div>
+                      <button
+                        title='Assign Task Force' 
+                        onClick={(e) => handleUserCircleClick(e, {
+                          parameterId: data.parameter_id, 
+                          parameter: data.parameter
+                        })}
+                        className='absolute bottom-2.5 right-1 text-white cursor-pointer active:opacity-50 rounded-full hover:bg-white/20 p-1 z-10'>
+                        <CircleUserRound />
+                      </button>
+                      <ProfileStack 
+                        data={{ assignmentData, taskForce, parameter_id: data.parameter_id }}
+                        handlers={{ handleProfileStackClick }}
+                        scope='parameter'
+                      />
                     </div>
+                    
+                    <button
+                      onClick={(e) => handleParamOptionClick(e, { paramId: data.parameter_uuid })}
+                      title='Options'
+                      className='absolute top-16 right-1 text-white cursor-pointer active:scale-95 rounded-full hover:bg-yellow-500/60 p-1 z-20'
+                    >
+                      <EllipsisVertical className='h-5 w-5' />
+                    </button>
+                    {activeParamId && <div className='absolute inset-0 z-20'></div>}
+                    {activeParamId === data.parameter_uuid && (
+                      <>
+                        <div className='absolute inset-0 z-20'></div>
+                        <div ref={paramOptionRef} className='absolute top-14 left-2 flex items-center shadow-md z-30'>
+                          <Dropdown 
+                            width={'w-50'} 
+                            border={'border border-slate-300 rounded-lg bg-slate-800'}
+                          >
+                            {MENU_OPTIONS.DEAN.PARAMETER_OPTIONS.map((item) => {
+                              const Icon = item.icon;
+                              return (
+                                <React.Fragment key={item.id}>
+                                  {item.label === 'Delete' && (
+                                    <hr className='my-1 mx-auto w-[90%] text-slate-300'></hr>
+                                  )}
+                                  <p 
+                                    onClick={(e) => handleOptionItem(e, {
+                                      label: item.label,
+                                      apmId: data.apmId,
+                                      parameterId: data.parameter_id,
+                                      paramUUID: data.parameter_uuid,
+                                      parameter: data.parameter
+                                    })}
+                                    className={`flex items-center p-2 rounded-md text-sm active:scale-99 transition
+                                      ${item.label === 'Delete' 
+                                        ? 'hover:bg-red-200 text-red-600' 
+                                        : 'hover:bg-slate-200'}`}
+                                  >
+                                    <Icon />
+                                    <span className='ml-2'>
+                                      {item.label}
+                                    </span>
+                                  </p>
+                                </React.Fragment>
+                              );
+                            })}
+                          </Dropdown>
+                        </div>
+                      </>
+                    )}
                   </div>
                   
-                  <button
-                    onClick={(e) => handleParamOptionClick(e, { paramId: parameter_uuid })}
-                    title='Options'
-                    className='absolute top-16 right-1 text-white cursor-pointer active:scale-95 rounded-full hover:bg-yellow-500/60 p-1 z-20'
-                  >
-                    <EllipsisVertical className='h-5 w-5' />
-                  </button>
-                  {activeParamId && <div className='absolute inset-0 z-20'></div>}
-                  {activeParamId === parameter_uuid && (
-                    <>
-                      <div className='absolute inset-0 z-20'></div>
-                      <div ref={paramOptionRef} className='absolute top-14 left-2 flex items-center shadow-md z-30'>
-                        <Dropdown 
-                          width={'w-50'} 
-                          border={'border border-slate-300 rounded-lg bg-slate-800'}
-                        >
-                          {MENU_OPTIONS.DEAN.PARAMETER_OPTIONS.map((item) => {
-                            const Icon = item.icon;
-                            return (
-                              <React.Fragment key={item.id}>
-                                {item.label === 'Delete' && (
-                                  <hr className='my-1 mx-auto w-[90%] text-slate-300'></hr>
-                                )}
-                                <p 
-                                  onClick={(e) => handleOptionItem(e, {
-                                    label: item.label,
-                                    apmId,
-                                    paramUUID: parameter_uuid,
-                                    parameter
-                                  })}
-                                  className={`flex items-center p-2 rounded-md text-sm active:scale-99 transition
-                                    ${item.label === 'Delete' 
-                                      ? 'hover:bg-red-200 text-red-600' 
-                                      : 'hover:bg-slate-200'}`}
-                                >
-                                  <Icon />
-                                  <span className='ml-2'>
-                                    {item.label}
-                                  </span>
-                                </p>
-                              </React.Fragment>
-                            );
-                          })}
-                        </Dropdown>
-                      </div>
-                    </>
-                  )}
-                </div>
+                </React.Fragment>
               );
             })}
             {parameterData.length > 0 && (
@@ -234,12 +268,12 @@ const AreaParameters = () => {
       </div>
       <ParameterModal 
         modalType={modalType}
-        refs={{ parameterInputRef }}
+        refs={{ parameterInputRef, assignedTaskForceRef }}
         inputs={{ parameterInput }}
         datas={{ 
           parametersArr, duplicateValues, modalData, taskForce,
           taskForceLoading, taskForceError, taskForceRefetch,
-          selectedTaskForce 
+          selectedTaskForce, activeTaskForceId, showConfirmUnassign
         }}
         handlers={{
           handleCloseModal,
@@ -249,7 +283,13 @@ const AreaParameters = () => {
           handleParameterChange,
           handleConfirmDelete,
           handleCheckboxChange,
-          handleSelectAll
+          handleSelectAll,
+          handleAssignTaskForce,
+          handleATFEllipsisClick,
+          handleAddTaskForceClick,
+          handleUnassignedAllClick,
+          handleAssignedOptionsClick,
+          handleConfirmUnassign
         }}
       />
     </DeanLayout>

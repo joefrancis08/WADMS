@@ -2,9 +2,14 @@ import db from "../../../../config/db.js";
 
 const updateAssignment = async (data = {}, connection = null) => {
   const { 
-    taskForceId, accredInfoId, levelId, programId, 
-    areaId, parameterId, subParameterId, indicatorId 
+    userId, accredInfoId, levelId, programId, 
+    areaId, parameterId = null, subParameterId = null, indicatorId = null
   } = data;
+
+  console.log({
+    parameterId, subParameterId, indicatorId,
+    userId, accredInfoId, levelId, programId, areaId
+  });
 
   const query = `
     UPDATE accreditation_assignment
@@ -20,7 +25,7 @@ const updateAssignment = async (data = {}, connection = null) => {
     const executor = connection || db;
     const [result] = await executor.execute(query, [
       parameterId, subParameterId, indicatorId,
-      taskForceId, accredInfoId, levelId,
+      userId, accredInfoId, levelId,
       programId, areaId
     ]);
 

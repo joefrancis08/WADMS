@@ -7,6 +7,8 @@ const ATFModalBody = ({ data = {}, handlers = {} }) => {
   const { taskForce, taskForceLoading, selectedTaskForce } = data;
   const { handleSelectAll, handleCheckboxChange } = handlers;
 
+  console.log(taskForce, selectedTaskForce);
+
   return (
     <div className='relative w-full border min-h-50 max-h-75 overflow-auto border-slate-500 rounded-lg px-4 pb-2'>
       <div className='sticky top-0 bg-white flex items-center justify-between py-2'>

@@ -1,30 +1,77 @@
-import React from 'react'
+import React from 'react';
+import formatAreaName from '../utils/formatAreaName';
 
-const ProfileStack = ({ images = [], maxVisible = 5 }) => {
-  const visibleImages = images.slice(0, maxVisible);
+const PROFILE_PIC_PATH = import.meta.env.VITE_PROFILE_PIC_PATH;
 
-  const extraCount = images.length - maxVisible;
+const ProfileStack = ({ 
+  data = {}, 
+  handlers = {}, 
+  scope = 'area' // Can be 'area', 'parameter', or 'subparameter'
+}) => {
+  const { assignmentData, taskForce } = data;
+  const { handleProfileStackClick } = handlers;
 
-  console.log(images);
+  // Mapping for dynamic IDs
+  const idMapping = {
+    area: 'areaID',
+    parameter: 'parameterID',
+    subparameter: 'subParameterID'
+  };
+
+  const scopeIdKey = idMapping[scope];
+  const currentScopeId = data[`${scope}_id`] || data[`${scope}Id`];
 
   return (
-    <div className='flex items-center'>
-      {Object.entries(visibleImages).map((src, index) => (
-        <img 
-          key={index}
-          src={src}
-          alt="Profile Picture"
-          className='h-6 w-6 rounded-full border-l border-white/80 -ml-2 first:ml-0'
-        />
-      ))}
+    <div className='absolute bottom-3 left-2 flex hover:bg-slate-200/20 items-center rounded-full p-1'>
+      {assignmentData.map((assignment, idx) => {
+        const isScopeMatch = assignment[scopeIdKey] === currentScopeId;
 
-      {extraCount > 0 && (
-        <div className='h-6 w-6 rounded-full bg-gray-300 text-xs font-medium flex items-center justify-center border-2 border-white -ml-2'>
-          +{extraCount}
-        </div>
-      )}
+        return taskForce.map((tf) => {
+          const isTaskForceMatch = assignment.taskForceID === tf.id;
+
+          if (!isScopeMatch || !isTaskForceMatch) return null;
+
+          return (
+            <div
+              key={`${assignment.id}-${tf.id}-${idx}`}
+              title='Assigned Task Force (Click to see details)'
+              onClick={(e) => {
+                const assignedTaskForces = assignmentData
+                  .filter(a => a[scopeIdKey] === currentScopeId) // All assignments for this scope
+                  .map(a => {
+                    const tfMatch = taskForce.find(tf => tf.id === a.taskForceID);
+                    return {
+                      uuid: tfMatch?.uuid,
+                      id: tfMatch?.id,
+                      fullName: tfMatch?.fullName || a.taskForce,
+                      role: a.role,
+                      profilePic: tfMatch?.profilePicPath || '/default-profile-picture.png',
+                    };
+                  });
+
+                handleProfileStackClick(e, {
+                  accredInfoId: assignment.accredID,
+                  levelId: assignment.levelID,
+                  programId: assignment.programID,
+                  [`${scope}Id`]: currentScopeId,
+                  [scope]: assignment[scope],
+                  taskForces: assignedTaskForces,
+                });
+              }}
+              className='first:m-0 -ml-2 flex items-center justify-start'
+            >
+              <img
+                src={`${PROFILE_PIC_PATH}/${tf.profilePicPath || '/default-profile-picture.png'}`}
+                alt='Task Force Profile Picture'
+                className='h-5 w-5 rounded-full border-l border-white/80'
+                loading='lazy'
+              />
+            </div>
+          );
+        });
+      })}
     </div>
-  )
-}
+  );
+};
 
-export default ProfileStack
+export default ProfileStack;

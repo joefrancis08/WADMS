@@ -5,9 +5,10 @@ import AddField from '../../../Form/AddField';
 import ConfirmationModal from '../../../Modals/ConfirmationModal';
 import { deleteFolder } from '../../../../assets/icons';
 import ATFModalBody from '../Area/ATFModalBody';
+import VATFModal from '../Area/VATFModal';
 
 const ParameterModal = ({ refs, modalType, datas, inputs, handlers }) => {
-  const { parameterInputRef } = refs;
+  const { parameterInputRef, assignedTaskForceRef } = refs;
   const { parameterInput } = inputs;
   const { 
     parametersArr,
@@ -17,9 +18,11 @@ const ParameterModal = ({ refs, modalType, datas, inputs, handlers }) => {
     taskForceLoading,
     taskForceError,
     taskForceRefetch,
-    selectedTaskForce
+    selectedTaskForce,
+    activeTaskForceId,
+    showConfirmUnassign
   } = datas;
-
+  console.log(modalData);
   const {
     handleCloseModal,
     handleSaveParameters,
@@ -28,7 +31,13 @@ const ParameterModal = ({ refs, modalType, datas, inputs, handlers }) => {
     handleParameterChange,
     handleConfirmDelete,
     handleCheckboxChange,
-    handleSelectAll
+    handleSelectAll,
+    handleAssignTaskForce,
+    handleATFEllipsisClick,
+    handleAddTaskForceClick,
+    handleUnassignedAllClick,
+    handleAssignedOptionsClick,
+    handleConfirmUnassign
   } = handlers;
  
   switch (modalType) {
@@ -73,13 +82,22 @@ const ParameterModal = ({ refs, modalType, datas, inputs, handlers }) => {
         <ParameterBaseModal 
           onClose={() => handleCloseModal({ assignTaskForce: true })}
           onCancel={() => handleCloseModal({ assignTaskForce: true })}
-          onSave={null}
+          onSave={() => handleAssignTaskForce({
+            accredInfoId: modalData.accredInfoId, 
+            levelId: modalData.levelId, 
+            programId: modalData.programId, 
+            areaId: modalData.areaId, 
+            parameterId: modalData.parameterId, 
+            parameter: modalData.parameter
+          })}
           primaryButton='Assign'
           disabled={selectedTaskForce.length === 0}
           secondaryButton='Cancel'
           mode={'add'}
           headerContent={
-            <p className='text-xl font-semibold'>
+            <p 
+              title={`Assign Task Force to ${modalData?.parameter}`}
+              className='text-xl font-semibold w-full truncate'>
               Assign Task Force to {modalData?.parameter}
             </p>
           }
@@ -96,6 +114,21 @@ const ParameterModal = ({ refs, modalType, datas, inputs, handlers }) => {
               }}
             />
           }
+        />
+      );
+
+    case MODAL_TYPE.VIEW_ASSIGNED_TASK_FORCE:
+      return (
+        <VATFModal 
+          data={{
+            modalData, activeTaskForceId, assignedTaskForceRef,
+            showConfirmUnassign 
+          }}
+          handlers={{
+            handleCloseModal, handleEllipsisClick: handleATFEllipsisClick, handleAssignedOptionsClick, handleAddTaskForceClick,
+            handleUnassignedAllClick, handleConfirmUnassign 
+          }}
+          scope='parameter'
         />
       );
 
