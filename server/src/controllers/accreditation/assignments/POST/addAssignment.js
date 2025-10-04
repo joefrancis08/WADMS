@@ -1,5 +1,6 @@
 import db from "../../../../config/db.js";
 import insertAssignment from "../../../../models/accreditation/assignments/POST/insertAssignment.js";
+import updateAssignment from "../../../../models/accreditation/assignments/UPDATE/updateAssignment.js";
 import sendUpdate from "../../../../services/websocket/sendUpdate.js";
 
 const addAssignment = async (req, res) => {
@@ -37,17 +38,50 @@ const addAssignment = async (req, res) => {
 
     const commonData = { accredInfoId, levelId, programId, areaId, parameterId, subParameterId, indicatorId };
 
-    const results = await Promise.all(
-      userIDs.map(userId => insertAssignment({ userId, ...commonData }, connection))
-    );
+    const results = [];
+
+    for (const userId of userIDs) {
+      // Check if record exists
+      const [existing] = await connection.execute(
+        `SELECT id FROM accreditation_assignment 
+         WHERE user_id = ? AND accred_info_id = ? AND level_id = ? AND program_id = ? AND area_id = ?`,
+        [userId, accredInfoId, levelId, programId, areaId]
+      );
+
+      if (existing.length > 0) {
+        // Update if parameter/sub-parameter/indicator is provided
+        if (parameterId !== null || subParameterId !== null || indicatorId !== null) {
+          await updateAssignment({
+            taskForceId: userId,
+            ...commonData
+          }, connection);
+          results.push({ type: 'update', userId });
+
+        } else {
+          results.push({ type: 'skip', userId });
+        }
+
+      } else {
+        // Insert new record
+        const insertRes = await insertAssignment({
+          userId, ...commonData
+        }, connection);
+        results.push({ 
+          type: 'insert', 
+          userId, 
+          insertId: insertRes.insertId 
+        });
+      }
+    }
 
     await connection.commit();
+
     sendUpdate('assignment-update');
 
     res.status(200).json({
-      message: 'Assignments added successfully!',
+      message: 'Assignments processed successfully!',
       success: true,
-      assignmentIds: results.map(r => r.insertId)
+      results
     });
 
   } catch (error) {
@@ -59,7 +93,7 @@ const addAssignment = async (req, res) => {
       }
     }
 
-    console.error('Error adding assignment:', error);
+    console.error('Error processing assignments:', error);
 
     if (error.message === 'DUPLICATE_ENTRY') {
       return res.status(409).json({
