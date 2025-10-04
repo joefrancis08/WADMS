@@ -31,7 +31,7 @@ const AreaParameters = () => {
   const { 
     parameterData, parametersArr, duplicateValues, title, year, area, program, levelName,
     isEllipsisClick, activeParamId, hoveredId, taskForce, taskForceLoading, 
-    taskForceError, taskForceRefetch
+    taskForceError, taskForceRefetch, selectedTaskForce
   } = datas;
   const {
     handleCloseModal,
@@ -45,7 +45,9 @@ const AreaParameters = () => {
     handleOptionItem,
     handleConfirmDelete,
     handleMouseEnter,
-    handleMouseLeave
+    handleMouseLeave,
+    handleCheckboxChange,
+    handleSelectAll
   } = handlers;
 
   return (
@@ -236,7 +238,8 @@ const AreaParameters = () => {
         inputs={{ parameterInput }}
         datas={{ 
           parametersArr, duplicateValues, modalData, taskForce,
-          taskForceLoading, taskForceError, taskForceRefetch 
+          taskForceLoading, taskForceError, taskForceRefetch,
+          selectedTaskForce 
         }}
         handlers={{
           handleCloseModal,
@@ -244,7 +247,9 @@ const AreaParameters = () => {
           handleAddParameterValue,
           handleRemoveParameterValue,
           handleParameterChange,
-          handleConfirmDelete
+          handleConfirmDelete,
+          handleCheckboxChange,
+          handleSelectAll
         }}
       />
     </DeanLayout>

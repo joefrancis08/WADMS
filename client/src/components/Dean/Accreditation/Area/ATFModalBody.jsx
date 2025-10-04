@@ -29,8 +29,8 @@ const ATFModalBody = ({ data = {}, handlers = {} }) => {
             />
             <label htmlFor="select-all">
               {selectedTaskForce.length === taskForce.length 
-                ? 'Deselect all' 
-                : 'Select all'
+                ? `Deselect all (${taskForce.length})` 
+                : `Select all (${taskForce.length})`
               }
             </label>
           </div>

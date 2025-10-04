@@ -11,6 +11,7 @@ import { showErrorToast, showSuccessToast } from "../../utils/toastNotification"
 import { addAreaParameters, deleteAPM } from "../../api-calls/accreditation/accreditationAPI";
 import useOutsideClick from "../useOutsideClick";
 import { useUsersBy } from "../fetch-react-query/useUsers";
+import usePageTitle from "../usePageTitle";
 
 const { PARAMETER_ADDITION } = TOAST_MESSAGES;
 
@@ -64,6 +65,9 @@ const useAreaParameters = () => {
   const [isEllipsisClick, setIsEllipsisClick] = useState(false);
   const [activeParamId, setActiveParamId] = useState(null);
   const [hoveredId, setHoveredId] = useState(null);
+  const [selectedTaskForce, setSelectedTaskForce] = useState([]); // State for selected checkboxes (AreaModal)
+  const [activeTaskForceId, setActiveTaskForceId] = useState(null);
+  const [showConfirmUnassign, setShowConfirmUnassign] = useState(false);
 
   // Auto-focus parameter input
   const parameterInputRef = useAutoFocus(
@@ -78,6 +82,8 @@ const useAreaParameters = () => {
 
   useOutsideClick(paramOptionRef, () => setActiveParamId(null));
 
+  usePageTitle('Parameters');
+
   const findDuplicate = (value) => {
     return parameterData.some(d => d.parameter.trim() === value.trim());
   };
@@ -87,11 +93,17 @@ const useAreaParameters = () => {
   };
 
   const handleCloseModal = (from = {}) => {
-    const { addParam, deleteParam} = from;
+    const { addParam, deleteParam, assignTaskForce } = from;
     
     if (addParam || deleteParam) {
-      setModalType(null);
       setParametersArr([]);
+      setModalType(null);
+      setModalData({});
+
+    } else if (assignTaskForce) {
+      setSelectedTaskForce([]);
+      setModalType(null);
+      setModalData({});
     }
   };
 
@@ -168,6 +180,7 @@ const useAreaParameters = () => {
 
     } else if (label === 'Assign Task Force') {
       setModalType(MODAL_TYPE.ASSIGN_TASK_FORCE);
+      setModalData({ parameter });
 
     } else if (label === 'Delete') {
       setModalType(MODAL_TYPE.DELETE_PARAM);
@@ -202,6 +215,24 @@ const useAreaParameters = () => {
   const handleMouseLeave = (e) => {
     e.stopPropagation();
     setHoveredId(null);
+  };
+
+  // Toggle single checkbox (AreaModal)
+  const handleCheckboxChange = (userId) => {
+    setSelectedTaskForce((prev) =>
+      prev.includes(userId)
+        ? prev.filter((id) => id !== userId) // Remove if already selected
+        : [...prev, userId] // Add if not selected
+    );
+  };
+
+  // Toggle Select All (AreaModal)
+  const handleSelectAll = () => {
+    if (selectedTaskForce.length === taskForce.length) {
+      setSelectedTaskForce([]); // Unselect all
+    } else {
+      setSelectedTaskForce(taskForce.map((user) => user.id)); // select all by id
+    }
   };
 
   return {
@@ -248,7 +279,8 @@ const useAreaParameters = () => {
       taskForce,
       taskForceLoading,
       taskForceError,
-      taskForceRefetch 
+      taskForceRefetch,
+      selectedTaskForce
     },
 
     handlers: {
@@ -263,7 +295,9 @@ const useAreaParameters = () => {
       handleOptionItem,
       handleConfirmDelete,
       handleMouseEnter,
-      handleMouseLeave 
+      handleMouseLeave,
+      handleCheckboxChange,
+      handleSelectAll 
     }
   }
 };

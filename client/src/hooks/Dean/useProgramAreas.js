@@ -75,7 +75,6 @@ const useProgramAreas = () => {
 
   const [modalType, setModalType] = useState(null);
   const [modalData, setModalData] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [areas, setAreas] = useState([]);
   const [areaInput, setAreaInput] = useState('');
   const [duplicateValues, setDuplicateValues] = useState([]);

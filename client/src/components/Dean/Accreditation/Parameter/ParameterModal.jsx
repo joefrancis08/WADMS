@@ -16,15 +16,19 @@ const ParameterModal = ({ refs, modalType, datas, inputs, handlers }) => {
     taskForce,
     taskForceLoading,
     taskForceError,
-    taskForceRefetch
+    taskForceRefetch,
+    selectedTaskForce
   } = datas;
+
   const {
     handleCloseModal,
     handleSaveParameters,
     handleAddParameterValue,
     handleRemoveParameterValue,
     handleParameterChange,
-    handleConfirmDelete
+    handleConfirmDelete,
+    handleCheckboxChange,
+    handleSelectAll
   } = handlers;
  
   switch (modalType) {
@@ -71,7 +75,7 @@ const ParameterModal = ({ refs, modalType, datas, inputs, handlers }) => {
           onCancel={() => handleCloseModal({ assignTaskForce: true })}
           onSave={null}
           primaryButton='Assign'
-          disabled={true}
+          disabled={selectedTaskForce.length === 0}
           secondaryButton='Cancel'
           mode={'add'}
           headerContent={
@@ -84,11 +88,11 @@ const ParameterModal = ({ refs, modalType, datas, inputs, handlers }) => {
               data={{
                 taskForce, 
                 taskForceLoading, 
-                // selectedTaskForce: null
+                selectedTaskForce
               }}
               handlers={{
-                // handleSelectAll, 
-                // handleCheckboxChange
+                handleSelectAll, 
+                handleCheckboxChange
               }}
             />
           }
