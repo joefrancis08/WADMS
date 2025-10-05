@@ -22,6 +22,7 @@ const MODAL_TYPES = Object.freeze({
   DELETE_PARAM: 'delete-parameter',
 
   ADD_SUBPARAMETERS: 'add-subparameters',
+  DELETE_SUBPARAM: 'delete-subparameter',
 
   ADD_INDICATORS: 'add-indicators',
 

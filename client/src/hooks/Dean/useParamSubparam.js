@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import useAutoFocus from "../useAutoFocus";
 import MODAL_TYPE from "../../constants/modalTypes";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
-import { addDocument, addSubParams, deleteDoc, fetchDocumentsDynamically, updateDocName } from "../../api-calls/accreditation/accreditationAPI";
+import { addDocument, addSubParams, deleteDoc, deletePSPM, fetchDocumentsDynamically, updateDocName } from "../../api-calls/accreditation/accreditationAPI";
 import { TOAST_MESSAGES } from "../../constants/messages";
 import PATH from "../../constants/path";
 import { useQueryClient } from "@tanstack/react-query";
@@ -418,7 +418,7 @@ const useParamSubparam = () => {
 
   const handleSubParamOptionItem = (e, data = {}) => {
     e.stopPropagation();
-    const { label, subParamId, subParamUUID, subParameter } = data;
+    const { label, pspmId, subParamId, subParamUUID, subParameter } = data;
     console.log(data);
 
     if (label === 'Assign Task Force') {
@@ -431,7 +431,37 @@ const useParamSubparam = () => {
       console.log(label);
 
     } else if (label === 'Delete') {
-      console.log(label);
+      setActiveSubParamId(null);
+      setModalType(MODAL_TYPE.DELETE_SUBPARAM);
+      setModalData({
+        pspmId,
+        subParamId,
+        subParamUUID,
+        subParameter
+      });
+    }
+  };
+
+  const handleDeleteSubParam = async (data = {}) => {
+    const { pspmId, subParamId, subParameter } = data;
+
+    try {
+      const res = await deletePSPM({
+        pspmId,
+        subParameterId: subParamId,
+        subParameter
+      });
+
+      if (res.data.success && res.data.message) {
+        showSuccessToast(res.data.message);
+      }
+
+      handleCloseModal();
+      
+    } catch (error) {
+      showErrorToast('Something went wrong. Please try again.');
+      console.error('Error delete sub-parameter:', error);
+      throw error;
     }
   };
 
@@ -514,7 +544,8 @@ const useParamSubparam = () => {
       handleConfirmRemove,
       handleNavEllipsis,
       handleSubParamOption,
-      handleSubParamOptionItem
+      handleSubParamOptionItem,
+      handleDeleteSubParam
     }
   };
 };

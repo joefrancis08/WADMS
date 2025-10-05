@@ -6,6 +6,8 @@ const deletePSPM = async (req, res) => {
   const subParameterId = Number(req.query.subParameterId);
   const subParameter = req.query.subParameter;
 
+  console.log({ pspmId, subParameterId, subParameter });
+
   if (!pspmId || !subParameterId || !subParameter || !subParameter.trim()) {
     return res.status(400).json({
       message: 'Subparameter id and subparameter name should not be empty.',

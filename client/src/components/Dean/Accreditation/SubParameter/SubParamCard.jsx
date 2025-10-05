@@ -21,7 +21,9 @@ const SubParamCard = ({
 
 }) => {
   const { subParamOptionRef } = refs;
-  const { sub_parameter_uuid, sub_parameter, sub_parameter_id } = subParam;
+  const { pspmId, sub_parameter_uuid, sub_parameter, sub_parameter_id } = subParam;
+
+  console.log(pspmId);
 
   return (
     <div
@@ -64,6 +66,7 @@ const SubParamCard = ({
                       <p 
                         onClick={(e) => handleSubParamOptionItem(e, {
                           label: item.label,
+                          pspmId,
                           subParamId: sub_parameter_id,
                           subParamUUID: sub_parameter_uuid,
                           subParameter: sub_parameter

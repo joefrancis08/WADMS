@@ -4,6 +4,7 @@ import SubParameterBaseModal from '../../../Modals/accreditation/SubParameterBas
 import AddField from '../../../Form/AddField';
 import ConfirmationModal from '../../../Modals/ConfirmationModal';
 import { File, FileText, Trash2 } from 'lucide-react';
+import { deleteFolder } from '../../../../assets/icons';
 
 const SubParamModal = ({ refs, modalType, datas, handlers }) => {
   const { subParamInputRef } = refs;
@@ -20,7 +21,8 @@ const SubParamModal = ({ refs, modalType, datas, handlers }) => {
     handleAddSubParamValue,
     handleRemoveSubParamValue,
     handleSubParamChange,
-    handleConfirmRemove
+    handleConfirmRemove,
+    handleDeleteSubParam
   } = handlers;
 
   switch (modalType) {
@@ -70,6 +72,46 @@ const SubParamModal = ({ refs, modalType, datas, handlers }) => {
                 onChange={(e) => handleSubParamChange(e)}
                 // onFocus={handleFocus}
               />
+            </div>
+          }
+        />
+      );
+
+    case MODAL_TYPE.DELETE_SUBPARAM:
+       return (
+        <ConfirmationModal 
+          onClose={handleCloseModal}
+          onCancelClick={handleCloseModal}
+          onConfirmClick={() => handleDeleteSubParam({
+            pspmId: modalData.pspmId, 
+            subParamId: modalData.subParamId, 
+            subParameter: modalData.subParameter
+          })}
+          isDelete={true}
+          primaryButton={'Delete'}
+          secondaryButton={'Cancel'}
+          bodyContent={
+            <div className='flex flex-col items-center justify-center pb-4 px-2'>
+              <div className='flex flex-col items-center justify-center pb-4'>
+                <img src={deleteFolder} alt="Folder Delete" className='h-24 w-24 opacity-80' />
+                <p className='flex flex-col px-8 text-md md:text-lg text-center'>
+                  <span className='text-red-500 text-2xl font-semibold mt-2'>
+                    Delete
+                  </span>
+                </p>
+              </div>
+              
+              <div className='pb-2 space-y-2'>
+                <p className='px-8 text-center'>
+                  This action will permanently delete the records under this sub-parameter. This action cannot be undone.
+                </p>
+                <p className='px-8 text-center'>
+                  Do you really want to delete {' '}
+                  <span className='font-medium'>
+                    {modalData.subParameter}?
+                  </span>
+                </p>
+              </div>
             </div>
           }
         />

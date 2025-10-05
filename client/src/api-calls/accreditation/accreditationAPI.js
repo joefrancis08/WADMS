@@ -340,6 +340,18 @@ export const deleteAPM = (data = {}) => {
   });
 };
 
+export const deletePSPM = (data = {}) => {
+  const { pspmId, subParameterId, subParameter } = data;
+
+  return axios.delete(`${API_BASE_URL}/accreditation/delete-param-subparam`, {
+    params: {
+      pspmId,
+      subParameterId,
+      subParameter
+    }
+  });
+};
+
 export const deleteDoc = (docId) => {
   return axios.delete(`${API_BASE_URL}/accreditation/delete-document`, {
     params: {

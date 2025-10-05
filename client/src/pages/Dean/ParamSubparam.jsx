@@ -63,7 +63,8 @@ const ParamSubparam = () => {
     handleConfirmRemove,
     handleNavEllipsis,
     handleSubParamOption,
-    handleSubParamOptionItem
+    handleSubParamOptionItem,
+    handleDeleteSubParam
   } = handlers;
 
   return (
@@ -163,7 +164,8 @@ const ParamSubparam = () => {
                 </div>
               </div>
             )}
-            {subParamsData.map(({ sub_parameter_uuid, sub_parameter, sub_parameter_id }) => {
+            {console.log(subParamsData)}
+            {subParamsData.map(({ pspmId, sub_parameter_uuid, sub_parameter, sub_parameter_id }) => {
               const docsArray = documentsBySubParam[sub_parameter_id] ?? []
               const isExpanded = expandedId === sub_parameter_id
 
@@ -175,6 +177,7 @@ const ParamSubparam = () => {
                     refs={{ subParamOptionRef }}
                     activeSubParamId={activeSubParamId} 
                     subParam={{
+                      pspmId,
                       sub_parameter_id,
                       sub_parameter_uuid, 
                       sub_parameter, 
@@ -233,7 +236,7 @@ const ParamSubparam = () => {
             {subParamsData.length > 0 && (
               <div
                 onClick={handleAddSubparamClick}
-                className='flex flex-col gap-y-2 items-center justify-center border border-slate-700 hover:scale-102 hover:shadow shadow-slate-600 p-4 rounded-md transition cursor-pointer bg-slate-800 active:opacity-90 w-[40%] py-10 text-slate-100 active:scale-98'
+                className='flex flex-col gap-y-2 items-center justify-center border border-slate-700 hover:scale-102 hover:shadow shadow-slate-600 p-4 rounded-md transition cursor-pointer bg-slate-800 active:opacity-90 w-[40%] py-12 text-slate-100 active:scale-98'
               >
                 <CirclePlus className='h-12 w-12 flex shrink-0'/>
                 <p>Add Sub-parameter</p>
@@ -254,7 +257,8 @@ const ParamSubparam = () => {
           handleAddSubParamValue,
           handleRemoveSubParamValue,
           handleSubParamChange,
-          handleConfirmRemove
+          handleConfirmRemove,
+          handleDeleteSubParam
         }}
       />
       {previewFile && (
