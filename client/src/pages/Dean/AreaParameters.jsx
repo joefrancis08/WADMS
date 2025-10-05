@@ -1,5 +1,5 @@
 import DeanLayout from '../../components/Layout/Dean/DeanLayout';
-import { ChevronRight, CirclePlus, CircleUserRound, Ellipsis, EllipsisVertical, Folder, FolderOpen, Plus } from 'lucide-react';
+import { ChevronRight, CirclePlus, CircleUserRound, Ellipsis, EllipsisVertical, FileUser, Folder, FolderOpen, Plus } from 'lucide-react';
 import PATH from '../../constants/path';
 import formatAreaName from '../../utils/formatAreaName';
 import useAreaParameters from '../../hooks/Dean/useAreaParameters';
@@ -10,6 +10,7 @@ import { MENU_OPTIONS } from '../../constants/user';
 import Dropdown from '../../components/Dropdown/Dropdown';
 import Popover from '../../components/Popover';
 import ProfileStack from '../../components/ProfileStack';
+import deduplicateAssignments from '../../utils/deduplicateAssignments';
 
 const { PROGRAMS_TO_BE_ACCREDITED, PROGRAM_AREAS, PARAM_SUBPARAMS } = PATH.DEAN;
 
@@ -51,7 +52,7 @@ const AreaParameters = () => {
     handleCheckboxChange,
     handleSelectAll,
     handleAssignTaskForce,
-    handleUserCircleClick,
+    handleFileUserClick,
     handleProfileStackClick,
     handleATFEllipsisClick,
     handleAddTaskForceClick,
@@ -152,13 +153,17 @@ const AreaParameters = () => {
               return (
                 <React.Fragment key={index}>
                   <div
-                    onClick={() => navigate(PARAM_SUBPARAMS({ 
-                      accredInfoUUID, 
-                      level, 
-                      programUUID, 
-                      areaUUID, 
-                      parameterUUID: data.parameter_uuid 
-                    }))}
+                    onClick={() => { 
+                      navigate(PARAM_SUBPARAMS({ 
+                        accredInfoUUID, 
+                        level, 
+                        programUUID, 
+                        areaUUID, 
+                        parameterUUID: data.parameter_uuid 
+                      }));
+                      localStorage.removeItem('modal-type');
+                      localStorage.removeItem('modal-data');
+                    }}
                     className='relative w-60 h-50 bg-[url("/src/assets/icons/folder.png")] bg-cover bg-center rounded-lg cursor-pointer transition'
                   >
                     <div className='absolute inset-0'></div>
@@ -182,20 +187,27 @@ const AreaParameters = () => {
                           )}
                         </div>
                       </div>
-                      <button
-                        title='Assign Task Force' 
-                        onClick={(e) => handleUserCircleClick(e, {
-                          parameterId: data.parameter_id, 
-                          parameter: data.parameter
-                        })}
-                        className='absolute bottom-2.5 right-1 text-white cursor-pointer active:opacity-50 rounded-full hover:bg-white/20 p-1 z-10'>
-                        <CircleUserRound />
-                      </button>
-                      <ProfileStack 
-                        data={{ assignmentData, taskForce, parameter_id: data.parameter_id }}
-                        handlers={{ handleProfileStackClick }}
-                        scope='parameter'
-                      />
+                      <div className='flex items-center justify-between px-1'>
+                        <button
+                          title='Assign Task Force' 
+                          onClick={(e) => handleFileUserClick(e, {
+                            parameterId: data.parameter_id, 
+                            parameter: data.parameter
+                          })}
+                          className='absolute bottom-2.5 right-1 text-white cursor-pointer active:opacity-50 rounded-full hover:bg-white/20 p-1 z-10'>
+                          <FileUser />
+                        </button>
+                        <div className='absolute bottom-2.5 left-1'>
+                          <ProfileStack 
+                            data={{ 
+                              assignmentData: deduplicateAssignments(assignmentData), 
+                              taskForce, 
+                              parameter_id: data.parameter_id }}
+                            handlers={{ handleProfileStackClick }}
+                            scope='parameter'
+                          />
+                        </div>
+                      </div>
                     </div>
                     
                     <button

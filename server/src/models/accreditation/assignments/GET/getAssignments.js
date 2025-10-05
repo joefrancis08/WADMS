@@ -83,9 +83,9 @@ const getAssignments = async (accredData = {}, userData = {}, condition = {}, co
       pa.id                        AS parameterID,
       pa.uuid                      AS parameterUUID,
       pa.parameter_name            AS parameter,
-      spa.id                       AS sub_parameterID,
-      spa.uuid                     AS sub_parameterUUID,
-      spa.sub_parameter_name       AS sub_parameter,
+      spa.id                       AS subParameterID,
+      spa.uuid                     AS subParameterUUID,
+      spa.sub_parameter_name       AS subParameter,
       i.id                         AS indicatorID,
       i.uuid                       AS indicatorUUID,
       i.indicator_name             AS indicator

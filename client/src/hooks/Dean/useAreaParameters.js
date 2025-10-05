@@ -59,7 +59,7 @@ const useAreaParameters = () => {
     loading: loadingAssignments, 
     error: errorAssignments,
     refetch: refetchAssignments 
-  } = useFetchAssignments({ accredInfoId, levelId, programId });
+  } = useFetchAssignments({ accredInfoId, levelId, programId, areaId });
   console.log(assignments.assignmentData);
   const assignmentData = assignments?.assignmentData ?? [];
   
@@ -199,7 +199,7 @@ const useAreaParameters = () => {
     console.log('Clicked!', data.paramId);
   };
 
-  const handleUserCircleClick = (e, data = {}) => {
+  const handleFileUserClick = (e, data = {}) => {
     e.stopPropagation();
     const { parameterId, parameter } = data;
     setModalType(MODAL_TYPE.ASSIGN_TASK_FORCE);
@@ -231,7 +231,7 @@ const useAreaParameters = () => {
       }));
 
     } else if (label === 'Assign Task Force') {
-      handleUserCircleClick(e, data);
+      handleFileUserClick(e, data);
 
     } else if (label === 'Delete') {
       setModalType(MODAL_TYPE.DELETE_PARAM);
@@ -508,7 +508,7 @@ const useAreaParameters = () => {
       handleCheckboxChange,
       handleSelectAll,
       handleAssignTaskForce,
-      handleUserCircleClick,
+      handleFileUserClick,
       handleProfileStackClick,
       handleATFEllipsisClick,
       handleAddTaskForceClick,

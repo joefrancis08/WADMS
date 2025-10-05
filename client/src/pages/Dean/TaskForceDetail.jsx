@@ -139,17 +139,17 @@ const TaskForceDetail = () => {
         }
 
         // ---------- SUB-PARAMETER ----------
-        if (item.sub_parameterID) {
-          if (!paramObj.subParameters[item.sub_parameterID]) {
-            paramObj.subParameters[item.sub_parameterID] = {
-              subParameterID: item.sub_parameterID,
-              subParameter: item.sub_parameter,
+        if (item.subParameterID) {
+          if (!paramObj.subParameters[item.subParameterID]) {
+            paramObj.subParameters[item.subParameterID] = {
+              subParameterID: item.subParameterID,
+              subParameter: item.subParameter,
               taskForces: [],
               indicators: {}
             };
           }
 
-          const subObj = paramObj.subParameters[item.sub_parameterID];
+          const subObj = paramObj.subParameters[item.subParameterID];
 
           if (!subObj.taskForces.some(tf => tf.taskForceID === item.taskForceID)) {
             subObj.taskForces.push({

@@ -16,6 +16,8 @@ const VATFModal = ({ data = {}, handlers = {}, scope = 'area' }) => {
     handleUnassignedAllClick, handleConfirmUnassign 
   } = handlers;
 
+  console.log(modalData);
+
   return (
     <>
       <div className="h-full fixed inset-0 z-40 flex items-center justify-center bg-black/40 backdrop-blur-xs overflow-hidden">
@@ -84,6 +86,8 @@ const VATFModal = ({ data = {}, handlers = {}, scope = 'area' }) => {
                                 area: modalData?.area,
                                 parameterId: modalData?.parameterId,
                                 parameter: modalData?.parameter,
+                                subParameterId: modalData?.subParameterId,
+                                subParameter: modalData?.subParameter,
                                 taskForceId: tf?.id,
                                 taskForceUUID: tf?.uuid,
                                 taskForce: tf.fullName,
@@ -134,6 +138,7 @@ const VATFModal = ({ data = {}, handlers = {}, scope = 'area' }) => {
             programId: modalData.programId, 
             areaId: modalData.areaId, 
             parameterId: modalData.parameterId,
+            subParameterId: modalData.subParameterId,
             taskForceId: modalData.selectedTaskForce.id 
           })}
           primaryButton={'Unassign'}
