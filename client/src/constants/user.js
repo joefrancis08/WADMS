@@ -34,6 +34,13 @@ export const MENU_OPTIONS = {
       { id: 'rename', icon: FolderPen, label: 'Rename'},
       { id: 'move-to-archive',icon: Archive, label: 'Move to Archive'},
       { id: 'delete', icon: Trash2, label: 'Delete'},
+    ],
+
+    SUB_PARAMETER_OPTIONS: [
+      { id: 'assign-task-force', icon: FileUser, label: 'Assign Task Force'},
+      { id: 'rename', icon: FolderPen, label: 'Rename'},
+      { id: 'move-to-archive',icon: Archive, label: 'Move to Archive'},
+      { id: 'delete', icon: Trash2, label: 'Delete'},
     ]
   }
 }

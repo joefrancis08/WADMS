@@ -4,7 +4,7 @@ import { addLevelController, fetchLevelsController } from '../controllers/accred
 import { deletePeriodController, fetchPeriodController } from '../controllers/accreditation/period/periodController.js';
 import { addProgramAreaController, deletePAMController, fetchProgramAreaController } from '../controllers/accreditation/program-area-mapping/programAreaMappingController.js';
 import { addAreaParameterController, deleteAreaParameterController, fetchAreaParameterController } from '../controllers/accreditation/area-parameter-mapping/areaParameterMappingController.js';
-import { addParamSubParamController, fetchParamSubParamController } from '../controllers/accreditation/param-subparam-mapping/paramSubparamController.js';
+import { addParamSubParamController, deleteParamSubParamController, fetchParamSubParamController } from '../controllers/accreditation/param-subparam-mapping/paramSubparamController.js';
 import { addAccredInfoController } from '../models/accreditation/accreditation-info/accreditationInfoController.js';
 import { addILPController, fetchILPController } from '../controllers/accreditation/info-level-program-mapping/ILPController.js';
 import { addSIMController, fetchSIMController } from '../controllers/accreditation/subparam-indicator-mapping/SIMController.js';
@@ -43,6 +43,7 @@ accreditationRouter.delete('/delete-accreditation-period', deletePeriodControlle
 accreditationRouter.delete('/delete-programs-to-be-accredited', deleteProgramToBeAccreditedController);
 accreditationRouter.delete('/delete-program-area', deletePAMController);
 accreditationRouter.delete('/delete-area-parameter', deleteAreaParameterController);
+accreditationRouter.delete('/delete-param-subparam', deleteParamSubParamController);
 accreditationRouter.delete('/delete-document', deleteDocController);
 accreditationRouter.delete('/delete-assignment', deleteAssignmentController);
 

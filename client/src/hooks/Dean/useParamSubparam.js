@@ -9,7 +9,7 @@ import { showErrorToast, showSuccessToast } from "../../utils/toastNotification"
 import { addDocument, addSubParams, deleteDoc, fetchDocumentsDynamically, updateDocName } from "../../api-calls/accreditation/accreditationAPI";
 import { TOAST_MESSAGES } from "../../constants/messages";
 import PATH from "../../constants/path";
-import { useQueries, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRef } from "react";
 import { messageHandler } from "../../services/websocket/messageHandler";
 import { useMemo } from "react";
@@ -26,6 +26,8 @@ const useParamSubparam = () => {
   const fileInputRef = useRef();
   const renameFileRef = useRef();
   const fileOptionRef = useRef();
+  const navEllipsisRef = useRef();
+  const subParamOptionRef = useRef();
   const queryClient = useQueryClient();
   const { level: levelName } = formatProgramParams(level);
 
@@ -93,6 +95,7 @@ const useParamSubparam = () => {
   // Check if any of the document queries encountered an error
   const errorDocs = subParamDocs.some(q => q.isError);
 
+  const [isNavEllipsisClick, setIsNavEllipsisClick] = useState(false);
   const [modalType, setModalType] = useState(null);
   const [modalData, setModalData] = useState(null); 
   const [subParameterInput, setSubParameterInput] = useState('');
@@ -106,6 +109,7 @@ const useParamSubparam = () => {
   const [renameInput, setRenameInput] = useState('');
   const [renameDocId, setRenameDocId] = useState(null); // Track which doc is being renamed
   const [loadingFileId, setLoadingFileId] = useState(null); // Store the doc id that's loading
+  const [activeSubParamId, setActiveSubParamId] = useState(null); // Set state for each subparam option
 
   // Auto-focus on sub-parameter input
   const subParamInputRef = useAutoFocus(
@@ -118,11 +122,17 @@ const useParamSubparam = () => {
     setDuplicateValues(prev => prev.filter(val => subParamsArr.includes(val)));
   }, [subParamsArr]);
 
+  // Close navigation dropdown when click outside
+  useOutsideClick(navEllipsisRef, () => setIsNavEllipsisClick(false));
+
   // Close file option when click outside
   useOutsideClick(fileOptionRef, () => setActiveDocId(null));
 
   // Close input when click outside
   useOutsideClick(renameFileRef, () => cancelRename());
+
+  // Close subParamOption Dropdown when click outside
+  useOutsideClick(subParamOptionRef, () => setActiveSubParamId(null));
 
   // Refetch data if there are new updates such as addition and deletion
   useEffect(() => {
@@ -139,6 +149,10 @@ const useParamSubparam = () => {
 
   const findDuplicate = (value) => {
     return subParamsData.some(d => d.sub_parameter.trim() === value.trim());
+  };
+
+  const handleNavEllipsis = () => {
+    setIsNavEllipsisClick(!isNavEllipsisClick);
   };
 
   const handleAddSubparamClick = () => {
@@ -395,16 +409,44 @@ const useParamSubparam = () => {
     }
   };
 
+  const handleSubParamOption = (e, subParamId) => {
+    e.stopPropagation();
+    setActiveSubParamId(prev => prev !== subParamId ? subParamId : null);
+  };
+
+  console.log(activeSubParamId);
+
+  const handleSubParamOptionItem = (e, data = {}) => {
+    e.stopPropagation();
+    const { label, subParamId, subParamUUID, subParameter } = data;
+    console.log(data);
+
+    if (label === 'Assign Task Force') {
+      console.log(label);
+
+    } else if (label === 'Rename') {
+      console.log(label);
+
+    } else if (label === 'Move to Archive') {
+      console.log(label);
+
+    } else if (label === 'Delete') {
+      console.log(label);
+    }
+  };
+
   return {
     navigate,
     modalType,
     modalData,
 
     refs: {
+      navEllipsisRef,
       subParamInputRef,
       fileInputRef,
       fileOptionRef,
-      renameFileRef
+      renameFileRef,
+      subParamOptionRef
     },
     
     params: {
@@ -425,6 +467,8 @@ const useParamSubparam = () => {
     },
 
     datas: {
+      title,
+      year,
       subParameter,
       subParameters,
       loading,
@@ -443,7 +487,9 @@ const useParamSubparam = () => {
       errorDocs,
       expandedId,
       selectedFiles,
-      isRename
+      isRename,
+      isNavEllipsisClick,
+      activeSubParamId
     },
 
     handlers: {
@@ -466,6 +512,9 @@ const useParamSubparam = () => {
       handleKeyDown,
       handleRemoveClick,
       handleConfirmRemove,
+      handleNavEllipsis,
+      handleSubParamOption,
+      handleSubParamOptionItem
     }
   };
 };
