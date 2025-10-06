@@ -7,28 +7,38 @@ import LoadSpinner from '../components/Loaders/LoadSpinner';
 import { LoaderCircle } from 'lucide-react';
 
 const { EMAIL_CONFIRMATION, LOGIN } = PATH.PUBLIC;
-const { UNVERIFIED_USER } = USER_ROLES;
-const { PENDING } = USER_STATUS;
+const { UU } = USER_ROLES;
+const { PENDING: PENDING_STATUS } = USER_STATUS;
 
 const LandingRedirect = () => {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
 
+  console.log(user);
+
   useEffect(() => {
     if (!isLoading) {
       if (!user) {
         navigate(LOGIN, { replace: true });
+
       } else {
-        // Logged-in users
-        switch (user.role) {
-          case USER_ROLES.DEAN:
+        if (user.status === USER_STATUS.PENDING) {
+          if (user.role === USER_ROLES.UU) {
+            navigate(PATH.UNVERIFIED_USER.PENDING, { replace: true });
+          }
+        }
+        
+         // Logged in user
+        if (user.status === USER_STATUS.VERIFIED) {
+          if (user.role === USER_ROLES.DEAN) {
             navigate('/d', { replace: true });
-            break;
-          case UNVERIFIED_USER:
-            navigate(EMAIL_CONFIRMATION, { replace: true });
-            break;
-          default:
+
+          } else if (user.role === USER_ROLES.TASK_FORCE_CHAIR || USER_ROLES.TASK_FORCE_MEMBER) {
+            navigate('/t', { replace: true });
+
+          } else {
             navigate('/', { replace: true });
+          }
         }
       }
     }
@@ -37,7 +47,7 @@ const LandingRedirect = () => {
 
   return (
     <div className="w-full h-screen flex items-center justify-center">
-      <LoaderCircle className='h-16 w-16 animate-spin text-slate-700'/>
+      <LoaderCircle className='h-10 w-10 animate-spin text-slate-700'/>
     </div>
   );
 };

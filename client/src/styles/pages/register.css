@@ -1,17 +1,17 @@
 .reg-card-container {
-  @apply min-h-screen flex items-center justify-center bg-gray-300;
+  @apply min-h-screen flex items-center justify-center bg-[url("/pit-bg-1.jpg")] bg-cover bg-center;
 }
 
 .reg-card-content {
-  @apply w-full max-w-md max-sm:mx-4 bg-gradient-to-b from-gray-100 to-white px-8 pb-8 pt-2 rounded-lg drop-shadow-md;
+  @apply flex min-w-[75%] justify-between gap-x-8 bg-slate-200 p-8 rounded-lg drop-shadow-md;
 }
 
 .reg-card-header-title {
-  @apply font-bold mb-6 text-center text-base text-green-700;
+  @apply text-green-700 text-2xl max-w-[400px] font-bold;
 }
 
 .reg-hr-line {
-  @apply opacity-50 text-secondary shadow-lg;
+  @apply opacity-50 h-2 text-secondary shadow-lg;
 }
 
 .reg-form-title {

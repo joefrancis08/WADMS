@@ -159,7 +159,6 @@ const useLogin = () => {
         password: ''
       });
 
-      setIsLoading(false);
       setNextStep(2);
       setTimeLeft(5 * 60); // reset timer
       setOtpExpired(false);
@@ -189,7 +188,9 @@ const useLogin = () => {
       if (error.code === 'ERR_NETWORK') {
         showErrorToast("Something went wrong. Please check your internet connection and try again.", 'top-center', 8000);
       }
-    } 
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleBackToLogin = () => {

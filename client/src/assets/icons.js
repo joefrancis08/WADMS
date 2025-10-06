@@ -31,3 +31,4 @@ export { default as toga } from './icons/toga.png';
 export { default as notAssigned } from './icons/denied.png';
 export { default as notAssignedDM } from './icons/denied-darkmode.png';
 export { default as deleteFolder } from './icons/delete-folder.png';
+export { default as googleIcon } from './icons/google.png'

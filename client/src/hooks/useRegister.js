@@ -6,6 +6,7 @@ import { checkUserEmail, registerUser } from '../api-calls/Users/userAPI';
 import { showErrorToast, showSuccessToast } from '../utils/toastNotification';
 import { TOAST_MESSAGES } from '../constants/messages';
 import usePageTitle from './usePageTitle';
+import PATH from '../constants/path';
 
 const { REGISTRATION } = TOAST_MESSAGES;
 
@@ -89,7 +90,7 @@ export const useRegister = () => {
     try {
       // Step 3: Check if email already exists
       // Note: This is a server-side validation so I think it's good to keep the code here, still I update the errors if there's any.
-      const res = await checkUserEmail(values);
+      const res = await checkUserEmail(values.email);
       const emailAlreadyExists = res?.data?.alreadyExists;
 
       if (emailAlreadyExists) {
@@ -103,7 +104,7 @@ export const useRegister = () => {
       // Step 4: Register the user if there are no errors
       setIsLoading(true); // Set loading state to true while waiting to post the data
       const data = await registerUser(values);
-      const { email, fullName, role, status } = data.user; // Destructure the data for easy access and usage
+      const { email, fullName, profilePicPath, role, status } = data.user; // Destructure the data for easy access and usage
       console.log(data.user);
       
       // Step 5: If registration unsuccessful, let the user know thru toast notification
@@ -115,7 +116,7 @@ export const useRegister = () => {
       setIsLoading(false); // Set loading to false after posting the data
 
       // Step 6: Save the data of the registered user to the context so that it can be used in other components
-      register(email, fullName, role, status);
+      register(email, fullName, profilePicPath, role, status);
 
       // Step 7: Reset field values after successful form submission
       setValues({
@@ -127,7 +128,7 @@ export const useRegister = () => {
       showSuccessToast(REGISTRATION.SUCCESS); // Show success toast notification
 
       // Step 8: Redirect to pedinding verification page
-      navigate('/pending-verification');
+      navigate(PATH.UNVERIFIED_USER.PENDING);
 
     } catch (error) {
       // Additional step: Log the error and let the user know thru toast notification

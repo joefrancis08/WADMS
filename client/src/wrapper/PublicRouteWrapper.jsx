@@ -2,6 +2,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import LoadSpinner from "../components/Loaders/LoadSpinner";
 import { LoaderCircle } from "lucide-react";
+import { USER_ROLES } from "../constants/user";
 
 const PublicRouteWrapper = ({ children, restricted = false }) => {
   const { user, isLoading } = useAuth();
@@ -16,7 +17,7 @@ const PublicRouteWrapper = ({ children, restricted = false }) => {
     );
   }
 
-  if (user && restricted) {
+  if (user && user.role !== USER_ROLES.UU && restricted) {
     // Redirect to the page they were on
     return <Navigate to='/' replace />;
   }

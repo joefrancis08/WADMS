@@ -9,8 +9,8 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const register = (email, fullName, role, status) => {
-    setUser({ email, fullName, role, status });
+  const register = (email, fullName, profilePicPath, role, status) => {
+    setUser({ email, fullName, profilePicPath, role, status });
   }
 
   const login = (email, fullName, profilePicPath, role, status) => {
@@ -26,8 +26,8 @@ export const AuthProvider = ({ children }) => {
     const restoreSession = async () => {
       try {
         const user = await getUserSession();
-        const { email, fullName, role, status } = user ?? {};
-        if (user) setUser({ email, fullName, role, status });
+        const { email, fullName, profilePicPath, role, status } = user ?? {};
+        if (user) setUser({ email, fullName, profilePicPath, role, status });
 
       } catch (error) {
         console.error('Error: ', error);

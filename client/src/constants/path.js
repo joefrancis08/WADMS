@@ -8,6 +8,10 @@ const PATH = {
     NOT_FOUND_URL: '/page-not-found'
   },
 
+  UNVERIFIED_USER: {
+    PENDING: '/pending-verification',
+  },
+
   DEAN: {
     DASHBOARD: '/d',
 
