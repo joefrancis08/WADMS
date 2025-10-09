@@ -58,7 +58,7 @@ const DocumentList = ({
         <div ref={fileOptionRef} className='flex flex-col absolute top-2 right-10 bg-slate-800 gap-1 p-2 rounded z-20'>
           <button
             title='Rename'
-            className='flex gap-x-2 p-2 text-sm text-white/80 hover:bg-slate-300/30 rounded-md cursor-pointer'
+            className='flex gap-x-2 p-2 text-sm text-white/80 hover:bg-slate-700 rounded-md cursor-pointer'
             onClick={(e) => handleRenameClick(e, docObj)}
           >
             <FilePenLine className='h-5 w-5 text-white/80'/>
@@ -67,7 +67,7 @@ const DocumentList = ({
           <hr className='text-slate-600'></hr>
           <button
             title='Remove'
-            className='flex gap-x-2 p-2 text-sm bg-transparent text-red-300 hover:bg-red-100/30 rounded-md cursor-pointer'
+            className='flex gap-x-2 p-2 text-sm bg-transparent text-red-300 hover:bg-red-200/20 rounded-md cursor-pointer'
             onClick={(e) => handleRemoveClick(e, {
               docId: docObj.doc_id,
               document: docObj.file_name

@@ -69,6 +69,16 @@ export const TOAST_MESSAGES = Object.freeze({
   INDICATORS_ADDITION: {
     SUCCESS: 'Added successfully!',
     ERROR: 'Something went wrong while adding indicators.'
+  },
+
+  ASSIGNMENT: {
+    SUCCESS: 'Assigned successfully!',
+    ERROR: 'Something went wrong while assigning. Try again.'
+  },
+
+  UNASSIGN: {
+    SUCCESS: 'Unassigned successfully!',
+    ERROR: 'Something went wrong while unassigning. Try again'
   }
 });
 
