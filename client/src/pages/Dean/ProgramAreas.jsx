@@ -187,7 +187,7 @@ const ProgramAreas = () => {
                   <div className='absolute bottom-2.5  z-20'>
                     <ProfileStack 
                       data={{ 
-                        assignmentData: deduplicateAssignments(assignmentData),
+                        assignmentData: deduplicateAssignments(assignmentData, 'area'),
                         taskForce, 
                         area_id: data.area_id, 
                         area: formatAreaName(data.area )}}

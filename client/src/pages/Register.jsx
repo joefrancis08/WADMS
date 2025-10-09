@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { AtSign, LockKeyhole, UserRoundPen } from 'lucide-react';
+import { AtSign, LockKeyhole, Mail, UserRound, UserRoundPen } from 'lucide-react';
 import { useRegister } from '../hooks/useRegister'; // Importing register custom hook
 import SubmitButton from '../components/Auth/SubmitButton'; // Importing custom SubmitButton component
 import LoadSpinner from '../components/Loaders/LoadSpinner'; // Importing custom LoadSpinner component
@@ -31,10 +31,10 @@ function Register() {
           <h2 className="reg-card-header-title">
             Document Management System
           </h2>
-          <div className='w-[50%] h-0.5 bg-slate-400 my-30'></div>
+          <div className='w-[50%] h-0.5 bg-slate-400 my-20'></div>
           <div className='max-w-[300px]'>
             <p>
-              After successful registration, the administrator will verified your credentials before granting you access to the system.
+              After successful registration, the administrator will verify your credentials before granting you access to the system.
             </p>
           </div>
         </div>
@@ -43,7 +43,7 @@ function Register() {
           <form onSubmit={handleSubmit} className="space-y-2">
             <Field
               autoFocus={true}
-              icon={<UserRoundPen color='gray' size={24} />}
+              icon={<UserRound color='gray' size={24} />}
               ref={fullNameRef}
               name='fullName'
               placeholder='Full Name'
@@ -53,7 +53,7 @@ function Register() {
             />
             
             <Field
-              icon={<AtSign color='gray' size={24} />}
+              icon={<Mail color='gray' size={24} />}
               ref={emailRef}
               name='email'
               placeholder='Email Address'

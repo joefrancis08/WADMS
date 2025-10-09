@@ -1,4 +1,4 @@
-const deduplicateAssignments = (assignmentData) => {
+const deduplicateAssignments = (assignmentData, scope = 'area') => {
   // Suppose 'assignmentData' is your fetched data
   const uniqueAssignments = [];
 
@@ -6,7 +6,7 @@ const deduplicateAssignments = (assignmentData) => {
 
   assignmentData.forEach((item) => {
     // Use a combination of taskForceID + areaID to check uniqueness
-    const key = `${item.taskForceID}-${item.areaID}`;
+    const key = `${item.taskForceID}-${item[`${scope}ID`]}`;
     if (!seen.has(key)) {
       seen.add(key);
       uniqueAssignments.push(item);

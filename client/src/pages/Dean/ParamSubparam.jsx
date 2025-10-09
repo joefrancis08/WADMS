@@ -266,7 +266,7 @@ const ParamSubparam = () => {
             {subParamsData.length > 0 && (
               <div
                 onClick={handleAddSubparamClick}
-                className='flex flex-col gap-y-2 items-center justify-center border border-slate-700 hover:scale-102 hover:shadow shadow-slate-600 p-4 rounded-md transition cursor-pointer bg-slate-800 active:opacity-90 w-[40%] py-12 text-slate-100 active:scale-98'
+                className='flex flex-col gap-y-2 items-center justify-center border border-slate-700 hover:scale-102 hover:shadow shadow-slate-600 p-4 rounded-md transition cursor-pointer bg-slate-800 active:opacity-90 w-[45%] py-12 text-slate-100 active:scale-98'
               >
                 <CirclePlus className='h-12 w-12 flex shrink-0'/>
                 <p>Add Sub-parameter</p>

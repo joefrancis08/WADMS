@@ -171,7 +171,7 @@ const SubParamCard = ({
         <div className='-ml-2'>
           <ProfileStack 
             data={{ 
-              assignmentData: deduplicateAssignments(assignmentData), 
+              assignmentData: deduplicateAssignments(assignmentData, 'subParameter'), 
               taskForce, 
               subParameterId: sub_parameter_id }}
             handlers={{ handleProfileStackClick }}

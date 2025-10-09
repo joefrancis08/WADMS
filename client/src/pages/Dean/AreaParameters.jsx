@@ -200,7 +200,7 @@ const AreaParameters = () => {
                         <div className='absolute bottom-2.5 left-1'>
                           <ProfileStack 
                             data={{ 
-                              assignmentData: deduplicateAssignments(assignmentData), 
+                              assignmentData: deduplicateAssignments(assignmentData, 'parameter'), 
                               taskForce, 
                               parameter_id: data.parameter_id }}
                             handlers={{ handleProfileStackClick }}
