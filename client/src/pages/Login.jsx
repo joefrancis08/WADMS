@@ -101,7 +101,7 @@ const Login = () => {
                     </SubmitButton>
                   </div>
                   <div>
-                    <p className="text-center mt-4">
+                    <p className="text-center mt-4 text-sm">
                       No account? {' '}
                       <Link to="/register" className="text-green-700 hover:underline">Register</Link>
                     </p>

@@ -3,6 +3,7 @@ import { ChevronRight, EllipsisVertical, File, FileSpreadsheet, FileText, FileUs
 import ProfileStack from '../../../ProfileStack';
 import Dropdown from '../../../Dropdown/Dropdown';
 import { MENU_OPTIONS } from '../../../../constants/user';
+import deduplicateAssignments from '../../../../utils/deduplicateAssignments';
 
 const SubParamCard = ({
   refs,
@@ -11,13 +12,17 @@ const SubParamCard = ({
   docsArray = [],       // documents array for this subparam
   selectedFiles = null,  // selected file for upload
   isExpanded = false,   // whether the dropdown is expanded
+  assignmentData,
+  taskForce,
   handleSPCardClick,    // click handler for empty docs
   toggleExpand,         // toggle expand handler
   handleSaveFile,       // save selected file
   removeSelectedFile,   // remove selected file
   handleUploadClick,     // upload file click
+  handleFileUserClick,
   handleSubParamOption,
-  handleSubParamOptionItem
+  handleSubParamOptionItem,
+  handleProfileStackClick
 
 }) => {
   const { subParamOptionRef } = refs;
@@ -162,14 +167,24 @@ const SubParamCard = ({
         </div>
       )}
       <hr className='text-slate-700 my-2'></hr>
-      <div
-        onClick={(e) => e.stopPropagation()} 
-        className='flex items-center justify-between px-1'
-      >
-        <img src="/sample-profile-picture.webp" alt="" className='h-6 w-6 rounded-full'/>
+      <div className='flex items-center justify-between px-1'>
+        <div className='-ml-2'>
+          <ProfileStack 
+            data={{ 
+              assignmentData: deduplicateAssignments(assignmentData, 'subParameter'), 
+              taskForce, 
+              subParameterId: sub_parameter_id }}
+            handlers={{ handleProfileStackClick }}
+            scope='subParameter'
+          />
+        </div>
         <button
           title='Assign Task Force' 
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e) => handleFileUserClick(e, {
+            subParamId: sub_parameter_id,
+            subParamUUID: sub_parameter_uuid,
+            subParameter: sub_parameter
+          })}
           className='-mr-2 p-2 rounded-full hover:bg-slate-700 text-slate-100 active:scale-98 cursor-pointer'>
           <FileUser />
         </button>

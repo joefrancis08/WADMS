@@ -159,7 +159,6 @@ const useLogin = () => {
         password: ''
       });
 
-      setIsLoading(false);
       setNextStep(2);
       setTimeLeft(5 * 60); // reset timer
       setOtpExpired(false);
@@ -189,7 +188,9 @@ const useLogin = () => {
       if (error.code === 'ERR_NETWORK') {
         showErrorToast("Something went wrong. Please check your internet connection and try again.", 'top-center', 8000);
       }
-    } 
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleBackToLogin = () => {
@@ -230,7 +231,7 @@ const useLogin = () => {
       const { email, fullName, profile_pic_path, role, status } = tempUser;
       login(email, fullName, profile_pic_path, role, status);
       
-      showSuccessToast('Verified successfully!', 'top-center', 5000);
+      showSuccessToast('Logged in successfully!', 'top-center', 5000);
 
       // Navigate to dashboard or home page after OTP verification
       if (tempUser.role === USER_ROLES.DEAN) {

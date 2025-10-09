@@ -15,16 +15,23 @@ const ProfileStack = ({
   const idMapping = {
     area: 'areaID',
     parameter: 'parameterID',
-    subparameter: 'subParameterID'
+    subParameter: 'subParameterID'
   };
 
   const scopeIdKey = idMapping[scope];
   const currentScopeId = data[`${scope}_id`] || data[`${scope}Id`];
 
+  console.log(assignmentData);
+
   return (
-    <div className='absolute bottom-3 left-2 flex hover:bg-slate-200/20 items-center rounded-full p-1'>
+    <div className='flex hover:bg-slate-200/20 items-center rounded-full p-1'>
       {assignmentData.map((assignment, idx) => {
         const isScopeMatch = assignment[scopeIdKey] === currentScopeId;
+
+        console.log(data);
+        console.log(assignment);
+        console.log(currentScopeId);
+        console.log(isScopeMatch);
 
         return taskForce.map((tf) => {
           const isTaskForceMatch = assignment.taskForceID === tf.id;

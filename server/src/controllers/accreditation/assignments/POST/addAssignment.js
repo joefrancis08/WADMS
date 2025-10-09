@@ -15,6 +15,15 @@ const addAssignment = async (req, res) => {
     indicatorId = null
   } = req.body;
 
+  console.log({ userIDList,
+    accredInfoId,
+    levelId,
+    programId,
+    areaId,
+    parameterId,
+    subParameterId,
+    indicatorId })
+
   if (!accredInfoId || !levelId || !programId || !areaId) {
     return res.status(400).json({
       message: 'IDs of accreditation, level, program, and area are required.',

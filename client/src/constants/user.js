@@ -1,6 +1,7 @@
 import { Archive, CircleUserRound, FileUser, FolderPen, Folders, Trash2, UserRoundX } from "lucide-react";
 
 export const USER_ROLES = {
+  UU: 'Unverified User',
   DEAN: 'Dean',
   TASK_FORCE_CHAIR: 'Chair',
   TASK_FORCE_MEMBER: 'Member',

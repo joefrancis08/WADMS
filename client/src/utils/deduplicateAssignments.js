@@ -1,32 +1,19 @@
-// utils/deduplicateAssignments.js
-const deduplicateAssignments = (assignments = [], taskForce = []) => {
-  if (!Array.isArray(assignments) || !Array.isArray(taskForce)) return [];
+const deduplicateAssignments = (assignmentData, scope = 'area') => {
+  // Suppose 'assignmentData' is your fetched data
+  const uniqueAssignments = [];
 
-  return Object.values(
-    assignments.reduce((acc, curr) => {
-      // find the full user details from taskForce list
-      const tf = taskForce.find(tf => tf.id === curr.taskForceID);
+  const seen = new Set();
 
-      if (!acc[curr.taskForceID]) {
-        acc[curr.taskForceID] = {
-          taskForceID: curr.taskForceID,
-          fullName: tf?.fullName || 'Unknown',
-          role: tf?.role || '',
-          profilePicPath: tf?.profilePicPath || null,
-          assignments: []
-        };
-      }
+  assignmentData.forEach((item) => {
+    // Use a combination of taskForceID + areaID to check uniqueness
+    const key = `${item.taskForceID}-${item[`${scope}ID`]}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      uniqueAssignments.push(item);
+    }
+  });
 
-      acc[curr.taskForceID].assignments.push({
-        assignmentID: curr.assignmentID,
-        parameterID: curr.parameterID,
-        parameter: curr.parameter,
-        areaId: curr.areaId
-      });
-
-      return acc;
-    }, {})
-  );
+  return uniqueAssignments;
 };
 
 export default deduplicateAssignments;

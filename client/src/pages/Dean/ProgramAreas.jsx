@@ -79,22 +79,6 @@ const ProgramAreas = () => {
     handleConfirmUnassign
   } = handlers
 
-  // Suppose 'assignmentData' is your fetched data
-  const uniqueAssignments = [];
-
-  const seen = new Set();
-
-  assignmentData.forEach((item) => {
-    // Use a combination of taskForceID + areaID to check uniqueness
-    const key = `${item.taskForceID}-${item.areaID}`;
-    if (!seen.has(key)) {
-      seen.add(key);
-      uniqueAssignments.push(item);
-    }
-  });
-
-  console.log(uniqueAssignments);
-
   return (
     <DeanLayout>
       <div className='flex-1 p-3'>
@@ -199,33 +183,37 @@ const ProgramAreas = () => {
                     <Upload />
                   </button>
                 )}
-                <button
-                  title='Assign Task Force' 
-                  onClick={(e) => handleUserCircleClick(e, {
-                    accredId: data.accredId,
-                    title,
-                    year,
-                    accredBody,
-                    levelId: data.levelId,
-                    level: formattedLevel,
-                    programId: data.programId,
-                    program,
-                    areaId: data.area_id,
-                    areaUUID: data.area_uuid,
-                    area: formatAreaName(data.area)
-                  })}
-                  className='absolute bottom-2.5 right-1 text-white cursor-pointer active:opacity-50 rounded-full hover:bg-white/20 p-1'>
-                  <CircleUserRound />
-                </button>
-                <ProfileStack 
-                  data={{ 
-                    assignmentData: uniqueAssignments,
-                    taskForce, 
-                    area_id: data.area_id, 
-                    area: formatAreaName(data.area )}}
-                  handlers={{ handleProfileStackClick }}
-                  scope='area'
-                />
+                <div className='flex items-center justify-between px-1'>
+                  <div className='absolute bottom-2.5  z-20'>
+                    <ProfileStack 
+                      data={{ 
+                        assignmentData: deduplicateAssignments(assignmentData, 'area'),
+                        taskForce, 
+                        area_id: data.area_id, 
+                        area: formatAreaName(data.area )}}
+                      handlers={{ handleProfileStackClick }}
+                      scope='area'
+                    />
+                  </div>
+                  <button
+                    title='Assign Task Force' 
+                    onClick={(e) => handleUserCircleClick(e, {
+                      accredId: data.accredId,
+                      title,
+                      year,
+                      accredBody,
+                      levelId: data.levelId,
+                      level: formattedLevel,
+                      programId: data.programId,
+                      program,
+                      areaId: data.area_id,
+                      areaUUID: data.area_uuid,
+                      area: formatAreaName(data.area)
+                    })}
+                    className='absolute bottom-2.5 right-1 text-white cursor-pointer active:opacity-50 rounded-full hover:bg-white/20 p-1'>
+                    <FileUser />
+                  </button>
+                </div>
                 {activeAreaId && <div className='absolute inset-0 z-20'></div>}
                 {activeAreaId === data.area_uuid && (
                   <>
@@ -249,7 +237,6 @@ const ProgramAreas = () => {
                                   title,
                                   year,
                                   accredBody,
-                      
                                   levelId: data.levelId,
                                   level: formattedLevel,
                                   programId: data.programId,

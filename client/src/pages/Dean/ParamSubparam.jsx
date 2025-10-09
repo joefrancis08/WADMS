@@ -16,9 +16,12 @@ const { PROGRAMS_TO_BE_ACCREDITED, AREA_PARAMETERS, PROGRAM_AREAS } = PATH.DEAN;
 
 const ParamSubparam = () => {
   const { navigate, modalType, modalData, refs, params, datas, states, handlers } = useParamSubparam();
-  const { navEllipsisRef, subParamInputRef, fileOptionRef, renameFileRef, subParamOptionRef } = refs;
   const { accredInfoUUID, level, programUUID, areaUUID } = params;
   const { previewFile, setPreviewFile, activeDocId, renameInput, renameDocId, loadingFileId } = states;
+  const { 
+    navEllipsisRef, subParamInputRef, fileOptionRef, 
+    renameFileRef, subParamOptionRef, assignedTaskForceRef 
+  } = refs;
 
   const {
     title,
@@ -38,7 +41,15 @@ const ParamSubparam = () => {
     selectedFiles,
     isRename,
     isNavEllipsisClick,
-    activeSubParamId
+    activeSubParamId,
+    taskForce,
+    taskForceLoading,
+    taskForceError,
+    taskForceRefetch,
+    selectedTaskForce,
+    assignmentData,
+    activeTaskForceId,
+    showConfirmUnassign
   } = datas;
 
   const {
@@ -64,7 +75,17 @@ const ParamSubparam = () => {
     handleNavEllipsis,
     handleSubParamOption,
     handleSubParamOptionItem,
-    handleDeleteSubParam
+    handleFileUserClick,
+    handleDeleteSubParam,
+    handleCheckboxChange,
+    handleSelectAll,
+    handleAssignTaskForce,
+    handleProfileStackClick,
+    handleAddTaskForceClick,
+    handleATFEllipsisClick,
+    handleUnassignedAllClick,
+    handleAssignedOptionsClick,
+    handleConfirmUnassign
   } = handlers;
 
   return (
@@ -73,7 +94,12 @@ const ParamSubparam = () => {
         {/* Breadcrumb navigation */}
         <div className='bg-slate-900 m-2 pb-2 border border-slate-700 rounded-lg'>
           <div className='flex justify-between shadow px-4 pt-4 bg-black/40 p-4 rounded-t-lg'>
-            <p className='relative flex flex-row items-center text-slate-100 text-sm gap-1'>
+            <div 
+              onClick={() => {
+                localStorage.removeItem('modal-type');
+                localStorage.removeItem('modal-data');
+              }}  
+              className='relative flex flex-row items-center text-slate-100 text-sm gap-1'>
               <span
                 onClick={() => {
                   localStorage.removeItem('lastProgramId');
@@ -85,7 +111,7 @@ const ParamSubparam = () => {
                 {`${title} ${year}`}
               </span>
               <ChevronRight className='h-5 w-5'/>
-              <div ref={navEllipsisRef}>
+              <p ref={navEllipsisRef}>
                 <span onClick={handleNavEllipsis} className=' rounded-full text-slate-100 cursor-pointer'>
                   <Ellipsis className='h-4 w-4 -mb-2 hover:bg-slate-700 rounded-lg'/>
                 </span>
@@ -116,7 +142,7 @@ const ParamSubparam = () => {
                     </p>
                   </div>
                 )}
-              </div>
+              </p>
               <ChevronRight className='h-4 w-4 text-slate-100'/>
               <span
                 title={parameter}
@@ -129,7 +155,7 @@ const ParamSubparam = () => {
               <span className='font-semibold text-lg'>
                 {subParamsData.length > 1 ? 'Sub-Parameters' : 'Sub-Parameter'}
               </span>
-            </p>
+            </div>
           </div>
           {/* Program and Level Display */}
           <div className='flex items-center justify-center mt-4 max-md:mt-10 w-auto mx-auto'>
@@ -185,13 +211,17 @@ const ParamSubparam = () => {
                     docsArray={docsArray}
                     selectedFiles={selectedFiles}
                     isExpanded={isExpanded}
+                    taskForce={taskForce}
+                    assignmentData={assignmentData}
                     handleSPCardClick={handleSPCardClick}
                     toggleExpand={toggleExpand}
                     handleSaveFile={handleSaveFile}
                     removeSelectedFile={removeSelectedFile}
                     handleUploadClick={handleUploadClick}
+                    handleFileUserClick={handleFileUserClick}
                     handleSubParamOption={handleSubParamOption}
                     handleSubParamOptionItem={handleSubParamOptionItem}
+                    handleProfileStackClick={handleProfileStackClick}
                   />
                   
                   {/* Dropdown section aligned with card */}
@@ -236,7 +266,7 @@ const ParamSubparam = () => {
             {subParamsData.length > 0 && (
               <div
                 onClick={handleAddSubparamClick}
-                className='flex flex-col gap-y-2 items-center justify-center border border-slate-700 hover:scale-102 hover:shadow shadow-slate-600 p-4 rounded-md transition cursor-pointer bg-slate-800 active:opacity-90 w-[40%] py-12 text-slate-100 active:scale-98'
+                className='flex flex-col gap-y-2 items-center justify-center border border-slate-700 hover:scale-102 hover:shadow shadow-slate-600 p-4 rounded-md transition cursor-pointer bg-slate-800 active:opacity-90 w-[45%] py-12 text-slate-100 active:scale-98'
               >
                 <CirclePlus className='h-12 w-12 flex shrink-0'/>
                 <p>Add Sub-parameter</p>
@@ -250,7 +280,20 @@ const ParamSubparam = () => {
       <SubParamModal 
         modalType={modalType}
         refs={{ subParamInputRef }}
-        datas={{ subParamsArr, subParameterInput, duplicateValues, modalData }}
+        datas={{ 
+          subParamsArr, 
+          subParameterInput, 
+          duplicateValues, 
+          modalData,
+          taskForce,
+          taskForceLoading,
+          taskForceError,
+          taskForceRefetch,
+          selectedTaskForce,
+          activeTaskForceId,
+          showConfirmUnassign,
+          assignedTaskForceRef
+        }}
         handlers={{
           handleCloseModal,
           handleSaveSubParams,
@@ -258,7 +301,15 @@ const ParamSubparam = () => {
           handleRemoveSubParamValue,
           handleSubParamChange,
           handleConfirmRemove,
-          handleDeleteSubParam
+          handleDeleteSubParam,
+          handleCheckboxChange,
+          handleSelectAll,
+          handleAssignTaskForce,
+          handleAddTaskForceClick,
+          handleATFEllipsisClick,
+          handleUnassignedAllClick,
+          handleAssignedOptionsClick,
+          handleConfirmUnassign
         }}
       />
       {previewFile && (

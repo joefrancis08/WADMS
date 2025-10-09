@@ -30,42 +30,16 @@ const Dashboard = () => {
             alt={`${user.fullName} Profile Picture`}
             className='h-12 w-12 object-cover rounded-full z-20' 
           />
-          
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
           <Link to={PATH.DEAN.TASK_FORCE}
             className="bg-slate-900 rounded-lg p-4 hover:shadow-lg hover:shadow-slate-700 hover:scale-102 transition">
             <p className="text-slate-400">Number of Task Forces</p>
             <h3 className="text-2xl font-bold text-slate-100">10</h3>
           </Link>
-
-          <div className="bg-slate-900 rounded-lg p-4 hover:shadow-lg hover:shadow-slate-700 transition">
-            <p className="text-slate-400">Growth Rate</p>
-            <h3 className="text-2xl font-bold text-slate-100">78.4%</h3>
-            <p className="text-slate-400">+12% from last month</p>
-          </div>
-
-          {/* Add more cards like Monthly Revenue, Device Type, Social Leads etc. */}
-        </div>
-
-        {/* Charts Section */}
-        <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-slate-900 rounded-lg p-4 hover:shadow-lg hover:shadow-slate-700 transition">
-            <h3 className="text-slate-100 font-bold mb-2">Monthly Revenue</h3>
-            <div className="h-40">
-              {/* Insert chart library here */}
-            </div>
-          </div>
-
-          <div className="bg-slate-900 rounded-lg p-4 hover:shadow-lg hover:shadow-slate-700 transition">
-            <h3 className="text-slate-100 font-bold mb-2">Device Type</h3>
-            <div className="h-40">
-              {/* Pie chart for device type */}
-            </div>
-          </div>
-        </div>
+        </div> */}
       </div>
     </AdminLayout>
   );

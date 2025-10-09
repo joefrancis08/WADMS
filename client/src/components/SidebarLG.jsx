@@ -279,7 +279,7 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
           secondaryButton={'Cancel'}
           bodyContent={
             <div className='flex flex-col items-center justify-center gap-y-5 mb-5'>
-              <img src={logoutIcon} alt="Log out Icon" className='h-28 w-28 text-white' loading='lazy' />
+              <img src={logoutIcon} alt="Log out Icon" className='h-28 w-28 text-white opacity-50' loading='lazy' />
               <p className='text-lg text-black'>
                 Are you sure you want to logout?
               </p>

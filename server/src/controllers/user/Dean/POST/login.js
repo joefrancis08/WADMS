@@ -77,12 +77,11 @@ const login = async (req, res) => {
     await transporter.sendMail({
       from: `"WDMS" <${process.env.EMAIL}>`,
       to: email,
-      subject: `Your OTP Code: ${otp}`,
+      subject: `Your One-Time Password (OTP): ${otp}`,
       html: `
         <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.5; padding: 20px; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; background-color: #fafafa;">
-          <h2 style="color: #4CAF50; text-align: center;">Your OTP Code</h2>
-          <p>Your <strong>One-Time Password (OTP)</strong> is:</p>
-          <p style="text-align: center; font-size: 24px; font-weight: bold; color: #ff5722; margin: 20px 0;">${otp}</p>
+          <h2 style="color: #16a34a; text-align: center;">Your One-Time Password (OTP)</h2>
+          <p style="text-align: center; font-size: 24px; font-weight: bold; color: #0f172a; margin: 20px 0;">${otp}</p>
           <p>This OTP is valid for <strong>5 minutes</strong>. Please use it before it expires.</p>
           <p style="font-size: 12px; color: gray;">If you did not request this OTP, please ignore this email.</p>
         </div>

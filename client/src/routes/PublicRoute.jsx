@@ -6,6 +6,7 @@ import NotFound from "../pages/NotFound";
 import EmailConfirmation from "../pages/EmailConfirmation";
 import Login from "../pages/Login";
 import PublicRouteWrapper from "../wrapper/PublicRouteWrapper";
+import Pending from "../pages/Pending/Pending";
 
 const { DEFAULT_PATH, REGISTER, LOGIN, EMAIL_CONFIRMATION, NOT_FOUND_DEFAULT, NOT_FOUND_URL } = PATH.PUBLIC;
 
