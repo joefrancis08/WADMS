@@ -19,12 +19,17 @@ const MODAL_TYPES = Object.freeze({
   REMOVE_AREA: 'remove-area',
 
   ADD_PARAMETER: 'add-parameter',
+  DELETE_PARAM: 'delete-parameter',
 
   ADD_SUBPARAMETERS: 'add-subparameters',
+  DELETE_SUBPARAM: 'delete-subparameter',
 
   ADD_INDICATORS: 'add-indicators',
 
   ASSIGN_TASK_FORCE: 'assign-task-force',
+
+  VIEW_ASSIGNED_TASK_FORCE: 'view-assigned-task-force',
+  UNASSIGNED_TASK_FORCE: 'unassigned-task-force',
 
   DELETE_DOC: 'delete-document',
 

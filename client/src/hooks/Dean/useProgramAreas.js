@@ -8,23 +8,42 @@ import useAutoFocus from "../useAutoFocus";
 import formatArea from "../../utils/formatArea";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
 import useOutsideClick from "../useOutsideClick";
-import { addAssignment, addProgramAreas, deletePAM } from "../../api-calls/accreditation/accreditationAPI";
+import { addAssignment, addProgramAreas, deleteAssignment, deletePAM } from "../../api-calls/accreditation/accreditationAPI";
 import { TOAST_MESSAGES } from "../../constants/messages";
 import PATH from "../../constants/path";
 import useFetchAreasByLevel from "../fetch-react-query/useFetchAreasByLevel";
 import { useUsersBy } from "../fetch-react-query/useUsers";
+import usePageTitle from "../usePageTitle";
+import useFetchAssignments from "../fetch-react-query/useFetchAssignments";
+import formatAreaName from "../../utils/formatAreaName";
+import { getFullNameById } from "../../utils/getUserInfo";
 
 const { AREA_PARAMETERS } = PATH.DEAN;
+const { ASSIGNMENT, UNASSIGN } = TOAST_MESSAGES;
 
 const useProgramAreas = () => {
   const navigate = useNavigate();
   const areaOptionsRef = useRef();
+  const assignedTaskForceRef = useRef();
+  usePageTitle('Areas');
   const { accredInfoUUID, level, programUUID } = useParams();
   const { level: formattedLevel } = formatProgramParams(level);
 
   const { areas: areasByLevel } = useFetchAreasByLevel(formattedLevel);
 
-  const { title, year, accredBody, program } = useProgramToBeAccreditedDetails(accredInfoUUID, programUUID);
+  const { 
+    accredInfoId, title, year, accredBody, 
+    levelId, programId, program 
+  } = useProgramToBeAccreditedDetails(accredInfoUUID, programUUID);
+
+  const { 
+    assignments, 
+    loading: loadingAssignments, 
+    error: errorAssignments,
+    refetch: refetchAssignments 
+  } = useFetchAssignments({ accredInfoId, levelId, programId });
+  console.log(assignments.assignmentData);
+  const assignmentData = assignments?.assignmentData ?? [];
 
   // Only fetch areas if programObj is ready
   const { areas: areasData, loading, error, refetch } = useFetchProgramAreas({
@@ -34,6 +53,7 @@ const useProgramAreas = () => {
     level: formattedLevel,
     program
   });
+
   const { 
     users: taskForce, 
     loading: taskForceLoading, 
@@ -45,6 +65,9 @@ const useProgramAreas = () => {
   const data = areasData?.data ?? [];
   const areasByLevelData = areasByLevel?.areas ?? [];
   console.log(data);
+  const areaArray = data.map((item) => {
+    return item.area_id;
+  });
 
   const [modalType, setModalType] = useState(null);
   const [modalData, setModalData] = useState(null);
@@ -53,8 +76,10 @@ const useProgramAreas = () => {
   const [duplicateValues, setDuplicateValues] = useState([]);
   const [activeAreaId, setActiveAreaId] = useState(null);
   const [selectedTaskForce, setSelectedTaskForce] = useState([]); // State for selected checkboxes (AreaModal)
+  const [activeTaskForceId, setActiveTaskForceId] = useState(null);
+  const [showConfirmUnassign, setShowConfirmUnassign] = useState(false);
 
-  console.log(areasByLevelData);
+  console.log('Active Task Force ID:', activeTaskForceId);
 
   // Auto focus input when 
   const areaInputRef = useAutoFocus(modalType, modalType === MODAL_TYPE.ADD_AREA);
@@ -64,17 +89,56 @@ const useProgramAreas = () => {
     setDuplicateValues(prev => prev.filter(val => areas.includes(val)));
   }, [areas]);
 
+  useEffect(() => {
+    const modalType = localStorage.getItem('modal-type');
+    const modalData = localStorage.getItem('modal-data');
+    setModalData(JSON.parse(modalData));
+    setModalType(JSON.parse(modalType));
+
+  }, []);
+  console.log(modalType);
+
   // Reuse useOutsideClick hook to make area options disappear
   useOutsideClick(areaOptionsRef, () => setActiveAreaId(null));
+
+  // Reuse useOutsideClick hook to make assigned task force options disappear
+  useOutsideClick(assignedTaskForceRef, () => setActiveTaskForceId(null));
+
 
   const findDuplicate = (value) => {
     return data.some(d => d.area.toUpperCase().trim() === value.toUpperCase().trim());
   };
 
-  const handleCloseModal = () => {
-    setModalType(null);
-    setAreas([]);
-    setModalData(null);
+  const handleCloseModal = (from = {}) => {
+    const { addArea, assignTaskForce, viewAssignedTaskForce, confirmUnassign, removeArea } = from;
+
+    if (addArea) {
+      setAreas([]);
+      setModalData(null);
+      setModalType(null);
+    }
+
+    if (assignTaskForce) {
+      setSelectedTaskForce([]);
+      setModalData(null);
+      setModalType(null);
+    }
+
+    if (viewAssignedTaskForce || modalData?.taskForces?.length === 0) {
+      setModalData(null);
+      setModalType(null);
+      localStorage.removeItem('modal-type');
+      localStorage.removeItem('modal-data');
+    }
+
+    if (removeArea) {
+      setModalData(null);
+      setModalType(null);
+    }
+
+    if (confirmUnassign) {
+      setShowConfirmUnassign(false);
+    }
   };
 
   const handleAreaInputChange = (e) => {
@@ -123,7 +187,7 @@ const useProgramAreas = () => {
       });
       if (res.data.success) {
         showSuccessToast(TOAST_MESSAGES.AREA_ADDITION.SUCCESS);
-        handleCloseModal();
+        handleCloseModal({ addArea: true });
         await refetch(); // Refresh areas after save
       }
       
@@ -148,26 +212,30 @@ const useProgramAreas = () => {
     setActiveAreaId(data?.areaID);
   };
 
+  const handleUserCircleClick = (e, data = {}) => {
+    e.stopPropagation();
+    const { accredId, levelId, programId, areaId, area } = data;
+    setModalType(MODAL_TYPE.ASSIGN_TASK_FORCE);
+    setModalData({
+      accredId, 
+      levelId, 
+      programId, 
+      areaId, 
+      area: formatAreaName(area)
+    });
+  };
+
   const handleOptionItemClick = async (e, data = {}) => {
-    console.table({data})
     e.stopPropagation();
     setActiveAreaId(null);
     if (data && data.label === 'View Parameters' && data.areaUUID) {
       const areaUUID = data.areaUUID;
+      localStorage.removeItem('modal-type');
+      localStorage.removeItem('modal-data');
       navigate(AREA_PARAMETERS({ accredInfoUUID, level, programUUID, areaUUID }));
-      
 
     } else if (data && data.label === 'Assign Task Force') {
-      const { accredId, levelId, programId, areaId, area } = data;
-      setModalType(MODAL_TYPE.ASSIGN_TASK_FORCE);
-      console.log(data);
-      setModalData({
-        accredId, 
-        levelId, 
-        programId, 
-        areaId, 
-        area
-      });
+      handleUserCircleClick(e, data);
 
     } else if (data && data.label === 'Delete') {
       setModalType(MODAL_TYPE.REMOVE_AREA);
@@ -185,6 +253,7 @@ const useProgramAreas = () => {
   };
 
   const handleConfirmRemoval = async (data = {}) => {
+    console.log(data.area);
     try {
       const res = await deletePAM({
         title: data.title,
@@ -195,9 +264,9 @@ const useProgramAreas = () => {
         area: data.area
       });
 
-      if (res.data.success) showSuccessToast(`${data.area} removed successfully!`);
+      if (res.data.success) showSuccessToast(`${data.area} deleted successfully!`);
 
-      handleCloseModal();
+      handleCloseModal({ removeArea: true });
 
     } catch (error) {
       console.error(error);
@@ -224,11 +293,9 @@ const useProgramAreas = () => {
 
   // Pass selectedTaskForce to backend on save (AreaModal)
   const handleAssignTaskForce = async (data = {}) => {
-    const { accredInfoId, levelId, programId, areaId } = data;
+    const { accredInfoId, levelId, programId, areaId, area } = data;
     const userIDList = selectedTaskForce;
-    console.log("Selected users:", selectedTaskForce);
-    console.log(data);
-    // TODO: call the backend here (axios)
+   
     try {
       const res = await addAssignment({
         accredInfoId, 
@@ -239,12 +306,149 @@ const useProgramAreas = () => {
       });
 
       console.log(res);
+      if (res?.data?.success) {
+        showSuccessToast(ASSIGNMENT.SUCCESS);
+      }
+
+      handleCloseModal({ assignTaskForce: true });
 
     } catch (error) {
-      console.error('Error assigning taskforce:', error);
+      const userId = error?.response?.data?.error?.user;
+      const user = getFullNameById(taskForce, userId);
+      
+      if (userId && user) {
+        showErrorToast(`${user} is already assigned to ${area}.`, 'top-center');
+
+      } else {
+        showErrorToast(ASSIGNMENT.ERROR);
+      }
+
       throw error;
     }
   };
+
+  const handleProfileStackClick = (e, data = {}) => {
+    e.stopPropagation();
+    const { 
+      accredInfoId, levelId, programId, 
+      areaId, area, taskForces 
+    } = data;
+    setModalType(MODAL_TYPE.VIEW_ASSIGNED_TASK_FORCE);
+    setModalData({
+      accredInfoId,
+      levelId,
+      programId,
+      areaId,
+      area,
+      taskForces
+    });
+    console.log('Profile stack is clicked!')
+    console.log(data);
+    
+  };
+
+  console.log({ modalType, modalData });
+
+  // For AreaModal.jsx
+  const handleEllipsisClick = (data = {}) => {
+    const { taskForceId } = data;
+    console.log('ellipsis clicked!');
+    setActiveTaskForceId(prev => prev === taskForceId ? null : taskForceId);
+  };
+
+  // For AreaModal.jsx
+  const handleAddTaskForceClick = () => {
+    setModalType(MODAL_TYPE.ASSIGN_TASK_FORCE);
+  };
+
+  // For AreaModal.jsx
+  const handleUnassignedAllClick = () => {
+    console.log('unassigned all clicked!')
+  };
+
+  // For AreaModal.jsx (Assigned Task Force Options)
+  const handleAssignedOptionsClick = (option, data = {}) => {
+    if (option.label === 'View Profile') {
+      navigate(PATH.DEAN.TASK_FORCE_DETAIL(data.taskForceUUID), {
+        state: { from: PATH.DEAN.PROGRAM_AREAS({ accredInfoUUID, level, programUUID }) } 
+      });
+      localStorage.setItem('modal-type', JSON.stringify(modalType));
+      localStorage.setItem('modal-data', JSON.stringify({
+        accredInfoId: data.accredInfoId,
+        levelId: data.levelId,
+        programId: data.programId,
+        areaId: data.areaId,
+        area: data.area,
+        taskForces: data.taskForces
+      }));
+      
+    } else if (option.label === 'Unassign') {
+      console.log('Unassigned clicked!');
+      setModalData(prev => ({
+        ...prev,
+        selectedTaskForce: { id: data.taskForceId, fullName: data.taskForce, profilePic: data.taskForceImage }
+      }));
+      handleUnassignedClick({
+        accredInfoId: data.accredInfoId,
+        levelId: data.levelId,
+        programId: data.programId,
+        areaId: data.areaId,
+        area: data.area,
+        taskForceId: data.taskForceId,
+        taskForce: data.taskForce
+      });
+      console.log(data);
+    } 
+  };
+
+  // For AreaModal.jsx (Assigned Task Force option - Unassigned)
+  const handleUnassignedClick = (data = {}) => {
+    const {
+      accredInfoId, levelId, programId, 
+      areaId,  taskForceId
+    } = data;
+   setShowConfirmUnassign(true);
+
+    return { 
+      accredInfoId, levelId, programId, areaId, taskForceId 
+    };
+  };
+
+  const handleConfirmUnassign = async (data = {}) => {
+    const { 
+      accredInfoId, levelId, programId, 
+      areaId, taskForceId 
+    } = data;
+
+    console.log({ accredInfoId, levelId, programId, 
+      areaId, taskForceId });
+
+    try {
+      const res = await deleteAssignment({
+        accredInfoId, levelId, programId,
+        areaId, taskForceId
+      });
+
+      console.log(res);
+
+      handleCloseModal({ confirmUnassign: true });
+      setModalData(prev => ({
+        ...prev,
+        taskForces: modalData.taskForces.filter(tf => tf.id !== taskForceId)
+      }));
+
+      if (res.data.success) {
+        showSuccessToast(UNASSIGN.SUCCESS);
+      }
+
+    } catch (error) {
+      showErrorToast(UNASSIGN.ERROR);
+      console.error('Error deleting assigment:', error);
+      throw error;
+    }
+  };
+
+  console.log(modalData?.taskForces?.length);
 
   return {
     navigation: {
@@ -272,7 +476,14 @@ const useProgramAreas = () => {
       taskForce,
       taskForceLoading,
       taskForceError,
-      selectedTaskForce
+      taskForceRefetch,
+      selectedTaskForce,
+      assignmentData,
+      loadingAssignments,
+      errorAssignments,
+      refetchAssignments,
+      activeTaskForceId,
+      showConfirmUnassign
     },
 
     inputs: {
@@ -283,7 +494,8 @@ const useProgramAreas = () => {
 
     refs: {
       areaInputRef,
-      areaOptionsRef
+      areaOptionsRef,
+      assignedTaskForceRef
     },
 
     values: {
@@ -309,7 +521,15 @@ const useProgramAreas = () => {
       handleConfirmRemoval, 
       handleCheckboxChange,
       handleSelectAll,
-      handleAssignTaskForce
+      handleAssignTaskForce,
+      handleProfileStackClick,
+      handleEllipsisClick,
+      handleUserCircleClick,
+      handleAddTaskForceClick,
+      handleUnassignedAllClick,
+      handleUnassignedClick,
+      handleAssignedOptionsClick,
+      handleConfirmUnassign
     }
   }
 };

@@ -29,6 +29,7 @@ export const useProgramsToBeAccredited = () => {
   const programCardRef = useRef();
   const programOptionsRef = useRef();
   const levelRef = useRef({});
+  usePageTitle('Programs To Be Accredited');
 
   const { accredInfoLevelPrograms, loading, error } = useFetchILP();
   console.log(accredInfoLevelPrograms);
@@ -81,7 +82,6 @@ export const useProgramsToBeAccredited = () => {
   // Reuse useOutsideClick hook to make period and program options disappear
   useOutsideClick(accredInfoOptionsRef, () => setActiveAccredInfoID(null));
   useOutsideClick(programOptionsRef, () => setActiveProgramID(null));
-  usePageTitle('Accreditation | WDMS');
 
   // Remove duplicates automatically if programs state changes
   useEffect(() => {
@@ -91,10 +91,18 @@ export const useProgramsToBeAccredited = () => {
   // Save position of this page when navigating on other page
   useEffect(() => {
     const lastId = localStorage.getItem('lastProgramId');
+    const accredTitle = localStorage.getItem('accreditation-title');
     if (lastId) {
       const el = document.getElementById(`last-program-${lastId}`);
       if (el) {
         el.scrollIntoView({ behavior: 'auto', block: 'center' });
+      }
+    }
+
+    if (accredTitle) {
+      const el = document.getElementById(accredTitle);
+      if (el) {
+        el.scrollIntoView({ behavior: 'auto', block: 'center'})
       }
     }
   }, []);

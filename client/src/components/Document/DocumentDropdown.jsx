@@ -71,8 +71,8 @@ const DocumentDropdown = (props) => {
 
       {/* Show selected file for this subparam */}
       {selectedFiles[selectedFileKey] && (
-        <div className='px-3 mt-5 flex justify-between items-center'>
-          <p className='text-sm text-slate-600 mb-2 truncate'>
+        <div className='px-3 mt-5 flex items-center justify-between'>
+          <p className='text-sm text-slate-600 truncate'>
             Filename: <span className='font-medium'>{selectedFiles[selectedFileKey].name}</span>
           </p>
           <button 

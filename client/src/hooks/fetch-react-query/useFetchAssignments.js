@@ -1,12 +1,33 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
-import { fetchUserAssignments } from "../../api-calls/users/userAPI";
+import { fetchUserAssignments } from "../../api-calls/Users/userAPI";
 import { messageHandler } from "../../services/websocket/messageHandler";
 
-const useFetchAssignments = (userId) => {
+const useFetchAssignments = (IDs = {}) => {
+  const { 
+    userId = null,
+    accredInfoId = null,
+    levelId = null,
+    programId = null,
+    areaId = null,
+    parameterId = null,
+    subParameterId = null,
+    indicatorId = null
+  } = IDs;
+
   const queryClient = useQueryClient();
 
-  const queryKey = useMemo(() => ['assignments', userId], [userId]);
+  const queryKey = useMemo(() => [
+    'assignments', 
+    userId,
+    accredInfoId,
+    levelId,
+    programId,
+    areaId,
+    parameterId,
+    subParameterId,
+    indicatorId
+  ], [userId, accredInfoId, levelId, programId, areaId, parameterId, subParameterId, indicatorId]);
 
   const queryFn = async ({ signal }) => {
     try {
