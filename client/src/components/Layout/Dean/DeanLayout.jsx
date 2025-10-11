@@ -10,7 +10,12 @@ import { useUsersBy } from '../../../hooks/fetch-react-query/useUsers';
 
 const DeanLayout = ({ children, ref }) => {
   const { UNVERIFIED_USER } = USER_ROLES;
-  const { DASHBOARD, TASK_FORCE, PROGRAMS_TO_BE_ACCREDITED } = PATH.DEAN;
+  const { 
+    DASHBOARD, 
+    TASK_FORCE, 
+    UNVERIFIED_USER: UNVERIFIED_USERS, 
+    PROGRAMS_TO_BE_ACCREDITED 
+  } = PATH.DEAN;
   const unverifiedUsers = useUsersBy('role', UNVERIFIED_USER).users;
   const [menuIsClicked, setMenuIsClicked] = useState(false);
   const [unverifiedUserCount, setUnverifiedUserCount] = useState(null);
@@ -63,7 +68,7 @@ const DeanLayout = ({ children, ref }) => {
           id: 'unverified',
           icon: UserRoundX,
           label: 'Unverified',
-          link: '',
+          link: UNVERIFIED_USERS,
           hasHR: true
         }
       ]

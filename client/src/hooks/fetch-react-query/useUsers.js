@@ -17,8 +17,8 @@ export const useUsersBy = (key, value) => {
         : await fetchUserBy(key, value, { signal });
 
       // Ensure we always return an array
-      const users = Array.isArray(res?.data?.data) ? res.data.data : [];
-      return users;
+      
+      return res.data;
     } catch (err) {
       console.error('Error fetching users:', err);
       return []; // Fallback to empty array

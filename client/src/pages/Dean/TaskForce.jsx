@@ -91,13 +91,13 @@ const TaskForce = () => {
             <Search className='h-6 w-6'/>
           </button>
         </div>
-        <div className='relative px-4 flex justify-between ml-4'>
+        <div className='relative px-4 flex justify-between ml-2'>
           <div className='flex gap-x-1'>
             {cardNav.map((item) => (
               <p 
                 onClick={() => setActiveTabId(item.id)}
                 key={item.id}
-                className={`min-w-20 text-center px-5 text-lg text-slate-100 cursor-pointer ${activeTabId === item.id ? 'border-slate-700 border-t border-x bg-slate-900 font-semibold -mb-0.5 z-20 rounded-t-xl' : 'border-transparent hover:bg-slate-700 rounded-xl mb-1'}`}
+                className={`min-w-20 text-center px-5 text-lg text-slate-100 cursor-pointer py-1 transition rounded-t-md ${activeTabId === item.id ? 'border-b-3 border-yellow-400' : 'hover:border-b-3 border-slate-600'}`}
               >
                 {item.label}
               </p>

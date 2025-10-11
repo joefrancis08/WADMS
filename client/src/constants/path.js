@@ -14,7 +14,7 @@ const PATH = {
 
   DEAN: {
     DASHBOARD: '/d',
-
+    UNVERIFIED_USER: '/d/unverified-user',
     TASK_FORCE: '/d/task-force',
     TASK_FORCE_DETAIL: (uuid) => `/d/task-force/${uuid}`,
     TASK_FORCE_DETAIL_TEMPLATE: '/d/task-force/:uuid',

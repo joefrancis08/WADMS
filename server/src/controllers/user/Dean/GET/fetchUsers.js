@@ -1,3 +1,4 @@
+import { getUserBy } from "../../../../models/user/GET/getUser.js";
 import { getUsersModel } from "../../../../models/userModel.js";
 
 export const fetchUsers = async (req, res) => {
@@ -71,4 +72,28 @@ export const fetchUserController = ({
       });
     }
   };
+};
+
+export const fetchUnverifiedUsers = async (req, res) => {
+  const { role } = req.query;
+
+  try {
+    const result = await getUserBy('role', role, false, false, true);
+
+    if (result.length === 0) {
+      return res.status(404).json({
+        message: `No user found with the role ${role}.`,
+        success: false
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      unverifiedUsers: result
+    });
+
+  } catch (error) {
+    console.error(`Error fetching user by ${role}.`);
+    throw error;
+  }
 };

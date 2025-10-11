@@ -47,12 +47,14 @@ export const getUsers = async (condition = {}) => {
 
 
 // GET User(s) By
-export const getUserBy = async (column, value, single = true, isLogin = false) => {
+export const getUserBy = async (column, value, single = true, isLogin = false, includeUnverified = false) => {
   const allowedColumns = ['id', 'user_uuid', 'email', 'full_name', 'role', 'status'];
 
   if (!allowedColumns.includes(column)) {
     throw new Error('Invalid column specified');
   }
+
+  const roleFilter = includeUnverified ? '' : "AND role <> 'Unverified User'";
 
   const query = `
     SELECT 
@@ -60,20 +62,18 @@ export const getUserBy = async (column, value, single = true, isLogin = false) =
       user_uuid, 
       profile_pic_path, 
       full_name, 
-      email,
-      password, 
+      email, 
+      password,
       role,
       status,
       created_at 
-    FROM user WHERE ${column} = ? 
-      ${isLogin 
-        ? "AND status = 'Verified'"
-        : "AND role <> 'Unverified User'"
-      }
+    FROM user 
+    WHERE ${column} = ? 
+      ${isLogin ? "AND status = 'Verified'" : roleFilter}
     ORDER BY created_at DESC
   `;
-  const [rows] = await db.execute(query, [value]);
 
+  const [rows] = await db.execute(query, [value]);
   return single ? rows[0] : rows;
 };
 

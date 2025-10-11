@@ -29,8 +29,9 @@ export const useTaskForce = () => {
   const navigate = useNavigate();
   const dropdownRef = useRef();
 
-  const taskForceChair = users.filter(u => u.role === TASK_FORCE_CHAIR);
-  const taskForceMember = users.filter(u => u.role === TASK_FORCE_MEMBER);
+  const taskForce = users?.data ?? [];
+  const taskForceChair = taskForce.filter(u => u.role === TASK_FORCE_CHAIR);
+  const taskForceMember = taskForce.filter(u => u.role === TASK_FORCE_MEMBER);
   
   const [activeDropdownId, setActiveDropdownId] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);

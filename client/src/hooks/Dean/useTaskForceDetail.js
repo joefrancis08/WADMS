@@ -14,7 +14,7 @@ const useVerifiedUserDetail = () => {
   const { NOT_FOUND_URL } = PATH.PUBLIC;
   const { USER_DELETION_CONFIRMATION } = MODAL_TYPES;
   const { users, loading, error } = useUsersBy();
-  const taskForce = useMemo(() => users, [users]);
+  const taskForce = useMemo(() => users?.data ?? [], [users]);
 
   const userId = getIdByUuid(taskForce, uuid);
   const { 

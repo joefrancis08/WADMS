@@ -6,14 +6,19 @@ import fs from "fs";
 import sendUpdate from "../../../../services/websocket/sendUpdate.js";
 
 export const deleteUserByIdController = async (req, res) => {
-  const { uuid } = req.params;
+  const { uuid } = req.query;
   const PROFILE_PIC_PATH = process.env.PROFILE_PIC_PATH;
 
+  console.log(uuid);
+
   try {
-    const user = await getUserBy('user_uuid', uuid, true);
+    const user = await getUserBy('user_uuid', uuid, true, false, true);
+
+    console.log('Line 17:', user);
 
     if (!user) return res.status(404).json({
-      message: 'User not found'
+      message: 'User not found',
+      success: false
     });
 
     const profilePic = user.profile_pic_path;

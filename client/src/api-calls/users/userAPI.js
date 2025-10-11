@@ -120,14 +120,9 @@ export const updateUserRole = async (selectedUserId, newRole) => {
   }
 };
 
-export const deleteUser = async (selectedUserId) => {
-  try {
-    const res = await axios.delete(`${API_BASE_URL}/users/${selectedUserId}`);
-
-    return res.data;
-
-  } catch (error) {
-    console.log('Error deleting user:', error);
-  }
+export const deleteUser = async (uuid) => {
+  return await axios.delete(`${API_BASE_URL}/users/delete-user`, {
+    params: { uuid },
+  }); 
 };
 

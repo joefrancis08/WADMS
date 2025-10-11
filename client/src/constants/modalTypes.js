@@ -1,6 +1,8 @@
 const MODAL_TYPES = Object.freeze({
   UU_PROFILE: 'unverified-user-profile',
   UU_VERIFICATION_CONFIRMATION: 'confirm-unverified-user-verification',
+  UU_DELETION_CONFIRMATION: 'unverified-user-confirm-delete',
+  UU_UPDATE: 'update-unverified-user',
   TF_DELETION_CONFIRMATION: 'task-force-confirm-deletion',
   ADD_TF: 'add-task-force',
   ADD_TF_CARD: 'add-task-force-from-card',
