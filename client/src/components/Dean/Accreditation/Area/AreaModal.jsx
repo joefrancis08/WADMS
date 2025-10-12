@@ -53,6 +53,8 @@ const AreaModal = ({ navigation, params, refs, modalType, datas, inputs, handler
     handleConfirmUnassign
   } = handlers;
 
+  console.log(taskForce);
+
   function formatAreaName(text) {
     // Words that should always be lowercase
     const lowerWords = ['and', 'or'];

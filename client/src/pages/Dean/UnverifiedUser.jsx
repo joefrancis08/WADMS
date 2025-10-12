@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowUp, ChevronDown, Search, ShieldCheck, ShieldUser, Trash2 } from 'lucide-react';
+import { ArrowDown, ArrowUp, ChevronDown, Search, ShieldCheck, ShieldUser, Trash2, X } from 'lucide-react';
 import AdminLayout from '../../components/Layout/Dean/DeanLayout';
 import UserProfileModal from '../../components/Modals/UserProfileModal';
 import ConfirmationModal from '../../components/Modals/ConfirmationModal';
@@ -7,7 +7,7 @@ import MODAL_TYPE from '../../constants/modalTypes';
 import Dropdown from '../../components/Dropdown/Dropdown';
 import TimeAgo from '../../components/TimeAgo';
 import { useUnverifiedUsers } from '../../hooks/useUnverifiedUsers';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 
 const PROFILE_PIC_PATH = import.meta.env.VITE_PROFILE_PIC_PATH;
 
@@ -31,17 +31,23 @@ const UnverifiedUsers = () => {
   // States
   const [sortConfig, setSortConfig] = useState({ key: 'created_at', direction: 'desc' });
   const [searchQuery, setSearchQuery] = useState('');
-  const [showSearch, setShowSearch] = useState(false); // NEW: toggle search input
+  const [showSearch, setShowSearch] = useState(false);
+  const searchInputRef = useRef(null);
+
+  useEffect(() => {
+    if (showSearch) searchInputRef.current?.focus();
+  }, [showSearch]);
 
   // Memoized sorted & filtered users
   const sortedUsers = useMemo(() => {
     let filteredUsers = [...unverifiedUsers];
 
     if (searchQuery) {
+      const q = searchQuery.toLowerCase();
       filteredUsers = filteredUsers.filter(
         (user) =>
-          user.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          user.email.toLowerCase().includes(searchQuery.toLowerCase())
+          user.full_name.toLowerCase().includes(q) ||
+          user.email.toLowerCase().includes(q)
       );
     }
 
@@ -177,21 +183,41 @@ const UnverifiedUsers = () => {
         {/* Header */}
         <div className="sticky top-0 flex flex-col md:flex-row items-center justify-between py-2 px-4 bg-slate-900 border-l border-b border-slate-700 z-50 mb-4 gap-2 md:gap-0">
           <h2 className="text-xl text-slate-100 font-bold">Unverified Users</h2>
-          <div className="relative">
-            {showSearch && (
+
+          {/* Search toggle / input — styled to match ProgramsToAccredit */}
+          {showSearch ? (
+            <div className="relative w-full max-w-md">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
               <input
-                autoFocus
-                type="text"
-                placeholder="Search by name or email..."
+                ref={searchInputRef}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="absolute right-12 text-sm px-6 py-2 rounded-full border border-slate-600 bg-slate-800 text-slate-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-slate-100 w-64 transition-all"
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape') {
+                    setSearchQuery('');
+                    setShowSearch(false);
+                  }
+                }}
+                placeholder="Search name or email…"
+                className="pl-10 pr-10 py-2 rounded-full bg-slate-800 border border-slate-600 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-100 focus:border-transparent w-full transition-all"
               />
-            )}
-            <button onClick={toggleSearch} className="p-2 hover:bg-slate-700 rounded-full transition-all active:scale-95 cursor-pointer">
-              <Search className="h-6 w-6 text-slate-100" />
+              <button
+                onClick={() => setShowSearch(false)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-slate-700 text-slate-300 cursor-pointer"
+                title="Close search"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={toggleSearch}
+              className="text-slate-100 p-2 hover:bg-slate-700 rounded-full cursor-pointer active:scale-95"
+              title="Search"
+            >
+              <Search className="h-6 w-6" />
             </button>
-          </div>
+          )}
         </div>
 
         {/* Table */}

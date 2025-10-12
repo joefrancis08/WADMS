@@ -12,6 +12,7 @@ import { useFetchILP } from "../fetch-react-query/useFetchILP";
 import useScrollSaver from "../useScrollSaver";
 import scrollToNewAddition from "../../utils/scrollToNewAddition";
 import usePageTitle from "../usePageTitle";
+import useAccreditationBodies from "../fetch-react-query/useAccreditationBodies";
 
 const { PROGRAM_AREAS } = PATH.DEAN;
 const { 
@@ -258,8 +259,10 @@ export const useProgramsToBeAccredited = () => {
       setFormValue(prev => ({...prev, level}));
       
     } else if (options.isForAddProgram && program) {
-      // Make sure we're adding to programs, not level
       setPrograms(prev => [...prev, program]);
+
+    } else if (options.isForAddAccredBody && options.accredBody) {
+      setFormValue(prev => ({ ...prev, accreditationBody: options.accredBody }));
     }
   };
 
@@ -426,12 +429,12 @@ export const useProgramsToBeAccredited = () => {
         }));
 
       } else if (data?.optionName === 'View Areas') {
-        const accredInfoUUID = data?.data?.accredInfoUUID;
-        const programUUID = data?.data?.programUUID;
-        const formattedLevel = String(data.data.level).toLowerCase().split(' ').join('-');
+        const accredInfoUUID = data.accredInfo.accredInfoUUID;
+        const programUUID = data.accredInfo.programUUID;
+        const formattedLevel = String(data.accredInfo.level).toLowerCase().split(' ').join('-');
 
-        if (data.data?.programId) {
-          localStorage.setItem('lastProgramId', data.data.programId)
+        if (data.accredInfo.programId) {
+          localStorage.setItem('lastProgramId', data.accredInfo.programId)
           navigate(PROGRAM_AREAS({ 
             accredInfoUUID, 
             level: formattedLevel, 
@@ -544,7 +547,7 @@ export const useProgramsToBeAccredited = () => {
       activeAccredInfoID,
       activeProgramID,
       programInput,
-      programs,
+      programs
     },
 
     handlers: {

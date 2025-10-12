@@ -20,7 +20,7 @@ const addBody = async (req, res) => {
 
     console.log(response);
 
-    sendUpdate('accred-body-updates');
+    sendUpdate('accred-body-update');
 
     res.status(200).json({
       message: 'Accreditation body added successfully.',

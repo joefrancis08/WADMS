@@ -36,6 +36,7 @@ const AreaParameters = () => {
     taskForceError, taskForceRefetch, selectedTaskForce, assignmentData, activeTaskForceId,
     showConfirmUnassign
   } = datas;
+  console.log(title);
   const {
     handleCloseModal,
     handlePlusClick,

@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import DeanLayout from '../../components/Layout/Dean/DeanLayout';
-import { Archive, CalendarArrowUp, ClipboardPlus, EllipsisVertical, Folders, NotebookPen, NotepadText, Plus, PlusCircle, Scroll, Search, Trash2 } from 'lucide-react';
+import { Archive, CalendarArrowUp, ClipboardPlus, EllipsisVertical, Folders, NotebookPen, NotepadText, Plus, PlusCircle, Scroll, Search, Trash2, X } from 'lucide-react';
 import ContentHeader from '../../components/Dean/ContentHeader';
 import { useProgramsToBeAccredited } from '../../hooks/Dean/useProgramsToBeAccredited';
 import ProgramToBeAccreditedModal from '../../components/Dean/Accreditation/Programs/ProgramToBeAccreditedModal';
@@ -40,9 +40,8 @@ const ProgramsToAccredit = () => {
     activeProgramID,
     programInput,
     programs,
+    accredBodiesData
   } = datas;
-
-  
 
   const {
     handleAddClick,
@@ -63,6 +62,71 @@ const ProgramsToAccredit = () => {
     handleSave
   } = handlers;
 
+  // -----------------------------
+  // Search state & behavior
+  // -----------------------------
+  const [query, setQuery] = useState('');
+  const [showSearch, setShowSearch] = useState(false);
+  const searchInputRef = useRef(null);
+
+  useEffect(() => {
+    if (showSearch) {
+      // focus when opening search
+      searchInputRef.current?.focus();
+    }
+  }, [showSearch]);
+
+  const normalize = (v) => (v?.toString?.().toLowerCase().trim() ?? '');
+
+  // Array of Programs To Be Accredited, fallback to empty array if fetch is loading
+  const rawData = accredInfoLevelPrograms?.data ?? [];
+
+  // Filter by title, year, level, and program
+  const filteredData = useMemo(() => {
+    if (!query) return rawData;
+    const q = normalize(query);
+    return rawData.filter((item) => {
+      const title = normalize(item?.accreditationInfo?.accred_title);
+      const year = normalize(item?.accreditationInfo?.accred_year);
+      const level = normalize(item?.level);
+      const program = normalize(item?.program?.program);
+      return (
+        title.includes(q) ||
+        year.includes(q) ||
+        level.includes(q) ||
+        program.includes(q) ||
+        `${title} ${year}`.includes(q)
+      );
+    });
+  }, [rawData, query]);
+
+  // Group by Accreditation Year + Title
+  const grouped = useMemo(() => {
+    return filteredData.reduce((acc, item) => {
+      // Use accred_title + accred_year as unique key
+      const accredTitle = `${item.accreditationInfo.accred_title} ${item.accreditationInfo.accred_year}`;
+
+      if (!acc[accredTitle]) {
+        acc[accredTitle] = {};
+      }
+
+      if (!acc[accredTitle][item.level]) {
+        acc[accredTitle][item.level] = [];
+      }
+
+      acc[accredTitle][item.level].push({
+        ...item.program,       // { program_uuid, program }
+        level: item.level,
+        accred_uuid: item.accreditationInfo.accred_uuid,
+        accred_year: item.accreditationInfo.accred_year,
+        accred_title: item.accreditationInfo.accred_title,
+        accred_body_name: item.accreditationInfo.accred_body
+      });
+
+      return acc;
+    }, {});
+  }, [filteredData]);
+
   // Function to make input ref dynamic based on the rendered modal
   const getInputRef = () => {
     if (modalType === MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED && !formValue?.title) {
@@ -77,34 +141,6 @@ const ProgramsToAccredit = () => {
   }
 
   const inputRef = getInputRef();
-  
-  // Array of Programs To Be Accredited, fallback to empty array if fetch is loading
-  const data = accredInfoLevelPrograms?.data ?? [];
-
-  // Group by Accreditation Year + Title
-  const grouped = data.reduce((acc, item) => {
-    // Use accred_title + accred_year as unique key
-    const accredTitle = `${item.accreditationInfo.accred_title} ${item.accreditationInfo.accred_year}`;
-
-    if (!acc[accredTitle]) {
-      acc[accredTitle] = {};
-    }
-
-    if (!acc[accredTitle][item.level]) {
-      acc[accredTitle][item.level] = [];
-    }
-
-    acc[accredTitle][item.level].push({
-      ...item.program,       // { program_uuid, program }
-      level: item.level,
-      accred_uuid: item.accreditationInfo.accred_uuid,
-      accred_year: item.accreditationInfo.accred_year,
-      accred_title: item.accreditationInfo.accred_title,
-      accred_body_name: item.accreditationInfo.accred_body
-    });
-
-    return acc;
-  }, {});
 
   // Options for Period
   const accredInfoOptions = [
@@ -127,9 +163,44 @@ const ProgramsToAccredit = () => {
           <h2 className='text-xl text-slate-100 font-bold'>
             Programs
           </h2>
-          <button className='text-slate-100 p-2 hover:bg-slate-700 rounded-full cursor-pointer active:scale-95'>
-            <Search className='h-6 w-6'/>
-          </button>
+
+          {/* Search toggle / input */}
+          {showSearch ? (
+            <div className='relative w-full max-w-md'>
+              <Search className='absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400' />
+              <input
+                ref={searchInputRef}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape') {
+                    setQuery('');
+                    setShowSearch(false);
+                  }
+                }}
+                placeholder='Search title, year, level, or program…'
+                className='pl-10 pr-10 py-2 rounded-full bg-slate-800 border border-slate-600 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-100 focus:border-transparent w-full transition-all'
+              />
+              <button
+                onClick={() => {
+                  setShowSearch(false);
+                  setQuery('');
+                }}
+                className='absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-slate-700 text-slate-300 cursor-pointer'
+                title='Close search'
+              >
+                <X className='h-5 w-5' />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowSearch(true)}
+              className='text-slate-100 p-2 hover:bg-slate-700 rounded-full cursor-pointer active:scale-95'
+              title='Search'
+            >
+              <Search className='h-6 w-6'/>
+            </button>
+          )}
         </div>
 
         {/* Add button */}
@@ -148,7 +219,11 @@ const ProgramsToAccredit = () => {
           <div className='flex flex-col items-center justify-center h-100'>
             <Scroll className='text-slate-400 h-40 w-40 md:h-60 md:w-60'/>
             <p className='text-center font-medium text-slate-100 text-lg md:text-xl'>
-              No accreditation data yet. Click '+' to add
+              {rawData.length === 0 && !query ? (
+                <>No accreditation data yet. Click '+' to add</>
+              ) : (
+                <>No results for “<span className='text-green-400'>{query}</span>”. Try a different search.</>
+              )}
             </p>
           </div>
         ) : (
@@ -165,8 +240,6 @@ const ProgramsToAccredit = () => {
             const accredInfoUUID = firstProgram.accred_uuid;
             const accredYear = firstProgram.accred_year;
             const accredBody = firstProgram.accred_body_name;
-            console.log(accredTitle);
-            console.log(firstProgram.accred_title);
 
             return (
               <React.Fragment key={index}>
@@ -298,7 +371,7 @@ const ProgramsToAccredit = () => {
                       <hr className='w-[75%] bg-slate-600 border border-transparent my-16 mx-auto'></hr>
                       <div className='mx-auto'>
                         <p className='text-xl md:text-2xl lg:text-3xl text-center tracking-wider font-extrabold text-yellow-400 mb-4'>
-                          {level === LEVEL.PRELIM ? 'Programs Under Survey' : 'Program To Be Accredited'}
+                          {level === LEVEL.PRELIM ? 'Programs Under Survey' : 'Programs To Be Accredited'}
                         </p>
                       </div>
                       <div
@@ -474,6 +547,7 @@ const ProgramsToAccredit = () => {
         isAllDuplicates={isAllDuplicates}
         duplicateValues={duplicateValues}
         disableButton={disableButton}
+        accredBodiesData={accredBodiesData}
         handlers={{
           handleChevronClick,
           handleCloseClick,

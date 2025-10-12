@@ -8,6 +8,7 @@ import { useState } from 'react';
 import usePrograms from '../../../../hooks/fetch-react-query/usePrograms';
 import ConfirmationModal from '../../../Modals/ConfirmationModal';
 import formatAccreditationPeriod from '../../../../utils/formatAccreditationPeriod';
+import useAccreditationBodies from '../../../../hooks/fetch-react-query/useAccreditationBodies';
 
 const ProgramToBeAccreditedModal = ({
   ref,
@@ -23,6 +24,17 @@ const ProgramToBeAccreditedModal = ({
 }) => {
   // Here we store the value of the selected year in the dropdown
   const [ accredYear, setAccredYear] = useState(null); 
+
+  const { 
+    accredBodies, 
+    loadingAccredBodies, 
+    errorAccredBodies,
+    refetchAccredBodies
+  } = useAccreditationBodies();
+  const accredBodiesData = accredBodies?.data ?? [];
+  const accredBodiesArray = accredBodiesData.map(item => item.name);
+
+  console.log(accredBodiesData);
 
   const { levels, loading: levelLoading, error: errorLoading } = useAccreditationLevel();
   const data = levels?.data ?? []; // Fallback to [] if levels.data is null or undefined
@@ -98,16 +110,20 @@ const ProgramToBeAccreditedModal = ({
                 </div>
                 <AddField 
                   fieldName='Accrediting Agency'
-                  placeholder={'Enter accrediting agency...'}
+                  placeholder={accredBodiesArray.length > 0 
+                    ? 'Enter new agency or select from below...'
+                    : 'Enter new agency...'
+                  }
                   type='text'
                   name='accreditationBody'
                   formValue={formValue?.accreditationBody}
-                  isDropdown={false}
+                  isDropdown={accredBodiesArray.length > 0}
                   onChange={handleInputChange}
-                  showDropdownOnFocus={false}
+                  showDropdownOnFocus={true}
                   isDuplicate={isAllDuplicates}
-                  // dropdownItems={levelsArray}
-                  // onDropdownMenuClick={handleOptionSelection}
+                  dropdownItems={accredBodiesArray }
+                  onDropdownMenuClick={handleOptionSelection}
+                  condition={{ forAccredBody: true }}
                 />
                 <AddField 
                   fieldName='Level'

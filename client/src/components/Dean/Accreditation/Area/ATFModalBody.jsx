@@ -51,6 +51,7 @@ const ATFModalBody = ({ data = {}, handlers = {} }) => {
                 onClick={() => handleCheckboxChange(data.id)} 
                 className='flex bg-slate-100 py-3 px-2 -ml-2 mb-1 hover:bg-slate-200 cursor-pointer justify-between items-center rounded-lg active:scale-99'
               >
+                {console.log(data)}
                 <div className='flex gap-3 items-center'>
                   <input 
                     type="checkbox" 

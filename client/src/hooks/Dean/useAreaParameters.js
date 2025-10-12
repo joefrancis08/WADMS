@@ -68,7 +68,9 @@ const useAreaParameters = () => {
     loading: taskForceLoading, 
     error: taskForceError, 
     refetch: taskForceRefetch 
-  } = useUsersBy();
+  } = useUsersBy('role', 'Member' );
+
+  console.log(taskForce);
 
   const parameterData = parameters.data ?? [];
 
