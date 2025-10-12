@@ -284,29 +284,16 @@ export const updateDocName = (docId, newFileName) => {
   });
 };
 
-export const deleteProgramToBeAccredited = (startDate, endDate, levelName, programName) => {
-  return axios.delete(`${API_BASE_URL}/accreditation/delete-programs-to-be-accredited`, {
+export const deleteAccredInfo = (data = {}, condition = {}) => {
+  return axios.delete(`${API_BASE_URL}/accreditation/delete-info-level-program`, {
     params: {
-      startDate,
-      endDate,
-      levelName,
-      programName
+      title: data.title,
+      year: data.year,
+      accredBody: data.accredBody,
+      level: condition.includeLevel ? data.level : null,
+      program: condition.includeProgram ? data.program : null,
     }
   });
-};
-
-export const deleteAccreditationPeriod = (startDate, endDate, options = {}) => {
-  if (options.isFromPTBA) {
-    return axios.delete(`${API_BASE_URL}/accreditation/delete-accreditation-period`, {
-      params: {
-        startDate,
-        endDate
-      }
-    });
-    
-  } else {
-    return 'Invalid options.';
-  }
 };
 
 export const deletePAM = ({

@@ -49,6 +49,8 @@ const ProgramToBeAccreditedModal = ({
     handleProgramChange({ target: { name: 'programInput', value: '' } }); // Reset textarea
   };
 
+  console.log(modalData);
+
   switch (modalType) {
       case MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED:
         return (
@@ -283,16 +285,17 @@ const ProgramToBeAccreditedModal = ({
       case MODAL_TYPE.DELETE_PROGRAM_TO_BE_ACCREDITED:
         return (
           <ConfirmationModal 
-            onClose={() => handleCloseClick({ isFromProgram: true, isDelete: true})}
-            onCancelClick={() => handleCloseClick({ isFromProgram: true, isDelete: true })}
+            onClose={() => handleCloseClick({ program: true, isDelete: true})}
+            onCancelClick={() => handleCloseClick({ program: true, isDelete: true })}
             onConfirmClick={() => handleConfirmClick({ 
-              isFromProgram: true, 
+              from: { program: true }, 
               isDelete: true,
-              data: {
-                startDate: modalData.startDate,
-                endDate: modalData.endDate,
-                levelName: modalData.levelName,
-                programName: modalData.programName
+              accredInfo: {
+                title: modalData.title,
+                year: modalData.year,
+                accredBody: modalData.accredBody,
+                level: modalData.level,
+                program: modalData.program
               }
             })}
             isDelete={true}
@@ -303,10 +306,7 @@ const ProgramToBeAccreditedModal = ({
                 <div className='flex flex-col items-center justify-center pb-4'>
                   <TriangleAlert className='text-red-400 h-20 w-20'/>
                   <p className='px-8 text-md md:text-lg text-center text-red-500'>
-                    Delete {'\n'}
-                    <span className='font-bold'>
-                      {modalData.programName}
-                    </span>?
+                    Delete
                   </p>
                 </div>
                 
@@ -323,17 +323,18 @@ const ProgramToBeAccreditedModal = ({
           />
         );
       
-      case MODAL_TYPE.DELETE_PERIOD:
+      case MODAL_TYPE.DELETE_ACCRED_INFO:
         return (
           <ConfirmationModal 
-            onClose={() => handleCloseClick({ isFromPeriod: true, isDelete: true })}
-            onCancelClick={() => handleCloseClick({ isFromPeriod: true, isDelete: true })}
+            onClose={() => handleCloseClick({ accredInfo: true, isDelete: true })}
+            onCancelClick={() => handleCloseClick({ accredInfo: true, isDelete: true })}
             onConfirmClick={() => handleConfirmClick({
-              isFromPeriod: true,
+              from: { accredInfo: true },
               isDelete: true,
-              data: {
-                startDate: modalData.startDate,
-                endDate: modalData.endDate
+              accredInfo: {
+                title: modalData.title,
+                year: modalData.year,
+                accredBody: modalData.accredBody
               }
             })}
             isDelete={true}
@@ -344,17 +345,13 @@ const ProgramToBeAccreditedModal = ({
                 <div className='flex flex-col items-center justify-center pb-4'>
                   <TriangleAlert className='text-red-400 h-20 w-20'/>
                   <p className='px-8 text-md md:text-lg text-center text-red-500'>
-                    Delete {'\n'}
-                    <span className='font-bold'>
-                      {formatAccreditationPeriod(modalData.startDate, modalData.endDate)}
-                    </span> {'\n'}
-                    Period?
+                    Delete
                   </p>
                 </div>
                 
                 <div className='pb-2 space-y-2'>
                   <p className='px-8 text-center'>
-                    This action will permanently delete the period along with all associated levels and programs. This cannot be undone.
+                    This action will permanently delete the period along with all associated datas. This action cannot be undone
                   </p>
                   <p className='px-8 text-center'>
                     Do you want to proceed?

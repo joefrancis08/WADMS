@@ -7,6 +7,7 @@ import { TOAST_MESSAGES } from "../constants/messages";
 import MODAL_TYPE from "../constants/modalTypes";
 import { showErrorToast, showSuccessToast } from "../utils/toastNotification";
 import useOutsideClick from "./useOutsideClick";
+import usePageTitle from "./usePageTitle";
 
 export const useUnverifiedUsers = () => {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ export const useUnverifiedUsers = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedRole, setSelectedRole] = useState(UU);
 
-  useOutsideClick('Unverified Users');
+  usePageTitle('Unverified Users');
 
   const handleCloseModal = (options = {}) => {
     setModalType(null);

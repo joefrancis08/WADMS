@@ -180,7 +180,7 @@ const Login = () => {
                   className="w-full gap-x-3 flex items-center justify-center bg-gradient-to-br from-white to-slate-100 border border-slate-300 text-slate-800 px-4 py-3 rounded-full font-medium shadow-sm hover:shadow-md transition-all hover:scale-[1.02] active:scale-[0.97]"
                 >
                   <img src={googleIcon} alt="Google Logo" className="h-5 w-5" loading="lazy" />
-                  Login with Google
+                  Continue with Google
                 </button>
 
                 <p className="text-xs text-slate-500 mt-2 text-center max-w-[280px]">

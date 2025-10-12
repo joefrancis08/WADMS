@@ -78,14 +78,14 @@ const DeanLayout = ({ children, ref }) => {
       icon: BookCopy,
       label: 'Accreditation',
       children: [
-        { id: 'period-and-level', 
+        { id: 'assignment', 
           icon: CalendarDays, 
-          label: 'Period & Level', 
+          label: 'Assignments', 
           link: '' 
         },
-        { id: 'program-to-be-accredited', 
+        { id: 'programs', 
           icon: NotepadText, 
-          label: 'Programs to be Accredited', 
+          label: 'Programs', 
           link: PROGRAMS_TO_BE_ACCREDITED 
         },
         { id: 'archive', 

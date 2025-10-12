@@ -1,8 +1,9 @@
-import db from "../../../../config/db";
+import db from "../../../../config/db.js";
 
 const getAccredBody = async (connection = null) => {
   const query = `
     SELECT
+      id,
       name
     FROM accreditation_body
     ORDER BY name

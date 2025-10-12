@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import DeanLayout from '../../components/Layout/Dean/DeanLayout';
-import { Archive, CalendarArrowUp, ClipboardPlus, EllipsisVertical, Folders, NotebookPen, NotepadText, Plus, PlusCircle, Scroll, Search } from 'lucide-react';
+import { Archive, CalendarArrowUp, ClipboardPlus, EllipsisVertical, Folders, NotebookPen, NotepadText, Plus, PlusCircle, Scroll, Search, Trash2 } from 'lucide-react';
 import ContentHeader from '../../components/Dean/ContentHeader';
 import { useProgramsToBeAccredited } from '../../hooks/Dean/useProgramsToBeAccredited';
 import ProgramToBeAccreditedModal from '../../components/Dean/Accreditation/Programs/ProgramToBeAccreditedModal';
@@ -8,6 +8,7 @@ import ProgramsToBeAccreditedSL from '../../components/Loaders/ProgramsToBeAccre
 import Dropdown from '../../components/Dropdown/Dropdown';
 import MODAL_TYPE from '../../constants/modalTypes';
 import formatAccreditationTitle from '../../utils/formatAccreditationTitle';
+import LEVEL from '../../constants/accreditationLevels';
 
 const ProgramsToAccredit = () => {
   const { refs, datas, handlers } = useProgramsToBeAccredited();
@@ -109,11 +110,13 @@ const ProgramsToAccredit = () => {
   const accredInfoOptions = [
     { icon: <CalendarArrowUp size={24} />, label: 'Update info' },
     { icon: <Archive size={24} />, label: 'Move to Archive' },
+    { icon: <Trash2 size={24} />, label: 'Delete'}
   ];
 
   const programOptions = [
     { icon: <Folders size={22} />, label: 'View Areas' },
     { icon: <Archive size={22} />, label: 'Move to Archive' },
+    { icon: <Trash2 size={24} />, label: 'Delete'}
   ];
 
   return (
@@ -163,6 +166,7 @@ const ProgramsToAccredit = () => {
             const accredYear = firstProgram.accred_year;
             const accredBody = firstProgram.accred_body_name;
             console.log(accredTitle);
+            console.log(firstProgram.accred_title);
 
             return (
               <React.Fragment key={index}>
@@ -256,7 +260,7 @@ const ProgramsToAccredit = () => {
                         >
                           {accredInfoOptions.map((option, index) => (
                             <React.Fragment key={index}>
-                              {option.label === 'Move to Archive' && (
+                              {option.label === 'Delete' && (
                                 <hr className='m-1 text-slate-300'></hr>
                               )}
                               <div 
@@ -264,10 +268,10 @@ const ProgramsToAccredit = () => {
                                   handleOptionItemClick(e, {
                                     isFromAccredInfo: true,
                                     optionName: option.label,
-                                    data: {
+                                    accredInfo: {
+                                      title: firstProgram.accred_title,
                                       year: accredYear,
-                                      title: accredTitle,
-                                      accredBody: accredBody
+                                      accredBody
                                     }
                                   })
                                 )}
@@ -275,10 +279,10 @@ const ProgramsToAccredit = () => {
                                 className={`flex items-center p-2 justify-start gap-x-2 cursor-pointer rounded-md active:opacity-60 transition ${option.label === 'Delete' ? 
                                 'hover:bg-red-200' : 'hover:bg-slate-200'}`}
                               >
-                                <i className={option.label === 'Move to Archive' ? 'text-slate-700' : 'text-slate-800'}>
+                                <i className={option.label === 'Delete' ? 'text-red-500' : 'text-slate-800'}>
                                   {option.icon}
                                 </i>
-                                <p className={option.label === 'Move to Archive' ? 'text-slate-700' : 'text-slate-800'}>
+                                <p className={option.label === 'Delete' ? 'text-red-500' : 'text-slate-800'}>
                                   {option.label}
                                 </p>
                               </div>
@@ -288,15 +292,15 @@ const ProgramsToAccredit = () => {
                       </div>
                     )}
                   </div>
-                  <hr className='w-[75%] bg-slate-600 border border-transparent my-16 mx-auto'></hr>
-                  <div className='mx-auto'>
-                    <p className='text-xl md:text-2xl lg:text-3xl text-center tracking-wider font-extrabold text-yellow-400 mb-4'>
-                      PROGRAMS TO BE ACCREDITED
-                    </p>
-                  </div>
                   {/* Loop through levels inside each period */}
                   {Object.entries(levels).map(([level, programs]) => (
                     <React.Fragment key={level} >
+                      <hr className='w-[75%] bg-slate-600 border border-transparent my-16 mx-auto'></hr>
+                      <div className='mx-auto'>
+                        <p className='text-xl md:text-2xl lg:text-3xl text-center tracking-wider font-extrabold text-yellow-400 mb-4'>
+                          {level === LEVEL.PRELIM ? 'Programs Under Survey' : 'Program To Be Accredited'}
+                        </p>
+                      </div>
                       <div
                         ref={(el) => (levelRef.current[`${accredTitle}-${level}`] = el)} 
                         id={`${accredTitle}-${level}`}
@@ -366,18 +370,19 @@ const ProgramsToAccredit = () => {
                                       >
                                         {programOptions.map((option, index) => (
                                           <React.Fragment key={index}>
-                                            {option.label === 'Move to Archive' && (
+                                            {option.label === 'Delete' && (
                                               <hr className='m-1 text-slate-300'></hr>
                                             )}
                                             <div 
                                               onClick={(e) => (
                                                 handleOptionItemClick(e, { 
-                                                  isFromProgram: true,
+                                                  from: { program: true },
                                                   optionName: option.label,
-                                                  data: {
+                                                  accredInfo: {
                                                     accredInfoUUID,
-                                                    accredTitle,
+                                                    accredTitle: firstProgram.accred_title,
                                                     accredYear,
+                                                    accredBody,
                                                     level,
                                                     programUUID,
                                                     program,
@@ -385,13 +390,13 @@ const ProgramsToAccredit = () => {
                                                   }
                                                 }))}
                                               key={index} 
-                                              className={`flex items-center p-2 justify-start gap-x-2 cursor-pointer rounded-md active:opacity-60 ${option.label === 'Move to Archive' ? 
-                                              'hover:bg-slate-300' : 'hover:bg-slate-200'}`}
+                                              className={`flex items-center p-2 justify-start gap-x-2 cursor-pointer rounded-md active:opacity-60 ${option.label === 'Delete' ? 
+                                              'hover:bg-red-200' : 'hover:bg-slate-200'}`}
                                             >
-                                              <i className={option.label === 'Move to Archive' ? 'text-gray-700' : 'text-slate-800'}>
+                                              <i className={option.label === 'Delete' ? 'text-red-500' : 'text-slate-800'}>
                                                 {option.icon}
                                               </i>
-                                              <p className={`text-sm ${option.label === 'Move to Archive' ? 'text-gray-700' : 'text-slate-800'}`}>
+                                              <p className={`text-sm ${option.label === 'Delete' ? 'text-red-500' : 'text-slate-800'}`}>
                                                 {option.label}
                                               </p>
                                             </div>
@@ -408,7 +413,7 @@ const ProgramsToAccredit = () => {
                                     handleOptionClick(e, { 
                                       isFromProgram: true,
                                       data: {
-                                        accredTitle,
+                                        accredTitle: firstProgram.accred_title,
                                         level,
                                         programId
                                       }
@@ -426,7 +431,7 @@ const ProgramsToAccredit = () => {
                             onClick={() => handleAddClick({ 
                               isFromCard: true, 
                               data: { 
-                                accredTitle,
+                                accredTitle: firstProgram.accred_title,
                                 accredYear,
                                 accredBody,
                                 level

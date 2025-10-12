@@ -1,5 +1,4 @@
 import express from 'express';
-import { deleteProgramToBeAccreditedController } from '../controllers/accreditation/programs-to-be-accredited/programToBeAccreditedController.js';
 import { addLevelController, fetchLevelsController } from '../controllers/accreditation/level/levelController.js';
 import { deletePeriodController, fetchPeriodController } from '../controllers/accreditation/period/periodController.js';
 import { addProgramAreaController, deletePAMController, fetchProgramAreaController } from '../controllers/accreditation/program-area-mapping/programAreaMappingController.js';
@@ -12,7 +11,7 @@ import fetchAreasBy from '../controllers/accreditation/areas/GET/fetchAreasBy.js
 import { addDocumentController, deleteDocController, fetchDocumentsController, updateDocController } from '../controllers/accreditation/document/documentController.js';
 import { upload } from '../middlewares/uploadFile.js';
 import { addAssignmentController, deleteAssignmentController, fetchAssignmentController } from '../controllers/accreditation/assignments/assignmentController.js';
-import deleteAssignment from '../models/accreditation/assignments/DELETE/deleteAssignment.js';
+import deleteILP from '../controllers/accreditation/info-level-program-mapping/DELETE/deleteILP.js';
 
 const accreditationRouter = express.Router();
 
@@ -40,7 +39,7 @@ accreditationRouter.get('/fetch-assignments', fetchAssignmentController);
 accreditationRouter.patch('/rename-document/:docId', updateDocController);
 
 accreditationRouter.delete('/delete-accreditation-period', deletePeriodController);
-accreditationRouter.delete('/delete-programs-to-be-accredited', deleteProgramToBeAccreditedController);
+accreditationRouter.delete('/delete-info-level-program', deleteILP);
 accreditationRouter.delete('/delete-program-area', deletePAMController);
 accreditationRouter.delete('/delete-area-parameter', deleteAreaParameterController);
 accreditationRouter.delete('/delete-param-subparam', deleteParamSubParamController);

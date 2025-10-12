@@ -1,3 +1,5 @@
+import db from "../../../../config/db.js";
+
 /* 
   Insert Accreditation Body into Program Table.
   Use connection to include this query in a transaction.

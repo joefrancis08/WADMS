@@ -15,7 +15,7 @@ const MODAL_TYPES = Object.freeze({
 
   ADD_LEVEL_PROGRAM: 'add-level-and-programs',
 
-  DELETE_PERIOD: 'delete-period',
+  DELETE_ACCRED_INFO: 'delete-accred-info',
 
   ADD_AREA: 'add-area',
   REMOVE_AREA: 'remove-area',

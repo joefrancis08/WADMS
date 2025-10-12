@@ -13,6 +13,7 @@ import accreditationRouter from './src/routes/accreditationRoute.js';
 import areaRouter from './src/routes/areaRoute.js';
 import parameterRouter from './src/routes/parameterRoute.js';
 import authRouter from './src/routes/authRoute.js';
+import accredBodyRouter from './src/routes/accredBodyRoute.js';
 
 dotenv.config({ quiet: true });
 const __filename = fileURLToPath(import.meta.url);
@@ -37,6 +38,7 @@ app.use(express.static(path.join(__dirname, '../client/dist')));
 app.use('/users', userRouter);
 app.use('/auth', authRouter);
 app.use('/accreditation', accreditationRouter);
+app.use('/accreditation-body', accredBodyRouter);
 app.use('/programs', programRouter);
 app.use('/areas', areaRouter);
 app.use('/parameters', parameterRouter);
