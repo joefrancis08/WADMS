@@ -27,7 +27,7 @@ const TaskForceCard = ({
 }) => {
   const menu = [
     { icon: <FolderTree size={20} />, label: 'Assign Program, Area, & Parameter' },
-    { icon: <LinkIcon size={20} />, label: 'Generate Access Link' },
+    { icon: <LinkIcon size={20} />, label: 'View Access Link' },
     { icon: <FileUser size={20} />, label: 'View Details' },
     { icon: <UserRoundPen size={20} />, label: 'Update' },
     { icon: <Trash2 size={20} color='red' />, label: 'Delete' },
@@ -110,7 +110,7 @@ const TaskForceCard = ({
                   profilePic={profilePic(user)}
                   height={isChair ? 'h-28' : 'h-24'}
                   width={isChair ? 'w-28' : 'w-24'}
-                  border={`rounded-full border-4 ${isChair ? 'border-amber-500' : 'border-green-700'}`}
+                  border={`rounded-full border-4 border-green-700`}
                 />
 
                 <div className='mt-4 space-y-2 w-full'>

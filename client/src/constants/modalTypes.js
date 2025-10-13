@@ -35,7 +35,9 @@ const MODAL_TYPES = Object.freeze({
 
   DELETE_DOC: 'delete-document',
 
-  LOGOUT: 'logout-user'
+  LOGOUT: 'logout-user',
+
+  VIEW_ACCESS_LINK: 'view-access-link'
 });
 
 export default MODAL_TYPES;

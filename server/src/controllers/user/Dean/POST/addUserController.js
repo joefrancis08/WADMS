@@ -3,6 +3,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { getUserByEmail, insertUser } from '../../../../models/userModel.js';
 import sendUpdate from '../../../../services/websocket/sendUpdate.js';
 import { insertUserModel } from '../../../../models/user/POST/postUser.js';
+import insertAccessToken from '../../../../models/access-token/POST/insertAccessToken.js';
+import generateToken from '../../../../utils/token.js';
+import { getUserBy } from '../../../../models/user/GET/getUser.js';
 
 export const addUserController = async (req, res) => {
   
@@ -16,7 +19,9 @@ export const addUserController = async (req, res) => {
   // Step 3: Use try/catch to insert data into database and to catch any errors if database queries are unsuccessful. Best practice when fetching or posting data
   try {
     // Step 3.1: Check if email already exists in the database and return a response
-    const user = await getUserByEmail(email);
+    const user = await getUserBy('email', email, true, false, false);
+
+    console.log('line 24:', user);
 
     if (user && user.email === email) {
       return res.status(200).json({
@@ -33,7 +38,7 @@ export const addUserController = async (req, res) => {
 
     // Step 3.2: Proceed to inserting the user to the database if email does not exist and return the response
     const userUUID = uuidv4();
-    await insertUser(
+    const verifiedUser = await insertUser(
       userUUID, 
       profilePicPath, 
       fullName, 
@@ -42,6 +47,14 @@ export const addUserController = async (req, res) => {
       role, 
       status
     );
+
+    // Step 3.3: Generate access link for verified user
+    const result = await insertAccessToken({
+      token: generateToken(),
+      expireAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+      isUsed: false,
+      userId: verifiedUser.insertId
+    });
 
     sendUpdate('user-update');
 

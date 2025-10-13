@@ -5,7 +5,7 @@ import PATH from "../../constants/path";
 import { useUsersBy } from "../fetch-react-query/useUsers"; // your improved hook that returns an array
 import MODAL_TYPES from "../../constants/modalTypes";
 import { TOAST_MESSAGES } from "../../constants/messages";
-import { checkUserEmail, deleteUser, postUser, updateUser } from "../../api-calls/Users/userAPI";
+import { checkUserEmail, deleteUser, fetchAccessToken, postUser, updateUser } from "../../api-calls/Users/userAPI";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
 import { emailRegex } from "../../utils/regEx";
 import useOutsideClick from "../useOutsideClick";
@@ -15,7 +15,8 @@ const {
   ADD_TF, 
   ADD_TF_CARD, 
   UPDATE_TF,
-  TF_DELETION_CONFIRMATION 
+  TF_DELETION_CONFIRMATION ,
+  VIEW_ACCESS_LINK
 } = MODAL_TYPES;
 const { TASK_FORCE, TASK_FORCE_DETAIL } = PATH.DEAN;
 const { TASK_FORCE_CREATION, TASK_FORCE_UPDATE, TASK_FORCE_DELETION } = TOAST_MESSAGES;
@@ -62,6 +63,8 @@ export const useTaskForce = () => {
   const [updatedProfilePic, setUpdatedProfilePic] = useState(null);
   const [formValue, setFormValue] = useState({ fullName: "", email: "", role: "" });
   const [updatedValue, setUpdatedValue] = useState({ fullName: "", email: "", role: "" });
+  const [accessTokens, setAccessTokens] = useState([]);
+  const [loadingToken, setLoadingToken] = useState(true);
 
   // Search state (consumed in component)
   const [searchOpen, setSearchOpen] = useState(false);
@@ -70,6 +73,26 @@ export const useTaskForce = () => {
   // Close dropdowns on outside click
   useOutsideClick(dropdownRef, () => setActiveDropdownId(null));
   usePageTitle("Task Force");
+
+  console.log(accessTokens);
+
+  // Fetch access tokens
+  const queryFn = async () => {
+    try {
+      const res = await fetchAccessToken();
+
+      console.log(res);
+      setLoadingToken(false);
+      setAccessTokens(res.data.tokens);
+
+    } catch (error) {
+      console.error('Error fetching access token:', error);
+    }
+  };
+  useEffect(() => {
+    queryFn();
+    
+  }, []);
 
   // Prefill update form from selectedUser
   useEffect(() => {
@@ -169,17 +192,30 @@ export const useTaskForce = () => {
     setActiveDropdownId((prev) => (prev === id ? null : id));
   };
 
+  console.log(modalType);
   const handleDropdown = (e, menu, user) => {
     e.stopPropagation();
     const id = getUserId(user);
 
-    if (menu?.label === "View Details") {
+    if (menu.label === 'View Access Link') {
+      console.log(user);
+      setModalType(VIEW_ACCESS_LINK);
+      setModalData({
+        userId: user.id,
+        email: user.email,
+        fullName: user.fullName,
+      });
+      queryFn();
+
+    } else if (menu?.label === "View Details") {
       navigate(TASK_FORCE_DETAIL(id), { state: { from: TASK_FORCE } });
       setActiveDropdownId(null);
+
     } else if (menu?.label === "Update") {
       setSelectedUser(user);
       setModalType(UPDATE_TF);
       setActiveDropdownId(null);
+
     } else if (menu?.label === "Delete") {
       setSelectedUser(user);
       setModalType(TF_DELETION_CONFIRMATION);
@@ -211,8 +247,9 @@ export const useTaskForce = () => {
   const handleConfirmDelete = async (selectedUserId, options = {}) => {
     try {
       const res = await deleteUser(selectedUserId);
-      if (res?.success) showSuccessToast(TASK_FORCE_DELETION.SUCCESS);
+      if (res.data.success) showSuccessToast(TASK_FORCE_DELETION.SUCCESS);
       else showErrorToast(TASK_FORCE_DELETION.ERROR);
+
     } catch (error) {
       console.error("Error deleting user: ", error);
       showErrorToast(TASK_FORCE_DELETION.ERROR);
@@ -228,12 +265,14 @@ export const useTaskForce = () => {
     options.removeSelectedUser && setSelectedUser(null);
     options.untoggleDropdown && setToggleDropdown(false);
     options.removeActiveDropdownId && setActiveDropdownId(null);
+    options.viewAccessLink && setModalType(null) && setModalData(null);
     options.clearForm &&
       setFormValue({
         fullName: "",
         email: "",
         role: "",
       });
+
   };
 
   const handleChevronClick = () => setToggleDropdown((v) => !v);
@@ -277,6 +316,8 @@ export const useTaskForce = () => {
       selectedUser,
       formValue,
       infoClick,
+      accessTokens,
+      loadingToken,
 
       // search
       searchOpen,

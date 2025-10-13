@@ -9,6 +9,7 @@ import TaskForceCard from '../../components/Dean/TaskForce/TaskForceCard';
 import TaskForceModal from '../../components/Dean/TaskForce/TaskForceModal';
 import { searchUser } from '../../assets/icons';
 import useDebouncedValue from '../../hooks/useDebouncedValue';
+import { useCallback } from 'react';
 
 const { TASK_FORCE_DETAIL } = PATH.DEAN;
 
@@ -41,6 +42,8 @@ const TaskForce = () => {
     infoClick,
     searchOpen,
     searchQuery,
+    accessTokens,
+    loadingToken
   } = datas;
 
   const {
@@ -68,14 +71,14 @@ const TaskForce = () => {
   const debouncedQuery = useDebouncedValue(searchQuery, 250);
   const lowerQ = (debouncedQuery || '').toLowerCase();
 
-  const filterByQuery = (arr) =>
+  const filterByQuery = useCallback((arr) =>
     !lowerQ
       ? arr
       : arr.filter(
           (u) =>
             getUserName(u).toLowerCase().includes(lowerQ) ||
             getUserEmail(u).toLowerCase().includes(lowerQ)
-        );
+        ), [lowerQ]);
 
   const chairsCount = taskForceChair.length;
   const membersCount = taskForceMember.length;
@@ -122,13 +125,13 @@ const TaskForce = () => {
               {/* Search + Add (desktop) */}
               <div className="hidden md:flex items-center gap-3">
                 <div className="relative">
-                  <Search className="absolute left-3 top-2.5 h-5 w-5 text-slate-400" />
+                  <Search className="absolute left-4 top-2.5 h-5 w-5 text-slate-400" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => handleSearchChange(e.target.value)}
-                    placeholder="Search name or email"
-                    className="pl-9 pr-3 py-2 rounded-full bg-slate-800 text-slate-100 border border-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200 w-72 transition-all"
+                    placeholder="Search name or email..."
+                    className="ml-1 pl-9 pr-3 py-2 rounded-full bg-slate-800 text-slate-100 border border-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200 w-72 transition-all"
                   />
                 </div>
                 <button
@@ -337,6 +340,8 @@ const TaskForce = () => {
           selectedUser,
           infoClick,
           isUpdateBtnDisabled,
+          accessTokens,
+          loadingToken
         }}
         handlers={{
           handleCloseModal,

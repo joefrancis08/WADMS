@@ -50,6 +50,8 @@ const TaskForceDetail = () => {
   const { selectedUser, assignmentData } = datas;
   const { refetchAssignments, handleBack } = handlers;
 
+  console.log(selectedUser);
+
   const [showParameters, setShowParameters] = useState(false);
   const [showSubParam, setShowSubParam] = useState(false);
   const [showIndicator, setShowIndicator] = useState(false);

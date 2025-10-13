@@ -70,7 +70,11 @@ export const fetchAllUsers = async (controller) => {
   } catch(error) {
     console.error('Error getting all users:', error);
   }
-}
+};
+
+export const fetchAccessToken = async () => {
+  return await axios.get(`${API_BASE_URL}/users/access-token`);
+};
 
 export const fetchUserBy = async (key, value, controller) => {
   try {
