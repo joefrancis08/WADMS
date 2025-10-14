@@ -17,6 +17,10 @@ import { USER_ROLES } from '../constants/user';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
 import PrivateRouteWrapper from '../wrapper/PrivateRouteWrapper';
+import InternalAssessor from '../pages/Dean/InternalAssessor';
+import ArchivePage from '../pages/Dean/ArchivePage';
+import Archive from '../pages/Dean/ArchivePage';
+
 
 const { 
   DASHBOARD, 
@@ -24,11 +28,13 @@ const {
   UNVERIFIED_USER,
   UNVERIFIED_USERS_ID, 
   TASK_FORCE, 
+  INTERNAL_ASSESSORS,
   PROGRAMS_TO_BE_ACCREDITED,
   PROGRAM_AREAS_TEMPLATE, 
   AREA_PARAMETERS_TEMPLATE,
   PARAM_SUBPARAMS_TEMPLATE,
   SUBPARAM_INDICATORS_TEMPLATE,
+  ARCHIVE,
   DOCUMENTS
 } = PATH.DEAN;
 
@@ -37,6 +43,7 @@ const { NOT_FOUND_URL, LOGIN } = PATH.PUBLIC;
 const protectedRoutes = [
   { path: DASHBOARD, element: <Dashboard />},
   { path: TASK_FORCE, element: <TaskForce /> },
+  { path: INTERNAL_ASSESSORS, element: <InternalAssessor /> },
   { path: UNVERIFIED_USER, element: <UnverifiedUsers /> },
   { path: TASK_FORCE_DETAIL_TEMPLATE, element: <TaskForceDetail /> },
   { path: UNVERIFIED_USERS_ID, element: <UnverifiedUsers /> },
@@ -45,6 +52,7 @@ const protectedRoutes = [
   { path: AREA_PARAMETERS_TEMPLATE, element: <AreaParameters /> },
   { path: PARAM_SUBPARAMS_TEMPLATE, element: <ParamSubparam /> },
   { path: SUBPARAM_INDICATORS_TEMPLATE, element: <SubparamIndicator />},
+  { path: ARCHIVE, element: <ArchivePage /> },
   { path: DOCUMENTS, element: <Documents /> }
 ];
 

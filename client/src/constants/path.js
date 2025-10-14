@@ -1,3 +1,5 @@
+import { Archive } from "lucide-react";
+
 const PATH = {
   PUBLIC: {
     DEFAULT_PATH: '/',
@@ -19,6 +21,7 @@ const PATH = {
     TASK_FORCE: '/d/task-force',
     TASK_FORCE_DETAIL: (uuid) => `/d/task-force/${uuid}`,
     TASK_FORCE_DETAIL_TEMPLATE: '/d/task-force/:uuid',
+    INTERNAL_ASSESSORS: '/d/internal-assessors',
 
     PROGRAMS_TO_BE_ACCREDITED: '/d/accreditation/programs',
 
@@ -48,6 +51,7 @@ const PATH = {
       `/d/accreditation/programs/${level}/${programUUID}/${accredInfoUUID}/${areaUUID}/${parameterUUID}/${subParameterUUID}`
     ),
     SUBPARAM_INDICATORS_TEMPLATE: '/d/accreditation/programs/:level/:programUUID/:accredInfoUUID/:areaUUID/:parameterUUID/:subParameterUUID',
+    ARCHIVE: '/d/accreditation/archive',
     
     DOCUMENTS: '/d/accreditation/documents'
   },
@@ -55,6 +59,14 @@ const PATH = {
   TASK_FORCE: {
     DASHBOARD: '/t',
     ACCREDITATION: '/t/accreditation'
+  },
+
+  INTERNAL_ASSESSOR: {
+    DASHBOARD: '/ia',
+  },
+
+  ACCREDITOR: {
+    DASHBOARD: '/a',
   }
 }
 

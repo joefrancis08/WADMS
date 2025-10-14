@@ -36,6 +36,9 @@ const LandingRedirect = () => {
           } else if (user.role === USER_ROLES.TASK_FORCE_CHAIR || USER_ROLES.TASK_FORCE_MEMBER) {
             navigate('/t', { replace: true });
 
+          } else if (user.role === USER_ROLES.IA) {
+            navigate(PATH.INTERNAL_ASSESSOR.DASHBOARD);
+
           } else {
             navigate('/', { replace: true });
           }
