@@ -15,6 +15,7 @@ const DeanLayout = ({ children, ref }) => {
     TASK_FORCE, 
     INTERNAL_ASSESSORS,
     UNVERIFIED_USER: UNVERIFIED_USERS, 
+    ARCHIVE,
     PROGRAMS_TO_BE_ACCREDITED 
   } = PATH.DEAN;
   const unverifiedUsers = useUsersBy('role', UNVERIFIED_USER).users;
@@ -92,7 +93,7 @@ const DeanLayout = ({ children, ref }) => {
         { id: 'archive', 
           icon: FolderArchive, 
           label: 'Archive', 
-          link: '',
+          link: ARCHIVE,
           hasHR: true
         },
       ]

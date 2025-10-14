@@ -1,3 +1,5 @@
+import { Archive } from "lucide-react";
+
 const PATH = {
   PUBLIC: {
     DEFAULT_PATH: '/',
@@ -49,6 +51,7 @@ const PATH = {
       `/d/accreditation/programs/${level}/${programUUID}/${accredInfoUUID}/${areaUUID}/${parameterUUID}/${subParameterUUID}`
     ),
     SUBPARAM_INDICATORS_TEMPLATE: '/d/accreditation/programs/:level/:programUUID/:accredInfoUUID/:areaUUID/:parameterUUID/:subParameterUUID',
+    ARCHIVE: '/d/accreditation/archive',
     
     DOCUMENTS: '/d/accreditation/documents'
   },

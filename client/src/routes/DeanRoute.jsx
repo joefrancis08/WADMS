@@ -18,6 +18,9 @@ import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
 import PrivateRouteWrapper from '../wrapper/PrivateRouteWrapper';
 import InternalAssessor from '../pages/Dean/InternalAssessor';
+import ArchivePage from '../pages/Dean/ArchivePage';
+import Archive from '../pages/Dean/ArchivePage';
+
 
 const { 
   DASHBOARD, 
@@ -31,6 +34,7 @@ const {
   AREA_PARAMETERS_TEMPLATE,
   PARAM_SUBPARAMS_TEMPLATE,
   SUBPARAM_INDICATORS_TEMPLATE,
+  ARCHIVE,
   DOCUMENTS
 } = PATH.DEAN;
 
@@ -48,6 +52,7 @@ const protectedRoutes = [
   { path: AREA_PARAMETERS_TEMPLATE, element: <AreaParameters /> },
   { path: PARAM_SUBPARAMS_TEMPLATE, element: <ParamSubparam /> },
   { path: SUBPARAM_INDICATORS_TEMPLATE, element: <SubparamIndicator />},
+  { path: ARCHIVE, element: <ArchivePage /> },
   { path: DOCUMENTS, element: <Documents /> }
 ];
 
