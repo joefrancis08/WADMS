@@ -6,17 +6,20 @@ import { useEffect, useState } from "react";
 import useAutoFocus from "../useAutoFocus";
 import MODAL_TYPE from "../../constants/modalTypes";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
-import { addDocument, addSubParams, deleteDoc, fetchDocumentsDynamically, updateDocName } from "../../api-calls/accreditation/accreditationAPI";
+import { addAssignment, addDocument, addSubParams, deleteAssignment, deleteDoc, deletePSPM, fetchDocumentsDynamically, updateDocName } from "../../api-calls/accreditation/accreditationAPI";
 import { TOAST_MESSAGES } from "../../constants/messages";
 import PATH from "../../constants/path";
-import { useQueries, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRef } from "react";
 import { messageHandler } from "../../services/websocket/messageHandler";
 import { useMemo } from "react";
 import useOutsideClick from "../useOutsideClick";
 import { useDocumentsQueries } from "../fetch-react-query/useDocumentsQueries";
+import { useUsersBy } from "../fetch-react-query/useUsers";
+import { getFullNameById } from "../../utils/getUserInfo";
+import useFetchAssignments from "../fetch-react-query/useFetchAssignments";
 
-const { SUBPARAMETER_ADDITION } = TOAST_MESSAGES;
+const { SUBPARAMETER_ADDITION, ASSIGNMENT } = TOAST_MESSAGES;
 const { SUBPARAM_INDICATORS } = PATH.DEAN;
 const DOCUMENT_PATH = import.meta.env.VITE_DOCUMENT_PATH;
 
@@ -26,6 +29,9 @@ const useParamSubparam = () => {
   const fileInputRef = useRef();
   const renameFileRef = useRef();
   const fileOptionRef = useRef();
+  const navEllipsisRef = useRef();
+  const subParamOptionRef = useRef();
+  const assignedTaskForceRef = useRef();
   const queryClient = useQueryClient();
   const { level: levelName } = formatProgramParams(level);
 
@@ -68,6 +74,22 @@ const useParamSubparam = () => {
     parameter
   });
 
+  const { 
+    users: taskForce, 
+    loading: taskForceLoading, 
+    error: taskForceError, 
+    refetch: taskForceRefetch 
+  } = useUsersBy();
+
+  const { 
+    assignments, 
+    loading: loadingAssignments, 
+    error: errorAssignments,
+    refetch: refetchAssignments 
+  } = useFetchAssignments({ accredInfoId, levelId, programId, areaId, parameterId: paramId });
+  console.log(assignments.assignmentData);
+  const assignmentData = assignments?.assignmentData ?? [];
+
   const subParamsData = useMemo(() => subParameters?.data ?? [], [subParameters?.data]) ;
   const subParameter = subParamsData.map((sp) => sp.sub_parameter_id);
 
@@ -85,14 +107,13 @@ const useParamSubparam = () => {
     documentsBySubParam[subParamsData[i]?.sub_parameter_id] = Array.isArray(documents) ? documents : [];
   });
 
-  console.log(documentsBySubParam);
-
   // Check if any of the document queries are still loading
   const loadingDocs = subParamDocs.some(q => q.isLoading);
 
   // Check if any of the document queries encountered an error
   const errorDocs = subParamDocs.some(q => q.isError);
 
+  const [isNavEllipsisClick, setIsNavEllipsisClick] = useState(false);
   const [modalType, setModalType] = useState(null);
   const [modalData, setModalData] = useState(null); 
   const [subParameterInput, setSubParameterInput] = useState('');
@@ -106,6 +127,10 @@ const useParamSubparam = () => {
   const [renameInput, setRenameInput] = useState('');
   const [renameDocId, setRenameDocId] = useState(null); // Track which doc is being renamed
   const [loadingFileId, setLoadingFileId] = useState(null); // Store the doc id that's loading
+  const [activeSubParamId, setActiveSubParamId] = useState(null); // Set state for each subparam option
+  const [selectedTaskForce, setSelectedTaskForce] = useState([]); // Set state for task force selection
+  const [activeTaskForceId, setActiveTaskForceId] = useState(null); // Set state for assigned task force option
+  const [showConfirmUnassign, setShowConfirmUnassign] = useState(false); // Set state for unassigning confirmation
 
   // Auto-focus on sub-parameter input
   const subParamInputRef = useAutoFocus(
@@ -113,16 +138,33 @@ const useParamSubparam = () => {
     modalType === MODAL_TYPE.ADD_SUBPARAMETERS
   );
 
+  // Render VATFModal if modal data and modal type is available (usually it is available during navigation)
+  useEffect(() => {
+    const modalType = localStorage.getItem('modal-type');
+    const modalData = localStorage.getItem('modal-data');
+    setModalData(JSON.parse(modalData));
+    setModalType(JSON.parse(modalType));
+  }, []);
+
   // Remove duplicate automatically if sub-parameter state changes
   useEffect(() => {
     setDuplicateValues(prev => prev.filter(val => subParamsArr.includes(val)));
   }, [subParamsArr]);
+
+  // Close navigation dropdown when click outside
+  useOutsideClick(navEllipsisRef, () => setIsNavEllipsisClick(false));
 
   // Close file option when click outside
   useOutsideClick(fileOptionRef, () => setActiveDocId(null));
 
   // Close input when click outside
   useOutsideClick(renameFileRef, () => cancelRename());
+
+  // Close subParamOption Dropdown when click outside
+  useOutsideClick(subParamOptionRef, () => setActiveSubParamId(null));
+
+  // Close assigned tf option when click outside
+  useOutsideClick(assignedTaskForceRef, () => setActiveTaskForceId(null));
 
   // Refetch data if there are new updates such as addition and deletion
   useEffect(() => {
@@ -141,9 +183,12 @@ const useParamSubparam = () => {
     return subParamsData.some(d => d.sub_parameter.trim() === value.trim());
   };
 
+  const handleNavEllipsis = () => {
+    setIsNavEllipsisClick(!isNavEllipsisClick);
+  };
+
   const handleAddSubparamClick = () => {
     setModalType(MODAL_TYPE.ADD_SUBPARAMETERS);
-    console.log('clicked');
   };
 
   // Handler for dropdown expand
@@ -151,14 +196,34 @@ const useParamSubparam = () => {
     setExpandedId((prev) => (prev === id ? null : id));
   };
 
-  const handleCloseModal = () => {
-    setSubParamsArr([]);
-    setModalType(null);
-    setModalData(null);
-  };
+  const handleCloseModal = (from = {}) => {
+    if (from.addSubParameter) {
+      setSubParamsArr([]);
+      setModalType(null);
 
-  console.log(modalData);
-  console.log(modalType);
+    } else if (from.assignTaskForce) {
+      setModalType(null);
+      setModalData(null);
+      setSelectedTaskForce([]);
+
+    } else if (from.viewAssignedTaskForce) {
+      localStorage.removeItem('modal-type');
+      localStorage.removeItem('modal-data');
+      setModalType(null);
+      setModalData(null);
+
+    } else if (from.confirmUnassign) {
+      setShowConfirmUnassign(false);
+
+    } else if (from.deleteSubParam) {
+      setModalType(null);
+      setModalData(null);
+
+    } else if (from.deleteDoc) {
+      setModalType(null);
+      setModalData(null);
+    }
+  };
 
   const handleSubParamChange = (e) => {
     setSubParameterInput(e.target.value)
@@ -198,18 +263,16 @@ const useParamSubparam = () => {
         showSuccessToast(SUBPARAMETER_ADDITION.SUCCESS);
       }
 
-      handleCloseModal();
+      handleCloseModal({ addSubParameter: true });
 
     } catch (error) {
       const duplicateValue = error?.response?.data?.error?.duplicateValue;
-      console.log(duplicateValue);
       setDuplicateValues(prev => [...new Set([...prev, duplicateValue])]);
       showErrorToast(`${duplicateValue} already exist.`, 'top-center');
     }
   };
 
   const handleSPCardClick = (data = {}) => {
-    console.log('Clicked');
     const subParameterUUID = data?.subParameterUUID;
     navigate(SUBPARAM_INDICATORS({
       accredInfoUUID,
@@ -241,8 +304,6 @@ const useParamSubparam = () => {
       ...prev,
       [subParameterId]: file
     }));
-
-    console.log('Selected file:', file.name, 'for subParam:', subParameterId);
   };
 
 
@@ -362,7 +423,6 @@ const useParamSubparam = () => {
     }
   };
 
-
   const handleKeyDown = (e, doc) => {
     if(e.key === 'Enter') handleSaveRename(doc.doc_id);
     if(e.key === 'Escape') cancelRename();
@@ -387,11 +447,262 @@ const useParamSubparam = () => {
         showSuccessToast(res?.data?.message || 'Remove successfully!');
       }
 
-      handleCloseModal();
+      handleCloseModal({ deleteDoc: true });
 
     } catch (error) {
       console.log(error);
       showErrorToast('Something went wrong. Try again.');
+      throw error;
+    }
+  };
+
+  const handleSubParamOption = (e, subParamId) => {
+    e.stopPropagation();
+    setActiveSubParamId(prev => prev !== subParamId ? subParamId : null);
+  };
+
+  const handleFileUserClick = (e, data = {}) => {
+    e.stopPropagation();
+    const { subParamId, subParamUUID, subParameter } = data;
+    setModalType(MODAL_TYPE.ASSIGN_TASK_FORCE);
+    setModalData({
+      accredInfoId,
+      levelId,
+      programId,
+      areaId,
+      paramId,
+      subParamId,
+      subParamUUID,
+      subParameter
+    });
+  };
+
+  const handleSubParamOptionItem = (e, data = {}) => {
+    e.stopPropagation();
+    const { label, pspmId, subParamId, subParamUUID, subParameter } = data;
+
+    if (label === 'Assign Task Force') {
+      handleFileUserClick(e, data);
+      
+    } else if (label === 'Rename') {
+      console.log(label);
+
+    } else if (label === 'Move to Archive') {
+      console.log(label);
+
+    } else if (label === 'Delete') {
+      setActiveSubParamId(null);
+      setModalType(MODAL_TYPE.DELETE_SUBPARAM);
+      setModalData({
+        pspmId,
+        subParamId,
+        subParamUUID,
+        subParameter
+      });
+    }
+  };
+
+  const handleDeleteSubParam = async (data = {}) => {
+    const { pspmId, subParamId, subParameter } = data;
+
+    try {
+      const res = await deletePSPM({
+        pspmId,
+        subParameterId: subParamId,
+        subParameter
+      });
+
+      if (res.data.success && res.data.message) {
+        showSuccessToast(res.data.message);
+      }
+
+      handleCloseModal({ deleteSubParam: true });
+      
+    } catch (error) {
+      showErrorToast('Something went wrong. Please try again.');
+      console.error('Error delete sub-parameter:', error);
+      throw error;
+    }
+  };
+
+  // Toggle single checkbox (SubParamModal)
+  const handleCheckboxChange = (userId) => {
+    setSelectedTaskForce((prev) =>
+      prev.includes(userId)
+        ? prev.filter((id) => id !== userId) // Remove if already selected
+        : [...prev, userId] // Add if not selected
+    );
+  };
+
+  // Toggle Select All (SubParamModal)
+  const handleSelectAll = () => {
+    if (selectedTaskForce.length === taskForce.length) {
+      setSelectedTaskForce([]); // Unselect all
+    } else {
+      setSelectedTaskForce(taskForce.map((user) => user.id)); // select all by id
+    }
+  };
+
+  // Pass selectedTaskForce to backend on save (SubParamModal)
+  const handleAssignTaskForce = async (data = {}) => {
+    const { 
+      accredInfoId, levelId, programId, areaId, 
+      parameterId, subParameterId, subParameter 
+    } = data;
+    const userIDList = selectedTaskForce;
+    
+    try {
+      const res = await addAssignment({
+        accredInfoId, 
+        levelId, 
+        programId, 
+        areaId,
+        parameterId,
+        subParameterId,
+        userIDList
+      }, { 
+        includeParameter: true, 
+        includeSubParameter: true 
+      });
+
+      if (res?.data?.success) {
+        showSuccessToast(ASSIGNMENT.SUCCESS);
+      }
+
+      handleCloseModal({ assignTaskForce: true });
+
+    } catch (error) {
+      const userId = error?.response?.data?.error?.user;
+      const user = getFullNameById(taskForce, userId);
+      
+      if (userId && user) {
+        showErrorToast(`${user} is already assigned to ${subParameter}.`, 'top-center');
+
+      } else {
+        showErrorToast(ASSIGNMENT.ERROR);
+      }
+
+      throw error;
+    }
+  };
+
+  const handleProfileStackClick = (e, data = {}) => {
+    e.stopPropagation();
+    const { subParameterId, subParameter, taskForces } = data;
+    setModalType(MODAL_TYPE.VIEW_ASSIGNED_TASK_FORCE);
+    setModalData({
+      accredInfoId,
+      levelId,
+      programId,
+      areaId,
+      parameterId: paramId,
+      subParameterId,
+      subParameter,
+      taskForces
+    });
+  };
+
+  // For SubParameModal.jsx
+  const handleATFEllipsisClick = (data = {}) => {
+    const { taskForceId } = data;
+    console.log('ellipsis clicked!');
+    setActiveTaskForceId(prev => prev === taskForceId ? null : taskForceId);
+  };
+
+  // For SubParamModal.jsx
+  const handleAddTaskForceClick = () => {
+    setModalType(MODAL_TYPE.ASSIGN_TASK_FORCE);
+  };
+
+  // For SubParamModal.jsx
+  const handleUnassignedAllClick = () => {
+    console.log('unassigned all clicked!')
+  };
+
+  // For SubParamModal.jsx (Assigned Task Force Options)
+  const handleAssignedOptionsClick = (option, data = {}) => {
+    if (option.label === 'View Profile') {
+      navigate(PATH.DEAN.TASK_FORCE_DETAIL(data.taskForceUUID), {
+        state: { from: PATH.DEAN.PROGRAM_AREAS({ accredInfoUUID, level, programUUID }) } 
+      });
+      localStorage.setItem('modal-type', JSON.stringify(modalType));
+      localStorage.setItem('modal-data', JSON.stringify({
+        accredInfoId,
+        levelId,
+        programId,
+        areaId,
+        parameterId: paramId,
+        subParameterId: data.subParameterId,
+        subParameter: data.subParameter,
+        taskForces: data.taskForces
+      }));
+      
+    } else if (option.label === 'Unassign') {
+      console.log('Unassigned clicked!');
+      setModalData(prev => ({
+        ...prev,
+        selectedTaskForce: { id: data.taskForceId, fullName: data.taskForce, profilePic: data.taskForceImage }
+      }));
+      handleUnassignedClick({
+        accredInfoId: data.accredInfoId,
+        levelId: data.levelId,
+        programId: data.programId,
+        areaId: data.areaId,
+        parameterId: paramId,
+        subParameterId: data.subParameterId,
+        subParameter: data.subParameter,
+        taskForceId: data.taskForceId,
+        taskForce: data.taskForce
+      });
+      console.log(data);
+    } 
+  };
+
+  // For SubParamModal.jsx (Assigned Task Force option - Unassigned)
+  const handleUnassignedClick = (data = {}) => {
+    const {
+      accredInfoId, levelId, programId, 
+      areaId,  taskForceId
+    } = data;
+   setShowConfirmUnassign(true);
+
+    return { 
+      accredInfoId, levelId, programId, areaId, taskForceId 
+    };
+  };
+
+  const handleConfirmUnassign = async (data = {}) => {
+    const { 
+      accredInfoId, levelId, programId, 
+      areaId, parameterId, subParameterId, taskForceId 
+    } = data;
+
+    console.log({ accredInfoId, levelId, programId, 
+      areaId, parameterId, subParameterId, taskForceId });
+
+    try {
+      const res = await deleteAssignment({
+        accredInfoId, levelId, programId,
+        areaId, parameterId, subParameterId, 
+        taskForceId
+      });
+
+      console.log(res);
+
+      handleCloseModal({ confirmUnassign: true });
+      setModalData(prev => ({
+        ...prev,
+        taskForces: modalData.taskForces.filter(tf => tf.id !== taskForceId)
+      }));
+
+      if (res.data.success) {
+        showSuccessToast(TOAST_MESSAGES.UNASSIGN.SUCCESS);
+      }
+
+    } catch (error) {
+      showErrorToast(TOAST_MESSAGES.UNASSIGN.ERROR);
+      console.error('Error deleting assigment:', error);
+      throw error;
     }
   };
 
@@ -401,10 +712,13 @@ const useParamSubparam = () => {
     modalData,
 
     refs: {
+      navEllipsisRef,
       subParamInputRef,
       fileInputRef,
       fileOptionRef,
-      renameFileRef
+      renameFileRef,
+      subParamOptionRef,
+      assignedTaskForceRef
     },
     
     params: {
@@ -425,6 +739,8 @@ const useParamSubparam = () => {
     },
 
     datas: {
+      title,
+      year,
       subParameter,
       subParameters,
       loading,
@@ -443,7 +759,17 @@ const useParamSubparam = () => {
       errorDocs,
       expandedId,
       selectedFiles,
-      isRename
+      isRename,
+      isNavEllipsisClick,
+      activeSubParamId,
+      taskForce,
+      taskForceLoading,
+      taskForceError,
+      taskForceRefetch,
+      selectedTaskForce,
+      assignmentData,
+      activeTaskForceId,
+      showConfirmUnassign
     },
 
     handlers: {
@@ -466,6 +792,20 @@ const useParamSubparam = () => {
       handleKeyDown,
       handleRemoveClick,
       handleConfirmRemove,
+      handleNavEllipsis,
+      handleSubParamOption,
+      handleSubParamOptionItem,
+      handleFileUserClick,
+      handleDeleteSubParam,
+      handleCheckboxChange,
+      handleSelectAll,
+      handleAssignTaskForce,
+      handleProfileStackClick,
+      handleATFEllipsisClick,
+      handleAddTaskForceClick,
+      handleUnassignedAllClick,
+      handleAssignedOptionsClick,
+      handleConfirmUnassign
     }
   };
 };

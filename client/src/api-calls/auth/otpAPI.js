@@ -7,3 +7,10 @@ export const verifyOTP = async (email, otp) => {
     otp
   });
 };
+
+export const OAuth = async (tokenResponse, mode) => {
+  return await axios.post(`${API_BASE_URL}/auth/google`, {
+    token: tokenResponse.access_token,
+    mode
+  }, { withCredentials: true })
+};

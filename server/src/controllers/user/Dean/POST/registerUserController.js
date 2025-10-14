@@ -3,8 +3,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { getUserByEmail, insertUser } from "../../../../models/userModel.js";
 import { handleBlankUserInput } from "../../../../utils/handleBlankField.js";
 import { insertUserModel } from '../../../../models/user/POST/postUser.js';
-import { getUserBy } from '../../../../models/user/GET/getUser.js';
-
 
 export const registerUserController = async (req, res) => {
   // Step 1: Get the data from the request body (typically from the frontend)
@@ -37,6 +35,16 @@ export const registerUserController = async (req, res) => {
     const status = 'Pending';
     const hashedPassword = await bcrypt.hash(password, 10); // Hash password using bcrypt
 
+    console.log('line 40:', {
+      userUUID, 
+      profilePicPath: null, 
+      fullName, 
+      email, 
+      password: hashedPassword, 
+      role, 
+      status
+    });
+
     const insertResult = await insertUserModel({
       userUUID, 
       profilePicPath: null, 
@@ -47,18 +55,27 @@ export const registerUserController = async (req, res) => {
       status
     });
 
-    const userResult = await getUserBy('id', insertResult.insertId, true);
-    console.log(userResult);
+    console.log('line 60:', insertResult.insertId);
 
-    // Save user to session temporarily after registration
+    // After successful insert:
+    const newUser = {
+      user_id: insertResult.insertId,
+      user_uuid: userUUID,
+      full_name: fullName,
+      email: email,
+      profile_pic_path: null,
+      role: 'Unverified User',
+      status: 'Pending'
+    };
+
     req.session.user = {
-      userId: userResult.user_id, 
-      userUUID: userResult.user_uuid, 
-      email: userResult.email, 
-      fullName: userResult.full_name,
-      profilePicPath: userResult.profile_pic_path, 
-      role: userResult.role, 
-      status: userResult.status
+      userId: newUser.user_id,
+      userUUID: newUser.user_uuid,
+      email: newUser.email,
+      fullName: newUser.full_name,
+      profilePicPath: newUser.profile_pic_path,
+      role: newUser.role,
+      status: newUser.status
     };
 
     console.log(req.session.user);
@@ -69,16 +86,16 @@ export const registerUserController = async (req, res) => {
       user: req.session.user
     });
 
-  } catch (err) {
+  } catch (error) {
     // Step 6: Return an error if any (typically server error)
-    if (err.code === 'ER_DUP_ENTRY') {
+    if (error.message === 'DUPLICATE_ENTRY') {
       return res.status(409).json({
         message: 'Email already exists.',
         success: false,
         alreadyExists: true, 
       });
     }
-    console.error(err);
+    console.error(error);
     return res.status(500).json({ 
       message: 'Something went wrong in our server.', 
       success: false 

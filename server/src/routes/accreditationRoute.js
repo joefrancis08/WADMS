@@ -1,17 +1,17 @@
 import express from 'express';
-import { deleteProgramToBeAccreditedController } from '../controllers/accreditation/programs-to-be-accredited/programToBeAccreditedController.js';
 import { addLevelController, fetchLevelsController } from '../controllers/accreditation/level/levelController.js';
 import { deletePeriodController, fetchPeriodController } from '../controllers/accreditation/period/periodController.js';
 import { addProgramAreaController, deletePAMController, fetchProgramAreaController } from '../controllers/accreditation/program-area-mapping/programAreaMappingController.js';
-import { addAreaParameterController, fetchAreaParameterController } from '../controllers/accreditation/area-parameter-mapping/areaParameterMappingController.js';
-import { addParamSubParamController, fetchParamSubParamController } from '../controllers/accreditation/param-subparam-mapping/paramSubparamController.js';
+import { addAreaParameterController, deleteAreaParameterController, fetchAreaParameterController } from '../controllers/accreditation/area-parameter-mapping/areaParameterMappingController.js';
+import { addParamSubParamController, deleteParamSubParamController, fetchParamSubParamController } from '../controllers/accreditation/param-subparam-mapping/paramSubparamController.js';
 import { addAccredInfoController } from '../models/accreditation/accreditation-info/accreditationInfoController.js';
 import { addILPController, fetchILPController } from '../controllers/accreditation/info-level-program-mapping/ILPController.js';
 import { addSIMController, fetchSIMController } from '../controllers/accreditation/subparam-indicator-mapping/SIMController.js';
 import fetchAreasBy from '../controllers/accreditation/areas/GET/fetchAreasBy.js';
 import { addDocumentController, deleteDocController, fetchDocumentsController, updateDocController } from '../controllers/accreditation/document/documentController.js';
 import { upload } from '../middlewares/uploadFile.js';
-import { addAssignmentController, fetchAssignmentController } from '../controllers/accreditation/assignments/assignmentController.js';
+import { addAssignmentController, deleteAssignmentController, fetchAssignmentController } from '../controllers/accreditation/assignments/assignmentController.js';
+import deleteILP from '../controllers/accreditation/info-level-program-mapping/DELETE/deleteILP.js';
 
 const accreditationRouter = express.Router();
 
@@ -39,8 +39,11 @@ accreditationRouter.get('/fetch-assignments', fetchAssignmentController);
 accreditationRouter.patch('/rename-document/:docId', updateDocController);
 
 accreditationRouter.delete('/delete-accreditation-period', deletePeriodController);
-accreditationRouter.delete('/delete-programs-to-be-accredited', deleteProgramToBeAccreditedController);
+accreditationRouter.delete('/delete-info-level-program', deleteILP);
 accreditationRouter.delete('/delete-program-area', deletePAMController);
+accreditationRouter.delete('/delete-area-parameter', deleteAreaParameterController);
+accreditationRouter.delete('/delete-param-subparam', deleteParamSubParamController);
 accreditationRouter.delete('/delete-document', deleteDocController);
+accreditationRouter.delete('/delete-assignment', deleteAssignmentController);
 
 export default accreditationRouter;

@@ -1,18 +1,20 @@
 import { useState, useEffect, useMemo} from 'react';
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import PATH from "../../constants/path";
 import MODAL_TYPES from '../../constants/modalTypes';
 import { useUsersBy } from "../fetch-react-query/useUsers";
 import usePageTitle from '../usePageTitle';
 import useFetchAssignments from '../fetch-react-query/useFetchAssignments';
+import { USER_ROLES } from '../../constants/user';
 
 const useVerifiedUserDetail = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const { uuid } = useParams();
   const { TASK_FORCE } = PATH.DEAN;
   const { NOT_FOUND_URL } = PATH.PUBLIC;
   const { USER_DELETION_CONFIRMATION } = MODAL_TYPES;
-  const { users, loading, error } = useUsersBy();
+  const { users, loading, error } = useUsersBy({ role: [USER_ROLES.TASK_FORCE_CHAIR, USER_ROLES.TASK_FORCE_MEMBER]});
   const taskForce = useMemo(() => users, [users]);
 
   const userId = getIdByUuid(taskForce, uuid);
@@ -21,8 +23,9 @@ const useVerifiedUserDetail = () => {
     loading: loadingAssignments,
     error: errorAssignments,
     refetch: refetchAssignments
-  } = useFetchAssignments(userId);
+  } = useFetchAssignments({ userId });
 
+  console.log(taskForce);
   
   const assignmentData = assignments.assignmentData ?? [];
   console.log(assignmentData);
@@ -50,9 +53,14 @@ const useVerifiedUserDetail = () => {
   const handleDelete = (e) => {
     e.stopPropagation();
     setModalType(USER_DELETION_CONFIRMATION);
-  }
+  };
+
+  const handleBack = () => {
+    navigate(-1);
+  };
 
   return {
+    navigate, 
     params: {
       uuid
     },
@@ -72,7 +80,8 @@ const useVerifiedUserDetail = () => {
     
     handlers: {
       handleDelete,
-      refetchAssignments
+      refetchAssignments,
+      handleBack
     },
 
     constant: {

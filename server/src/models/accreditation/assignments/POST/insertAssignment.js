@@ -44,6 +44,7 @@ const insertAssignment = async (data, connection = null) => {
   } catch (error) {
     if (error.code === 'ER_DUP_ENTRY') {
       const duplicateError = new Error('DUPLICATE_ENTRY');
+      duplicateError.user = userId;
       throw duplicateError;
     }
 

@@ -21,7 +21,7 @@ import PrivateRouteWrapper from '../wrapper/PrivateRouteWrapper';
 const { 
   DASHBOARD, 
   TASK_FORCE_DETAIL_TEMPLATE, 
-  UNVERIFIED_USERS,
+  UNVERIFIED_USER,
   UNVERIFIED_USERS_ID, 
   TASK_FORCE, 
   PROGRAMS_TO_BE_ACCREDITED,
@@ -37,7 +37,7 @@ const { NOT_FOUND_URL, LOGIN } = PATH.PUBLIC;
 const protectedRoutes = [
   { path: DASHBOARD, element: <Dashboard />},
   { path: TASK_FORCE, element: <TaskForce /> },
-  { path: UNVERIFIED_USERS, element: <UnverifiedUsers /> },
+  { path: UNVERIFIED_USER, element: <UnverifiedUsers /> },
   { path: TASK_FORCE_DETAIL_TEMPLATE, element: <TaskForceDetail /> },
   { path: UNVERIFIED_USERS_ID, element: <UnverifiedUsers /> },
   { path: PROGRAMS_TO_BE_ACCREDITED, element: <ProgramsToBeAccredited /> },

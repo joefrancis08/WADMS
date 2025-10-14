@@ -257,7 +257,30 @@ export const fetchDocumentsDynamically = async (data = {}) => {
   }).then(res => res.data); // React Query expects the resolved data
 };
 
-export const fetchAssignments = null;
+export const fetchAssignments = (data = {}, signal) => {
+  const { 
+    accredInfoId, levelId, programId, areaId, 
+    parameterId, subParameterId, indicatorId
+  } = data;
+  return axios.get(`${API_BASE_URL}/accreditation/fetch-assignments`, {
+    params: {
+      accredInfoId,
+      levelId,
+      programId,
+      areaId,
+      parameterId,
+      subParameterId,
+      indicatorId
+    },
+    signal
+  });
+};
+
+export const fetchAccreditationBodies = (signal) => {
+  return axios.get(`${API_BASE_URL}/accreditation-body/fetch-accreditation-bodies`, {
+    signal
+  });
+};
 
 export const updateDocName = (docId, newFileName) => {
   return axios.patch(`${API_BASE_URL}/accreditation/rename-document/${docId}`, {
@@ -267,29 +290,16 @@ export const updateDocName = (docId, newFileName) => {
   });
 };
 
-export const deleteProgramToBeAccredited = (startDate, endDate, levelName, programName) => {
-  return axios.delete(`${API_BASE_URL}/accreditation/delete-programs-to-be-accredited`, {
+export const deleteAccredInfo = (data = {}, condition = {}) => {
+  return axios.delete(`${API_BASE_URL}/accreditation/delete-info-level-program`, {
     params: {
-      startDate,
-      endDate,
-      levelName,
-      programName
+      title: data.title,
+      year: data.year,
+      accredBody: data.accredBody,
+      level: condition.includeLevel ? data.level : null,
+      program: condition.includeProgram ? data.program : null,
     }
   });
-};
-
-export const deleteAccreditationPeriod = (startDate, endDate, options = {}) => {
-  if (options.isFromPTBA) {
-    return axios.delete(`${API_BASE_URL}/accreditation/delete-accreditation-period`, {
-      params: {
-        startDate,
-        endDate
-      }
-    });
-    
-  } else {
-    return 'Invalid options.';
-  }
 };
 
 export const deletePAM = ({
@@ -312,12 +322,54 @@ export const deletePAM = ({
   });
 };
 
+export const deleteAPM = (data = {}) => {
+  const { id, parameter } = data;
+  
+  return axios.delete(`${API_BASE_URL}/accreditation/delete-area-parameter`, {
+    params: {
+      id,
+      parameter
+    }
+  });
+};
+
+export const deletePSPM = (data = {}) => {
+  const { pspmId, subParameterId, subParameter } = data;
+
+  return axios.delete(`${API_BASE_URL}/accreditation/delete-param-subparam`, {
+    params: {
+      pspmId,
+      subParameterId,
+      subParameter
+    }
+  });
+};
+
 export const deleteDoc = (docId) => {
   return axios.delete(`${API_BASE_URL}/accreditation/delete-document`, {
     params: {
       docId
     }
   });
+};
+
+export const deleteAssignment = (data = {}) => {
+  const { 
+    accredInfoId, levelId, programId, areaId, parameterId, subParameterId, indicatorId, taskForceId 
+  } = data;
+
+  return axios.delete(`${API_BASE_URL}/accreditation/delete-assignment`, {
+    params: {
+      taskForceId,
+      accredInfoId, 
+      levelId, 
+      programId, 
+      areaId, 
+      parameterId, 
+      subParameterId, 
+      indicatorId 
+    }
+  })
 };
 
 

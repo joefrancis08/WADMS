@@ -5,8 +5,10 @@ import { insertLevel } from "../../level/POST/insertLevel.js";
 import insertAccreditationInfo from "../../accreditation-info/POST/insertAccreditationInfo.js";
 import { insertProgram } from "../../../programs/POST/insertProgram.js";
 import getAccredInfoBy from '../../accreditation-info/GET/getAccredInfoBy.js';
+import getAccredInfo from '../../accreditation-info/GET/getAccredInfo.js';
 
 const insertInfoLevelProgramMapping = async ({ title, year, accredBody, level, program }) => {
+  console.log('addILPModel line 11:', { title, year, accredBody, level, program })
   /* 
     Get a connection from the database pool
     so we can manually control transaction behavior
@@ -48,7 +50,9 @@ const insertInfoLevelProgramMapping = async ({ title, year, accredBody, level, p
     }
 
     // Logic here is the same as program and level
-    const accredInfoResult = await getAccredInfoBy('year', year, connection);
+    const accredInfoResult = await getAccredInfo({ title, year, accredBody }, connection);
+
+    console.log('line 54 of addILP model:', accredInfoResult);
 
     let accredInfoId;
     if (accredInfoResult.length > 0) {
@@ -85,7 +89,7 @@ const insertInfoLevelProgramMapping = async ({ title, year, accredBody, level, p
     */
     await connection.rollback();
 
-    if (error.code === 'ER_DUP_ENTRY') {
+    if (error.code === 'ER_DUP_ENTRY' || error.message === 'DUPLICATE_ENTRY') {
       const duplicateError = new Error('DUPLICATE_ENTRY');
       duplicateError.duplicateValue = [title, year, accredBody, level, program];
       throw duplicateError;

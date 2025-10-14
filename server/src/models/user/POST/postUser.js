@@ -27,6 +27,11 @@ export const insertUserModel = async (data = {}) => {
     return result;
 
   } catch (error) {
+    if (error.code === 'ER_DUP_ENTRY') {
+        const duplicateError = new Error('DUPLICATE_ENTRY');
+        duplicateError.duplicateValue = email;
+        throw duplicateError;
+    }
     console.error('Error inserting user:', error);
     throw error;
   }

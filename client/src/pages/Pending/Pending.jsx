@@ -2,9 +2,14 @@ import React from 'react';
 import { pendingIcon } from '../../assets/icons.js';
 import { useAuth } from '../../contexts/AuthContext';
 import PendingSkeletonLoader from '../Pending/PendingSkeletonLoader.jsx';
+import { useNavigate } from 'react-router-dom';
+import PATH from '../../constants/path.js';
+import usePageTitle from '../../hooks/usePageTitle.js';
 
 const Pending = () => {
+  const navigate = useNavigate();
   const { user, isLoading } = useAuth();
+  usePageTitle('Pending Verification');
 
   if (isLoading) 
     return (
@@ -28,10 +33,10 @@ const Pending = () => {
         <div className="content border-2 border-green-500 rounded-3xl pt-4">
           <h1 className="text-2xl font-bold text-center text-green-700">Pending Verification</h1>
           <p className="text-center mt-4 m-2">
-            Hello, <strong>{user.fullName}</strong>!
+            Good day, <strong>{user.fullName}</strong>!
           </p>
           <p className="text-center mt-4 m-2">
-            Your registration is currently awaiting verification by the College Dean.
+            Your registration is currently awaiting verification by the administrator.
           </p>
           <p className="text-center mt-4 m-2">You'll be notified once your account has been reviewed and approved.</p>
           <p className="text-center mt-4 m-2 pb-4">Thank you for your patience!</p>

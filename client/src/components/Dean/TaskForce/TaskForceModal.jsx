@@ -1,5 +1,5 @@
 import MODAL_TYPE from '../../../constants/modalTypes';
-import { CircleQuestionMark, Trash2 } from 'lucide-react';
+import { Check, CheckCheck, CheckCircle, CircleQuestionMark, Copy, Link, Link2, LoaderCircle, Mail, Send, Trash2, X } from 'lucide-react';
 import ImageUpload from '../../Form/Upload/ImageUpload';
 import AddUserModal from '../../Modals/user/AddUserModal';
 import UpdateUserModal from '../../Modals/user/UpdateUserModal';
@@ -9,7 +9,11 @@ import AddField from '../../Form/AddField';
 import { emailRegex } from '../../../utils/regEx';
 import Tooltip from '../../Popover';
 import Popover from '../../Popover';
-import { deleteUser } from '../../../assets/icons';
+import { deleteUser, gmailIcon } from '../../../assets/icons';
+import { useState } from 'react';
+import { showSuccessToast } from '../../../utils/toastNotification';
+
+const CLIENT_BASE_URL = import.meta.env.VITE_CLIENT_BASE_URL;
 
 const TaskForceModal = ({ data, handlers }) => {
   const {
@@ -23,7 +27,9 @@ const TaskForceModal = ({ data, handlers }) => {
     infoClick,
     isUpdateBtnDisabled,
     taskForceChair,
-    taskForceMember
+    taskForceMember,
+    accessTokens,
+    loadingToken
   } = data;
 
   const {
@@ -42,6 +48,28 @@ const TaskForceModal = ({ data, handlers }) => {
     toggleDropdown,
     handleConfirmDelete,
   } = handlers;
+
+  console.log(modalData);
+
+  const token = accessTokens?.map(t => t.accessToken);
+  console.log(token);
+
+  const accessLink = accessTokens?.find(t => modalData?.userId === t?.userId)?.accessToken;
+  const url = accessLink ? `${CLIENT_BASE_URL}/redirect?token=${accessLink}` : '';
+
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000); // reset after 2s
+      showSuccessToast('Copied to clipboard!');
+
+    } catch (error) {
+      console.error('Failed to copy:', error);
+    }
+  };
 
   switch (modalType) {
     case MODAL_TYPE.ADD_TF:
@@ -197,6 +225,58 @@ const TaskForceModal = ({ data, handlers }) => {
           }
         />
       );
+
+    case MODAL_TYPE.VIEW_ACCESS_LINK:
+      return (
+        <div className="h-full fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs overflow-hidden">
+          <div className="w-full md:max-w-xl max-md:mx-4 bg-white rounded shadow-2xl px-6 pt-4 animate-fadeIn ">
+            <div className='flex text-slate-900 text-lg font-medium justify-between items-center max-md:items-center'>
+              Access Link of {modalData.fullName}
+              <button 
+                onClick={() => handleCloseModal({ viewAccessLink: true })}
+                className='p-1 hover:bg-slate-200 rounded-full -mr-2 cursor-pointer active:scale-95'>
+                <X className='h-5 w-5'/>
+              </button>
+            </div>
+            {loadingToken ? (
+                <div className='w-full flex flex-col my-4 justify-center gap-y-3'>
+                  <LoaderCircle className='h-16 w-16 animate-spin'/>
+                </div>
+              ) : (
+                <div className='w-full flex flex-col my-4 justify-center gap-y-3'>
+                  <p className='text-xs -mb-2'>
+                    Please share this link only with {modalData.fullName} to ensure that access remain secure and limited to the intended recipient.
+                  </p>
+                  <div className='relative flex justify-between w-full items-start'>
+                      <input 
+                        type='text'
+                        value={url}
+                        readOnly
+                        className='relative border border-slate-300 rounded-md pl-10 pr-15 py-4 w-full text-center focus:outline-0'
+                      />
+                      <Link className='absolute top-4.5 left-3 h-5 w-5 text-slate-700'/>
+                      <button 
+                        onClick={handleCopy}
+                        className='absolute top-3 right-3 p-2 hover:bg-slate-200 rounded-full cursor-pointer active:scale-95'>
+                        {copied ? <Check className='text-green-700 h-4 w-4 font-bold' /> : <Copy className='h-4 w-4'/>}
+                      </button>
+                  </div>
+                  <div className='flex justify-between items-center'>
+                    <button className='flex items-center justify-center gap-x-2 text-sm px-3 py-1 rounded-full cursor-pointer hover:bg-slate-200 border border-slate-300 active:scale-95 transition'>
+                      <Link2 className='h-5 w-5'/>
+                      Generate new
+                    </button>
+                    <button className='flex items-center justify-center text-sm pl-1 pr-3 py-1 rounded-full cursor-pointer hover:bg-slate-200 border border-slate-300 active:scale-95 transition'>
+                      <img src={gmailIcon} alt='Gmail Logo' className='h-5 w-auto' loading='lazy' />
+                      Share via email
+                    </button>
+                  </div>
+                </div>
+              )}
+          </div>
+        </div>
+      );
+
     default:
       return null;
   }

@@ -3,15 +3,25 @@ import MODAL_TYPE from '../../../../constants/modalTypes';
 import AreaBaseModal from '../../../Modals/accreditation/AreaBaseModal';
 import AddField from '../../../Form/AddField';
 import ConfirmationModal from '../../../Modals/ConfirmationModal';
-import { LoaderCircle, Plus, TriangleAlert, UserRoundX, UserX } from 'lucide-react';
+import { Ellipsis, LoaderCircle, Plus, TriangleAlert, UserRoundMinus, UserRoundX, UserX, X } from 'lucide-react';
 import { deleteFolder, notAssignedDM, userIcon } from '../../../../assets/icons';
+import Popover from '../../../Popover';
+import { MENU_OPTIONS } from '../../../../constants/user';
+import PATH from '../../../../constants/path';
+import { replace } from 'react-router-dom';
+import ATFModalBody from './ATFModalBody';
+import VATFModal from './VATFModal';
 
 const PROFILE_PIC_PATH = import.meta.env.VITE_PROFILE_PIC_PATH;
 
-const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
-  const { areaInputRef } = refs;
+const AreaModal = ({ navigation, params, refs, modalType, datas, inputs, handlers }) => {
+  const { navigate } = navigation;
+  const { areaInputRef, assignedTaskForceRef } = refs;
   const { areaInput } = inputs;
-  const { 
+  const {
+    accredInfoUUID,
+    level,
+    programUUID, 
     data,
     areas,
     areasByLevelData,
@@ -20,7 +30,9 @@ const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
     taskForce,
     taskForceLoading,
     taskForceError,
-    selectedTaskForce
+    selectedTaskForce,
+    activeTaskForceId,
+    showConfirmUnassign
   } = datas;
   const {
     handleCloseModal,
@@ -32,8 +44,16 @@ const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
     handleConfirmRemoval,
     handleCheckboxChange,
     handleSelectAll,
-    handleAssignTaskForce
+    handleAssignTaskForce,
+    handleEllipsisClick,
+    handleAddTaskForceClick,
+    handleUnassignedClick,
+    handleUnassignedAllClick,
+    handleAssignedOptionsClick,
+    handleConfirmUnassign
   } = handlers;
+
+  console.log(taskForce);
 
   function formatAreaName(text) {
     // Words that should always be lowercase
@@ -61,8 +81,8 @@ const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
     case MODAL_TYPE.ADD_AREA:
       return (
         <AreaBaseModal
-          onClose={handleCloseModal}
-          onCancel={handleCloseModal}
+          onClose={() => handleCloseModal({ addArea: true })}
+          onCancel={() => handleCloseModal({ addArea: true })}
           onSave={handleSaveAreas}
           primaryButton={areas.length > 1 ? 'Add Areas' : 'Add Area'}
           secondaryButton='Cancel'
@@ -98,106 +118,66 @@ const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
       return (
         <AreaBaseModal 
           mode='add'
-          onClose={handleCloseModal}
-          onCancel={handleCloseModal}
+          onClose={() => handleCloseModal({ assignTaskForce: true })}
+          onCancel={() => handleCloseModal({ assignTaskForce: true })}
           onSave={() => handleAssignTaskForce({
             accredInfoId: modalData.accredId,
             levelId: modalData.levelId,
             programId: modalData.programId,
-            areaId: modalData.areaId
+            areaId: modalData.areaId,
+            area: modalData.area
           })}
           primaryButton={'Assign'}
           disabled={selectedTaskForce.length === 0}
           secondaryButton={'Cancel'}
           headerContent={
-            <p className='text-xl font-semibold'>
-              Assign Task Force to {modalData.area}
+            <p className='text-xl font-semibold w-full truncate'>
+              Assign Task Force to {modalData?.area}
             </p>
           }
           bodyContent={
-            <div className='relative w-full border min-h-50 max-h-75 overflow-auto border-slate-500 rounded-lg px-4 pb-2'>
-              <div className='sticky top-0 bg-white flex items-center justify-between py-2'>
-                <h2>Select or Add Task Force</h2>
-                <button 
-                  title='Add Task Force'
-                  className='p-1 hover:bg-slate-200 rounded-full cursor-pointer active:scale-95'>
-                  <Plus className='active:scale-95'/>
-                </button>
-              </div>
-              <hr className='text-slate-200'></hr>
-              <div className='flex flex-col p-2'>
-                {taskForce.length > 0 && (
-                  <div className='flex gap-2 mb-2'>
-                    <input 
-                      type="checkbox"  
-                      id="select-all" 
-                      checked={selectedTaskForce.length === taskForce.length}
-                      onChange={handleSelectAll}
-                    />
-                    <label htmlFor="select-all">Select All</label>
-                  </div>
-                )}
-                {taskForceLoading 
-                  ? (
-                      <div className='flex gap-y-4 flex-col items-center justify-center h-40 w-full'>
-                        <LoaderCircle className='h-12 w-12 animate-spin text-slate-800'/>
-                        <p className='text-slate-900'>Loading task force data...</p>
-                      </div>
-                    ) 
-                  : (
-                      taskForce.length > 0 ? taskForce.map((data, index) => (
-                      <div 
-                        key={index} 
-                        className='flex bg-slate-100 py-3 px-2 -ml-2 mb-1 hover:bg-slate-200 cursor-pointer justify-between items-center rounded-lg active:scale-99'
-                      >
-                        <div className='flex gap-3 items-center'>
-                          <input 
-                            type="checkbox" 
-                            id={`user-${data.id}`}
-                            checked={selectedTaskForce.includes(data.id)} 
-                            onChange={() => handleCheckboxChange(data.id)}
-                            className="cursor-pointer"
-                          />
-                          <img 
-                            src={`${PROFILE_PIC_PATH}/${data.profilePicPath || '/default-profile-picture.png'}`} 
-                            alt="Profile Picture" 
-                            loading='lazy' 
-                            className='h-12 w-12 p-0.5 rounded-full border-2 border-green-600'
-                          />
-                          <label htmlFor={`user-${data.id}`}>{data.fullName}</label>
-                        </div>
-                        <p className='text-sm text-slate-600 italic mr-4'>
-                          {data.role}
-                        </p>
-                      </div>
-                    )) 
-                  : (
-                      <div className='flex gap-y-4 flex-col items-center justify-center h-40 w-full'>
-                        <UserRoundX className='h-16 w-16 text-slate-600'/>
-                        <p className='text-sm text-slate-800'>
-                          No task force yet.
-                        </p>
-                      </div>
-                    )
-                  )}
-              </div>
-            </div>
+            <ATFModalBody 
+              data={{
+                taskForce, 
+                taskForceLoading, 
+                selectedTaskForce
+              }}
+              handlers={{
+                handleSelectAll, 
+                handleCheckboxChange
+              }}
+            />
           }
+        />
+      );
+    
+    case MODAL_TYPE.VIEW_ASSIGNED_TASK_FORCE:
+      return (
+        <VATFModal 
+          data={{
+            modalData, activeTaskForceId, assignedTaskForceRef,
+            showConfirmUnassign 
+          }}
+          handlers={{
+            handleCloseModal, handleEllipsisClick, handleAssignedOptionsClick, handleAddTaskForceClick,
+            handleUnassignedAllClick, handleConfirmUnassign
+          }}
+          scope='area'
         />
       );
 
     case MODAL_TYPE.REMOVE_AREA:
       return (
         <ConfirmationModal 
-          onClose={handleCloseModal}
-          onCancelClick={handleCloseModal}
+          onClose={() => handleCloseModal({ removeArea: true })}
+          onCancelClick={() => handleCloseModal({ removeArea: true })}
           onConfirmClick={() => handleConfirmRemoval({
             title: modalData.title,
             year: modalData.year,
             accredBody: modalData.accredBody,
             level: modalData.level,
             program: modalData.program,
-            area: formatAreaName(modalData.area)
+            area: modalData.area
           })}
           isDelete={true}
           primaryButton={'Delete'}

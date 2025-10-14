@@ -4,6 +4,9 @@ import SubParameterBaseModal from '../../../Modals/accreditation/SubParameterBas
 import AddField from '../../../Form/AddField';
 import ConfirmationModal from '../../../Modals/ConfirmationModal';
 import { File, FileText, Trash2 } from 'lucide-react';
+import { deleteFolder } from '../../../../assets/icons';
+import ATFModalBody from '../Area/ATFModalBody';
+import VATFModal from '../Area/VATFModal';
 
 const SubParamModal = ({ refs, modalType, datas, handlers }) => {
   const { subParamInputRef } = refs;
@@ -11,7 +14,15 @@ const SubParamModal = ({ refs, modalType, datas, handlers }) => {
     subParamsArr,
     subParameterInput,
     duplicateValues,
-    modalData
+    modalData,
+    taskForce,
+    taskForceLoading,
+    taskForceError,
+    taskForceRefetch,
+    selectedTaskForce,
+    activeTaskForceId,
+    showConfirmUnassign,
+    assignedTaskForceRef
   } = datas;
   
   const { 
@@ -20,15 +31,26 @@ const SubParamModal = ({ refs, modalType, datas, handlers }) => {
     handleAddSubParamValue,
     handleRemoveSubParamValue,
     handleSubParamChange,
-    handleConfirmRemove
+    handleConfirmRemove,
+    handleDeleteSubParam,
+    handleCheckboxChange,
+    handleSelectAll,
+    handleAssignTaskForce,
+    handleAddTaskForceClick,
+    handleATFEllipsisClick,
+    handleUnassignedAllClick,
+    handleAssignedOptionsClick,
+    handleConfirmUnassign
   } = handlers;
+
+  console.log(modalData);
 
   switch (modalType) {
     case MODAL_TYPE.ADD_SUBPARAMETERS:
       return (
         <SubParameterBaseModal 
-          onClose={handleCloseModal}
-          onCancel={handleCloseModal}
+          onClose={() => handleCloseModal({ addSubParameter: true })}
+          onCancel={() => handleCloseModal({ addSubParameter: true })}
           onSave={handleSaveSubParams}
           primaryButton={
             subParamsArr.length > 1 
@@ -75,11 +97,107 @@ const SubParamModal = ({ refs, modalType, datas, handlers }) => {
         />
       );
 
+    case MODAL_TYPE.ASSIGN_TASK_FORCE:
+      return (
+        <SubParameterBaseModal
+          onClose={() => handleCloseModal({ assignTaskForce: true })}
+          onCancel={() => handleCloseModal({ assignTaskForce: true })}
+          onSave={() => handleAssignTaskForce({
+            accredInfoId: modalData.accredInfoId, 
+            levelId: modalData.levelId, 
+            programId: modalData.programId, 
+            areaId: modalData.areaId, 
+            parameterId: modalData.paramId, 
+            subParameterId: modalData.subParamId, 
+            subParameter: modalData.subParameter
+          })}
+          primaryButton={'Assign'}
+          disabled={selectedTaskForce.length === 0}
+          secondaryButton={'Cancel'}
+          mode={'add'}
+          headerContent={
+            <p className='text-lg text-slate-900 font-semibold w-full truncate'>
+              Assign Task Force to {modalData?.subParameter}
+            </p>
+          }
+          bodyContent={
+            <ATFModalBody
+              data={{
+                taskForce,
+                taskForceLoading,
+                taskForceError,
+                taskForceRefetch,
+                selectedTaskForce
+              }}
+              handlers={{
+                handleCheckboxChange,
+                handleSelectAll
+              }} 
+            />
+          }
+        />
+      );
+
+    case MODAL_TYPE.VIEW_ASSIGNED_TASK_FORCE:
+      return (
+        <VATFModal 
+          data={{
+            modalData, activeTaskForceId, assignedTaskForceRef,
+            showConfirmUnassign 
+          }}
+          handlers={{
+            handleCloseModal, handleEllipsisClick: handleATFEllipsisClick, handleAssignedOptionsClick, handleAddTaskForceClick,
+            handleUnassignedAllClick, handleConfirmUnassign 
+          }}
+          scope='subParameter'
+        />
+      );
+
+    case MODAL_TYPE.DELETE_SUBPARAM:
+       return (
+        <ConfirmationModal 
+          onClose={() => handleCloseModal({ deleteSubParam: true })}
+          onCancelClick={() => handleCloseModal({ deleteSubParam: true })}
+          onConfirmClick={() => handleDeleteSubParam({
+            pspmId: modalData.pspmId, 
+            subParamId: modalData.subParamId, 
+            subParameter: modalData.subParameter
+          })}
+          isDelete={true}
+          primaryButton={'Delete'}
+          secondaryButton={'Cancel'}
+          bodyContent={
+            <div className='flex flex-col items-center justify-center pb-4 px-2'>
+              <div className='flex flex-col items-center justify-center pb-4'>
+                <img src={deleteFolder} alt="Folder Delete" className='h-24 w-24 opacity-80' />
+                <p className='flex flex-col px-8 text-md md:text-lg text-center'>
+                  <span className='text-red-500 text-2xl font-semibold mt-2'>
+                    Delete
+                  </span>
+                </p>
+              </div>
+              
+              <div className='pb-2 space-y-2'>
+                <p className='px-8 text-center'>
+                  This action will permanently delete the records under this sub-parameter. This action cannot be undone.
+                </p>
+                <p className='px-8 text-center'>
+                  Do you really want to delete {' '}
+                  <span className='font-medium'>
+                    {modalData.subParameter}?
+                  </span>
+                </p>
+              </div>
+            </div>
+          }
+        />
+      );
+
     case MODAL_TYPE.DELETE_DOC:
       return (
         <ConfirmationModal 
-          onClose={handleCloseModal}
-          onCancelClick={handleCloseModal}
+          onClose={() => handleCloseModal({ deleteDoc: true })}
+          onCancelClick={() => handleCloseModal({ deleteDoc: true })}
           onConfirmClick={() => handleConfirmRemove(modalData?.docId)}
           isDelete={true}
           primaryButton={'Delete'}

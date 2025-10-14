@@ -1,6 +1,8 @@
 const MODAL_TYPES = Object.freeze({
   UU_PROFILE: 'unverified-user-profile',
   UU_VERIFICATION_CONFIRMATION: 'confirm-unverified-user-verification',
+  UU_DELETION_CONFIRMATION: 'unverified-user-confirm-delete',
+  UU_UPDATE: 'update-unverified-user',
   TF_DELETION_CONFIRMATION: 'task-force-confirm-deletion',
   ADD_TF: 'add-task-force',
   ADD_TF_CARD: 'add-task-force-from-card',
@@ -13,22 +15,29 @@ const MODAL_TYPES = Object.freeze({
 
   ADD_LEVEL_PROGRAM: 'add-level-and-programs',
 
-  DELETE_PERIOD: 'delete-period',
+  DELETE_ACCRED_INFO: 'delete-accred-info',
 
   ADD_AREA: 'add-area',
   REMOVE_AREA: 'remove-area',
 
   ADD_PARAMETER: 'add-parameter',
+  DELETE_PARAM: 'delete-parameter',
 
   ADD_SUBPARAMETERS: 'add-subparameters',
+  DELETE_SUBPARAM: 'delete-subparameter',
 
   ADD_INDICATORS: 'add-indicators',
 
   ASSIGN_TASK_FORCE: 'assign-task-force',
 
+  VIEW_ASSIGNED_TASK_FORCE: 'view-assigned-task-force',
+  UNASSIGNED_TASK_FORCE: 'unassigned-task-force',
+
   DELETE_DOC: 'delete-document',
 
-  LOGOUT: 'logout-user'
+  LOGOUT: 'logout-user',
+
+  VIEW_ACCESS_LINK: 'view-access-link'
 });
 
 export default MODAL_TYPES;

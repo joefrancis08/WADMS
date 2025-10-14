@@ -1,16 +1,22 @@
 import DeanLayout from '../../components/Layout/Dean/DeanLayout';
-import { Archive, ChevronRight, EllipsisVertical, FileUser, FolderOpen, FolderPen, Folders, Plus, PlusCircle, Trash2, Upload } from 'lucide-react';
+import { Archive, ChevronRight, CircleUserRound, EllipsisVertical, FileUser, FolderOpen, FolderPen, Folders, Plus, PlusCircle, Trash2, Upload } from 'lucide-react';
 import PATH from '../../constants/path';
 import useProgramAreas from '../../hooks/Dean/useProgramAreas';
 import AreaModal from '../../components/Dean/Accreditation/Area/AreaModal';
 import Dropdown from '../../components/Dropdown/Dropdown';
 import React from 'react';
-import formatArea from '../../utils/formatArea';
 import formatAreaName from '../../utils/formatAreaName';
+import LEVEL from '../../constants/accreditationLevels';
+import { MENU_OPTIONS } from '../../constants/user';
+import ProfileStack from '../../components/ProfileStack';
+import deduplicateAssignments from '../../utils/deduplicateAssignments';
+
+const PROFILE_PIC_PATH = import.meta.env.VITE_PROFILE_PIC_PATH;
 
 const ProgramAreas = () => {
   const {
     navigation,
+    params,
     datas,
     inputs,
     refs,
@@ -20,8 +26,9 @@ const ProgramAreas = () => {
   } = useProgramAreas();
 
   const { navigate } = navigation;
+  const { accredInfoUUID, programUUID, level } = params;
   const { areas, areaInput } = inputs;
-  const { areaInputRef, areaOptionsRef } = refs;
+  const { areaInputRef, areaOptionsRef, assignedTaskForceRef } = refs;
   const { duplicateValues } = values;
   const { modalType, modalData } = modals;
   const { 
@@ -38,7 +45,14 @@ const ProgramAreas = () => {
     taskForce,
     taskForceLoading,
     taskForceError,
-    selectedTaskForce
+    taskForceRefetch,
+    selectedTaskForce,
+    assignmentData,
+    loadingAssignments,
+    errorAssignments,
+    refetchAssignments,
+    activeTaskForceId,
+    showConfirmUnassign
   } = datas;
   const {
     handleAreaInputChange,
@@ -54,45 +68,60 @@ const ProgramAreas = () => {
     handleConfirmRemoval,
     handleCheckboxChange,
     handleSelectAll,
-    handleAssignTaskForce
+    handleAssignTaskForce,
+    handleProfileStackClick,
+    handleEllipsisClick,
+    handleUserCircleClick,
+    handleAddTaskForceClick,
+    handleUnassignedAllClick,
+    handleUnassignedClick,
+    handleAssignedOptionsClick,
+    handleConfirmUnassign
   } = handlers
 
-  const areaOptions = [
-    { icon: <Folders />, label: 'View Parameters' },
-    { icon: <FileUser />, label: 'Assign Task Force'},
-    { icon: <FolderPen />, label: 'Rename'},
-    { icon: <Archive />, label: 'Move to Archive'},
-    { icon: <Trash2 />, label: 'Delete'},
-  ];
   return (
     <DeanLayout>
       <div className='flex-1 p-3'>
         <div className='bg-slate-900 m-2 pb-2 border border-slate-700 rounded-lg'>
           <div className='flex justify-between shadow px-4 pt-4 bg-black/40 p-4 rounded-t-lg'>
-            <p className='flex flex-row items-center text-lg text-slate-100 '>
+            <p className='flex flex-row items-center gap-1 text-sm text-slate-100 '>
               <span
-                title='Back to Programs'
-                onClick={() => navigate(PATH.DEAN.PROGRAMS_TO_BE_ACCREDITED)}
+                onClick={() => {
+                  localStorage.removeItem('lastProgramId');
+                  localStorage.setItem('accreditation-title', `${title} ${year}`);
+                  navigate(PATH.DEAN.PROGRAMS_TO_BE_ACCREDITED);
+                }} 
                 className='hover:underline cursor-pointer transition-all'
               >
-                Programs
+                {`${title} ${year}`}
               </span>
-              <ChevronRight className='h-6 w-6 mx-2 text-slate-100' />
-              <span className='font-semibold'>{data.length > 1 ? 'Areas' : 'Area'}</span>
+              <ChevronRight className='h-4 w-4 text-slate-100' />
+              <span
+                title='Back to Programs'
+                onClick={() => {
+                  localStorage.removeItem('accreditation-title');
+                  navigate(PATH.DEAN.PROGRAMS_TO_BE_ACCREDITED);
+                }}
+                className='hover:underline cursor-pointer transition-all'
+              >
+                {program}
+              </span>
+              <ChevronRight className='h-4 w-4 text-slate-100' />
+              <span className='font-semibold text-lg'>{data.length > 1 ? 'Areas' : 'Area'}</span>
             </p>
           </div>
           <div className='flex items-center justify-center mt-4 max-md:mt-10 w-[85%] md:w-[75%] lg:w-[50%] mx-auto'>
             <p className='relative text-center'>
-              <span className='text-green-400 font-bold text-xl md:text-2xl lg:text-3xl tracking-wide text-center'>
+              <span className='text-yellow-400 font-bold text-xl md:text-2xl lg:text-3xl tracking-wide text-center'>
                 {program}
               </span>
               
-              <span className='absolute -bottom-10 left-1/2 -translate-x-1/2 text-lg px-2 bg-green-700 text-white font-bold'>
+              <span className='absolute -bottom-10 left-1/2 -translate-x-1/2 text-lg px-4 bg-green-700 text-white font-bold rounded-md'>
                 {formattedLevel}
               </span>
             </p>
           </div>
-          <hr className='mt-6 w-[30%] mx-auto border text-green-500'></hr>
+          <hr className='my-6 w-[30%] mx-auto border text-green-500'></hr>
           <div className={`flex flex-wrap gap-10 justify-center mb-8 py-8 px-2 mx-2 rounded
             ${data.length ? 'items-start' : 'items-center'}
           `}>
@@ -115,7 +144,7 @@ const ProgramAreas = () => {
               <div
                 key={index}
                 onClick={() => !activeAreaId && handleAreaCardClick(data.area_uuid)}
-                className='relative flex flex-col items-start justify-center px-2 max-sm:w-full md:w-75 lg:w-50 h-60 bg-[url("/cgs-bg-2.png")] bg-cover bg-center shadow-slate-800 border border-slate-600 hover:shadow hover:scale-105 transition cursor-pointer active:shadow'
+                className='relative flex flex-col items-start justify-center px-2 max-sm:w-full md:w-75 lg:w-50 h-60 bg-[url("/cgs-bg-2.png")] bg-cover bg-center shadow-slate-800 border border-slate-600 hover:shadow hover:scale-102 transition duration-300 cursor-pointer active:shadow'
               >
                 <div className='absolute inset-0 bg-black/50'></div>
                 {String(data.area)
@@ -145,13 +174,46 @@ const ProgramAreas = () => {
                 >
                   <EllipsisVertical className='h-5 w-5' />
                 </button>
-                <button
-                  onClick={(e) => e.stopPropagation()}
-                  title='Upload document'
-                  className='absolute bottom-2 right-1 text-white cursor-pointer active:opacity-50 rounded-full hover:bg-white/20 p-2'
-                >
-                  <Upload />
-                </button>
+                {data.level === LEVEL.LIV && (
+                  <button
+                    onClick={(e) => e.stopPropagation()}
+                    title='Upload document'
+                    className='absolute bottom-2 right-1 text-white cursor-pointer active:opacity-50 rounded-full hover:bg-white/20 p-2'
+                  >
+                    <Upload />
+                  </button>
+                )}
+                <div className='flex items-center justify-between px-1'>
+                  <div className='absolute bottom-2.5  z-20'>
+                    <ProfileStack 
+                      data={{ 
+                        assignmentData: deduplicateAssignments(assignmentData, 'area'),
+                        taskForce, 
+                        area_id: data.area_id, 
+                        area: formatAreaName(data.area )}}
+                      handlers={{ handleProfileStackClick }}
+                      scope='area'
+                    />
+                  </div>
+                  <button
+                    title='Assign Task Force' 
+                    onClick={(e) => handleUserCircleClick(e, {
+                      accredId: data.accredId,
+                      title,
+                      year,
+                      accredBody,
+                      levelId: data.levelId,
+                      level: formattedLevel,
+                      programId: data.programId,
+                      program,
+                      areaId: data.area_id,
+                      areaUUID: data.area_uuid,
+                      area: formatAreaName(data.area)
+                    })}
+                    className='absolute bottom-2.5 right-1 text-white cursor-pointer active:opacity-50 rounded-full hover:bg-white/20 p-1'>
+                    <FileUser />
+                  </button>
+                </div>
                 {activeAreaId && <div className='absolute inset-0 z-20'></div>}
                 {activeAreaId === data.area_uuid && (
                   <>
@@ -161,38 +223,41 @@ const ProgramAreas = () => {
                         width={'w-50'} 
                         border={'border border-slate-300 rounded-lg bg-slate-800'}
                       >
-                        {areaOptions.map((item, index) => (
-                          <React.Fragment key={index}>
-                            {item.label === 'Delete' && (
-                              <hr className='my-1 mx-auto w-[90%] text-slate-300'></hr>
-                            )}
-                            <p 
-                              onClick={(e) => handleOptionItemClick(e, { 
-                                label: item.label,
-                                accredId: data.accredId,
-                                title,
-                                year,
-                                accredBody,
-                                levelId: data.levelId,
-                                level: formattedLevel,
-                                programId: data.programId,
-                                program,
-                                areaId: data.area_id,
-                                areaUUID: data.area_uuid,
-                                area: formatAreaName(data.area)
-                              })}
-                              className={`flex items-center p-2 rounded-md text-sm
-                                ${item.label === 'Delete' 
-                                  ? 'hover:bg-red-200 text-red-600' 
-                                  : 'hover:bg-slate-200'}`}
-                            >
-                              {item.icon}
-                              <span className='ml-2'>
-                                {item.label}
-                              </span>
-                            </p>
-                          </React.Fragment>
-                        ))}
+                        {MENU_OPTIONS.DEAN.AREA_OPTIONS.map((item) => {
+                          const Icon = item.icon;
+                          return (
+                            <React.Fragment key={item.id}>
+                              {item.label === 'Delete' && (
+                                <hr className='my-1 mx-auto w-[90%] text-slate-300'></hr>
+                              )}
+                              <p 
+                                onClick={(e) => handleOptionItemClick(e, { 
+                                  label: item.label,
+                                  accredId: data.accredId,
+                                  title,
+                                  year,
+                                  accredBody,
+                                  levelId: data.levelId,
+                                  level: formattedLevel,
+                                  programId: data.programId,
+                                  program,
+                                  areaId: data.area_id,
+                                  areaUUID: data.area_uuid,
+                                  area: data.area
+                                })}
+                                className={`flex items-center p-2 rounded-md text-sm
+                                  ${item.label === 'Delete' 
+                                    ? 'hover:bg-red-200 text-red-600' 
+                                    : 'hover:bg-slate-200'}`}
+                              >
+                                <Icon />
+                                <span className='ml-2'>
+                                  {item.label}
+                                </span>
+                              </p>
+                            </React.Fragment>
+                          );
+                        })}
                       </Dropdown>
                     </div>
                   </>
@@ -211,11 +276,15 @@ const ProgramAreas = () => {
           </div>
         </div>
       </div>
-      <AreaModal 
+      <AreaModal
+        navigation={{ navigate }} 
         modalType={modalType}
-        refs={{ areaInputRef }}
+        refs={{ areaInputRef, assignedTaskForceRef }}
         inputs={{ areaInput }}
-        datas={{ 
+        datas={{
+          accredInfoUUID,
+          level,
+          programUUID, 
           data,
           error,
           loading, 
@@ -226,7 +295,9 @@ const ProgramAreas = () => {
           taskForce,
           taskForceLoading,
           taskForceError,
-          selectedTaskForce
+          selectedTaskForce,
+          activeTaskForceId,
+          showConfirmUnassign
         }}
         handlers={{
           handleCloseModal,
@@ -238,7 +309,13 @@ const ProgramAreas = () => {
           handleConfirmRemoval,
           handleCheckboxChange,
           handleSelectAll,
-          handleAssignTaskForce
+          handleAssignTaskForce,
+          handleEllipsisClick,
+          handleAddTaskForceClick,
+          handleUnassignedClick,
+          handleUnassignedAllClick,
+          handleAssignedOptionsClick,
+          handleConfirmUnassign
         }}
       />
     </DeanLayout>

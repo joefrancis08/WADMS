@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import DeanLayout from '../../components/Layout/Dean/DeanLayout';
-import { Archive, CalendarArrowUp, ClipboardPlus, EllipsisVertical, Folders, NotebookPen, NotepadText, Plus, PlusCircle, Scroll } from 'lucide-react';
+import { Archive, CalendarArrowUp, ClipboardPlus, EllipsisVertical, Folders, NotebookPen, NotepadText, Plus, PlusCircle, Scroll, Search, Trash2, X } from 'lucide-react';
 import ContentHeader from '../../components/Dean/ContentHeader';
 import { useProgramsToBeAccredited } from '../../hooks/Dean/useProgramsToBeAccredited';
 import ProgramToBeAccreditedModal from '../../components/Dean/Accreditation/Programs/ProgramToBeAccreditedModal';
@@ -8,6 +8,7 @@ import ProgramsToBeAccreditedSL from '../../components/Loaders/ProgramsToBeAccre
 import Dropdown from '../../components/Dropdown/Dropdown';
 import MODAL_TYPE from '../../constants/modalTypes';
 import formatAccreditationTitle from '../../utils/formatAccreditationTitle';
+import LEVEL from '../../constants/accreditationLevels';
 
 const ProgramsToAccredit = () => {
   const { refs, datas, handlers } = useProgramsToBeAccredited();
@@ -39,9 +40,8 @@ const ProgramsToAccredit = () => {
     activeProgramID,
     programInput,
     programs,
+    accredBodiesData
   } = datas;
-
-  
 
   const {
     handleAddClick,
@@ -62,6 +62,71 @@ const ProgramsToAccredit = () => {
     handleSave
   } = handlers;
 
+  // -----------------------------
+  // Search state & behavior
+  // -----------------------------
+  const [query, setQuery] = useState('');
+  const [showSearch, setShowSearch] = useState(false);
+  const searchInputRef = useRef(null);
+
+  useEffect(() => {
+    if (showSearch) {
+      // focus when opening search
+      searchInputRef.current?.focus();
+    }
+  }, [showSearch]);
+
+  const normalize = (v) => (v?.toString?.().toLowerCase().trim() ?? '');
+
+  // Array of Programs To Be Accredited, fallback to empty array if fetch is loading
+  const rawData = accredInfoLevelPrograms?.data ?? [];
+
+  // Filter by title, year, level, and program
+  const filteredData = useMemo(() => {
+    if (!query) return rawData;
+    const q = normalize(query);
+    return rawData.filter((item) => {
+      const title = normalize(item?.accreditationInfo?.accred_title);
+      const year = normalize(item?.accreditationInfo?.accred_year);
+      const level = normalize(item?.level);
+      const program = normalize(item?.program?.program);
+      return (
+        title.includes(q) ||
+        year.includes(q) ||
+        level.includes(q) ||
+        program.includes(q) ||
+        `${title} ${year}`.includes(q)
+      );
+    });
+  }, [rawData, query]);
+
+  // Group by Accreditation Year + Title
+  const grouped = useMemo(() => {
+    return filteredData.reduce((acc, item) => {
+      // Use accred_title + accred_year as unique key
+      const accredTitle = `${item.accreditationInfo.accred_title} ${item.accreditationInfo.accred_year}`;
+
+      if (!acc[accredTitle]) {
+        acc[accredTitle] = {};
+      }
+
+      if (!acc[accredTitle][item.level]) {
+        acc[accredTitle][item.level] = [];
+      }
+
+      acc[accredTitle][item.level].push({
+        ...item.program,       // { program_uuid, program }
+        level: item.level,
+        accred_uuid: item.accreditationInfo.accred_uuid,
+        accred_year: item.accreditationInfo.accred_year,
+        accred_title: item.accreditationInfo.accred_title,
+        accred_body_name: item.accreditationInfo.accred_body
+      });
+
+      return acc;
+    }, {});
+  }, [filteredData]);
+
   // Function to make input ref dynamic based on the rendered modal
   const getInputRef = () => {
     if (modalType === MODAL_TYPE.ADD_PROGRAM_TO_BE_ACCREDITED && !formValue?.title) {
@@ -76,57 +141,67 @@ const ProgramsToAccredit = () => {
   }
 
   const inputRef = getInputRef();
-  
-  // Array of Programs To Be Accredited, fallback to empty array if fetch is loading
-  const data = accredInfoLevelPrograms?.data ?? [];
-
-  // Group by Accreditation Year + Title
-  const grouped = data.reduce((acc, item) => {
-    // Use accred_title + accred_year as unique key
-    const accredTitle = `${item.accreditationInfo.accred_title} ${item.accreditationInfo.accred_year}`;
-
-    if (!acc[accredTitle]) {
-      acc[accredTitle] = {};
-    }
-
-    if (!acc[accredTitle][item.level]) {
-      acc[accredTitle][item.level] = [];
-    }
-
-    acc[accredTitle][item.level].push({
-      ...item.program,       // { program_uuid, program }
-      level: item.level,
-      accred_uuid: item.accreditationInfo.accred_uuid,
-      accred_year: item.accreditationInfo.accred_year,
-      accred_title: item.accreditationInfo.accred_title,
-      accred_body_name: item.accreditationInfo.accred_body
-    });
-
-    return acc;
-  }, {});
 
   // Options for Period
   const accredInfoOptions = [
     { icon: <CalendarArrowUp size={24} />, label: 'Update info' },
     { icon: <Archive size={24} />, label: 'Move to Archive' },
+    { icon: <Trash2 size={24} />, label: 'Delete'}
   ];
 
   const programOptions = [
     { icon: <Folders size={22} />, label: 'View Areas' },
     { icon: <Archive size={22} />, label: 'Move to Archive' },
+    { icon: <Trash2 size={24} />, label: 'Delete'}
   ];
 
   return (
     <DeanLayout>
       <div className='flex-1'>
         {/* Header */}
-        <ContentHeader 
-          headerIcon={NotepadText}
-          headerTitle='Programs For Accreditation'
-          searchTitle='Search Program to be Accredited'
-          placeholder='Search program to be accredited...'
-          condition={Object.entries(grouped).length > 0}
-        />
+        <div className='sticky top-0 flex items-center justify-between py-2 px-4 bg-slate-900 border-l border-b border-slate-700 z-50 mb-8'>
+          <h2 className='text-xl text-slate-100 font-bold'>
+            Programs
+          </h2>
+
+          {/* Search toggle / input */}
+          {showSearch ? (
+            <div className='relative w-full max-w-md'>
+              <Search className='absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400' />
+              <input
+                ref={searchInputRef}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape') {
+                    setQuery('');
+                    setShowSearch(false);
+                  }
+                }}
+                placeholder='Search title, year, level, or program…'
+                className='pl-10 pr-10 py-2 rounded-full bg-slate-800 border border-slate-600 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-100 focus:border-transparent w-full transition-all'
+              />
+              <button
+                onClick={() => {
+                  setShowSearch(false);
+                  setQuery('');
+                }}
+                className='absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-slate-700 text-slate-300 cursor-pointer'
+                title='Close search'
+              >
+                <X className='h-5 w-5' />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowSearch(true)}
+              className='text-slate-100 p-2 hover:bg-slate-700 rounded-full cursor-pointer active:scale-95'
+              title='Search'
+            >
+              <Search className='h-6 w-6'/>
+            </button>
+          )}
+        </div>
 
         {/* Add button */}
         <button 
@@ -144,13 +219,16 @@ const ProgramsToAccredit = () => {
           <div className='flex flex-col items-center justify-center h-100'>
             <Scroll className='text-slate-400 h-40 w-40 md:h-60 md:w-60'/>
             <p className='text-center font-medium text-slate-100 text-lg md:text-xl'>
-              No accreditation data yet. Click '+' to add
+              {rawData.length === 0 && !query ? (
+                <>No accreditation data yet. Click '+' to add</>
+              ) : (
+                <>No results for “<span className='text-green-400'>{query}</span>”. Try a different search.</>
+              )}
             </p>
           </div>
         ) : (
           /* Render Accreditation Info, Level, and Programs to be accredited */
           Object.entries(grouped).map(([accredTitle, levels], index) => {
-            console.log(accredTitle);
             const [first, rest] = formatAccreditationTitle(accredTitle, { isForUI: true });
             // Get the first level
             const firstLevel = Object.keys(levels)[0];
@@ -162,7 +240,6 @@ const ProgramsToAccredit = () => {
             const accredInfoUUID = firstProgram.accred_uuid;
             const accredYear = firstProgram.accred_year;
             const accredBody = firstProgram.accred_body_name;
-            console.log(accredTitle);
 
             return (
               <React.Fragment key={index}>
@@ -256,7 +333,7 @@ const ProgramsToAccredit = () => {
                         >
                           {accredInfoOptions.map((option, index) => (
                             <React.Fragment key={index}>
-                              {option.label === 'Move to Archive' && (
+                              {option.label === 'Delete' && (
                                 <hr className='m-1 text-slate-300'></hr>
                               )}
                               <div 
@@ -264,10 +341,10 @@ const ProgramsToAccredit = () => {
                                   handleOptionItemClick(e, {
                                     isFromAccredInfo: true,
                                     optionName: option.label,
-                                    data: {
+                                    accredInfo: {
+                                      title: firstProgram.accred_title,
                                       year: accredYear,
-                                      title: accredTitle,
-                                      accredBody: accredBody
+                                      accredBody
                                     }
                                   })
                                 )}
@@ -275,10 +352,10 @@ const ProgramsToAccredit = () => {
                                 className={`flex items-center p-2 justify-start gap-x-2 cursor-pointer rounded-md active:opacity-60 transition ${option.label === 'Delete' ? 
                                 'hover:bg-red-200' : 'hover:bg-slate-200'}`}
                               >
-                                <i className={option.label === 'Move to Archive' ? 'text-slate-700' : 'text-slate-800'}>
+                                <i className={option.label === 'Delete' ? 'text-red-500' : 'text-slate-800'}>
                                   {option.icon}
                                 </i>
-                                <p className={option.label === 'Move to Archive' ? 'text-slate-700' : 'text-slate-800'}>
+                                <p className={option.label === 'Delete' ? 'text-red-500' : 'text-slate-800'}>
                                   {option.label}
                                 </p>
                               </div>
@@ -288,15 +365,15 @@ const ProgramsToAccredit = () => {
                       </div>
                     )}
                   </div>
-                  <hr className='w-[75%] bg-slate-600 border border-transparent my-16 mx-auto'></hr>
-                  <div className='mx-auto'>
-                    <p className='text-xl md:text-2xl lg:text-3xl text-center tracking-wider font-extrabold text-yellow-400 mb-4'>
-                      PROGRAMS TO BE ACCREDITED
-                    </p>
-                  </div>
                   {/* Loop through levels inside each period */}
                   {Object.entries(levels).map(([level, programs]) => (
                     <React.Fragment key={level} >
+                      <hr className='w-[75%] bg-slate-600 border border-transparent my-16 mx-auto'></hr>
+                      <div className='mx-auto'>
+                        <p className='text-xl md:text-2xl lg:text-3xl text-center tracking-wider font-extrabold text-yellow-400 mb-4'>
+                          {level === LEVEL.PRELIM ? 'Programs Under Survey' : 'Programs To Be Accredited'}
+                        </p>
+                      </div>
                       <div
                         ref={(el) => (levelRef.current[`${accredTitle}-${level}`] = el)} 
                         id={`${accredTitle}-${level}`}
@@ -366,18 +443,19 @@ const ProgramsToAccredit = () => {
                                       >
                                         {programOptions.map((option, index) => (
                                           <React.Fragment key={index}>
-                                            {option.label === 'Move to Archive' && (
+                                            {option.label === 'Delete' && (
                                               <hr className='m-1 text-slate-300'></hr>
                                             )}
                                             <div 
                                               onClick={(e) => (
                                                 handleOptionItemClick(e, { 
-                                                  isFromProgram: true,
+                                                  from: { program: true },
                                                   optionName: option.label,
-                                                  data: {
+                                                  accredInfo: {
                                                     accredInfoUUID,
-                                                    accredTitle,
+                                                    accredTitle: firstProgram.accred_title,
                                                     accredYear,
+                                                    accredBody,
                                                     level,
                                                     programUUID,
                                                     program,
@@ -385,13 +463,13 @@ const ProgramsToAccredit = () => {
                                                   }
                                                 }))}
                                               key={index} 
-                                              className={`flex items-center p-2 justify-start gap-x-2 cursor-pointer rounded-md active:opacity-60 ${option.label === 'Move to Archive' ? 
-                                              'hover:bg-slate-300' : 'hover:bg-slate-200'}`}
+                                              className={`flex items-center p-2 justify-start gap-x-2 cursor-pointer rounded-md active:opacity-60 ${option.label === 'Delete' ? 
+                                              'hover:bg-red-200' : 'hover:bg-slate-200'}`}
                                             >
-                                              <i className={option.label === 'Move to Archive' ? 'text-gray-700' : 'text-slate-800'}>
+                                              <i className={option.label === 'Delete' ? 'text-red-500' : 'text-slate-800'}>
                                                 {option.icon}
                                               </i>
-                                              <p className={`text-sm ${option.label === 'Move to Archive' ? 'text-gray-700' : 'text-slate-800'}`}>
+                                              <p className={`text-sm ${option.label === 'Delete' ? 'text-red-500' : 'text-slate-800'}`}>
                                                 {option.label}
                                               </p>
                                             </div>
@@ -408,7 +486,7 @@ const ProgramsToAccredit = () => {
                                     handleOptionClick(e, { 
                                       isFromProgram: true,
                                       data: {
-                                        accredTitle,
+                                        accredTitle: firstProgram.accred_title,
                                         level,
                                         programId
                                       }
@@ -426,7 +504,7 @@ const ProgramsToAccredit = () => {
                             onClick={() => handleAddClick({ 
                               isFromCard: true, 
                               data: { 
-                                accredTitle,
+                                accredTitle: firstProgram.accred_title,
                                 accredYear,
                                 accredBody,
                                 level
@@ -469,6 +547,7 @@ const ProgramsToAccredit = () => {
         isAllDuplicates={isAllDuplicates}
         duplicateValues={duplicateValues}
         disableButton={disableButton}
+        accredBodiesData={accredBodiesData}
         handlers={{
           handleChevronClick,
           handleCloseClick,

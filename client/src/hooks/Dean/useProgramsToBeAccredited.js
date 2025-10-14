@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
 import { TOAST_MESSAGES } from "../../constants/messages";
-import { addInfoLevelProgram, deleteAccreditationPeriod, deleteProgramToBeAccredited } from "../../api-calls/accreditation/accreditationAPI";
+import { addInfoLevelProgram, deleteAccredInfo } from "../../api-calls/accreditation/accreditationAPI";
 import PATH from "../../constants/path";
 import MODAL_TYPE from "../../constants/modalTypes";
 import useOutsideClick from "../useOutsideClick";
@@ -11,8 +11,8 @@ import useAutoFocus from "../useAutoFocus";
 import { useFetchILP } from "../fetch-react-query/useFetchILP";
 import useScrollSaver from "../useScrollSaver";
 import scrollToNewAddition from "../../utils/scrollToNewAddition";
-import { set } from "date-fns";
 import usePageTitle from "../usePageTitle";
+import useAccreditationBodies from "../fetch-react-query/useAccreditationBodies";
 
 const { PROGRAM_AREAS } = PATH.DEAN;
 const { 
@@ -29,6 +29,7 @@ export const useProgramsToBeAccredited = () => {
   const programCardRef = useRef();
   const programOptionsRef = useRef();
   const levelRef = useRef({});
+  usePageTitle('Programs To Be Accredited');
 
   const { accredInfoLevelPrograms, loading, error } = useFetchILP();
   console.log(accredInfoLevelPrograms);
@@ -81,7 +82,6 @@ export const useProgramsToBeAccredited = () => {
   // Reuse useOutsideClick hook to make period and program options disappear
   useOutsideClick(accredInfoOptionsRef, () => setActiveAccredInfoID(null));
   useOutsideClick(programOptionsRef, () => setActiveProgramID(null));
-  usePageTitle('Accreditation | WDMS');
 
   // Remove duplicates automatically if programs state changes
   useEffect(() => {
@@ -91,10 +91,18 @@ export const useProgramsToBeAccredited = () => {
   // Save position of this page when navigating on other page
   useEffect(() => {
     const lastId = localStorage.getItem('lastProgramId');
+    const accredTitle = localStorage.getItem('accreditation-title');
     if (lastId) {
       const el = document.getElementById(`last-program-${lastId}`);
       if (el) {
         el.scrollIntoView({ behavior: 'auto', block: 'center' });
+      }
+    }
+
+    if (accredTitle) {
+      const el = document.getElementById(accredTitle);
+      if (el) {
+        el.scrollIntoView({ behavior: 'auto', block: 'center'})
       }
     }
   }, []);
@@ -174,8 +182,8 @@ export const useProgramsToBeAccredited = () => {
     isFromMain, isFromCard, isFromPeriod, and isFromProgram 
     is the options (don't forget), add more if necessary 
   */
-  const handleCloseClick = (options = {}) => {
-    if (options.isFromMain) {
+  const handleCloseClick = (from = {}) => {
+    if (from.isFromMain) {
       setPrograms([]);
       setModalType(null);
       setFormValue(prev => ({
@@ -186,7 +194,12 @@ export const useProgramsToBeAccredited = () => {
         level: ''
       }));
 
-    } else if (options?.isFromHeader) {
+    } else if (from.accredInfo || from.program) {
+      setPrograms([]);
+      setModalType(null);
+      setModalData(null);
+
+    } else if (from.isFromHeader) {
       setPrograms([]);
       setModalType(null);
       setFormValue(prev => ({
@@ -198,9 +211,9 @@ export const useProgramsToBeAccredited = () => {
       }))
 
     } else if (
-      options.isFromCard || 
-      (options.isFromTitleCard && options.isMoveToArchive || 
-      (options.isFromProgramCard && options.isMoveToArchive))) {
+      from.isFromCard || 
+      (from.isFromTitleCard && from.isMoveToArchive || 
+      (from.isFromProgramCard && from.isMoveToArchive))) {
         setPrograms([]);
         setModalType(null);
         setModalData(null);
@@ -246,8 +259,10 @@ export const useProgramsToBeAccredited = () => {
       setFormValue(prev => ({...prev, level}));
       
     } else if (options.isForAddProgram && program) {
-      // Make sure we're adding to programs, not level
       setPrograms(prev => [...prev, program]);
+
+    } else if (options.isForAddAccredBody && options.accredBody) {
+      setFormValue(prev => ({ ...prev, accreditationBody: options.accredBody }));
     }
   };
 
@@ -342,6 +357,9 @@ export const useProgramsToBeAccredited = () => {
       const duplicates = error?.response?.data?.duplicateValue;
       const duplicateProgram = error?.response?.data?.duplicateValue[4];
 
+      console.log(error);
+      console.log(duplicateProgram);
+
       if (options.isFromCard) {
         showErrorToast(`${duplicateProgram} already exist.`, 'top-center', 5000);
         setDuplicateValues(prev => [...new Set([...prev, duplicateProgram])]);
@@ -381,39 +399,42 @@ export const useProgramsToBeAccredited = () => {
     }
   };
 
-  const handleOptionItemClick = (e, options = {}) => {
+  const handleOptionItemClick = (e, data = {}) => {
+    console.log(data);
     e.stopPropagation();
-    if (options.isFromAccredInfo && options.optionName) {
+    if (data.isFromAccredInfo && data.optionName) {
       setActiveAccredInfoID(null);
 
-      if (options.optionName === 'Delete' && options.data) {
-        setModalType(MODAL_TYPE.DELETE_PERIOD);
+      if (data.optionName === 'Delete' && data.accredInfo) {
+        setModalType(MODAL_TYPE.DELETE_ACCRED_INFO);
         setModalData(prev => ({
           ...prev,
-          startDate: options.data.period[0],
-          endDate: options.data.period[1]
+          title: data.accredInfo.title,
+          year: data.accredInfo.year,
+          accredBody: data.accredInfo.accredBody
         }));
       }
       
-    } else if (options.isFromProgram && options.optionName) {
+    } else if (data.from.program && data.optionName) {
       setActiveProgramID(null);
-      if (options.optionName === 'Delete' && options.data) {
+      if (data.optionName === 'Delete' && data.accredInfo) {
         setModalType(MODAL_TYPE.DELETE_PROGRAM_TO_BE_ACCREDITED);
         setModalData(prev => ({
           ...prev, 
-          startDate: options.data.period[0],
-          endDate: options.data.period[1],
-          levelName: options.data.levelName,
-          programName: options.data.programName,
+          title: data.accredInfo.accredTitle,
+          year: data.accredInfo.accredYear,
+          accredBody: data.accredInfo.accredBody,
+          level: data.accredInfo.level,
+          program: data.accredInfo.program,
         }));
 
-      } else if (options?.optionName === 'View Areas') {
-        const accredInfoUUID = options?.data?.accredInfoUUID;
-        const programUUID = options?.data?.programUUID;
-        const formattedLevel = String(options.data.level).toLowerCase().split(' ').join('-');
+      } else if (data?.optionName === 'View Areas') {
+        const accredInfoUUID = data.accredInfo.accredInfoUUID;
+        const programUUID = data.accredInfo.programUUID;
+        const formattedLevel = String(data.accredInfo.level).toLowerCase().split(' ').join('-');
 
-        if (options.data?.programId) {
-          localStorage.setItem('lastProgramId', options.data.programId)
+        if (data.accredInfo.programId) {
+          localStorage.setItem('lastProgramId', data.accredInfo.programId)
           navigate(PROGRAM_AREAS({ 
             accredInfoUUID, 
             level: formattedLevel, 
@@ -424,13 +445,15 @@ export const useProgramsToBeAccredited = () => {
     }
   };
 
-  // This code here is not function but this could be useful
-  const handleConfirmClick = async (options = {}) => {
-    if (options.isFromPeriod && options.isDelete && options.data) {
+  const handleConfirmClick = async (data = {}) => {
+    console.log(data);
+    if (data.from.accredInfo && data.isDelete && data.accredInfo) {
       try {
-        const year = options?.data?.year;
-        const result = await deleteAccreditationPeriod(year, { isFromPTBA: true });
-
+        const result = await deleteAccredInfo({
+          title: data.accredInfo.title,
+          year: data.accredInfo.year,
+          accredBody: data.accredInfo.accredBody
+        });
 
         if (result.data.success) {
           showSuccessToast(PERIOD_DELETION.SUCCESS);
@@ -438,19 +461,27 @@ export const useProgramsToBeAccredited = () => {
           showErrorToast(PERIOD_DELETION.ERROR);
         }
 
-        handleCloseClick({ isFromPeriod: true, isDelete: true });
+        handleCloseClick({ accredInfo: true, isDelete: true });
 
       } catch (error) {
         console.error('Failed to delete period', error);
         throw error;
       }
 
-    } else if (options.isFromProgram && options.isDelete && options.data) {
+    } else if (data.from.program && data.isDelete && data.accredInfo) {
       try {
-        const year = options?.data?.year;
-        const level = options.data.level;
-        const program = options.data.program;
-        const result = await deleteProgramToBeAccredited(year, level, program);
+        const title = data.accredInfo.title;
+        const year = data.accredInfo.year;
+        const accredBody = data.accredInfo.accredBody;
+        const level = data.accredInfo.level;
+        const program = data.accredInfo.program;
+        const result = await deleteAccredInfo({ 
+          title, 
+          year, 
+          accredBody, 
+          level, 
+          program
+        }, { includeLevel: true, includeProgram: true });
         
         if (result.data.success) {
           showSuccessToast(PROGRAMS_TO_BE_ACCREDITED_DELETION.SUCCESS);
@@ -458,7 +489,7 @@ export const useProgramsToBeAccredited = () => {
           showErrorToast(PROGRAMS_TO_BE_ACCREDITED_DELETION.ERROR);
         }
 
-        handleCloseClick({ isFromProgram: true, isDelete: true });
+        handleCloseClick({ program: true, isDelete: true });
 
       } catch (error) {
         console.error('Failed to delete program.', error);
@@ -516,7 +547,7 @@ export const useProgramsToBeAccredited = () => {
       activeAccredInfoID,
       activeProgramID,
       programInput,
-      programs,
+      programs
     },
 
     handlers: {

@@ -21,6 +21,7 @@ const AddField = ({
   multiValues = [], // Array of existing values (for textarea)
   isDuplicate,
   duplicateValues = [], 
+  condition = {},
   onAddValue, // Callback when a value is added (for textarea)
   onRemoveValue, // Callback when a value is removed (for textarea)
   minDate,
@@ -108,6 +109,21 @@ const AddField = ({
     </p>
   ));
 
+  const accredBodyDropdownItems = dropdownItems.map(accredBody => (
+    dropdownItems.length > 0 && (
+      <p 
+        key={accredBody}
+        onClick={() => {
+          onDropdownMenuClick(null, null, { isForAddAccredBody: true, accredBody });
+          setShowDropdown(false);
+          setIsFocused(false);
+        }}
+        className='p-2 text-gray-800 hover:shadow cursor-pointer hover:bg-gray-200 first:rounded-t-md last:rounded-b-md active:opacity-50'>
+        {accredBody}
+      </p>
+    )
+  ))
+
   const levelDropdownItems = dropdownItems.map(level => (
     dropdownItems.length > 0 && (
       <p 
@@ -144,6 +160,9 @@ const AddField = ({
   } else if (type === 'textarea' && multiValue && showDropdown && showDropdownOnFocus) {
     // Textarea should take priority over level
     dropdownContent = availablePrograms.length > 0 ? programDropdownItems : null;
+
+  } else if (condition.forAccredBody) {
+    dropdownContent = accredBodyDropdownItems;
 
   } else if (showDropdownOnFocus && showDropdown) {
     dropdownContent = levelDropdownItems;
@@ -261,7 +280,7 @@ const AddField = ({
               name={name}
               value={formValue}
               autoComplete='off'
-              onChange={(e) => !isDropdown ? onChange(e) : null}
+              onChange={(e) => onChange(e)}
               onClick={isClickable ? onClick : null}
               onFocus={() => handleFocus({ showDropdown: true })}
               className={`text-wrap w-full p-3 rounded-lg border shadow transition

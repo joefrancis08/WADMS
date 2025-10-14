@@ -11,6 +11,11 @@ export const TOAST_MESSAGES = Object.freeze({
     ERROR: 'Something went wrong. Please try again later.'
   },
 
+  UU_DELETION: {
+    SUCCESS: 'Delete successfully!',
+    ERROR: 'Something went wrong. Try again.'
+  },
+
   UNVERIFIED_USER_UPDATE: {
     SUCCESS: 'Verified successfully.',
     ERROR: 'Something went wrong while verifying user. Try again.'
@@ -69,6 +74,16 @@ export const TOAST_MESSAGES = Object.freeze({
   INDICATORS_ADDITION: {
     SUCCESS: 'Added successfully!',
     ERROR: 'Something went wrong while adding indicators.'
+  },
+
+  ASSIGNMENT: {
+    SUCCESS: 'Assigned successfully!',
+    ERROR: 'Something went wrong while assigning. Try again.'
+  },
+
+  UNASSIGN: {
+    SUCCESS: 'Unassigned successfully!',
+    ERROR: 'Something went wrong while unassigning. Try again'
   }
 });
 

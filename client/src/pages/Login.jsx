@@ -1,163 +1,258 @@
 import { Link } from 'react-router-dom';
-import { ArrowLeft, AtSign, LoaderCircle, LockKeyhole, Mail } from 'lucide-react';
+import { ArrowLeft, LoaderCircle, LockKeyhole, Mail } from 'lucide-react';
 import SubmitButton from '../components/Auth/SubmitButton';
 import Field from '../components/Form/Auth/Field';
 import OTPField from '../components/Auth/OTPField';
 import useLogin from '../hooks/useLogin';
+import { useRef } from 'react';
+import GoogleLoginButton from '../services/google/GoogleLoginButton';
+import { googleIcon } from '../assets/icons';
+import { showErrorToast, showSuccessToast } from '../utils/toastNotification';
+import { USER_ROLES } from '../constants/user';
 
 const Login = () => {
   const { refs, datas, utils, handlers } = useLogin();
-
   const { emailRef, passwordRef } = refs;
   const { formatTime } = utils;
   const {
     values,
-    isLoading, 
-    errors,  
-    isPasswordVisible, 
+    isLoading,
+    errors,
+    isPasswordVisible,
     togglePasswordVisibility,
     tempUser,
     nextStep,
     otp,
     timeLeft,
-    otpExpired
+    otpExpired,
   } = datas;
 
-  const { 
+  const {
     handleChange,
     handleSubmit,
     handleBackToLogin,
     handleOtpChange,
     handleVerifyOtp,
-    handleResendOtp
+    handleResendOtp,
   } = handlers;
-  
+
+  const googleRef = useRef();
+
+  // Handle response from Google login
+  const handleGoogleLoginResult = (data) => {
+    const { success, registered, approved, message, user } = data;
+    console.log('Google login result:', data);
+
+    if (success) {
+      if (registered && !approved) {
+        showSuccessToast(message, 'top-center', 4000);
+        setTimeout(() => {
+          window.location.href = '/pending-verification';
+        }, 4000);
+      } else if (approved) {
+        showSuccessToast('Login successful! Redirecting...', 'top-center', 2000);
+        setTimeout(() => {
+          const targetPath =
+            user.role === USER_ROLES.DEAN
+              ? '/d'
+              : user.role === USER_ROLES.ACCREDITOR
+              ? '/a'
+              : user.role === USER_ROLES.TASK_FORCE
+              ? '/tf'
+              : '/';
+          window.location.href = targetPath;
+        }, 2000);
+      }
+    } else {
+      showErrorToast(
+        message || 'Google login failed. Please try again.',
+        'top-center',
+        6000
+      );
+    }
+  };
+
   return (
-    <div className='flex items-center justify-center w-full h-dvh bg-[url("/pit-bg-1.jpg")] bg-cover bg-center'>
-      <div className='absolute inset-0 bg-black/60'></div>
-      <div className="bg-slate-200 shadow-md shadow-slate-700 p-8 z-20 rounded">
-        <div className='flex gap-x-15'>
-          <div className='flex flex-col items-start'>
-            <div className="relative flex justify-center items-center p-8 h-20 w-20">
-              <img src="/pit-logo-outlined.png" alt="Logo" className="h-14 absolute top-0 left-0 z-10" />
-              <img src="/cgs-logo.png" alt="Logo" className="h-14 -mr-10 absolute bottom-6 right-0" />
-            </div>
-            <h2 className="text-green-700 text-2xl max-w-[300px] font-bold">
-              Document Management System
-            </h2>
-            <div className='w-[50%] h-0.5 bg-slate-400 my-15'></div>
-            <div className='flex items-center justify-center w-full'>
-              <p className='max-w-[300px]'>
-                {nextStep === 1
-                  ? `After verifying your credentials, you'll be redirected to One-Time Password (OTP) Verification.`
-                  : `After successful OTP verification, you can access the system based on your role set by administrator.`
-                }
-              </p>
+    <div className="flex items-center justify-center w-full h-dvh bg-[url('/pit-bg-1.jpg')] bg-cover bg-center">
+      <div className="absolute inset-0 bg-black/60"></div>
+
+      <div className="bg-slate-200 shadow-xl shadow-slate-800/70 px-10 py-6 z-20 rounded-2xl flex flex-col md:flex-row gap-x-20 relative overflow-hidden">
+        {/* Left side info */}
+        <div className="flex flex-col justify-center items-start md:w-[40%] text-slate-800">
+          {/* PIT + CGS Logo Hierarchy */}
+          <div className="flex flex-col items-start mb-6">
+            <div className="flex items-center gap-x-3">
+              <img
+                src="/pit-logo-outlined.png"
+                alt="PIT Logo"
+                className="h-16 drop-shadow-md"
+              />
+              <div>
+                <h3 className="text-xl font-bold text-slate-700 tracking-tight">
+                  Palompon Institute of Technology
+                </h3>
+                <p className="text-sm text-slate-600 italic">
+                  College of Graduate Studies
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* Right Side Form */}
-          <div className='bg-slate-100 p-8 rounded-md shadow-md shadow-slate-300 min-w-110 min-h-100 max-w-100 max-h-90 relative'>
-            {nextStep === 1 ? (
-              <>
-                <h2 className="reg-form-title">LOGIN</h2>
-                <form onSubmit={(e) => handleSubmit(e)} className="space-y-2">
+          {/* Title */}
+          <h2 className="text-green-700 text-3xl font-bold leading-tight mb-4">
+            Document Management System
+          </h2>
+
+          {/* Divider */}
+          <div className="w-24 h-1 bg-green-600 mb-6 rounded-full"></div>
+
+          {/* Description */}
+          <p className="text-slate-700 leading-relaxed max-w-[320px] text-sm">
+            {nextStep === 1
+              ? 'Login using your email and password, or continue with Google. Password logins require OTP verification for added security, while Google logins skip OTP since your identity is already verified by Google.'
+              : 'After successful OTP verification, you will be redirected to your assigned dashboard based on your role.'}
+          </p>
+        </div>
+
+        {/* Right side login form */}
+        <div className="bg-slate-100 p-8 rounded-xl shadow-md shadow-slate-400 min-w-[360px] md:w-[380px] flex flex-col justify-center relative translate-x-10">
+          {nextStep === 1 ? (
+            <>
+              <h2 className="text-center text-2xl font-bold text-slate-800 mb-4 tracking-wide">
+                Login
+              </h2>
+
+              <form onSubmit={(e) => handleSubmit(e)} className="space-y-3">
+                <Field
+                  autoFocus
+                  icon={<Mail color="gray" size={22} />}
+                  ref={emailRef}
+                  name="email"
+                  placeholder="Email Address"
+                  value={values.email}
+                  onChange={handleChange}
+                  error={errors.email}
+                />
+
+                {/* Password field with Forgot Password inline */}
+                <div>
                   <Field
-                    autoFocus={true}
-                    icon={<Mail color='gray' size={24} />}
-                    ref={emailRef}
-                    name='email'
-                    placeholder='Email Address'
-                    value={values.email}
+                    icon={<LockKeyhole color="gray" size={22} />}
+                    ref={passwordRef}
+                    name="password"
+                    placeholder="Password"
+                    value={values.password}
                     onChange={handleChange}
-                    error={errors.email}
+                    error={errors.password}
+                    isPassword
+                    isPasswordVisible={isPasswordVisible}
+                    togglePasswordVisibility={togglePasswordVisibility}
                   />
-                  <div className='relative'>
-                    <Field
-                      icon={<LockKeyhole color='gray' size={24} />}
-                      ref={passwordRef}
-                      name='password'
-                      placeholder='Password'
-                      value={values.password}
-                      onChange={handleChange}
-                      error={errors.password}
-                      isPassword={true}
-                      isPasswordVisible={isPasswordVisible}
-                      togglePasswordVisibility={togglePasswordVisibility}
-                    />
-                    <p className='text-green-600 text-sm absolute bottom-0 right-0 hover:cursor-pointer active:text-blue-400 hover:underline'>
+                  <div className="flex justify-end">
+                    <p className="text-green-700 text-sm hover:underline hover:cursor-pointer mt-1">
                       Forgot password?
                     </p>
                   </div>
-                  
-                  <div className='flex justify-center mt-5'>
-                    <SubmitButton 
-                      disabled={isLoading} 
-                    >
-                      {isLoading 
-                        ? <LoaderCircle className='h-5 w-5 animate-spin'/> 
-                        : 'Login'
-                      }
-                    </SubmitButton>
-                  </div>
-                  <div>
-                    <p className="text-center mt-4">
-                      No account? {' '}
-                      <Link to="/register" className="text-green-700 hover:underline">Register</Link>
-                    </p>
-                  </div>
-                </form>
-              </>
-            ) : (
-              <>
+                </div>
+
+                <div className="flex justify-center mt-6">
+                  <SubmitButton disabled={isLoading}>
+                    {isLoading ? (
+                      <LoaderCircle className="h-5 w-5 animate-spin" />
+                    ) : (
+                      'Login'
+                    )}
+                  </SubmitButton>
+                </div>
+              </form>
+
+              {/* Divider */}
+              <div className="flex items-center justify-center gap-x-4 my-6">
+                <hr className="w-24 border-slate-300" />
+                <p className="text-slate-500 text-sm">or</p>
+                <hr className="w-24 border-slate-300" />
+              </div>
+
+              {/* Google Login Button */}
+              <div className="flex flex-col items-center justify-center mb-3">
                 <button
-                  onClick={handleBackToLogin} 
-                  title='Back to Login'
-                  className='absolute top-3 left-1 flex flex-row justify-center items-center gap-x-2 py-1 px-3 hover:bg-slate-200 rounded-full cursor-pointer text-slate-600'
+                  onClick={() => googleRef.current.signIn()}
+                  className="w-full gap-x-3 flex items-center justify-center bg-gradient-to-br from-white to-slate-100 border border-slate-300 text-slate-800 px-4 py-3 rounded-full font-medium shadow-sm hover:shadow-md transition-all hover:scale-[1.02] active:scale-[0.97]"
                 >
-                  <ArrowLeft />
-                  Back
+                  <img src={googleIcon} alt="Google Logo" className="h-5 w-5" loading="lazy" />
+                  Continue with Google
                 </button>
-                <h2 className="reg-form-title">OTP Verification</h2>
-                <p className='text-center'>
-                  Enter the 6-digit code we've sent to {' '}
-                  <span className='font-semibold'>{tempUser?.email || "your email"}</span>
+
+                <p className="text-xs text-slate-500 mt-2 text-center max-w-[280px]">
+                  Google login skips OTP verification — your account is securely verified by Google.
                 </p>
-                <div className='flex gap-x-4 py-4 items-center justify-center mb-4'>
-                  {otp.map((digit, i) => (
-                    <OTPField 
-                      key={i}
-                      value={digit} 
-                      autoFocus={i===0}
-                      onChange={(val) => handleOtpChange(val, i)} 
-                    />
-                  ))}
-                </div>
-                <div className='flex flex-col justify-center items-center'>
-                  {!otpExpired ? (
-                    <>
-                      <SubmitButton onClick={(e) => handleVerifyOtp(e)}>
-                        <p>Verify OTP</p>
-                      </SubmitButton>
-                      <p className='mt-4 text-sm'>
-                        Code will expire in <b>{formatTime(timeLeft)}</b>.
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <p className='text-red-600 font-semibold mb-3'>OTP expired!</p>
-                      <button
-                        onClick={() => handleResendOtp(tempUser.email)}
-                        className="bg-green-600 text-white px-4 py-2 rounded"
-                      >
-                        Resend
-                      </button>
-                    </>
-                  )}
-                </div>
-              </>
-            )}
-          </div>
+              </div>
+
+              {/* Invisible Google Logic Component */}
+              <GoogleLoginButton ref={googleRef} onLogin={handleGoogleLoginResult} mode="login" />
+
+              <p className="text-center text-sm mt-5">
+                No account?{' '}
+                <Link to="/register" className="text-green-700 hover:underline font-semibold">
+                  Create
+                </Link>
+              </p>
+            </>
+          ) : (
+            <>
+              {/* OTP Verification Step */}
+              <button
+                onClick={handleBackToLogin}
+                title="Back to Login"
+                className="absolute top-3 left-3 flex flex-row justify-center items-center gap-x-2 py-1 px-3 hover:bg-slate-200 rounded-full cursor-pointer text-slate-600 text-sm"
+              >
+                <ArrowLeft size={18} />
+                Back
+              </button>
+
+              <h2 className="text-center text-2xl font-bold text-slate-800 mb-2">
+                OTP Verification
+              </h2>
+              <p className="text-center text-slate-600 mb-4 text-sm">
+                Enter the 6-digit code sent to{' '}
+                <span className="font-semibold">{tempUser?.email}</span>
+              </p>
+
+              <div className="flex gap-x-3 py-2 items-center justify-center mb-4">
+                {otp.map((digit, i) => (
+                  <OTPField
+                    key={i}
+                    value={digit}
+                    autoFocus={i === 0}
+                    onChange={(val) => handleOtpChange(val, i)}
+                  />
+                ))}
+              </div>
+
+              <div className="flex flex-col justify-center items-center">
+                {!otpExpired ? (
+                  <>
+                    <SubmitButton onClick={(e) => handleVerifyOtp(e)}>
+                      <p>Verify OTP</p>
+                    </SubmitButton>
+                    <p className="mt-4 text-sm text-slate-600">
+                      Code will expire in <b>{formatTime(timeLeft)}</b>.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-red-600 font-semibold mb-3">OTP expired!</p>
+                    <button
+                      onClick={() => handleResendOtp(tempUser.email)}
+                      className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500"
+                    >
+                      Resend
+                    </button>
+                  </>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

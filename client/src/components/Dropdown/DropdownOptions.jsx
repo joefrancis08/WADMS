@@ -31,7 +31,7 @@ export const AreaDropdownItems = ({ areas, selected, onChange }) => {
           className='w-4 h-4 accent-green-600 rounded border-gray-300 cursor-pointer transition duration-150'
         />
         <span className='select-none'>
-          {allSelected ? 'Deselect All' : 'Select All'}
+          {allSelected ? 'Deselect All' : `Select All (${areas.length})`}
         </span>
       </label>
       <hr className='border-t border-slate-300 my-2' />

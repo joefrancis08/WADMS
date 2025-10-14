@@ -70,7 +70,11 @@ export const fetchAllUsers = async (controller) => {
   } catch(error) {
     console.error('Error getting all users:', error);
   }
-}
+};
+
+export const fetchAccessToken = async () => {
+  return await axios.get(`${API_BASE_URL}/users/access-token`);
+};
 
 export const fetchUserBy = async (key, value, controller) => {
   try {
@@ -120,14 +124,9 @@ export const updateUserRole = async (selectedUserId, newRole) => {
   }
 };
 
-export const deleteUser = async (selectedUserId) => {
-  try {
-    const res = await axios.delete(`${API_BASE_URL}/users/${selectedUserId}`);
-
-    return res.data;
-
-  } catch (error) {
-    console.log('Error deleting user:', error);
-  }
+export const deleteUser = async (uuid) => {
+  return await axios.delete(`${API_BASE_URL}/users/delete-user`, {
+    params: { uuid },
+  }); 
 };
 
