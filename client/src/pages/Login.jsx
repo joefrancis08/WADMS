@@ -9,6 +9,7 @@ import GoogleLoginButton from '../services/google/GoogleLoginButton';
 import { googleIcon } from '../assets/icons';
 import { showErrorToast, showSuccessToast } from '../utils/toastNotification';
 import { USER_ROLES } from '../constants/user';
+import PATH from '../constants/path';
 
 const Login = () => {
   const { refs, datas, utils, handlers } = useLogin();
@@ -54,11 +55,13 @@ const Login = () => {
         setTimeout(() => {
           const targetPath =
             user.role === USER_ROLES.DEAN
-              ? '/d'
+              ? PATH.DEAN.DASHBOARD
               : user.role === USER_ROLES.ACCREDITOR
-              ? '/a'
+              ? PATH.ACCREDITOR.DASHBOARD
               : user.role === USER_ROLES.TASK_FORCE
-              ? '/tf'
+              ? PATH.TASK_FORCE.DASHBOARD
+              : user.role === USER_ROLES.IA
+              ? PATH.INTERNAL_ASSESSOR.DASHBOARD
               : '/';
           window.location.href = targetPath;
         }, 2000);

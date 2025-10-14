@@ -13,6 +13,7 @@ const DeanLayout = ({ children, ref }) => {
   const { 
     DASHBOARD, 
     TASK_FORCE, 
+    INTERNAL_ASSESSORS,
     UNVERIFIED_USER: UNVERIFIED_USERS, 
     PROGRAMS_TO_BE_ACCREDITED 
   } = PATH.DEAN;
@@ -56,7 +57,7 @@ const DeanLayout = ({ children, ref }) => {
           id: 'internal-assessor', 
           icon: SquareUserRound, 
           label: 'Internal Assessor',
-          link: ''
+          link: INTERNAL_ASSESSORS
         },
         { 
           id: 'accreditor', 

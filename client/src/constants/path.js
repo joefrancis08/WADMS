@@ -19,6 +19,7 @@ const PATH = {
     TASK_FORCE: '/d/task-force',
     TASK_FORCE_DETAIL: (uuid) => `/d/task-force/${uuid}`,
     TASK_FORCE_DETAIL_TEMPLATE: '/d/task-force/:uuid',
+    INTERNAL_ASSESSORS: '/d/internal-assessors',
 
     PROGRAMS_TO_BE_ACCREDITED: '/d/accreditation/programs',
 
@@ -59,6 +60,10 @@ const PATH = {
 
   INTERNAL_ASSESSOR: {
     DASHBOARD: '/ia',
+  },
+
+  ACCREDITOR: {
+    DASHBOARD: '/a',
   }
 }
 
