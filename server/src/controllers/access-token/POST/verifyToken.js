@@ -19,10 +19,11 @@ const verifyToken = async (req, res) => {
       at.user_id,
       u.email,
       u.full_name,
+      u.profile_pic_path,
       u.role,
       u.status
     FROM access_token at
-    JOIN \`user\` u
+    JOIN user u
       ON at.user_id = u.id
     WHERE at.token = ?
     LIMIT 1
@@ -47,6 +48,7 @@ const verifyToken = async (req, res) => {
       user_id,
       email,
       full_name,
+      profile_pic_path,
       role,
       status,
     } = record;
@@ -88,6 +90,7 @@ const verifyToken = async (req, res) => {
     req.session.user = {
       email,
       fullName: full_name,
+      profilePicPath: profile_pic_path,
       role,
       status,
     };

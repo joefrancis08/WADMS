@@ -74,7 +74,7 @@ function Register() {
         </div>
 
         {/* Right side form */}
-        <div className="bg-slate-100 p-6 rounded-xl shadow-md shadow-slate-400 min-w-[350px] md:w-[370px] flex flex-col justify-center relative">
+        <div className="bg-slate-100 p-6 rounded-xl shadow-md shadow-slate-400 min-w-[350px] md:w-[370px] flex flex-col justify-center relative -mr-20">
           <h2 className="text-center text-2xl font-bold text-slate-800 mb-4 tracking-wide">
             Create Account
           </h2>

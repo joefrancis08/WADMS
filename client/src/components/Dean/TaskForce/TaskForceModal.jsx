@@ -12,7 +12,7 @@ import Popover from '../../Popover';
 import { deleteUser, gmailIcon } from '../../../assets/icons';
 import { useState } from 'react';
 import { showSuccessToast } from '../../../utils/toastNotification';
-import { generateNewToken } from '../../../api-calls/Users/userAPI';
+import { generateNewToken, shareToken } from '../../../api-calls/Users/userAPI';
 
 const CLIENT_BASE_URL = import.meta.env.VITE_CLIENT_BASE_URL;
 
@@ -59,7 +59,7 @@ const TaskForceModal = ({ data, handlers }) => {
   const expireAt = new Date(accessTokens?.find(t => modalData?.userId === t?.userId)?.accessTokenExpiration);
   const isExpired = expireAt < now;
   const isUsed = accessTokens?.find(t => modalData?.userId === t?.userId)?.isUsed;
-  const url = accessToken ? `${CLIENT_BASE_URL}/redirect?token=${accessToken}` : '';
+  const url = accessToken ? `${CLIENT_BASE_URL}/share/${accessToken}` : '';
 
   console.log(accessToken);
   console.log(isExpired);
@@ -67,6 +67,7 @@ const TaskForceModal = ({ data, handlers }) => {
   console.log(loadingAccessTokens);
 
   const [copied, setCopied] = useState(false);
+  const [sending, setSending] = useState(false);
 
   const handleCopy = async () => {
     try {
@@ -89,6 +90,29 @@ const TaskForceModal = ({ data, handlers }) => {
     } catch (error) {
       console.error('Error generating token:', error);
       throw error;
+    }
+  };
+
+  const handleShareLink =  async () => {
+    try {
+      setSending(true);
+      const res = await shareToken({
+        email: modalData.email,
+        fullName: modalData.fullName,
+        accessLink: url
+      });
+
+      console.log(res);
+      if(res.data.success) {
+        showSuccessToast(res.data.message);
+      }
+
+      setSending(false);
+      
+    } catch (error) {
+      console.error('Error sending access link:', error);
+      throw error;
+
     }
   };
 
@@ -302,10 +326,10 @@ const TaskForceModal = ({ data, handlers }) => {
                       {loadingAccessTokens ? 'Generating...' : 'Generate new'}
                     </button>
                     <button 
-                      onClick={null}
+                      onClick={handleShareLink}
                       className={`flex items-center justify-center text-sm pl-1 pr-3 py-1 rounded-full cursor-pointer hover:bg-slate-200 border border-slate-300 active:scale-95 transition`}>
-                      <img src={gmailIcon} alt='Gmail Logo' className='h-5 w-auto' loading='lazy' />
-                      Share via email
+                      {sending ? <LoaderCircle className='h-5 w-5 animate-spin text-slate-500 mr-2' /> : <img src={gmailIcon} alt='Gmail Logo'className='h-5 w-auto' loading='lazy' /> }
+                      {sending ? 'Sending...' : 'Send via email'}
                     </button>
                   </div>
                 </div>

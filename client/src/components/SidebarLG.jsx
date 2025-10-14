@@ -9,6 +9,8 @@ import { logoutUser } from '../api-calls/Users/userAPI';
 import { showErrorToast, showSuccessToast } from '../utils/toastNotification';
 import { logoutIcon } from '../assets/icons';
 
+const PROFILE_PIC_PATH = import.meta.env.VITE_PROFILE_PIC_PATH;
+
 const profileOptions = [
   { id: 'view-profile', label: 'View Profile', icon: UserRound },
   { id: 'logout', label: 'Logout', icon: LogOut },
@@ -244,10 +246,18 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
           >
             {/* User Info */}
             <div className={`flex items-center overflow-hidden transition-all ${isCollapsed ? 'gap-0' : 'gap-3'}`}>
-              <img className='rounded-full w-8 h-8' src='/sample-profile-picture.webp' alt='User Profile' />
+              <img 
+                className='rounded-full w-8 h-8' 
+                src={
+                user?.profilePicPath?.startsWith('http')
+                  ? user.profilePicPath
+                  : `${PROFILE_PIC_PATH}/${user.profilePicPath || 'default-profile-picture.png'}`
+                }
+                alt='User Profile' 
+              />
               <div className={`${isCollapsed ? 'opacity-0 max-w-0' : 'opacity-100 max-w-[200px]'}`}>
-                <p className='text-sm font-semibold'>{'Sample User'}</p>
-                <p className='text-xs text-gray-400'>{'Sample Role'}</p>
+                <p className='text-sm font-semibold'>{user.fullName}</p>
+                <p className='text-xs text-gray-400'>{user.role}</p>
               </div>
             </div>
           </div>

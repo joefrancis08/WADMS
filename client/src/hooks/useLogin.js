@@ -20,6 +20,7 @@ const useLogin = () => {
 
   // Context of where to save the registered user's data, his/her data will be passed to the login variable
   const { login } = useAuth();
+  const { user } = useAuth();
 
   // State of login values
   const [values, setValues] = useState({
@@ -53,7 +54,7 @@ const useLogin = () => {
 
   usePageTitle('Login');
 
-  console.log(otp.join(''));
+  console.log(user);
 
   useEffect(() => {
     let timer;

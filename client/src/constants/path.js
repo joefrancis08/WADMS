@@ -8,7 +8,7 @@ const PATH = {
     EMAIL_CONFIRMATION: '/email-confirmation',
     NOT_FOUND_DEFAULT: '*',
     NOT_FOUND_URL: '/page-not-found',
-    SHARE_PAGE: '/share'
+    SHARE_PAGE_TEMPLATE: '/share/:token'
   },
 
   UNVERIFIED_USER: {

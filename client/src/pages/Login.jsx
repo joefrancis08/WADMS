@@ -161,7 +161,10 @@ const Login = () => {
                 <div className="flex justify-center mt-6">
                   <SubmitButton disabled={isLoading}>
                     {isLoading ? (
-                      <LoaderCircle className="h-5 w-5 animate-spin" />
+                      <div className='flex items-center justify-center gap-x-1'>
+                        <LoaderCircle className="h-5 w-5 animate-spin" />
+                        <p className='text-sm'>Sending OTP...</p>
+                      </div>
                     ) : (
                       'Login'
                     )}
