@@ -2,11 +2,11 @@ import db from "../../../config/db.js";
 import updateToken from "../../../models/access-token/PATCH/updateToken.js";
 
 const verifyToken = async (req, res) => {
-  const { token } = req.query; 
+  const { token } = req.body;
 
   if (!token) {
     return res.status(400).json({
-      message: 'Token is required.',
+      message: "Token is required.",
       success: false,
     });
   }
@@ -22,68 +22,95 @@ const verifyToken = async (req, res) => {
       u.role,
       u.status
     FROM access_token at
-    JOIN user u
+    JOIN \`user\` u
       ON at.user_id = u.id
-    WHERE token = ?
+    WHERE at.token = ?
+    LIMIT 1
   `;
 
   const connection = await db.getConnection();
   try {
-    await connection.beginTransaction();
+    const [rows] = await connection.execute(tokenLookUpQuery, [token]);
 
-    const [tokenRecord] = await connection.execute(tokenLookUpQuery, [token]);
-
-    if (!tokenRecord) {
+    // No matching token
+    if (!rows || rows.length === 0) {
       return res.status(401).json({
-        message: 'Invalid token.',
+        message: "Invalid token.",
         success: false,
       });
     }
 
-    const { 
-      expire_at, is_used, user_id, 
-      email, full_name, role, status 
-    } = tokenRecord[0];
+    const record = rows[0];
+    const {
+      expire_at,
+      is_used,
+      user_id,
+      email,
+      full_name,
+      role,
+      status,
+    } = record;
 
-    if (expire_at < new Date()) {
-      return res.status(401).json({
-        message: 'Token expired.',
+    // Ensure Date comparison is correct
+    const now = new Date();
+    const expireAt = expire_at instanceof Date ? expire_at : new Date(expire_at);
+
+    if (isNaN(expireAt.getTime())) {
+      // Unexpected data shape; treat as invalid
+      return res.status(500).json({
+        message: "Malformed token expiry date.",
         success: false,
-        isExpired: true
+      });
+    }
+
+    if (expireAt < now) {
+      return res.status(401).json({
+        message: "Token expired.",
+        success: false,
+        isExpired: true,
       });
     }
 
     if (is_used) {
       return res.status(401).json({
-        message: 'Token already used.',
+        message: "Token already used.",
         success: false,
-        isUsed: true
+        isUsed: true,
       });
     }
-    console.log(tokenRecord);
 
-    await updateToken({ user_id }, { updateIsUsed: true });
-
+    // Mark token as used (wrap in a transaction in case updateToken touches DB)
+    await connection.beginTransaction();
+    await updateToken({ userId: user_id, token }, { updateIsUsed: true });
     await connection.commit();
-    
+
+    // Create session
     req.session.user = {
       email,
       fullName: full_name,
       role,
-      status
+      status,
     };
 
-    res.status(200).json({
-      message: 'Valid token.',
+    return res.status(200).json({
+      message: "Valid token.",
       success: true,
       isValidToken: true,
-      userId: tokenRecord[0].user_id
+      userData: req.session.user,
     });
-
   } catch (error) {
-    await connection.rollback();
-    console.error('Error verifying token:', error);
-    throw error;
+    try {
+      await connection.rollback();
+    } catch (_) {
+      // ignore rollback errors
+    }
+    console.error("Error verifying token:", error);
+    return res.status(500).json({
+      message: "Internal server error.",
+      success: false,
+    });
+  } finally {
+    connection.release();
   }
 };
 

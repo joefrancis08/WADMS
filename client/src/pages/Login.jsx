@@ -177,7 +177,7 @@ const Login = () => {
               <div className="flex flex-col items-center justify-center mb-3">
                 <button
                   onClick={() => googleRef.current.signIn()}
-                  className="w-full gap-x-3 flex items-center justify-center bg-gradient-to-br from-white to-slate-100 border border-slate-300 text-slate-800 px-4 py-3 rounded-full font-medium shadow-sm hover:shadow-md transition-all hover:scale-[1.02] active:scale-[0.97]"
+                  className="w-full gap-x-3 flex items-center justify-center bg-gradient-to-br from-white to-slate-100 border border-slate-300 text-slate-800 px-4 py-3 rounded-full font-medium shadow-sm hover:shadow-md transition-all active:scale-[0.97] cursor-pointer"
                 >
                   <img src={googleIcon} alt="Google Logo" className="h-5 w-5" loading="lazy" />
                   Continue with Google

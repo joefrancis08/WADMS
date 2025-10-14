@@ -5,6 +5,7 @@ import { fetchUnverifiedUsers } from '../controllers/user/Dean/GET/fetchUsers.js
 import fetchAccessToken from '../controllers/access-token/GET/fetchAccessToken.js';
 import verifyToken from '../controllers/access-token/POST/verifyToken.js';
 import generateNewToken from '../controllers/access-token/PATCH/generateNewToken.js';
+import shareToken from '../controllers/access-token/POST/shareToken.js';
 
 const userRouter = express.Router();
 
@@ -13,6 +14,7 @@ userRouter.post('/add-user', upload.single('profilePic'), addUser);
 userRouter.post('/confirm-email', confirmEmail);
 userRouter.post('/login', loginController);
 userRouter.post('/verify-token', verifyToken);
+userRouter.post('/share-token', shareToken);
 userRouter.post('/logout', logoutUser);
 userRouter.get('/check-email', checkEmail);
 userRouter.get('/session', userSession);

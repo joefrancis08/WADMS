@@ -12,10 +12,12 @@ import Popover from '../../Popover';
 import { deleteUser, gmailIcon } from '../../../assets/icons';
 import { useState } from 'react';
 import { showSuccessToast } from '../../../utils/toastNotification';
+import { generateNewToken } from '../../../api-calls/Users/userAPI';
 
 const CLIENT_BASE_URL = import.meta.env.VITE_CLIENT_BASE_URL;
 
 const TaskForceModal = ({ data, handlers }) => {
+  const now = new Date();
   const {
     loading,
     modalType,
@@ -29,7 +31,9 @@ const TaskForceModal = ({ data, handlers }) => {
     taskForceChair,
     taskForceMember,
     accessTokens,
-    loadingToken
+    loadingAccessTokens, 
+    errorAccessTokens, 
+    refetchAccessTokens
   } = data;
 
   const {
@@ -50,12 +54,17 @@ const TaskForceModal = ({ data, handlers }) => {
   } = handlers;
 
   console.log(modalData);
+  
+  const accessToken = accessTokens?.find(t => modalData?.userId === t?.userId)?.accessToken;
+  const expireAt = new Date(accessTokens?.find(t => modalData?.userId === t?.userId)?.accessTokenExpiration);
+  const isExpired = expireAt < now;
+  const isUsed = accessTokens?.find(t => modalData?.userId === t?.userId)?.isUsed;
+  const url = accessToken ? `${CLIENT_BASE_URL}/redirect?token=${accessToken}` : '';
 
-  const token = accessTokens?.map(t => t.accessToken);
-  console.log(token);
-
-  const accessLink = accessTokens?.find(t => modalData?.userId === t?.userId)?.accessToken;
-  const url = accessLink ? `${CLIENT_BASE_URL}/redirect?token=${accessLink}` : '';
+  console.log(accessToken);
+  console.log(isExpired);
+  console.log(isUsed);
+  console.log(loadingAccessTokens);
 
   const [copied, setCopied] = useState(false);
 
@@ -68,6 +77,18 @@ const TaskForceModal = ({ data, handlers }) => {
 
     } catch (error) {
       console.error('Failed to copy:', error);
+    }
+  };
+
+  const handleGenerateNewToken = async (userUUID) => {
+    try {
+      const res = await generateNewToken(userUUID);
+      console.log(res);
+      refetchAccessTokens();
+
+    } catch (error) {
+      console.error('Error generating token:', error);
+      throw error;
     }
   };
 
@@ -238,21 +259,21 @@ const TaskForceModal = ({ data, handlers }) => {
                 <X className='h-5 w-5'/>
               </button>
             </div>
-            {loadingToken ? (
+            {loadingAccessTokens ? (
                 <div className='w-full flex flex-col my-4 justify-center gap-y-3'>
                   <LoaderCircle className='h-16 w-16 animate-spin'/>
                 </div>
               ) : (
                 <div className='w-full flex flex-col my-4 justify-center gap-y-3'>
                   <p className='text-xs -mb-2'>
-                    Please share this link only with {modalData.fullName} to ensure that access remain secure and limited to the intended recipient.
+                    Please share this link only with <span className='font-semibold'>{modalData.fullName}</span> to ensure that access remain secure and limited to the intended recipient. This is only valid for <span className='font-semibold'>3 days</span> and can only be used once.
                   </p>
                   <div className='relative flex justify-between w-full items-start'>
                       <input 
                         type='text'
                         value={url}
                         readOnly
-                        className='relative border border-slate-300 rounded-md pl-10 pr-15 py-4 w-full text-center focus:outline-0'
+                        className='relative border border-slate-300 rounded-md pl-10 pr-15 py-4 w-full text-center focus:outline-0 cursor-default'
                       />
                       <Link className='absolute top-4.5 left-3 h-5 w-5 text-slate-700'/>
                       <button 
@@ -261,12 +282,28 @@ const TaskForceModal = ({ data, handlers }) => {
                         {copied ? <Check className='text-green-700 h-4 w-4 font-bold' /> : <Copy className='h-4 w-4'/>}
                       </button>
                   </div>
+                  <div className='-mt-3'>
+                    {isExpired && (
+                      <p className='text-sm text-red-500'>
+                        {isExpired === 0 && 'Link expired. Generate new.'}
+                      </p>
+                    )}
+                    {isUsed === 1 && (
+                      <p className='text-sm text-red-500'>
+                        {isUsed === 1 && 'Link already used. Generate new.'}
+                      </p>
+                    )}
+                  </div>
                   <div className='flex justify-between items-center'>
-                    <button className='flex items-center justify-center gap-x-2 text-sm px-3 py-1 rounded-full cursor-pointer hover:bg-slate-200 border border-slate-300 active:scale-95 transition'>
-                      <Link2 className='h-5 w-5'/>
-                      Generate new
+                    <button
+                      onClick={() => handleGenerateNewToken(modalData.userUUID)} 
+                      className='flex items-center justify-center gap-x-2 text-sm px-3 py-1 rounded-full cursor-pointer hover:bg-slate-200 border border-slate-300 active:scale-95 transition'>
+                      {loadingAccessTokens ? <LoaderCircle className='h-5 w-5 text-slate-700 animate-spin'/> : <Link2 className='h-5 w-5'/>}
+                      {loadingAccessTokens ? 'Generating...' : 'Generate new'}
                     </button>
-                    <button className='flex items-center justify-center text-sm pl-1 pr-3 py-1 rounded-full cursor-pointer hover:bg-slate-200 border border-slate-300 active:scale-95 transition'>
+                    <button 
+                      onClick={null}
+                      className={`flex items-center justify-center text-sm pl-1 pr-3 py-1 rounded-full cursor-pointer hover:bg-slate-200 border border-slate-300 active:scale-95 transition`}>
                       <img src={gmailIcon} alt='Gmail Logo' className='h-5 w-auto' loading='lazy' />
                       Share via email
                     </button>
