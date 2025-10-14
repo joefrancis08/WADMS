@@ -33,7 +33,7 @@ const LandingRedirect = () => {
           if (user.role === USER_ROLES.DEAN) {
             navigate('/d', { replace: true });
 
-          } else if (user.role === USER_ROLES.TASK_FORCE_CHAIR || USER_ROLES.TASK_FORCE_MEMBER) {
+          } else if (user.role === USER_ROLES.TASK_FORCE_CHAIR || user.role === USER_ROLES.TASK_FORCE_MEMBER) {
             navigate('/t', { replace: true });
 
           } else if (user.role === USER_ROLES.IA) {

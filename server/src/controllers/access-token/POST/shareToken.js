@@ -28,7 +28,7 @@ const shareToken = async (req, res) => {
       html: `
         <div style="font-family: Arial, sans-serif; background-color: #f4f4f7; padding: 24px;">
           <div style="max-width:600px; margin:0 auto; background:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 2px 6px rgba(0,0,0,0,0.05);">
-            <div style="background:#4f46e5; color:#ffffff; padding:18px 20px; text-align:center;">
+            <div style="background:#15803d; color:#ffffff; padding:18px 20px; text-align:center;">
               <h1 style="margin:0; font-size:18px; line-height:1.2;">${escapeHTML('WDMS Access Link')}</h1>
             </div>
 
@@ -43,7 +43,7 @@ const shareToken = async (req, res) => {
             
 
               <div style="text-align:left; margin:16px 0">
-                <a href="${accessLink}" target="_blank" rel="noopener noreferrer" style="display:inline-block; text-decoration:none; padding:10px 16px; border-radius:6px; font-weight:600; font-size:14px; color:#ffffff; background:#4f46e5">
+                <a href="${accessLink}" target="_blank" rel="noopener noreferrer" style="display:inline-block; text-decoration:none; padding:10px 16px; border-radius:6px; font-weight:600; font-size:14px; color:#ffffff; background:#15803d">
                   Open Link
                 </a>
               </div>
@@ -73,7 +73,10 @@ const shareToken = async (req, res) => {
     
   } catch (error) {
     console.error('Error sharing email:', error);
-    throw error;
+    return res.status(500).json({
+      message: 'Failed to send email. Please try again.',
+      success: false,
+    });
   }
 };
 

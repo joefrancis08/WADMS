@@ -50,7 +50,7 @@ export const addUserController = async (req, res) => {
 
     // Step 3.3: Generate access link for verified user
     const result = await insertAccessToken({
-      token: generateToken(),
+      token: generateToken(62),
       expireAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
       isUsed: false,
       userId: verifiedUser.insertId

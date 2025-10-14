@@ -31,7 +31,7 @@ const taskForceRoutes = protectedRoutes.map(({ path, element }) => (
     path={path}
     element={
       <ProtectedRoute
-        allowedRoles={[]} // Allowed Role: Task Force
+        allowedRoles={[USER_ROLES.TASK_FORCE_CHAIR, USER_ROLES.TASK_FORCE_MEMBER]} // Allowed Role: Task Force
         loader={Loader}
         fallbackRoute={LOGIN}
       >

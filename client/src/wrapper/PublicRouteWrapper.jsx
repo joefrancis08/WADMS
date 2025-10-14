@@ -1,6 +1,5 @@
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import LoadSpinner from "../components/Loaders/LoadSpinner";
 import { LoaderCircle } from "lucide-react";
 import { USER_ROLES } from "../constants/user";
 

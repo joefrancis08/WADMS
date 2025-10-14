@@ -8,7 +8,8 @@ const transporter = nodemailer.createTransport({
   auth: {
     user: process.env.EMAIL, // Gmail account that sends OTP
     pass: process.env.EMAIL_PASSWORD // App password
-  }
+  },
+  family: 4
 });
 
 export default transporter;

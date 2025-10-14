@@ -9,7 +9,7 @@ import PublicRouteWrapper from "../wrapper/PublicRouteWrapper";
 import Pending from "../pages/Pending/Pending";
 import SharePage from "../pages/SharePage";
 
-const { DEFAULT_PATH, REGISTER, LOGIN, EMAIL_CONFIRMATION, NOT_FOUND_DEFAULT, NOT_FOUND_URL, SHARE_PAGE } = PATH.PUBLIC;
+const { DEFAULT_PATH, REGISTER, LOGIN, EMAIL_CONFIRMATION, NOT_FOUND_DEFAULT, NOT_FOUND_URL, SHARE_PAGE_TEMPLATE } = PATH.PUBLIC;
 
 const publicRouteArray = [
   {
@@ -38,7 +38,7 @@ const publicRouteArray = [
     </PublicRouteWrapper> 
   },
   {
-    path: SHARE_PAGE,
+    path: SHARE_PAGE_TEMPLATE,
     element: <SharePage />
   },
   {

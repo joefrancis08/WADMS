@@ -29,6 +29,15 @@ export const postUser = async (data) => {
 export const verifyToken = async (token) => {
   return axios.post(`${API_BASE_URL}/users/verify-token`, {
     token
+  }, { withCredentials: true });
+};
+
+export const shareToken = async ({ email, fullName, accessLink }) => {
+  console.log(accessLink);
+  return axios.post(`${API_BASE_URL}/users/share-token`, {
+    email,
+    fullName,
+    accessLink
   });
 };
 

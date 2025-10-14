@@ -101,7 +101,7 @@ const TaskForceLayout = ({ children }) => {
                 className="relative p-2 rounded-full hover:bg-slate-700 cursor-pointer"
               >
                 <Bell className="h-6 w-6 text-slate-100" />
-                <span className="absolute top-0 -right-1 bg-red-500 px-2 rounded-full text-slate-100 text-sm">
+                <span className="absolute top-0 border-2 border-slate-600 -right-1 bg-red-500 px-2 rounded-full text-slate-100 text-sm">
                   3
                 </span>
               </button>
