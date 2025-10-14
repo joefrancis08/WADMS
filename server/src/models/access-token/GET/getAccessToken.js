@@ -8,8 +8,6 @@ const getAccessToken = async (connection = null) => {
       expire_at AS accessTokenExpiration,
       is_used AS isUsed
     FROM access_token
-    WHERE expire_at > NOW()
-      AND is_used = 0
   `;
 
   try {

@@ -57,6 +57,7 @@ export const addUserController = async (req, res) => {
     });
 
     sendUpdate('user-update');
+    sendUpdate('access-token-update');
 
     return res.status(201).json({
       message: 'User added successfully.',
