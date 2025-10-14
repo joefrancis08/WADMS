@@ -6,30 +6,36 @@ import { USER_ROLES } from "../constants/user";
 import { TOAST_MESSAGES } from "../constants/messages";
 import MODAL_TYPE from "../constants/modalTypes";
 import { showErrorToast, showSuccessToast } from "../utils/toastNotification";
+import useOutsideClick from "./useOutsideClick";
+import usePageTitle from "./usePageTitle";
 
 export const useUnverifiedUsers = () => {
   const navigate = useNavigate();
 
-  const { UNVERIFIED_USER_UPDATE, UNVERIFIED_USER_DELETION } = TOAST_MESSAGES;
-  const { UNVERIFIED_USER } = USER_ROLES;
+  const { UU_UPDATE, UU_DELETION } = TOAST_MESSAGES;
+  const { UU } = USER_ROLES;
   const { 
     USER_PROFILE,
-    USER_VERIFICATION_CONFIRMATION,
-    UPDATE_USER,
-    USER_DELETION_CONFIRMATION,
+    UU_VERIFICATION_CONFIRMATION,
+    UU_UPDATE: UPDATE_UU,
+    UU_DELETION_CONFIRMATION,
   } = MODAL_TYPE;
 
-  const unverifiedUsers = useUsersBy('role', UNVERIFIED_USER).users.data ?? [];
+  const unverifiedUsers = useUsersBy('role', UU).users.data ?? [];
+
+  console.log(unverifiedUsers);
   
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalType, setModalType] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedRole, setSelectedRole] = useState(UNVERIFIED_USER);
+  const [selectedRole, setSelectedRole] = useState(UU);
+
+  usePageTitle('Unverified Users');
 
   const handleCloseModal = (options = {}) => {
     setModalType(null);
     setSelectedUser(null);
-    setSelectedRole(UNVERIFIED_USER);
+    setSelectedRole(UU);
 
     if (options.clearDropdown) setShowDropdown(false);
   };
@@ -42,13 +48,13 @@ export const useUnverifiedUsers = () => {
 
   const handleVerifyClick = (e, options = {}) => {
     e.stopPropagation();
-    setModalType(USER_VERIFICATION_CONFIRMATION);
+    setModalType(UU_VERIFICATION_CONFIRMATION);
 
     if (options.selectedUser) setSelectedUser(options.selectedUser);
   };
 
   const handleVerifyConfirm = () => {
-    setModalType(UPDATE_USER);
+    setModalType(UPDATE_UU);
   };
 
   const handleDropdown = () => {
@@ -60,11 +66,11 @@ export const useUnverifiedUsers = () => {
     setShowDropdown(false);
   }
 
-  const handleDeleteClick = (e, options = {}) => {
+  const handleDeleteClick = (e, data = {}) => {
     e.stopPropagation();
-    setModalType(USER_DELETION_CONFIRMATION);
+    setModalType(UU_DELETION_CONFIRMATION);
 
-    if (options.selectedUser) setSelectedUser(options.selectedUser);
+    if (data.selectedUser) setSelectedUser(data.selectedUser);
   };
 
   const handleDeleteConfirm = () => {
@@ -76,28 +82,31 @@ export const useUnverifiedUsers = () => {
 
     try {
       const res = await deleteUser(selectedUser?.user_uuid);
-      res.success && showSuccessToast(UNVERIFIED_USER_DELETION.SUCCESS);
+
+      if (res.data.success) {
+        showSuccessToast(UU_DELETION.SUCCESS);
+      } 
 
     } catch (error) {
       console.error('Failed to delete user:', error);
-      showErrorToast(UNVERIFIED_USER_DELETION.ERROR);
+      showErrorToast(UU_DELETION.ERROR);
     }
   }
 
   const handleUpdateSubmit = async () => {
     try {
       const res = await updateUserRole(selectedUser.user_uuid, selectedRole);
-      res.success && showSuccessToast(UNVERIFIED_USER_UPDATE.SUCCESS);
+      res.success && showSuccessToast(UU_UPDATE.SUCCESS);
 
     } catch (error) {
       console.error('Failed to update user:', error);
-      showErrorToast(UNVERIFIED_USER_UPDATE.ERROR);
+      showErrorToast(UU_UPDATE.ERROR);
     }
   }
 
   const handleSaveUpdate = () => {
      handleUpdateSubmit();
-     setSelectedRole(UNVERIFIED_USER);
+     setSelectedRole(UU);
      setModalType(null);
   }
 

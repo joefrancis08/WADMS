@@ -1,125 +1,156 @@
-import { EllipsisVertical, FileUser, FolderTree, Link, Plus, PlusCircle, Trash2, UserRoundPen } from 'lucide-react';
-import Dropdown from '../../Dropdown/Dropdown';
-import ProfilePicture from '../../ProfilePicture';
 import React from 'react';
+import {
+  EllipsisVertical,
+  FileUser,
+  FolderTree,
+  Link as LinkIcon,
+  PlusCircle,
+  Trash2,
+  UserRoundPen,
+} from 'lucide-react';
+import Dropdown from '../../../components/Dropdown/Dropdown';
+import ProfilePicture from '../../../components/ProfilePicture';
 
-const TaskForceCard = ({ 
+const getUserId = (u) => u.uuid;
+
+const TaskForceCard = ({
   dropdownRef,
-  activeDropdownId, 
+  activeDropdownId,
+  setActiveDropdownId,
   label,
-  taskForce, 
-  navigation, 
-  profilePic, 
-  handleDropdown, 
+  taskForce,
+  navigation,
+  profilePic,
+  handleDropdown,
   handleEllipsisClick,
-  handleAddCardClick 
+  handleAddCardClick,
 }) => {
+  const menu = [
+    { icon: <FolderTree size={20} />, label: 'Assign Program, Area, & Parameter' },
+    { icon: <LinkIcon size={20} />, label: 'View Access Link' },
+    { icon: <FileUser size={20} />, label: 'View Details' },
+    { icon: <UserRoundPen size={20} />, label: 'Update' },
+    { icon: <Trash2 size={20} color='red' />, label: 'Delete' },
+  ];
+
   const renderDropdown = (user) => {
-    
-    const dropDownMenu = [
-      { icon: <FolderTree size={22} />, label: 'Assign Program, Area, & Parameter' },
-      { icon: <Link size={22} />, label: 'Generate Access Link' },
-      { icon: <FileUser size={22} />, label: 'View Details' },
-      { icon: <UserRoundPen size={22} />, label: 'Update' },
-      { icon: <Trash2 size={22} color='red'/>, label: 'Delete' }
-    ];
+    const id = getUserId(user);
+    if (activeDropdownId !== id) return null;
 
     return (
-      activeDropdownId === user.uuid && (
-        <div ref={dropdownRef} className='absolute top-8 left-15 max-sm:left-10 transition'>
-          <Dropdown width='w-50' border='border border-gray-300 rounded-md'>
-            {dropDownMenu.map((menu, index) => (
-              <React.Fragment key={index}>
-                {menu.label === 'Delete' && (
-                  <hr className='m-1 text-slate-300'></hr>
-                )}
-                <div
-                  onClick={(e) => {
-                    e.stopPropagation(); // This code prevent card click.
-                    handleDropdown(e, menu, user)
-                  }}
-                  className={`flex items-center gap-x-2 text-gray-700 text-sm p-2 rounded-md hover:shadow transition-all active:opacity-60 ${menu.label === 'Delete' ? 
-                  'hover:bg-red-200' : 'hover:bg-slate-200'}`}
-                >
-                  <i>{menu.icon}</i>
-                  <p className={menu.label === 'Delete' ? 'text-red-500' : ''}>{menu.label}</p>
-                </div>
-              </React.Fragment>
-            ))}
-          </Dropdown>
-        </div>
-      )
+      <div ref={dropdownRef} className='absolute top-10 left-15 z-50'>
+        <Dropdown width='w-56' border='border border-slate-300 rounded-md bg-white shadow-lg'>
+          {menu.map((m, idx) => (
+            <React.Fragment key={idx}>
+              {m.label === 'Delete' && <hr className='m-1 text-slate-200' />}
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDropdown(e, m, user);
+                  setActiveDropdownId(null);
+                }}
+                className={`flex items-center gap-2 text-sm p-2 rounded-md cursor-pointer transition ${m.label === 'Delete' ? 'hover:bg-red-200' : 'hover:bg-slate-200'}`}
+                role='menuitem'
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleDropdown(e, m, user);
+                    setActiveDropdownId(null);
+                  }
+                }}
+              >
+                <i className='shrink-0'>{m.icon}</i>
+                <p className={m.label === 'Delete' ? 'text-red-500' : ''}>{m.label}</p>
+              </div>
+            </React.Fragment>
+          ))}
+        </Dropdown>
+      </div>
     );
   };
 
   return (
-    <div>
-      <div className='flex flex-wrap gap-10 pb-6 justify-center'>
-        {taskForce?.map((user, index) => (
-          <div
-            onClick={() => navigation(user)}
-            key={index} 
-            className={`relative p-4 h-65 bg-gradient-to-b from-green-700 to-amber-300 rounded-xl shadow hover:shadow-md hover:shadow-slate-700 hover:scale-105 active:shadow cursor-pointer transition
-              ${label === 'Chair' && 'w-70'}
-              ${label === 'Member' && 'w-60'}
-            `}
-          >
-            <div 
-              onClick={(e) => {
-                handleEllipsisClick(e, user);
-              }} 
-              className='absolute top-1 p-2 right-1 text-slate-100 rounded-full hover:shadow hover:text-slate-200 hover:bg-slate-100/20 active:opacity-50 transition'>
-              <EllipsisVertical size={20}/>
-            </div>
-            {renderDropdown(user)}
-            <div className='flex flex-col items-center text-center'>
-              {label === 'Chair' && (
-                <ProfilePicture
-                  name={user.fullName} 
-                  profilePic={profilePic(user)}
-                  height='h-36' width='w-36' 
-                  border='rounded-full border-3 border-green-800' 
-                />
-              )}
+    <div className='relative'>
+      {/* switched to flex + wrap + justify-center */}
+      <div className='flex flex-wrap justify-center gap-5'>
+        {taskForce?.map((user) => {
+          const id = getUserId(user);
+          const isChair = label === 'Chair';
+          return (
+            <div
+              key={id}
+              onClick={() => navigation(user)}
+              className='relative w-full max-w-[18rem]
+                         bg-gradient-to-b from-slate-800 to-slate-700
+                         border border-slate-600 rounded-xl
+                         shadow hover:shadow-lg hover:border-slate-500
+                         transition overflow-visible cursor-pointer'
+            >
+              {activeDropdownId === id && <div className="fixed inset-0 z-40"></div>}
+              {/* ellipsis button */}
+              <button
+                type='button'
+                aria-label='Open actions'
+                onClick={(e) => handleEllipsisClick(e, user)}
+                className='absolute top-2 right-2 p-2 rounded-full
+                           text-slate-200 hover:text-white hover:bg-slate-700
+                           cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-600
+                           active:scale-95'
+              >
+                <EllipsisVertical size={18} />
+              </button>
 
-              {label === 'Member' && (
+              {renderDropdown(user)}
+
+              {/* content */}
+              <div className='px-4 pt-6 pb-5 flex flex-col items-center text-center'>
                 <ProfilePicture
-                  name={user.fullName} 
+                  name={user.fullName}
                   profilePic={profilePic(user)}
-                  height='h-28' width='w-28' 
-                  border='rounded-full border-3 border-green-700' 
+                  height={isChair ? 'h-28' : 'h-24'}
+                  width={isChair ? 'w-28' : 'w-24'}
+                  border={`rounded-full border-4 border-green-700`}
                 />
-              )}
-              <div className='flex flex-col gap-y-1 items-center justify-center'>
-                <p className='bg-slate-900 rounded-md min-w-50 text-sm max-md:text-md md:text-lg text-slate-100 shadow font-semibold mt-3 py-1.5 leading-6'>
-                  {user.fullName}
-                </p>
-                <p className='w-1/2 bg-slate-100 p-1 border border-green-700 rounded text-green-700 font-semibold shadow max-md:text-xs md:text-sm'>
-                  {user.role}
-                </p>
+
+                <div className='mt-4 space-y-2 w-full'>
+                  <p className='mx-auto max-w-[220px] px-2 py-1 rounded bg-slate-900 text-slate-100 text-sm font-semibold truncate'>
+                    {user.fullName}
+                  </p>
+
+                  <div className='flex items-center justify-center'>
+                    <span
+                      className={`inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded border ${
+                        isChair ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-green-100 text-green-800 border-green-300'
+                      }`}
+                    >
+                      {user.role}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
+          );
+        })}
+
+        {/* add card */}
+        <button
+          type='button'
+          onClick={() => handleAddCardClick({ role: label, from: `${label}-section` })}
+          className='w-full max-w-[18rem] flex items-center justify-center rounded-xl
+                     border-2 border-dashed border-slate-600 hover:border-slate-500
+                     bg-slate-800/60 hover:bg-slate-800 text-slate-200 shadow-inner
+                     min-h-[220px] transition active:scale-95 cursor-pointer'
+          aria-label={`Add ${label}`}
+        >
+          <div className='flex flex-col items-center gap-2'>
+            <PlusCircle className='h-10 w-10' />
+            <p className='text-sm font-medium'>Add {label === 'Chair' ? 'Chair' : 'Member'}</p>
           </div>
-        ))}
-        <div 
-          onClick={() => handleAddCardClick({ role: label, from: `${label}-section`})}
-          className={`flex items-center justify-center bg-slate-700 p-4 rounded-xl shadow hover:shadow-md hover:shadow-slate-700 cursor-pointer transition active:shadow hover:scale-105 active:scale-95 border border-slate-600
-        ${label === 'Chair' && 'w-70 h-65'}
-        ${label === 'Member' && 'w-60 h-65'}`}>
-          <div className='flex flex-col items-center justify-center gap-2'>
-            <PlusCircle className='text-white' size={60}/>
-            <p className='text-white font-medium text-lg text-center'>
-              Add
-              {
-                label === 'Chair' ? ' Chair' : ' Member'
-              }
-            </p>
-          </div>
-        </div>
+        </button>
       </div>
     </div>
   );
 };
 
 export default TaskForceCard;
-

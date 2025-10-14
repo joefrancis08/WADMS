@@ -59,7 +59,7 @@ const useProgramAreas = () => {
     loading: taskForceLoading, 
     error: taskForceError, 
     refetch: taskForceRefetch 
-  } = useUsersBy();
+  } = useUsersBy({ role: ['Chair', 'Member'] });
 
   console.log(taskForce);
   const data = areasData?.data ?? [];

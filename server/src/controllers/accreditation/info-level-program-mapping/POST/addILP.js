@@ -3,13 +3,13 @@ import sendUpdate from "../../../../services/websocket/sendUpdate.js";
 
 const addILP = async (req, res) => {
   const { title, year, accredBody, level, programNames } = req.body;
-  console.table({
+  console.log('addILP.js Line 6', {
     title: title.trim(),
     year,
     accredBody,
     level,
     programNames
-  })
+  });
   try {
     // Validate title and accredBody
     if (!title?.trim() || !accredBody?.trim() || !level?.trim()) {
@@ -59,6 +59,8 @@ const addILP = async (req, res) => {
 
     // Wait for all promises to finish
     const results = await Promise.all(promises);
+
+    console.log(results, 'of addILP.js line 63');
 
     // Notify frontend via WebSocket
     sendUpdate('info-level-program-update');

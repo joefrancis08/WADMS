@@ -62,6 +62,10 @@ export const messageHandler = (callback) => {
           case 'assignment-update':
             callback();
             break;
+          
+          case 'accred-body-update':
+            callback();
+            break;
 
           // For any unrecognized message type
           default:

@@ -21,7 +21,7 @@ const login = async (req, res) => {
     }
 
     // Step 2: Check if email exist. If true, return email not found
-    const userResult = await getUserBy('email', email, true, true);
+    const userResult = await getUserBy('email', email, true, true, false);
     if (!userResult) {
       return res.status(404).json({
         message: 'Email not found.',

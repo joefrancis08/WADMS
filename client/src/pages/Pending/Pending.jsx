@@ -30,7 +30,7 @@ const Pending = () => {
         <div className='justify-center flex mb-6'>
           <img className='w-24 md:w-32 h-auto' src={pendingIcon} alt="Pending Icon" />
         </div>
-        <div className="content border-2 border-green-500 rounded-3xl pt-4 shadow-lg">
+        <div className="content border-2 border-green-500 rounded-3xl pt-4">
           <h1 className="text-2xl font-bold text-center text-green-700">Pending Verification</h1>
           <p className="text-center mt-4 m-2">
             Good day, <strong>{user.fullName}</strong>!
