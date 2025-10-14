@@ -54,6 +54,10 @@ const PATH = {
   TASK_FORCE: {
     DASHBOARD: '/t',
     ACCREDITATION: '/t/accreditation'
+  },
+
+  INTERNAL_ASSESSOR: {
+    DASHBOARD: '/ia',
   }
 }
 

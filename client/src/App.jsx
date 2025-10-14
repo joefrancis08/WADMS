@@ -4,6 +4,7 @@ import deanRoutes from './routes/DeanRoute';
 import publicRoute from './routes/PublicRoute';
 import taskForceRoutes from './routes/TaskForceRoute';
 import unverifiedUserRoutes from './routes/UnverifiedUserRoute';
+import internalAssessorRoutes from './routes/InternalAssessor';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         {unverifiedUserRoutes}
         {deanRoutes}
         {taskForceRoutes}
+        {internalAssessorRoutes}
       </Routes>
       <ToastContainer />
     </BrowserRouter>
