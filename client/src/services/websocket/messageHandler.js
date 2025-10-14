@@ -67,7 +67,11 @@ export const messageHandler = (callback) => {
             callback();
             break;
 
-          // For any unrecognized message type
+          case 'access-token-update':
+            callback();
+            break;
+
+          // For any unrecognized message type 
           default:
             console.warn('Unhandled WebSocket message type:', data.type);
         }

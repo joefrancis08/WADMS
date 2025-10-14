@@ -5,7 +5,8 @@ const PATH = {
     LOGIN: '/login',
     EMAIL_CONFIRMATION: '/email-confirmation',
     NOT_FOUND_DEFAULT: '*',
-    NOT_FOUND_URL: '/page-not-found'
+    NOT_FOUND_URL: '/page-not-found',
+    SHARE_PAGE: '/share'
   },
 
   UNVERIFIED_USER: {

@@ -15,7 +15,7 @@ const updateToken = async (data = {}, condition = {}, connection = null) => {
   } else if (updateToken) {
     query = `
       UPDATE access_token
-      SET token = ?, expire_at = ?
+      SET token = ?, expire_at = ?, is_used = 0
       WHERE user_id = ?
     `;
 

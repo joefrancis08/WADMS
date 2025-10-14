@@ -26,6 +26,12 @@ export const postUser = async (data) => {
   }
 };
 
+export const verifyToken = async (token) => {
+  return axios.post(`${API_BASE_URL}/users/verify-token`, {
+    token
+  });
+};
+
 export const registerUser = async (values) => {
   try {
     const { data } = await axios.post(`${API_BASE_URL}/users/register`, values, { withCredentials: true });
@@ -72,8 +78,10 @@ export const fetchAllUsers = async (controller) => {
   }
 };
 
-export const fetchAccessToken = async () => {
-  return await axios.get(`${API_BASE_URL}/users/access-token`);
+export const fetchAccessToken = async ({ signal }) => {
+  return await axios.get(`${API_BASE_URL}/users/access-token`, {
+    signal
+  });
 };
 
 export const fetchUserBy = async (key, value, controller) => {
@@ -108,7 +116,14 @@ export const updateUser = async (updatedData, uuid) => {
     console.log('Error updating data:', error);
     console.log(error.response.data);
   }
-}
+};
+
+export const generateNewToken = (userUUID) => {
+  console.log(userUUID);
+  return axios.patch(`${API_BASE_URL}/users/generate-new-token`, {
+    userUUID
+  });
+};
 
 export const updateUserRole = async (selectedUserId, newRole) => {
   try {
