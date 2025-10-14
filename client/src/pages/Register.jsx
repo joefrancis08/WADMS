@@ -138,7 +138,7 @@ function Register() {
           <div className="flex items-center justify-center mb-3">
             <button
               onClick={() => googleRef.current.signIn()}
-              className="w-full gap-x-3 flex items-center justify-center bg-gradient-to-br from-white to-slate-100 border border-slate-300 text-slate-800 px-4 py-3 rounded-full font-medium shadow-sm hover:shadow-md transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+              className="w-full gap-x-3 flex items-center justify-center bg-gradient-to-br from-white to-slate-100 border border-slate-300 text-slate-800 px-4 py-3 rounded-full font-medium shadow-sm hover:shadow-md transition-all active:scale-[0.98] cursor-pointer"
             >
               <img
                 src={googleIcon}

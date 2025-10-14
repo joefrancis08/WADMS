@@ -1,9 +1,12 @@
 import db from "../../../config/db.js";
 import updateToken from "../../../models/access-token/PATCH/updateToken.js";
+import sendUpdate from "../../../services/websocket/sendUpdate.js";
 import generateToken from "../../../utils/token.js";
 
 const generateNewToken = async (req, res) => {
-  const { userUUID } = req.query;
+  const { userUUID } = req.body;
+
+  console.log(userUUID);
 
   const lookUpQuery = `
     SELECT id 
@@ -38,6 +41,7 @@ const generateNewToken = async (req, res) => {
 
     console.log(result);
     if (result.affectedRows) {
+      sendUpdate('access-token-update');
       return res.status(200).json({
         message: 'New token generated successfully!',
         success: true

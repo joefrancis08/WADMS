@@ -10,6 +10,7 @@ import { showErrorToast, showSuccessToast } from "../../utils/toastNotification"
 import { emailRegex } from "../../utils/regEx";
 import useOutsideClick from "../useOutsideClick";
 import usePageTitle from "../usePageTitle";
+import useFetchAccessToken from "../fetch-react-query/useFetchAccessToken";
 
 const { 
   ADD_TF, 
@@ -31,6 +32,7 @@ const getUserEmail = (u) => u?.email || "";
 export const useTaskForce = () => {
   // Pull only chair & member — useUsersBy returns an array, not {data: ...}
   const { users, loading, error } = useUsersBy({ role: [TASK_FORCE_CHAIR, TASK_FORCE_MEMBER] });
+  const { accessTokens, loadingAccessTokens, errorAccessTokens, refetchAccessTokens } = useFetchAccessToken();
   const navigate = useNavigate();
   const dropdownRef = useRef();
 
@@ -63,8 +65,6 @@ export const useTaskForce = () => {
   const [updatedProfilePic, setUpdatedProfilePic] = useState(null);
   const [formValue, setFormValue] = useState({ fullName: "", email: "", role: "" });
   const [updatedValue, setUpdatedValue] = useState({ fullName: "", email: "", role: "" });
-  const [accessTokens, setAccessTokens] = useState([]);
-  const [loadingToken, setLoadingToken] = useState(true);
 
   // Search state (consumed in component)
   const [searchOpen, setSearchOpen] = useState(false);
@@ -75,24 +75,6 @@ export const useTaskForce = () => {
   usePageTitle("Task Force");
 
   console.log(accessTokens);
-
-  // Fetch access tokens
-  const queryFn = async () => {
-    try {
-      const res = await fetchAccessToken();
-
-      console.log(res);
-      setLoadingToken(false);
-      setAccessTokens(res.data.tokens);
-
-    } catch (error) {
-      console.error('Error fetching access token:', error);
-    }
-  };
-  useEffect(() => {
-    queryFn();
-    
-  }, []);
 
   // Prefill update form from selectedUser
   useEffect(() => {
@@ -202,10 +184,11 @@ export const useTaskForce = () => {
       setModalType(VIEW_ACCESS_LINK);
       setModalData({
         userId: user.id,
+        userUUID: user.uuid,
         email: user.email,
         fullName: user.fullName,
       });
-      queryFn();
+      refetchAccessTokens();
 
     } else if (menu?.label === "View Details") {
       navigate(TASK_FORCE_DETAIL(id), { state: { from: TASK_FORCE } });
@@ -317,7 +300,9 @@ export const useTaskForce = () => {
       formValue,
       infoClick,
       accessTokens,
-      loadingToken,
+      loadingAccessTokens, 
+      errorAccessTokens, 
+      refetchAccessTokens, 
 
       // search
       searchOpen,

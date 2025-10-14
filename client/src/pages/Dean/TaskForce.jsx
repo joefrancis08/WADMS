@@ -43,7 +43,9 @@ const TaskForce = () => {
     searchOpen,
     searchQuery,
     accessTokens,
-    loadingToken
+    loadingAccessTokens, 
+    errorAccessTokens, 
+    refetchAccessTokens
   } = datas;
 
   const {
@@ -341,7 +343,9 @@ const TaskForce = () => {
           infoClick,
           isUpdateBtnDisabled,
           accessTokens,
-          loadingToken
+          loadingAccessTokens, 
+          errorAccessTokens, 
+          refetchAccessTokens
         }}
         handlers={{
           handleCloseModal,

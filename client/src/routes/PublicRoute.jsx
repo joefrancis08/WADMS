@@ -7,8 +7,9 @@ import EmailConfirmation from "../pages/EmailConfirmation";
 import Login from "../pages/Login";
 import PublicRouteWrapper from "../wrapper/PublicRouteWrapper";
 import Pending from "../pages/Pending/Pending";
+import SharePage from "../pages/SharePage";
 
-const { DEFAULT_PATH, REGISTER, LOGIN, EMAIL_CONFIRMATION, NOT_FOUND_DEFAULT, NOT_FOUND_URL } = PATH.PUBLIC;
+const { DEFAULT_PATH, REGISTER, LOGIN, EMAIL_CONFIRMATION, NOT_FOUND_DEFAULT, NOT_FOUND_URL, SHARE_PAGE } = PATH.PUBLIC;
 
 const publicRouteArray = [
   {
@@ -35,6 +36,10 @@ const publicRouteArray = [
     <PublicRouteWrapper>
       <EmailConfirmation />
     </PublicRouteWrapper> 
+  },
+  {
+    path: SHARE_PAGE,
+    element: <SharePage />
   },
   {
     path: NOT_FOUND_URL,

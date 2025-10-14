@@ -3,6 +3,9 @@ import { Menu, X, Bell, Pen, LogOut, Sun, Moon } from "lucide-react";
 import PATH from "../../../constants/path";
 import { Link, useLocation } from "react-router-dom";
 import useOutsideClick from "../../../hooks/useOutsideClick";
+import { logoutUser } from "../../../api-calls/Users/userAPI";
+import { useAuth } from "../../../contexts/AuthContext";
+import { showErrorToast, showSuccessToast } from "../../../utils/toastNotification";
 
 const { DASHBOARD, ACCREDITATION } = PATH.TASK_FORCE;
 
@@ -13,6 +16,7 @@ const navItems = [
 ];
 
 const TaskForceLayout = ({ children }) => {
+  const { logout } = useAuth();
   const profileOptionRef = useRef();
   const location = useLocation();
 
@@ -28,6 +32,22 @@ const TaskForceLayout = ({ children }) => {
 
   const handleProfileClick = () => {
     setShowProfileOption(!showProfileOption);
+  };
+
+  const handleLogout = async () => {
+    try {
+      const res = await logoutUser();
+      if (res.data.success) {
+        logout();
+        showSuccessToast('Logged out successfully!', 'top-center');
+        
+      } else {
+        showErrorToast('Logout failed. Try again.');
+      }
+    } catch (error) {
+      showErrorToast('Something went wrong. Try again.');
+      console.error(error);
+    }
   };
 
   return (
@@ -138,7 +158,9 @@ const TaskForceLayout = ({ children }) => {
               </div>
               <hr className="text-slate-700 my-5" />
               <div className="p-4 bg-slate-800 hover:bg-slate-700 rounded-lg active:opacity-80 active:scale-95 cursor-pointer transition flex justify-center">
-                <button className="flex gap-x-2 items-center justify-center text-slate-100 cursor-pointer">
+                <button
+                  onClick={handleLogout} 
+                  className="flex gap-x-2 items-center justify-center text-slate-100 cursor-pointer">
                   <LogOut />
                   Log Out
                 </button>
