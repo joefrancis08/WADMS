@@ -7,7 +7,7 @@ export const DropdownItems = ({
   label = 'Item', // e.g. 'Area', 'Parameter'
 }) => {
   // Determine if all items are selected
-  const allSelected = items.length > 0 && items.every((i) => selected.includes(i));
+  const allSelected = items?.length > 0 && items?.every((i) => selected?.includes(i));
 
   const toggleSelectAll = () => {
     if (allSelected) {
@@ -50,7 +50,7 @@ export const DropdownItems = ({
         >
           <input
             type='checkbox'
-            checked={selected.includes(item)}
+            checked={selected?.includes(item)}
             onChange={() => toggleSelect(item)}
             className='w-4 h-4 accent-green-600 rounded border-gray-300 cursor-pointer transition duration-150'
           />

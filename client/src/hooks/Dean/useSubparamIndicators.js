@@ -9,6 +9,7 @@ import { showErrorToast, showSuccessToast } from "../../utils/toastNotification"
 import { addIndicators, fetchDocumentsDynamically } from "../../api-calls/accreditation/accreditationAPI";
 import { TOAST_MESSAGES } from "../../constants/messages";
 import { useDocumentsQueries } from "../fetch-react-query/useDocumentsQueries";
+import useFetchIndicatorBySubparamId from "../fetch-react-query/useFetchIndicatorBySubparamId";
 
 const { INDICATORS_ADDITION } = TOAST_MESSAGES;
 
@@ -66,6 +67,14 @@ const useSubparamIndicators = () => {
     subParameterUUID
   });
 
+  const { 
+    indicatorsBySubparamId,
+    loadingIndicators,
+    errorIndicators,
+    refetchIndicators
+  } = useFetchIndicatorBySubparamId(subParamId);
+  console.log(indicatorsBySubparamId);
+
   const { indicators, loading, error, refetch } = useFetchSubparamIndicators({
     title,
     year,
@@ -82,8 +91,8 @@ const useSubparamIndicators = () => {
   });
 
   const indicatorsArr = indicators?.data ?? [];
-
-  console.log(indicatorsArr);
+  const indicatorsBySubparamIdData = indicatorsBySubparamId?.indicators ?? [];
+  console.log(indicatorsBySubparamIdData);
 
   const indicatorDocs = useDocumentsQueries(
     indicatorsArr,
@@ -124,6 +133,7 @@ const useSubparamIndicators = () => {
 
   const handleCloseModal = () => {
     setModalType(null);
+    setInputtedIndicators(null);
   };
 
   const handleAddIndClick = () => {
@@ -203,6 +213,7 @@ const useSubparamIndicators = () => {
       area,
       parameter,
       modalType,
+      indicatorsBySubparamIdData,
       indicatorInput,
       inputtedIndicators,
       duplicateValues,

@@ -147,6 +147,15 @@ export const fetchSubParamByParamId = (parameterId, signal) => {
   });
 };
 
+export const fetchIndicatorBySubparamId = (subParamId, signal) => {
+  return axios.get(`${API_BASE_URL}/accreditation/fetch-subparameter-indicators-by`, {
+    params: {
+      subParamId
+    },
+    signal
+  });
+};
+
 export const fetchAccreditationPeriod = (controller) => {
   return axios.get(`${API_BASE_URL}/accreditation/fetch-accreditation-period`, {
     signal: controller.signal

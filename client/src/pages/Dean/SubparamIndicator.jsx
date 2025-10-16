@@ -41,6 +41,7 @@ const SubparamIndicator = () => {
     duplicateValues,
     subParam,
     indicatorsArr,
+    indicatorsBySubparamIdData,
     loading,
     error,
     refetch,
@@ -201,7 +202,8 @@ const SubparamIndicator = () => {
           modalType,
           indicatorInput,
           inputtedIndicators,
-          duplicateValues
+          duplicateValues,
+          indicatorsBySubparamIdData,
         }}
         handlers={{
           handleCloseModal,
