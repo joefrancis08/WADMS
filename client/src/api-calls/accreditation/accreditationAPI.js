@@ -108,6 +108,12 @@ export const fetchILP = (controller) => {
   });
 };
 
+export const fetchProgramProgress = (signal) => {
+  return axios.get(`${API_BASE_URL}/accreditation/fetch-program-progress`, {
+    signal
+  });
+}
+
 export const fetchAccreditationLevels = (controller) => {
   return axios.get(`${API_BASE_URL}/accreditation/fetch-accreditation-levels`, {
     signal: controller.signal

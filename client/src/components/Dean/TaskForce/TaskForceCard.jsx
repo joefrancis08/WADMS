@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import Dropdown from '../../../components/Dropdown/Dropdown';
 import ProfilePicture from '../../../components/ProfilePicture';
+import { USER_ROLES } from '../../../constants/user';
 
 const getUserId = (u) => u.uuid;
 
@@ -76,7 +77,7 @@ const TaskForceCard = ({
       <div className='flex flex-wrap justify-center gap-5'>
         {taskForce?.map((user) => {
           const id = getUserId(user);
-          const isChair = label === 'Chair';
+          const isChair = label === 'Task Force Chair';
           return (
             <div
               key={id}
@@ -124,7 +125,8 @@ const TaskForceCard = ({
                         isChair ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-green-100 text-green-800 border-green-300'
                       }`}
                     >
-                      {user.role}
+                      {user.role === USER_ROLES.TASK_FORCE_CHAIR && 'Chair'}
+                      {user.role === USER_ROLES.TASK_FORCE_MEMBER && 'Member'}
                     </span>
                   </div>
                 </div>
@@ -145,7 +147,7 @@ const TaskForceCard = ({
         >
           <div className='flex flex-col items-center gap-2'>
             <PlusCircle className='h-10 w-10' />
-            <p className='text-sm font-medium'>Add {label === 'Chair' ? 'Chair' : 'Member'}</p>
+            <p className='text-sm font-medium'>Add {label === 'Task Force Chair' ? 'Chair' : 'Member'}</p>
           </div>
         </button>
       </div>

@@ -12,6 +12,10 @@ import { addDocumentController, deleteDocController, fetchDocumentsController, u
 import { upload } from '../middlewares/uploadFile.js';
 import { addAssignmentController, deleteAssignmentController, fetchAssignmentController } from '../controllers/accreditation/assignments/assignmentController.js';
 import deleteILP from '../controllers/accreditation/info-level-program-mapping/DELETE/deleteILP.js';
+import fetchProgramProgress from '../controllers/progress/program-progress/fetchProgramProgress.js';
+import fetchParametersBy from '../controllers/accreditation/parameters/GET/fetchParametersBy.js';
+import fetchSubparametersBy from '../controllers/accreditation/sub-parameters/GET/fetchSubparametersBy.js';
+import fetchIndicatorBy from '../controllers/accreditation/indicator/GET/fetchIndicatorBy.js';
 
 const accreditationRouter = express.Router();
 
@@ -31,10 +35,14 @@ accreditationRouter.get('/fetch-info-level-programs', fetchILPController);
 accreditationRouter.get('/fetch-program-areas', fetchProgramAreaController);
 accreditationRouter.get('/fetch-program-areas-by', fetchAreasBy);
 accreditationRouter.get('/fetch-area-parameters', fetchAreaParameterController);
+accreditationRouter.get('/fetch-area-parameters-by', fetchParametersBy);
 accreditationRouter.get('/fetch-parameter-subparameters', fetchParamSubParamController);
+accreditationRouter.get('/fetch-parameter-subparameters-by', fetchSubparametersBy);
 accreditationRouter.get('/fetch-subparameter-indicators', fetchSIMController);
+accreditationRouter.get('/fetch-subparameter-indicators-by', fetchIndicatorBy);
 accreditationRouter.get('/fetch-documents', fetchDocumentsController);
 accreditationRouter.get('/fetch-assignments', fetchAssignmentController);
+accreditationRouter.get('/fetch-program-progress', fetchProgramProgress);
 
 accreditationRouter.patch('/rename-document/:docId', updateDocController);
 

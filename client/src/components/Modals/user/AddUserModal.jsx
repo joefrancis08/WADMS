@@ -7,7 +7,7 @@ const Header = ({  onClose, headerContent }) => {
       {headerContent}
       <button
         onClick={onClose}
-        className="text-gray-800 p-3 rounded-full transition cursor-pointer hover:bg-slate-200 active:opacity-75"
+        className="text-slate-700 p-2 -mr-3 rounded-full transition cursor-pointer hover:bg-slate-200 active:opacity-75"
         aria-label="Close"
       >
         <X className='h-5 w-5'/>
@@ -24,7 +24,7 @@ const Body = ({ bodyContent }) => {
   );
 };
 
-const Footer = ({ onCancel, primaryButton, disabled, secondaryButton }) => {
+const Footer = ({ onCancel, primaryButton, disabled, disabledMessage, secondaryButton }) => {
   return (
     <>
       <button
@@ -35,6 +35,7 @@ const Footer = ({ onCancel, primaryButton, disabled, secondaryButton }) => {
       </button>
       <button
         type='submit'
+        title={disabled && disabledMessage}
         disabled={disabled}
         className={disabled 
           ? 'flex items-center justify-center bg-gray-500 text-white font-semibold py-2 px-6 rounded-full text-sm opacity-50 cursor-not-allowed transition'
@@ -54,6 +55,7 @@ const AddUserModal = ({
   bodyContent,
   primaryButton,
   disabled = false,
+  disabledMessage,
   secondaryButton
 }) => {
   const handleSubmit = (e) => {
@@ -87,6 +89,7 @@ const AddUserModal = ({
                 onCancel={onCancel}
                 primaryButton={primaryButton}
                 disabled={disabled}
+                disabledMessage={disabledMessage}
                 secondaryButton={secondaryButton}
               />
             </div>

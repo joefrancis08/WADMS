@@ -8,26 +8,35 @@ import Dropdown from '../../components/Dropdown/Dropdown';
 import TimeAgo from '../../components/TimeAgo';
 import { useUnverifiedUsers } from '../../hooks/useUnverifiedUsers';
 import { useState, useMemo, useEffect, useRef } from 'react';
+import { USER_ROLES } from '../../constants/user';
+import { deleteUser } from '../../assets/icons';
 
 const PROFILE_PIC_PATH = import.meta.env.VITE_PROFILE_PIC_PATH;
 
 const UnverifiedUsers = () => {
-  const { user, modal, ui, data, actions } = useUnverifiedUsers();
-  const { selectedUser, selectedRole } = user;
-  const { modalType } = modal;
-  const { showDropdown } = ui;
-  const { unverifiedUsers, USER_ROLES } = data;
-
+  const { refs, datas, handlers } = useUnverifiedUsers();
+  const { roleDropdownRef } = refs;
   const {
-    closeModal: { handleCloseModal },
-    row: { handleRowClick },
-    verify: { handleVerifyClick, handleVerifyConfirm },
-    delete: { handleDeleteClick, handleDeleteConfirm },
-    dropdown: { handleDropdown },
-    select: { handleRoleSelection },
-    update: { handleSaveUpdate },
-  } = actions;
-
+    selectedUser,
+    selectedRole,
+    modalType,
+    modalData,
+    showDropdown,
+    showProfile,
+    unverifiedUsers
+  } = datas;
+  const {
+    handleCloseModal, 
+    handleRowClick,
+    handleVerifyClick,
+    handleConfirmVerification,
+    handleDropdown,
+    handleRoleSelection,
+    handleDeleteClick,
+    handleDeleteConfirm,
+    handleUpdateRole
+  } = handlers;
+  console.log(modalData);
   // States
   const [sortConfig, setSortConfig] = useState({ key: 'created_at', direction: 'desc' });
   const [searchQuery, setSearchQuery] = useState('');
@@ -87,7 +96,7 @@ const UnverifiedUsers = () => {
         return (
           <UserProfileModal
             selectedUser={selectedUser}
-            onClose={handleCloseModal}
+            onClose={() => handleCloseModal({ from: { profileCard: true } })}
             onVerifyClick={(e) => handleVerifyClick(e)}
             onDeleteClick={(e) => handleDeleteClick(e)}
           />
@@ -96,20 +105,48 @@ const UnverifiedUsers = () => {
         return (
           <ConfirmationModal
             onClose={handleCloseModal}
-            headerContent={<p className="text-2xl font-bold text-gray-800">Confirm Verification</p>}
-            bodyContent={<p className="pb-4">Are you sure you want to verify {selectedUser?.full_name}?</p>}
+            headerContent={
+              <div className='flex items-center justify-start'>
+                <p className="text-lg font-semibold text-gray-800">
+                  Confirm Verification
+                </p>
+              </div>
+            }
+            bodyContent={
+              <div className='flex flex-col gap-y-3 items-center justify-center my-3'>
+                <ShieldCheck className='text-green-600 h-16 w-16'/>
+                <p className="pb-4 max-w-100 text-center">
+                  Do you want to verify <span className='font-medium'>{selectedUser?.full_name}</span> with the role <span className='font-medium'>{modalData.selectedRole}</span>?
+                </p>
+              </div>
+            }
             primaryButton="Confirm"
             secondaryButton="Cancel"
             onCancelClick={handleCloseModal}
-            onConfirmClick={handleVerifyConfirm}
+            onConfirmClick={handleConfirmVerification}
+            hasHeader={true}
           />
         );
       case MODAL_TYPE.UU_DELETION_CONFIRMATION:
         return (
           <ConfirmationModal
             onClose={handleCloseModal}
-            headerContent={<p className="text-2xl font-bold text-red-600">Confirm Delete</p>}
-            bodyContent={<p className="pb-4">Are you sure you want to delete {selectedUser?.full_name}?</p>}
+            hasHeader={true}
+            headerContent={
+              <div>
+                <p className="text-lg font-semibold text-red-600">
+                  Confirm Delete
+                </p>
+              </div>
+            }
+            bodyContent={
+              <div className='flex flex-col justify-center items-center'>
+                <img src={deleteUser} alt="Delete User Icon" loading='lazy' className='h-16 w-16 my-3'/>
+                <p className="text-center pb-8">
+                  Do you want to delete <span className='font-medium'>{selectedUser?.full_name}</span>?
+                </p>
+              </div>
+            }
             isDelete
             primaryButton="Confirm"
             secondaryButton="Cancel"
@@ -117,21 +154,25 @@ const UnverifiedUsers = () => {
             onConfirmClick={handleDeleteConfirm}
           />
         );
-      case MODAL_TYPE.UPDATE_USER:
+      case MODAL_TYPE.UU_UPDATE:
         return (
           <UpdateUserModal
             onClose={() => handleCloseModal({ clearDropdown: true })}
             onCancelClick={handleCloseModal}
-            onSaveClick={handleSaveUpdate}
+            onSaveClick={handleUpdateRole}
             headerContent={`Assign Role to ${selectedUser?.full_name}`}
-            primaryButton="Save"
-            disabled={selectedRole === USER_ROLES.UNVERIFIED_USER}
+            primaryButton="Next"
+            disabled={selectedRole === USER_ROLES.UU}
+            disabledMessage={`Select other role aside from ${USER_ROLES.UU} to enable this button`}
             secondaryButton="Cancel"
             bodyContent={
               <div className="relative w-full">
-                <div className="input-container-layout relative">
+                <p className='text-sm px-1 my-2'>
+                  Select role, then click <span className='font-medium'>Next</span> to confirm verification.
+                </p>
+                <div ref={roleDropdownRef} className="input-container-layout relative">
                   <span className="input-icon-layout">
-                    <ShieldUser color="gray" size={24} />
+                    <ShieldUser className='text-slate-500' size={24} />
                   </span>
                   <input
                     readOnly
@@ -144,22 +185,22 @@ const UnverifiedUsers = () => {
                   <ChevronDown
                     onClick={handleDropdown}
                     className={`absolute top-4 right-4 cursor-pointer text-gray-500 hover:text-gray-600 transition ${
-                      showDropdown ? 'rotate-180' : ''
+                      showDropdown ? '-rotate-180' : ''
                     }`}
                   />
                   {showDropdown && (
-                    <Dropdown width="w-full" position="top-13">
+                    <Dropdown width="w-full" position="top-13" border='rounded-md border border-slate-400'>
                       {Object.entries(USER_ROLES)
                         .filter(
                           ([_, role]) =>
-                            role !== USER_ROLES.UNVERIFIED_USER &&
+                            role !== USER_ROLES.UU &&
                             role !== USER_ROLES.DEAN &&
                             role !== selectedRole
                         )
                         .map(([key, role]) => (
                           <p
                             key={key}
-                            className="px-4 py-2 text-gray-700 hover:bg-gray-200 cursor-pointer"
+                            className="px-4 py-2 text-slate-800 hover:bg-gray-200 cursor-pointer rounded-md"
                             onClick={() => handleRoleSelection(role)}
                           >
                             {role}
@@ -278,11 +319,11 @@ const UnverifiedUsers = () => {
                         <div className="flex items-center justify-center shrink-0">
                           <img
                             src={
-                              user?.profilePicPath?.startsWith('http')
-                                ? user.profilePicPath
-                                : `${PROFILE_PIC_PATH}/${user.profilePicPath || 'default-profile-picture.png'}`
+                              user?.profile_pic_path?.startsWith('http')
+                                ? user?.profile_pic_path
+                                : `${PROFILE_PIC_PATH}/${user?.profile_path_path || 'default-profile-picture.png'}`
                             } 
-                            className="h-10 w-10 rounded-full object-cover border border-slate-600"
+                            className="flex shrink-0 h-10 w-10 rounded-full object-cover border border-slate-600"
                           />
                         </div>
                       </td>
@@ -295,7 +336,7 @@ const UnverifiedUsers = () => {
                         <div className="flex justify-center items-center gap-3">
                           <button
                             title={`Verify ${user.full_name}?`}
-                            onClick={(e) => handleVerifyClick(e, { selectedUser: user })}
+                            onClick={(e) => handleVerifyClick(e, { selectedUser: user, from: { row: true } })}
                             className="flex items-center justify-center bg-gradient-to-br from-green-600 to-emerald-500 text-white px-4 py-2 rounded-full text-sm font-medium hover:from-green-500 hover:to-emerald-400 hover:shadow-md active:scale-95 transition-all cursor-pointer"
                           >
                             <ShieldCheck className="mr-1" size={18} />
@@ -303,7 +344,7 @@ const UnverifiedUsers = () => {
                           </button>
                           <button
                             title={`Delete ${user.full_name}?`}
-                            onClick={(e) => handleDeleteClick(e, { selectedUser: user })}
+                            onClick={(e) => handleDeleteClick(e, { selectedUser: user, from: { row: true } })}
                             className="p-2 rounded-full hover:bg-slate-700 active:scale-95 transition-all cursor-pointer"
                           >
                             <Trash2 className="text-red-500 hover:text-red-400 transition" size={20} />

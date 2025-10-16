@@ -111,17 +111,16 @@ const ProgramAreas = () => {
             </p>
           </div>
           <div className='flex items-center justify-center mt-4 max-md:mt-10 w-[85%] md:w-[75%] lg:w-[50%] mx-auto'>
-            <p className='relative text-center'>
+            <p className='relative text-center mb-8'>
               <span className='text-yellow-400 font-bold text-xl md:text-2xl lg:text-3xl tracking-wide text-center'>
                 {program}
               </span>
               
-              <span className='absolute -bottom-10 left-1/2 -translate-x-1/2 text-lg px-4 bg-green-700 text-white font-bold rounded-md'>
+              <span className='absolute -bottom-10 left-1/2 -translate-x-1/2 text-lg px-4 bg-green-700 text-white font-bold'>
                 {formattedLevel}
               </span>
             </p>
           </div>
-          <hr className='my-6 w-[30%] mx-auto border text-green-500'></hr>
           <div className={`flex flex-wrap gap-10 justify-center mb-8 py-8 px-2 mx-2 rounded
             ${data.length ? 'items-start' : 'items-center'}
           `}>

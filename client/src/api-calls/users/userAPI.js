@@ -134,18 +134,11 @@ export const generateNewToken = (userUUID) => {
   });
 };
 
-export const updateUserRole = async (selectedUserId, newRole) => {
-  try {
-    const res = await axios.patch(`${API_BASE_URL}/users/${selectedUserId}/role`, {
-      role: newRole,
-      status: 'Verified'
-    });
-
-    return res.data;
-
-  } catch (error) {
-    console.log('Error:', error);
-  }
+export const updateUserRole = async (selectedUserUUID, newRole) => {
+  return await axios.patch(`${API_BASE_URL}/users/role/${selectedUserUUID}`, {
+    role: newRole,
+    status: 'Verified'
+  });
 };
 
 export const deleteUser = async (uuid) => {

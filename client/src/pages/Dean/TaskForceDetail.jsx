@@ -10,6 +10,7 @@ import getProfilePicPath from '../../utils/getProfilePicPath';
 import TaskForceModal from '../../components/Dean/TaskForce/TaskForceModal';
 import { notAssigned, notAssignedDM, toga } from '../../assets/icons';
 import { useState } from 'react';
+import { USER_ROLES } from '../../constants/user';
 
 const AssignmentCard = ({ children }) => {
   return (

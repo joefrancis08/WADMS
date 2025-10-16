@@ -3,8 +3,8 @@ import { Archive, CircleUserRound, FileUser, FolderPen, Folders, Trash2, UserRou
 export const USER_ROLES = {
   UU: 'Unverified User',
   DEAN: 'Dean',
-  TASK_FORCE_CHAIR: 'Chair',
-  TASK_FORCE_MEMBER: 'Member',
+  TASK_FORCE_CHAIR: 'Task Force Chair',
+  TASK_FORCE_MEMBER: 'Task Force Member',
   IA: 'Internal Assessor',
   ACCREDITOR: 'Accreditor'
 };

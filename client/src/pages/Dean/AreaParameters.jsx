@@ -116,16 +116,15 @@ const AreaParameters = () => {
           </div>
           {/* Program and Level Display */}
           <div className='flex items-center justify-center mt-4 max-md:mt-10 w-[85%] md:w-[75%] lg:w-[50%] mx-auto'>
-            <p className='relative text-center gap-2 w-full'>
+            <p className='relative text-center gap-2 w-full mb-8'>
               <span className='text-yellow-400 font-bold text-xl md:text-2xl lg:text-3xl tracking-wide'>
                 {program}
               </span>
-              <span className='absolute -bottom-10 right-1/2 translate-x-1/2 text-xs md:text-lg px-4 bg-green-700 text-white font-bold rounded-md'>
+              <span className='absolute -bottom-10 right-1/2 translate-x-1/2 text-xs md:text-lg px-4 bg-green-700 text-white font-bold'>
                 {levelName} &#8226; {formatAreaName(area)}
               </span>
             </p>
           </div>
-          <hr className='my-6 w-[30%] mx-auto border text-green-500' />
 
           {/* Parameters List */}
           <div className={`flex flex-wrap gap-8 justify-center mb-8 py-8 px-2 mx-2 rounded ${parameterData.length ? 'items-start' : 'items-center'}`}>

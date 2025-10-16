@@ -1,12 +1,14 @@
-import { updateUserRole } from "../../../../models/userModel.js";
+import { updateUserRoleModel } from "../../../../models/user/UPDATE/updateUserModel.js";
 import sendUpdate from "../../../../services/websocket/sendUpdate.js";
 
 export const updateUserRoleController = async (req, res) => {
   const { uuid } = req.params;
   const { role, status } = req.body;
 
+  console.log({uuid, role, status});
+
   try {
-    const result = await updateUserRole(uuid, role, status);
+    const result = await updateUserRoleModel(uuid, role, status);
 
     if (result.affectedRows === 0) {
       return res.status(200).json({

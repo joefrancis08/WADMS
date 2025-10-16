@@ -181,7 +181,6 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
                   }`}
                 >
                   <Icon
-                    fill={isActive ? '#64748b' : 'none'}
                     className={`flex-shrink-0 ${isCollapsed ? 'w-6 h-6' : 'w-7 h-7'}`}
                   />
                   <span
@@ -215,7 +214,6 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
                             }`}
                           >
                             <ChildIcon
-                              fill={childActive ? '#64748b' : 'none'}
                               className="flex-shrink-0 w-6 h-6"
                             />
                             <span className="text-sm">{child.label}</span>

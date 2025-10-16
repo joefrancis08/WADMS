@@ -10,7 +10,11 @@ const ProfilePicture = ({
   return (
     <div className={`flex items-center justify-center ${height} ${width} ${border} overflow-hidden bg-slate-100`}>
       <img
-        src={profilePic ? profilePic : '/default-profile-picture.png'}
+        src={
+          profilePic?.startsWith('http')
+            ? profilePic
+            : `${PROFILE_PIC_PATH}/${profilePic || 'default-profile-picture.png'}`
+        }
         className="w-full h-full"
       />
     </div>

@@ -11,6 +11,7 @@ import { deleteUserByIdController } from './Dean/DELETE/deleteUserByIdController
 import { addUserController } from './Dean/POST/addUserController.js';
 import { confirmEmailController } from './Dean/POST/confirmEmailController.js';
 import login from './Dean/POST/login.js';
+import { updateUserRoleController } from './Dean/PATCH/updateUserRoleController.js';
 
 export const registerUser = (req, res) => registerUserController(req, res); // Create new user
 export const addUser = (req, res) => addUserController(req, res);
@@ -22,6 +23,7 @@ export const userSession = (req, res) => userSessionController(req, res); // Get
 export const logoutUser = (req, res) => logoutUserController(req, res); // Logout user
 export const fetchUsersController = (req, res) => fetchUsers(req, res); // Fetch all users
 export const updateUser = (req, res) => updateUserController(req, res); // Update user
+export const updateUserRole = (req, res) => updateUserRoleController(req, res);
 export const deleteAllUsers = (req, res) => deleteAllUsersController(req, res); // Delete all users
 export const deleteUser = (req, res) => deleteUserByIdController(req, res); // Delete user by ID
 

@@ -91,13 +91,13 @@ const TaskForce = () => {
     const members = filterByQuery(taskForceMember);
     switch (activeTabId) {
       case 'chairs':
-        return [{ data: chairs, label: 'Chair' }];
+        return [{ data: chairs, label: 'Task Force Chair' }];
       case 'members':
-        return [{ data: members, label: 'Member' }];
+        return [{ data: members, label: 'Task Force Member' }];
       default:
         return [
-          { data: chairs, label: 'Chair' },
-          { data: members, label: 'Member' },
+          { data: chairs, label: 'Task Force Chair' },
+          { data: members, label: 'Task Force Member' },
         ];
     }
   }, [activeTabId, taskForceChair, taskForceMember, filterByQuery]);
@@ -235,7 +235,7 @@ const TaskForce = () => {
                             dropdownRef={dropdownRef}
                             activeDropdownId={activeDropdownId}
                             setActiveDropdownId={setActiveDropdownId}
-                            label="Chair"
+                            label="Task Force Chair"
                             taskForce={filterByQuery(taskForceChair)}
                             navigation={(user) => navigate(TASK_FORCE_DETAIL(getUserId(user)))}
                             profilePic={(user) => getProfilePicPath(user.profilePicPath)}
@@ -263,7 +263,7 @@ const TaskForce = () => {
                             dropdownRef={dropdownRef}
                             activeDropdownId={activeDropdownId}
                             setActiveDropdownId={setActiveDropdownId}
-                            label="Member"
+                            label="Task Force Member"
                             taskForce={filterByQuery(taskForceMember)}
                             navigation={(user) => navigate(TASK_FORCE_DETAIL(getUserId(user)))}
                             profilePic={(user) => getProfilePicPath(user.profilePicPath)}
@@ -317,9 +317,9 @@ const TaskForce = () => {
               )}
 
               {/* Page-level empty state */}
-              {!loading && totalCount === 0 && (
+              {!loading && totalCount === 0 && activeTabId === 'all' && (
                 <div className="flex flex-col items-center justify-center py-16">
-                  <UserRoundX className="text-slate-600 w-28 h-28" />
+                  <img className="h-64 w-64 opacity-80" src={searchUser} alt="" />
                   <p className="mt-4 text-lg text-slate-300">No data to display at the moment.</p>
                 </div>
               )}
