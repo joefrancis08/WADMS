@@ -17,6 +17,7 @@ import usePageTitle from "../usePageTitle";
 import useFetchAssignments from "../fetch-react-query/useFetchAssignments";
 import formatAreaName from "../../utils/formatAreaName";
 import { getFullNameById } from "../../utils/getUserInfo";
+import useFetchProgramProgress from "../fetch-react-query/useFetchProgramProgress";
 
 const { AREA_PARAMETERS } = PATH.DEAN;
 const { ASSIGNMENT, UNASSIGN } = TOAST_MESSAGES;
@@ -59,9 +60,8 @@ const useProgramAreas = () => {
     loading: taskForceLoading, 
     error: taskForceError, 
     refetch: taskForceRefetch 
-  } = useUsersBy({ role: ['Chair', 'Member'] });
+  } = useUsersBy({ role: ['Task Force Chair', 'Task Force Member'] });
 
-  console.log(taskForce);
   const data = areasData?.data ?? [];
   const areasByLevelData = areasByLevel?.areas ?? [];
   console.log(data);

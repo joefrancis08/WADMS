@@ -19,19 +19,23 @@ const insertAreaParameterMapping = async ({
 
     // Step 1: Check if a parameter exist, if not, insert it.
     const parameterResult = await getParameterBy('parameter_name', parameter, connection);
+    console.log(parameterResult);
 
     let parameterId;
     if (parameterResult.length > 0) {
       parameterId = parameterResult[0].id;
+      console.log('insertAPM line 27:', parameterResult);
 
     } else {
       const areaResult = await getAreaBy('area_name', area, connection);
+      console.log(areaResult);
 
       if (!areaResult.length) {
         throw new Error('AREA_NOT_FOUND');
       }
 
       const areaID = areaResult[0].id;
+      console.log(areaID);
       const newParameter = await insertParameter(parameter, areaID, connection);
       parameterId = newParameter.insertId;
     }
@@ -74,6 +78,7 @@ const insertAreaParameterMapping = async ({
     }
 
     const programAreaMappingId = rows[0].id;
+    console.log(programAreaMappingId, parameterId);
 
     // Step 3: Insert mapping
     const query = `
@@ -86,6 +91,7 @@ const insertAreaParameterMapping = async ({
     return { programAreaMappingId, parameterId };
 
   } catch (error) {
+    console.error(error);
     await connection.rollback();
 
     if (error.code === 'ER_DUP_ENTRY') {

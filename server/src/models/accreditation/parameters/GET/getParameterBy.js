@@ -17,7 +17,7 @@ const getParameterBy = async (column, value, connection = null) => {
     } else {
       [result] = await db.execute(query, [value]);
     }
-
+    
     return result;
 
   } catch (error) {

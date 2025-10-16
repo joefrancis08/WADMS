@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react';
 import DeanLayout from '../../components/Layout/Dean/DeanLayout';
-import { Archive, CalendarArrowUp, ClipboardPlus, EllipsisVertical, Folders, NotebookPen, NotepadText, Plus, PlusCircle, Scroll, Search, Trash2, X } from 'lucide-react';
+import { Archive, CalendarArrowUp, ClipboardPlus, EllipsisVertical, Folders, NotebookPen, NotepadText, Percent, Plus, PlusCircle, Scroll, Search, Trash2, X } from 'lucide-react';
 import ContentHeader from '../../components/Dean/ContentHeader';
 import { useProgramsToBeAccredited } from '../../hooks/Dean/useProgramsToBeAccredited';
 import ProgramToBeAccreditedModal from '../../components/Dean/Accreditation/Programs/ProgramToBeAccreditedModal';
@@ -40,7 +40,11 @@ const ProgramsToAccredit = () => {
     activeProgramID,
     programInput,
     programs,
-    accredBodiesData
+    accredBodiesData,
+    progressData,
+    loadingProgramProgress,
+    errorProgramProgress,
+    refetchProgramProgress
   } = datas;
 
   const {
@@ -79,7 +83,7 @@ const ProgramsToAccredit = () => {
   const normalize = (v) => (v?.toString?.().toLowerCase().trim() ?? '');
 
   // Array of Programs To Be Accredited, fallback to empty array if fetch is loading
-  const rawData = accredInfoLevelPrograms?.data ?? [];
+  const rawData = useMemo(() => accredInfoLevelPrograms?.data ?? [], [accredInfoLevelPrograms]);
 
   // Filter by title, year, level, and program
   const filteredData = useMemo(() => {
@@ -117,6 +121,7 @@ const ProgramsToAccredit = () => {
       acc[accredTitle][item.level].push({
         ...item.program,       // { program_uuid, program }
         level: item.level,
+        accred_id: item.accreditationInfo.id,
         accred_uuid: item.accreditationInfo.accred_uuid,
         accred_year: item.accreditationInfo.accred_year,
         accred_title: item.accreditationInfo.accred_title,
@@ -126,6 +131,8 @@ const ProgramsToAccredit = () => {
       return acc;
     }, {});
   }, [filteredData]);
+
+  console.log(grouped);
 
   // Function to make input ref dynamic based on the rendered modal
   const getInputRef = () => {
@@ -368,6 +375,7 @@ const ProgramsToAccredit = () => {
                   {/* Loop through levels inside each period */}
                   {Object.entries(levels).map(([level, programs]) => (
                     <React.Fragment key={level} >
+                      {console.log(programs)}
                       <hr className='w-[75%] bg-slate-600 border border-transparent my-16 mx-auto'></hr>
                       <div className='mx-auto'>
                         <p className='text-xl md:text-2xl lg:text-3xl text-center tracking-wider font-extrabold text-yellow-400 mb-4'>
@@ -398,6 +406,8 @@ const ProgramsToAccredit = () => {
                               not just level and programName because there mignt be cases that 
                               level and programName is the same in the different period.
                             */
+                            const accredId = programObj.accred_id;
+                            const accredLevel = String(programObj.level).toLowerCase().replace(/\s+/g, '-');
                             const programId = `${accredTitle}-${level}-${programObj.program_uuid}`;
                             const programUUID = programObj?.program_uuid;
                             const program = programObj?.program;
@@ -430,7 +440,6 @@ const ProgramsToAccredit = () => {
                                     {program}
                                   </p>
                                 </div>
-
                                 {/* Render program options when option button is clicked */}
                                 {activeProgramID === programId && (
                                   <>
@@ -495,6 +504,27 @@ const ProgramsToAccredit = () => {
                                   className='absolute top-2 p-2 right-2 text-slate-100 rounded-full hover:shadow hover:text-slate-200 hover:bg-slate-100/20 active:opacity-50 transition cursor-pointer z-10'>
                                   <EllipsisVertical size={24}/>
                                 </button>
+                                {progressData.map((item, index) => {
+                                  console.log(item);
+                                  const matchAccredInfo = item.accreditation_info_id === accredId;
+                                  console.log(matchAccredInfo);
+                                  const matchLevel = String(item.level_name).toLowerCase().split(' ').join('-') === accredLevel;
+                                  console.log(String(item.level_name).toLowerCase().replace(/\s+/g, '-'));
+                                  console.log(accredLevel);
+                                  console.log(matchLevel);
+                                  const matchProgram = item.program_id === programObj.id;
+                                  console.log(matchProgram);
+
+                                  return (matchAccredInfo && matchLevel && matchProgram) && (
+                                    <div className='w-90 flex items-center justify-start rounded-full border border-white absolute bottom-3 left-1/2 -translate-x-1/2 z-20 h-4'>
+                                      <div style={{ width: `${item.progress}%`}} className='bg-green-500 h-3 rounded-full'>
+                                        
+                                      </div>
+                                      <p className='absolute -top-5 right-0 text-sm text-white text-end'>{Number(item.progress).toFixed(2)}%</p>
+                                      <p className='absolute -top-5 left-0 text-sm text-white text-end'>Status</p>
+                                    </div>
+                                  );
+                                })}
                               </div>
                             )}
                           )}

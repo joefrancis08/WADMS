@@ -2,82 +2,61 @@ import ModalLayout from '../Layout/ModalLayout';
 import { ShieldCheck, Trash2, X } from 'lucide-react';
 import TimeAgo from '../TimeAgo';
 import ProfilePicture from '../ProfilePicture';
-
-const UserProfileHeader = ({ selectedUser, onClose }) => {
-  return (
-    <>
-      {/* Close Button */}
-      <button
-        onClick={onClose}
-        className="absolute top-5 right-6 text-gray-600 p-3 rounded-full transition cursor-pointer hover:bg-slate-200 active:opacity-75"
-        aria-label="Close"
-      >
-        <X />
-      </button>
-
-      {/* Header */}
-      <div className='w-full flex flex-col md:flex-row rounded items-center justify-center py-5 border border-gray-200 shadow-md'>
-        <div>
-          <ProfilePicture name={selectedUser?.full_name} height={'md:h-36 h-32'} width={'md:w-36 w-32'} border={'rounded-full'}/>
-        </div>
-        <div className='relative p-4 flex'>
-          <p className=" border border-gray-200 rounded-md p-4 text-xl md:text-2xl font-bold text-green-900 mt-2 shadow-sm bg-gray-100">
-            {selectedUser?.full_name}
-          </p>
-        </div>
-      </div>
-    </>    
-  )
-}
-
-const UserProfileDetails = ({ selectedUser }) => {
-  return (
-    <>
-      <div className='relative p-4 flex'>
-        <span className='text-white text-xs absolute top-3 md:left-1/2 left-1/2 -translate-x-11 md:-translate-x-11 mb-2 bg-green-700 py-1 px-2 rounded-md'>Email Address</span>
-        <p className=" border border-gray-300 rounded-lg p-4 text-md font-bold text-green-900 mt-2 shadow-inner bg-gray-100">
-          {selectedUser?.email}
-        </p>
-      </div>
-      <div className='relative p-4 flex'>
-        <span className='text-white text-xs text-center absolute top-3 md:left-1/2 left-1/2 -translate-x-22 md:-translate-x-22 mb-2 bg-green-700 py-1 px-4 w-45 rounded-md'>Registration Date & Time</span>
-        <p className="flex border border-gray-300 rounded-lg p-4 text-md font-semibold text-green-900 mt-2 shadow-inner bg-gray-100">
-          <TimeAgo date={selectedUser?.created_at}/>
-        </p>
-      </div>
-    </> 
-  )
-}
-
-const UserProfileAction = ({ onVerifyClick, onDeleteClick }) => {
-  return (
-    <>
-      <button
-        onClick={onDeleteClick}
-        className='flex items-center justify-center bg-gradient-to-br from-red-800 to-red-500 text-white px-6 md:px-10 py-2 rounded-full text-sm hover:bg-gradient-to-tr hover:from-red-800 hover:to-red-500 hover:shadow-lg active:opacity-50 transition cursor-pointer'>
-        <Trash2 className='mr-1'/>
-        Delete
-      </button>
-      <button 
-        onClick={onVerifyClick}
-        className='flex items-center justify-center bg-gradient-to-br from-green-800 to-green-500 text-white px-6 md:px-10 py-2 rounded-full text-sm hover:bg-gradient-to-tr hover:from-green-800 hover:to-green-500 hover:shadow-lg active:opacity-50 transition cursor-pointer'>
-        <ShieldCheck className='mr-1'/>
-        Verify
-      </button>
-    </>
-  )
-}
+import { gmailIcon } from '../../assets/icons';
 
 const UserProfileModal = ({ selectedUser, onClose, onVerifyClick, onDeleteClick }) => {
+  const actions = [
+    { id: 'delete', label: 'Delete', icon: Trash2, onDeleteClick },
+    { id: 'verify', label: 'Verify', icon: ShieldCheck, onVerifyClick},
+  ];
   return (
-    <ModalLayout 
-      onClose={onClose}
-      header={<UserProfileHeader selectedUser={selectedUser} onClose={onClose} />}
-      body={<UserProfileDetails selectedUser={selectedUser} />}
-      footer={<UserProfileAction onVerifyClick={onVerifyClick} onDeleteClick={onDeleteClick} />}
-      border={'border border-gray-300 rounded-md shadow'}
-      footerPosition={'justify-evenly'}
-    />
+    <div onClick={onClose} className="h-full fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs overflow-hidden">
+      <div className="w-full md:max-w-2xl max-md:mx-4 bg-white rounded shadow-2xl px-6 py-4 animate-fadeIn">
+        <div className='relative w-full flex flex-col rounded-lg items-center justify-center py-5 border border-gray-200'>
+          <div className='flex items-center justify-center pb-10'>
+            <div>
+              <ProfilePicture 
+                profilePic={selectedUser?.profile_pic_path}
+                height={'md:h-36 h-32'} 
+                width={'md:w-36 w-32'} 
+                border={'border-3 border-green-700 rounded-full'}
+              />
+            </div>
+            <div className='relative p-4 flex flex-col items-center justify-center'>
+              <div className="flex flex-col items-center justify-center border border-gray-200 shadow-sm bg-gray-100 rounded-lg">
+                <p className='min-w-90 text-center py-4 text-xl md:text-2xl font-bold text-slate-900'>
+                  {selectedUser?.full_name}
+                </p>
+                <p className='flex items-center justify-start pb-3 -ml-3'>
+                  <img src={gmailIcon} alt="Gmail Logo" loading='lazy' className='h-4' />
+                  {selectedUser?.email}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className='absolute bottom-2 right-14 mt-3 flex gap-x-2'>
+            {actions.map(action => {
+              const Icon = action.icon;
+
+              return (
+                <button 
+                  key={action.id} 
+                  onClick={(e) => action.label === 'Verify' 
+                    ? action.onVerifyClick(e, { selectedUser, from: { profileCard: true } }) 
+                    : action.onDeleteClick(e, { selectedUser, from: { profileCard: true } })}
+                  className={`flex items-center justify-center gap-1 py-1 px-3 border rounded-full cursor-pointer
+                              active:scale-98 transition hover:shadow ${action.label === 'Delete' ? 'hover:bg-red-100 border-red-200 text-red-600' : 'hover:bg-slate-100 border-slate-200 text-green-600'}`
+                  }
+                >
+                  <Icon className={`${action.label === 'Delete' ? 'text-red-600' : 'text-green-600'} h-5 w-5`}/>
+                  <span>{action.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

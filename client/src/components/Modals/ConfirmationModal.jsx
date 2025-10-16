@@ -9,7 +9,7 @@ const ConfirmationModalHeader = ({ onClose, headerContent }) => {
       {headerContent}
       <button
         onClick={onClose}
-        className="text-gray-800 p-3 rounded-full transition cursor-pointer hover:bg-slate-200 active:opacity-75"
+        className="text-slate-800 p-2 -mr-2 rounded-full transition cursor-pointer hover:bg-slate-200 active:opacity-75"
         aria-label="Close"
       >
         <X className='h-5 w-5'/>
@@ -49,7 +49,7 @@ const ConfirmationModalFooter = ({ onCancelClick, onConfirmClick, isDelete = fal
   );
 };
 
-const ConfirmationModal = ({ onClose, headerContent, bodyContent, isDelete, primaryButton, secondaryButton, onCancelClick, onConfirmClick }) => {
+const ConfirmationModal = ({ onClose, headerContent, bodyContent, isDelete, primaryButton, secondaryButton, onCancelClick, onConfirmClick, hasHeader }) => {
   return (
     <ConfirmationModalLayout
       onClose={onClose}
@@ -62,6 +62,7 @@ const ConfirmationModal = ({ onClose, headerContent, bodyContent, isDelete, prim
       bodyMargin={'my-0'}
       footerMargin={'pb-4'}
       footerPosition={'justify-center'}
+      hasHeader={hasHeader}
     />
   );
 };

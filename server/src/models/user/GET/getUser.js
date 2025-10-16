@@ -9,7 +9,7 @@ export const getUsers = async (condition = {}) => {
   if (forTaskForce) {
     // Only Chairs and Members
     whereClause = `
-      role IN ('Chair', 'Member') AND 
+      role IN ('Task Force Chair', 'Task Force Member') AND 
       status = 'Verified'
     `;
   }
@@ -28,8 +28,8 @@ export const getUsers = async (condition = {}) => {
     WHERE ${whereClause}
     ORDER BY 
     CASE 
-      WHEN role = 'Chair' THEN 1
-      WHEN role = 'Member' THEN 2
+      WHEN role = 'Task Force Chair' THEN 1
+      WHEN role = 'Task Force Member' THEN 2
       ELSE 3
     END,
     created_at DESC

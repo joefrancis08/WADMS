@@ -69,7 +69,7 @@ const DeanLayout = ({ children, ref }) => {
         {
           id: 'unverified',
           icon: UserRoundX,
-          label: 'Unverified',
+          label: 'Unverified Users',
           link: UNVERIFIED_USERS,
           hasHR: true
         }

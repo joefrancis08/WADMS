@@ -53,7 +53,7 @@ export const fetchUserController = ({
       const isNotFound = Array.isArray(result) ? result.length === 0 : !result;
 
       if (isNotFound) {
-        return res.status(200).json({
+        return res.status(404).json({
           success: false,
           message: notFoundMessage(param)
         });
@@ -76,18 +76,22 @@ export const fetchUserController = ({
 
 export const fetchUnverifiedUsers = async (req, res) => {
   const { role } = req.query;
+  console.log(role);
 
   try {
-    const result = await getUserBy('role', role, false, false, true);
+    const result = await getUserBy('role', role, false, false, false);
+
+    console.log(result);
 
     if (result.length === 0) {
-      return res.status(404).json({
+      return res.status(500).json({
         message: `No user found with the role ${role}.`,
-        success: false
+        success: false,
+        count: result.length
       });
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       unverifiedUsers: result
     });

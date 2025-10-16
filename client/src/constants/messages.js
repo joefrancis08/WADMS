@@ -11,8 +11,18 @@ export const TOAST_MESSAGES = Object.freeze({
     ERROR: 'Something went wrong. Please try again later.'
   },
 
+  UU_VERIFICATION: {
+    SUCCESS: 'Verified successfully!',
+    ERROR: 'Something went wrong. Try again.'
+  },
+
+  UU_UPDATE: {
+    SUCCESS: 'Updated successfully!',
+    ERROR: 'Something went wrong. Try again.'
+  },
+
   UU_DELETION: {
-    SUCCESS: 'Delete successfully!',
+    SUCCESS: 'Deleted successfully!',
     ERROR: 'Something went wrong. Try again.'
   },
 

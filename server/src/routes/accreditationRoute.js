@@ -12,6 +12,7 @@ import { addDocumentController, deleteDocController, fetchDocumentsController, u
 import { upload } from '../middlewares/uploadFile.js';
 import { addAssignmentController, deleteAssignmentController, fetchAssignmentController } from '../controllers/accreditation/assignments/assignmentController.js';
 import deleteILP from '../controllers/accreditation/info-level-program-mapping/DELETE/deleteILP.js';
+import fetchProgramProgress from '../controllers/progress/program-progress/fetchProgramProgress.js';
 
 const accreditationRouter = express.Router();
 
@@ -35,6 +36,7 @@ accreditationRouter.get('/fetch-parameter-subparameters', fetchParamSubParamCont
 accreditationRouter.get('/fetch-subparameter-indicators', fetchSIMController);
 accreditationRouter.get('/fetch-documents', fetchDocumentsController);
 accreditationRouter.get('/fetch-assignments', fetchAssignmentController);
+accreditationRouter.get('/fetch-program-progress', fetchProgramProgress);
 
 accreditationRouter.patch('/rename-document/:docId', updateDocController);
 

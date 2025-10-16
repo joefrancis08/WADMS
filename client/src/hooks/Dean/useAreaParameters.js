@@ -14,6 +14,7 @@ import { useUsersBy } from "../fetch-react-query/useUsers";
 import usePageTitle from "../usePageTitle";
 import { getFullNameById } from "../../utils/getUserInfo";
 import useFetchAssignments from "../fetch-react-query/useFetchAssignments";
+import { USER_ROLES } from "../../constants/user";
 
 const { PARAMETER_ADDITION, ASSIGNMENT } = TOAST_MESSAGES;
 
@@ -68,7 +69,7 @@ const useAreaParameters = () => {
     loading: taskForceLoading, 
     error: taskForceError, 
     refetch: taskForceRefetch 
-  } = useUsersBy('role', 'Member' );
+  } = useUsersBy({ role: [USER_ROLES.TASK_FORCE_CHAIR, USER_ROLES.TASK_FORCE_MEMBER]});
 
   console.log(taskForce);
 
@@ -187,6 +188,7 @@ const useAreaParameters = () => {
       const duplicateValue = error?.response?.data?.error?.duplicateValue;
       setDuplicateValues(prev => [...new Set([...prev, duplicateValue])]);
       showErrorToast(`${duplicateValue} already exist.`, 'top-center');
+      console.log(error);
     }
   };
 

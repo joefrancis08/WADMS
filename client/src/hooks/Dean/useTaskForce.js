@@ -203,6 +203,9 @@ export const useTaskForce = () => {
       setSelectedUser(user);
       setModalType(TF_DELETION_CONFIRMATION);
       setActiveDropdownId(null);
+      setModalData({
+        fullName: user.fullName
+      });
     }
   };
 

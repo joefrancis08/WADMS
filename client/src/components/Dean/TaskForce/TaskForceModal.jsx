@@ -131,31 +131,17 @@ const TaskForceModal = ({ data, handlers }) => {
             emailAlreadyExist ||
             !emailRegex.test(formValue.email)
           }
+          disabledMessage={'Fields should not be empty, except profile picture.'}
           primaryButton="Create"
           secondaryButton="Cancel"
           headerContent={
             <div className='relative flex items-center transition-all duration-300'>
-              <p className='mr-2 text-2xl font-bold text-slate-700'>
+              <p className='mr-2 text-lg font-semibold text-slate-700'>
                 {taskForceChair.length > 0 || taskForceMember.length > 0 
                   ? 'Add Task Force'
                   : 'Create Task Force'
                 }
               </p>
-              <CircleQuestionMark 
-                onClick={handleInfoClick}
-                className='text-slate-500 hover:text-slate-600 cursor-pointer' size={20}
-              />
-              {infoClick && (
-                <Popover 
-                  handleInfoClick={handleInfoClick}
-                  position='top-2 left-1/2 translate-x-1/2'
-                  content={
-                    <p className='text-slate-100 text-xs p-2'>
-                      The "Create" button is enabled only if all mandatory fields (excluding the profile picture) are completed and the email is correctly formatted and not already taken.
-                    </p>
-                  }
-                />
-              ) }
             </div>
           }
           bodyContent={
@@ -183,6 +169,7 @@ const TaskForceModal = ({ data, handlers }) => {
             emailAlreadyExist ||
             !emailRegex.test(formValue.email)
           }
+          disabledMessage='Fields should not be empty, except profile picture.'
           primaryButton={`Add ${modalData.role}`}
           secondaryButton="Cancel"
           headerContent={
@@ -190,21 +177,6 @@ const TaskForceModal = ({ data, handlers }) => {
               <p className='mr-2 text-2xl font-bold text-slate-700'>
                 Add {modalData.role}
               </p>
-              <CircleQuestionMark 
-                onClick={handleInfoClick}
-                className='text-slate-500 hover:text-slate-600 cursor-pointer' size={20}
-              />
-              {infoClick && (
-                <Popover 
-                  handleInfoClick={handleInfoClick}
-                  position='top-2 left-1/2 translate-x-1/2'
-                  content={
-                    <p className='text-slate-100 text-xs p-2'>
-                      The "Create" button is enabled only if all mandatory fields (excluding the profile picture) are completed and the email is correctly formatted and not already taken.
-                    </p>
-                  }
-                />
-              ) }
             </div>
           }
           bodyContent={
@@ -254,15 +226,20 @@ const TaskForceModal = ({ data, handlers }) => {
           isDelete
           primaryButton="Delete"
           secondaryButton="Cancel"
+          hasHeader={true}
+          headerContent={
+            <p className='text-lg font-semibold text-red-600'>Confirm Delete</p>
+          }
           bodyContent={
             <>
               <div className='flex flex-col justify-center'>
                 <div className='flex justify-center px-4'>
-                  <img src={deleteUser} alt="Delete User Icon" className='h-20 w-20' />
+                  <img src={deleteUser} alt="Delete User Icon" className='h-16 w-16' />
                 </div>
                 <div>
-                  <p className='my-6 text-lg text-slate-800 text-center'>
-                    Do you want to delete this user?
+                  {console.log(modalData)}
+                  <p className='my-6 text-slate-800 text-center'>
+                    Do you want to delete <span className='font-medium'>{modalData.fullName}</span>?
                   </p>
                 </div>
               </div>

@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerUser, fetchUserById, updateUser, deleteAllUsers, deleteUser, loginUser, checkEmail, userSession, logoutUser, fetchUserByRole, fetchUserByStatus, addUser, confirmEmail, loginController, fetchUsersController } from '../controllers/user/userController.js';
+import { registerUser, fetchUserById, updateUser, deleteAllUsers, deleteUser, loginUser, checkEmail, userSession, logoutUser, fetchUserByRole, fetchUserByStatus, addUser, confirmEmail, loginController, fetchUsersController, updateUserRole } from '../controllers/user/userController.js';
 import upload from '../middlewares/uploadProfile.js';
 import { fetchUnverifiedUsers } from '../controllers/user/Dean/GET/fetchUsers.js';
 import fetchAccessToken from '../controllers/access-token/GET/fetchAccessToken.js';
@@ -26,6 +26,7 @@ userRouter.get('/by-status', fetchUserByStatus);
 userRouter.get('/:id', fetchUserById);
 userRouter.patch('/generate-new-token', generateNewToken);
 userRouter.patch('/:uuid', upload.single('newProfilePic'), updateUser);
+userRouter.patch('/role/:uuid', updateUserRole);
 userRouter.delete('/', deleteAllUsers);
 userRouter.delete('/delete-user', deleteUser);
 

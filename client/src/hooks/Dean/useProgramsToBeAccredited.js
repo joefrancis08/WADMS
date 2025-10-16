@@ -13,6 +13,7 @@ import useScrollSaver from "../useScrollSaver";
 import scrollToNewAddition from "../../utils/scrollToNewAddition";
 import usePageTitle from "../usePageTitle";
 import useAccreditationBodies from "../fetch-react-query/useAccreditationBodies";
+import useFetchProgramProgress from "../fetch-react-query/useFetchProgramProgress";
 
 const { PROGRAM_AREAS } = PATH.DEAN;
 const { 
@@ -34,6 +35,14 @@ export const useProgramsToBeAccredited = () => {
   const { accredInfoLevelPrograms, loading, error } = useFetchILP();
   console.log(accredInfoLevelPrograms);
 
+  const {
+    programProgressData,
+    loadingProgramProgress,
+    errorProgramProgress,
+    refetchProgramProgress
+  } = useFetchProgramProgress()
+  const progressData = programProgressData.programProgressData;
+  
   useScrollSaver(scrollContainerRef);
 
   const [modalType, setModalType] = useState(null);
@@ -547,7 +556,11 @@ export const useProgramsToBeAccredited = () => {
       activeAccredInfoID,
       activeProgramID,
       programInput,
-      programs
+      programs,
+      progressData,
+      loadingProgramProgress,
+      errorProgramProgress,
+      refetchProgramProgress
     },
 
     handlers: {

@@ -1,6 +1,7 @@
 import { ChevronDown } from "lucide-react";
 import { USER_ROLES } from "../../constants/user";
 import Dropdown from "../Dropdown/Dropdown";
+import { useState } from "react";
 
 const UpdateField = ({
   fieldName,
@@ -16,6 +17,11 @@ const UpdateField = ({
   isClickable = false,
   hasDropdown = false
 }) => {
+  const [open, setOpen] = useState(false);
+  const handleChevronClick = () => {
+    setOpen(!open);
+  };
+
   return (
     <div className='relative w-full flex-col pt-4'>
       <div className='pb-6'>
@@ -26,24 +32,24 @@ const UpdateField = ({
             name={name}
             readOnly={isReadOnly}
             autoComplete='off'
-            onClick={isClickable ? onClick : null}
+            onClick={isClickable ? handleChevronClick : null}
             onChange={!hasDropdown ? onChange : null}
             className={`w-full p-3 rounded-lg border border-gray-400 transition text-gray-800 focus:outline-0 focus:ring-2 focus:ring-green-600 shadow ${isClickable && 'cursor-pointer hover:bg-slate-100'}`}
             value={formValue}
           />
           {hasDropdown && (
             <ChevronDown 
-              onClick={onChevronClick}
-              className={`absolute top-3.5 right-3.5 text-gray-600 cursor-pointer rounded-full hover:bg-gray-100 hover:text-gray-800 transition duration-300 ${toggleDropdown && '-rotate-180'}`} 
+              onClick={handleChevronClick}
+              className={`absolute top-3.5 right-3.5 text-gray-600 cursor-pointer rounded-full hover:bg-gray-100 hover:text-gray-800 transition duration-300 ${open && '-rotate-180'}`} 
               size={26}
             />
           )}
-          {toggleDropdown && (
+          {open && (
             <Dropdown width='w-full' border='border border-gray-400 rounded-md'>
               <div className='transition-all duration-300'>
                 {Object.entries(USER_ROLES)
                   .filter(([_, roleValue]) => (
-                    roleValue !== USER_ROLES.UNVERIFIED_USER && 
+                    roleValue !== USER_ROLES.UU && 
                     roleValue !== USER_ROLES.DEAN &&
                     roleValue !== USER_ROLES.IA &&
                     roleValue !== USER_ROLES.ACCREDITOR &&
