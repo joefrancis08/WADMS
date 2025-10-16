@@ -1,7 +1,7 @@
 import db from "../../../../config/db.js";
 
 const getSubParameterBy = async (column, value, connection = null) => {
-  const allowedColumns = ['id', 'sub_parameter_name'];
+  const allowedColumns = ['id', 'sub_parameter_name', 'parameter_id'];
 
   if (!allowedColumns.includes(column)) {
     throw new Error('Invalid column.');
@@ -14,19 +14,12 @@ const getSubParameterBy = async (column, value, connection = null) => {
   `;
 
   try {
-    let result;
-
-    if (connection) {
-      [result] = await connection.execute(query, [value]);
-
-    } else {
-      [result] = await db.execute(query, [value]);
-    }
-
+    const executor = connection || db;
+    const [result] = await executor.execute(query, [value]);
     return result;
-
+    
   } catch (error) {
-    console.error('Error fetching sub-parameters:', error);
+    console.error(`Error fetching sub-parameters with the parameter id ${value}`, error);
     throw error;
   }
 };
