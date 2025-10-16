@@ -31,7 +31,7 @@ const AreaParameters = () => {
   const { modalType, modalData } = modals;
   const { parameterInput } = inputs;
   const { 
-    parameterData, parametersArr, duplicateValues, title, year, area, program, levelName,
+    parameterData, paramsByAreaIdData, parametersArr, duplicateValues, title, year, area, program, levelName,
     isEllipsisClick, activeParamId, hoveredId, taskForce, taskForceLoading, 
     taskForceError, taskForceRefetch, selectedTaskForce, assignmentData, activeTaskForceId,
     showConfirmUnassign
@@ -283,7 +283,7 @@ const AreaParameters = () => {
         refs={{ parameterInputRef, assignedTaskForceRef }}
         inputs={{ parameterInput }}
         datas={{ 
-          parametersArr, duplicateValues, modalData, taskForce,
+          parametersArr, duplicateValues, modalData, taskForce, paramsByAreaIdData,
           taskForceLoading, taskForceError, taskForceRefetch,
           selectedTaskForce, activeTaskForceId, showConfirmUnassign
         }}

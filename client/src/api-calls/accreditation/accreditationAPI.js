@@ -129,6 +129,15 @@ export const fetchAreasByLevel = (level, controller) => {
   });
 };
 
+export const fetchParamByAreaId = (areaId, signal) => {
+  return axios.get(`${API_BASE_URL}/accreditation/fetch-area-parameters-by`, {
+    params: {
+      areaId
+    },
+    signal
+  });
+};
+
 export const fetchAccreditationPeriod = (controller) => {
   return axios.get(`${API_BASE_URL}/accreditation/fetch-accreditation-period`, {
     signal: controller.signal

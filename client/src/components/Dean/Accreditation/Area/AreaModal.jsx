@@ -94,7 +94,7 @@ const AreaModal = ({ navigation, params, refs, modalType, datas, inputs, handler
               <AddField
                 ref={areaInputRef}
                 fieldName={areas.length > 1 ? 'Areas' : 'Area'}
-                placeholder={areasByLevelData.length > 0 ? 'Enter a new area or select an existing one...' : 'Enter a new area'}
+                placeholder={areasByLevelData.length > 0 ? 'Enter new area or select an existing one...' : 'Enter new area...'}
                 type='textarea'
                 name='areaInput'
                 formValue={areaInput}

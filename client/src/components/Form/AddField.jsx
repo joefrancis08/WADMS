@@ -6,7 +6,7 @@ import Popover from '../Popover';
 import DatePickerComponent from '../DatePickerComponent';
 import { getUserRolesDropdown } from '../../utils/dropdownOptions';
 import useOutsideClick from '../../hooks/useOutsideClick';
-import { AreaDropdownItems } from '../Dropdown/DropdownOptions';
+import { AreaDropdownItems, ParamDropdownItems } from '../Dropdown/DropdownOptions';
 
 const AddField = ({
   ref,
@@ -15,6 +15,7 @@ const AddField = ({
   type = 'text',
   name,
   formValue,
+  dropdownScope = 'area',
   dropdownItems = [],
   dropDownCondition,
   multiValue = false, // Enable multi-value mode (for textarea)
@@ -330,23 +331,46 @@ const AddField = ({
                 {dropDownCondition !== "canSelectAll" ? (
                   dropdownContent
                 ) : (
-                  <AreaDropdownItems
-                    areas={dropdownItems}
-                    selected={multiValues}
-                    onChange={(newSelected) => {
-                      if (newSelected.length === 0) {
-                        multiValues.forEach((_, idx) => onRemoveValue(0));
-                        return;
-                      }
-                      const deselected = multiValues.filter(val => !newSelected.includes(val));
-                      deselected.forEach(val => {
-                        const idx = multiValues.indexOf(val);
-                        if (idx !== -1) onRemoveValue(idx);
-                      });
-                      const added = newSelected.filter(val => !multiValues.includes(val));
-                      added.forEach(val => onAddValue(val));
-                    }}
-                  />
+                  <>
+                    {dropdownScope === 'area' && (
+                      <AreaDropdownItems
+                        areas={dropdownItems}
+                        selected={multiValues}
+                        onChange={(newSelected) => {
+                          if (newSelected.length === 0) {
+                            multiValues.forEach((_, idx) => onRemoveValue(0));
+                            return;
+                          }
+                          const deselected = multiValues.filter(val => !newSelected.includes(val));
+                          deselected.forEach(val => {
+                            const idx = multiValues.indexOf(val);
+                            if (idx !== -1) onRemoveValue(idx);
+                          });
+                          const added = newSelected.filter(val => !multiValues.includes(val));
+                          added.forEach(val => onAddValue(val));
+                        }}
+                      />
+                    )}
+                    {dropdownScope === 'parameter' && (
+                      <ParamDropdownItems
+                        parameters={dropdownItems}
+                        selected={multiValues}
+                        onChange={(newSelected) => {
+                          if (newSelected.length === 0) {
+                            multiValues.forEach((_, idx) => onRemoveValue(0));
+                            return;
+                          }
+                          const deselected = multiValues.filter(val => !newSelected.includes(val));
+                          deselected.forEach(val => {
+                            const idx = multiValues.indexOf(val);
+                            if (idx !== -1) onRemoveValue(idx);
+                          });
+                          const added = newSelected.filter(val => !multiValues.includes(val));
+                          added.forEach(val => onAddValue(val));
+                        }}
+                      />
+                    )}
+                  </>
                 )}
               </div>
             </Dropdown>
