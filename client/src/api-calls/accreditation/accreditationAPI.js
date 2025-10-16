@@ -138,6 +138,15 @@ export const fetchParamByAreaId = (areaId, signal) => {
   });
 };
 
+export const fetchSubParamByParamId = (parameterId, signal) => {
+  return axios.get(`${API_BASE_URL}/accreditation/fetch-parameter-subparameters-by`, {
+    params: {
+      parameterId
+    },
+    signal
+  });
+};
+
 export const fetchAccreditationPeriod = (controller) => {
   return axios.get(`${API_BASE_URL}/accreditation/fetch-accreditation-period`, {
     signal: controller.signal

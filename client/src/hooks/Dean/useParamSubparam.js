@@ -18,6 +18,7 @@ import { useDocumentsQueries } from "../fetch-react-query/useDocumentsQueries";
 import { useUsersBy } from "../fetch-react-query/useUsers";
 import { getFullNameById } from "../../utils/getUserInfo";
 import useFetchAssignments from "../fetch-react-query/useFetchAssignments";
+import useFetchSubparamByParamId from "../fetch-react-query/useFetchSubparamByParamId";
 
 const { SUBPARAMETER_ADDITION, ASSIGNMENT } = TOAST_MESSAGES;
 const { SUBPARAM_INDICATORS } = PATH.DEAN;
@@ -63,6 +64,13 @@ const useParamSubparam = () => {
     area,
     parameterUUID
   });
+
+  const {
+    subParamsByParamId,
+    loadingSubParam,
+    errorSubParam,
+    refetchSubParam
+  } = useFetchSubparamByParamId(paramId);
   
   const { subParameters, loading, error, refetch } = useFetchParamSubparam({
     title,
@@ -87,11 +95,11 @@ const useParamSubparam = () => {
     error: errorAssignments,
     refetch: refetchAssignments 
   } = useFetchAssignments({ accredInfoId, levelId, programId, areaId, parameterId: paramId });
-  console.log(assignments.assignmentData);
   const assignmentData = assignments?.assignmentData ?? [];
 
   const subParamsData = useMemo(() => subParameters?.data ?? [], [subParameters?.data]) ;
   const subParameter = subParamsData.map((sp) => sp.sub_parameter_id);
+  const subParamsByParamIdData = subParamsByParamId?.subParameters ?? [];
 
   const subParamDocs = useDocumentsQueries(
     subParamsData,
@@ -289,13 +297,20 @@ const useParamSubparam = () => {
   };
 
   const handleFileChange = (e, subParameterId) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  const file = e.target.files[0];
+  if (!file) return;
 
-    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/gif'];
+  const allowedTypes = [
+      'application/pdf',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation', // .pptx
+      'image/jpeg',
+      'image/png',
+      'image/gif'
+    ];
 
     if (!allowedTypes.includes(file.type)) {
-      showErrorToast('Only PDF and image files are allowed.', 'top-center', 5000);
+      showErrorToast('Only PDF, DOCX, PPTX, and image files are allowed.', 'top-center', 5000);
       e.target.value = ''; // reset file input
       return;
     }
@@ -305,7 +320,6 @@ const useParamSubparam = () => {
       [subParameterId]: file
     }));
   };
-
 
   const removeSelectedFile = (id) => {
     setSelectedFiles(prev => {
@@ -450,7 +464,7 @@ const useParamSubparam = () => {
       handleCloseModal({ deleteDoc: true });
 
     } catch (error) {
-      console.log(error);
+      console.error(error);
       showErrorToast('Something went wrong. Try again.');
       throw error;
     }
@@ -605,7 +619,6 @@ const useParamSubparam = () => {
   // For SubParameModal.jsx
   const handleATFEllipsisClick = (data = {}) => {
     const { taskForceId } = data;
-    console.log('ellipsis clicked!');
     setActiveTaskForceId(prev => prev === taskForceId ? null : taskForceId);
   };
 
@@ -638,7 +651,6 @@ const useParamSubparam = () => {
       }));
       
     } else if (option.label === 'Unassign') {
-      console.log('Unassigned clicked!');
       setModalData(prev => ({
         ...prev,
         selectedTaskForce: { id: data.taskForceId, fullName: data.taskForce, profilePic: data.taskForceImage }
@@ -654,7 +666,6 @@ const useParamSubparam = () => {
         taskForceId: data.taskForceId,
         taskForce: data.taskForce
       });
-      console.log(data);
     } 
   };
 
@@ -677,17 +688,12 @@ const useParamSubparam = () => {
       areaId, parameterId, subParameterId, taskForceId 
     } = data;
 
-    console.log({ accredInfoId, levelId, programId, 
-      areaId, parameterId, subParameterId, taskForceId });
-
     try {
       const res = await deleteAssignment({
         accredInfoId, levelId, programId,
         areaId, parameterId, subParameterId, 
         taskForceId
       });
-
-      console.log(res);
 
       handleCloseModal({ confirmUnassign: true });
       setModalData(prev => ({
@@ -751,6 +757,7 @@ const useParamSubparam = () => {
       area,
       parameter,
       subParamsData,
+      subParamsByParamIdData,
       subParameterInput,
       subParamsArr,
       duplicateValues,

@@ -171,43 +171,16 @@ const ProgramsToAccredit = () => {
             Programs
           </h2>
 
-          {/* Search toggle / input */}
-          {showSearch ? (
-            <div className='relative w-full max-w-md'>
-              <Search className='absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400' />
+            <div className="relative w-full md:w-1/3 lg:w-90">
+              <Search className="absolute left-3 top-2.5 h-5 w-5 text-slate-400" />
               <input
-                ref={searchInputRef}
+                type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Escape') {
-                    setQuery('');
-                    setShowSearch(false);
-                  }
-                }}
-                placeholder='Search title, year, level, or program…'
-                className='pl-10 pr-10 py-2 rounded-full bg-slate-800 border border-slate-600 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-100 focus:border-transparent w-full transition-all'
+                placeholder="Search title, year, level, or program..."
+                className="pl-10 pr-3 py-2 rounded-full bg-slate-800 text-slate-100 border border-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 w-full transition-all"
               />
-              <button
-                onClick={() => {
-                  setShowSearch(false);
-                  setQuery('');
-                }}
-                className='absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-slate-700 text-slate-300 cursor-pointer'
-                title='Close search'
-              >
-                <X className='h-5 w-5' />
-              </button>
             </div>
-          ) : (
-            <button
-              onClick={() => setShowSearch(true)}
-              className='text-slate-100 p-2 hover:bg-slate-700 rounded-full cursor-pointer active:scale-95'
-              title='Search'
-            >
-              <Search className='h-6 w-6'/>
-            </button>
-          )}
         </div>
 
         {/* Add button */}
@@ -504,7 +477,7 @@ const ProgramsToAccredit = () => {
                                   className='absolute top-2 p-2 right-2 text-slate-100 rounded-full hover:shadow hover:text-slate-200 hover:bg-slate-100/20 active:opacity-50 transition cursor-pointer z-10'>
                                   <EllipsisVertical size={24}/>
                                 </button>
-                                {progressData.map((item, index) => {
+                                {progressData?.map((item, index) => {
                                   console.log(item);
                                   const matchAccredInfo = item.accreditation_info_id === accredId;
                                   console.log(matchAccredInfo);

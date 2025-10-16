@@ -196,6 +196,12 @@ const useSubparamIndicators = () => {
     },
 
     datas: {
+      title,
+      year,
+      levelName,
+      program,
+      area,
+      parameter,
       modalType,
       indicatorInput,
       inputtedIndicators,

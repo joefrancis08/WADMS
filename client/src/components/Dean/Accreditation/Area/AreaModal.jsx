@@ -91,6 +91,7 @@ const AreaModal = ({ navigation, params, refs, modalType, datas, inputs, handler
           headerContent={<p className='text-xl font-semibold'>Add Areas</p>}
           bodyContent={
             <div className='relative w-full'>
+              {console.log(areasByLevelData)}
               <AddField
                 ref={areaInputRef}
                 fieldName={areas.length > 1 ? 'Areas' : 'Area'}

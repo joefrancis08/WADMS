@@ -6,7 +6,7 @@ import Popover from '../Popover';
 import DatePickerComponent from '../DatePickerComponent';
 import { getUserRolesDropdown } from '../../utils/dropdownOptions';
 import useOutsideClick from '../../hooks/useOutsideClick';
-import { AreaDropdownItems, ParamDropdownItems } from '../Dropdown/DropdownOptions';
+import { AreaDropdownItems, DropdownItems, ParamDropdownItems } from '../Dropdown/DropdownOptions';
 
 const AddField = ({
   ref,
@@ -333,8 +333,9 @@ const AddField = ({
                 ) : (
                   <>
                     {dropdownScope === 'area' && (
-                      <AreaDropdownItems
-                        areas={dropdownItems}
+                      <DropdownItems
+                        label='Area'
+                        items={dropdownItems}
                         selected={multiValues}
                         onChange={(newSelected) => {
                           if (newSelected.length === 0) {
@@ -352,8 +353,29 @@ const AddField = ({
                       />
                     )}
                     {dropdownScope === 'parameter' && (
-                      <ParamDropdownItems
-                        parameters={dropdownItems}
+                      <DropdownItems
+                        label='Parameter'
+                        items={dropdownItems}
+                        selected={multiValues}
+                        onChange={(newSelected) => {
+                          if (newSelected.length === 0) {
+                            multiValues.forEach((_, idx) => onRemoveValue(0));
+                            return;
+                          }
+                          const deselected = multiValues.filter(val => !newSelected.includes(val));
+                          deselected.forEach(val => {
+                            const idx = multiValues.indexOf(val);
+                            if (idx !== -1) onRemoveValue(idx);
+                          });
+                          const added = newSelected.filter(val => !multiValues.includes(val));
+                          added.forEach(val => onAddValue(val));
+                        }}
+                      />
+                    )}
+                    {dropdownScope === 'sub-parameter' && (
+                      <DropdownItems
+                        label='Sub-Parameter'
+                        items={dropdownItems}
                         selected={multiValues}
                         onChange={(newSelected) => {
                           if (newSelected.length === 0) {

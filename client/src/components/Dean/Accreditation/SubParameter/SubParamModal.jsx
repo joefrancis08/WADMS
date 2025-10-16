@@ -12,6 +12,7 @@ const SubParamModal = ({ refs, modalType, datas, handlers }) => {
   const { subParamInputRef } = refs;
   const { 
     subParamsArr,
+    subParamsByParamIdData,
     subParameterInput,
     duplicateValues,
     modalData,
@@ -76,21 +77,21 @@ const SubParamModal = ({ refs, modalType, datas, handlers }) => {
                     ? 'Sub-Parameters'
                     : 'Sub-Parameter'
                 }
-                placeholder={'Enter new sub-parameters...'}
+                placeholder={subParamsByParamIdData.length > 0 ? 'Enter new sub-parameter or select an existing one...' : 'Enter new sub-parameters...'}
                 type='textarea'
                 name='subParamInput'
                 formValue={subParameterInput}
+                isDropdown={subParamsByParamIdData.length > 0}
+                dropDownCondition='canSelectAll'
                 multiValue={true}
                 multiValues={subParamsArr}
-                // dropdownItems={data}
-                showDropdownOnFocus={true}
+                dropdownScope='sub-parameter'
+                dropdownItems={subParamsByParamIdData.map(sp => sp.sub_parameter_name)}
+                showDropdownOnFocus={subParamsByParamIdData.length > 0}
                 duplicateValues={duplicateValues}
-                // duplicateValues={duplicateValues}
-                // onDropdownMenuClick={handleOptionSelection}
-                onAddValue={(val) => handleAddSubParamValue(val)}
-                onRemoveValue={(index) => handleRemoveSubParamValue(index)}
+                onAddValue={handleAddSubParamValue}
+                onRemoveValue={handleRemoveSubParamValue}
                 onChange={(e) => handleSubParamChange(e)}
-                // onFocus={handleFocus}
               />
             </div>
           }
