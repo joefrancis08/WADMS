@@ -10,7 +10,8 @@ const IndicatorModal = ({ refs, datas, handlers }) => {
     modalType,
     indicatorInput,
     inputtedIndicators,
-    duplicateValues 
+    duplicateValues,
+    indicatorsBySubparamIdData,
   } = datas;
 
   const {
@@ -29,7 +30,7 @@ const IndicatorModal = ({ refs, datas, handlers }) => {
           onCancel={handleCloseModal}
           onSave={handleSaveIndicators}
           primaryButton={'Add Indicators'}
-          disabled={false}
+          disabled={inputtedIndicators?.length === 0}
           secondaryButton={'Cancel'}
           mode='add'
           headerContent={'Add Indicators'}
@@ -38,20 +39,20 @@ const IndicatorModal = ({ refs, datas, handlers }) => {
               <AddField
                 ref={indicatorInputRef}
                 fieldName={'Indicators'}
-                placeholder={'Enter new indicators...'}
+                placeholder={indicatorsBySubparamIdData.length > 0 ? 'Enter new indicator or select an existing one...' : 'Enter new indicator...'}
                 type='textarea'
-                name='subParamInput'
+                name='indicatorInput'
                 formValue={indicatorInput}
                 multiValue={true}
                 multiValues={inputtedIndicators}
-                // dropdownItems={data}
-                showDropdownOnFocus={true}
+                dropdownScope='indicator'
+                dropdownItems={indicatorsBySubparamIdData.map(i => i.indicator)}
+                dropDownCondition='canSelectAll'
+                showDropdownOnFocus={indicatorsBySubparamIdData.length > 0}
                 duplicateValues={duplicateValues}
-                // onDropdownMenuClick={handleOptionSelection}
-                onAddValue={(val) => handleAddIndicatorValue(val)}
-                onRemoveValue={(index) => handleRemoveIndicatorValue(index)}
+                onAddValue={handleAddIndicatorValue}
+                onRemoveValue={handleRemoveIndicatorValue}
                 onChange={(e) => handleIndicatorChange(e)}
-                // onFocus={handleFocus}
               />
             </div>
           }

@@ -12,6 +12,7 @@ const ParameterModal = ({ refs, modalType, datas, inputs, handlers }) => {
   const { parameterInput } = inputs;
   const { 
     parametersArr,
+    paramsByAreaIdData,
     duplicateValues,
     modalData,
     taskForce,
@@ -57,20 +58,21 @@ const ParameterModal = ({ refs, modalType, datas, inputs, handlers }) => {
               <AddField
                 ref={parameterInputRef}
                 fieldName={parametersArr.length > 1 ? 'Parameters' : 'Parameter'}
-                placeholder={'Enter a parameter...'}
+                placeholder={paramsByAreaIdData.length > 0 ? 'Enter new parameter or select an existing one...' : 'Enter new parameter...'}
                 type='textarea'
-                name='areaInput'
+                name='parameterInput'
                 formValue={parameterInput}
+                isDropdown={paramsByAreaIdData.length > 0}
+                dropDownCondition='canSelectAll'
                 multiValue={true}
                 multiValues={parametersArr}
-                // dropdownItems={areasArray}
-                showDropdownOnFocus={true}
+                dropdownScope='parameter'
+                dropdownItems={paramsByAreaIdData.map(p => p.parameter_name)}
+                showDropdownOnFocus={paramsByAreaIdData.length > 0}
                 duplicateValues={duplicateValues}
-                // onDropdownMenuClick={handleOptionSelection}
-                onAddValue={(val) => handleAddParameterValue(val)}
-                onRemoveValue={(index) => handleRemoveParameterValue(index)}
+                onAddValue={handleAddParameterValue}
+                onRemoveValue={handleRemoveParameterValue}
                 onChange={(e) => handleParameterChange(e)}
-                // onFocus={handleFocus}
               />
             </div>
           }

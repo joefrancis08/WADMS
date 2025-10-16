@@ -129,6 +129,33 @@ export const fetchAreasByLevel = (level, controller) => {
   });
 };
 
+export const fetchParamByAreaId = (areaId, signal) => {
+  return axios.get(`${API_BASE_URL}/accreditation/fetch-area-parameters-by`, {
+    params: {
+      areaId
+    },
+    signal
+  });
+};
+
+export const fetchSubParamByParamId = (parameterId, signal) => {
+  return axios.get(`${API_BASE_URL}/accreditation/fetch-parameter-subparameters-by`, {
+    params: {
+      parameterId
+    },
+    signal
+  });
+};
+
+export const fetchIndicatorBySubparamId = (subParamId, signal) => {
+  return axios.get(`${API_BASE_URL}/accreditation/fetch-subparameter-indicators-by`, {
+    params: {
+      subParamId
+    },
+    signal
+  });
+};
+
 export const fetchAccreditationPeriod = (controller) => {
   return axios.get(`${API_BASE_URL}/accreditation/fetch-accreditation-period`, {
     signal: controller.signal

@@ -3,17 +3,6 @@ import sendUpdate from "../../../../services/websocket/sendUpdate.js";
 
 const addSIM = async (req, res) => {
   const { title, year, accredBody, level, program, area, parameter, subParameter, indicatorNames } = req.body;
-  console.log({ 
-    title, 
-    year, 
-    accredBody, 
-    level, 
-    program, 
-    area, 
-    parameter, 
-    subParameter, 
-    indicatorNames 
-  });
 
   try {
     // Validate title, accredBody, level, program, area, parameter, and subparameter
@@ -37,17 +26,6 @@ const addSIM = async (req, res) => {
       });
     }
 
-    const currentYear = new Date().getFullYear();
-    if (year < 1900 || year > currentYear + 1) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Year must be realistic.' 
-      });
-    }
-
-    // Convert year into number after passes the validation
-    const numYear = Number(year);
-
     // Treat indicatorNames as an array since 2 or more indicators can exist in one sub-parameter
     const indicators = (Array.isArray(indicatorNames)
       ? indicatorNames : [indicatorNames])
@@ -69,7 +47,7 @@ const addSIM = async (req, res) => {
       // Insert each sub-parameter into the db with its associated accreditation title, year, body, level, program, area, parameter, and sub-parameter
       const response = await insertSIM({
         title,
-        year: numYear,
+        year,
         accredBody,
         level,
         program,

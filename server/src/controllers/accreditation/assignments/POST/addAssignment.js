@@ -166,6 +166,46 @@ const addAssignment = async (req, res) => {
         )
         : [[]];
 
+      if (subParameterId !== null && indicatorId === null) {
+        // Get all indicators belonging to this subparameter
+        const [indicators] = await connection.execute(
+          `SELECT id FROM indicator WHERE subparam_id = ?`,
+          [subParameterId]
+        );
+
+        for (const { id: indicatorId } of indicators) {
+          // Check if assignment already exists for this indicator
+          const [existingIndicatorAssignment] = await connection.execute(
+            `SELECT id FROM accreditation_assignment
+            WHERE user_id = ?
+              AND accred_info_id = ?
+              AND level_id = ?
+              AND program_id = ?
+              AND area_id = ?
+              AND parameter_id = ?
+              AND sub_parameter_id = ?
+              AND indicator_id = ?`,
+            [userId, accredInfoId, levelId, programId, areaId, parameterId, subParameterId, indicatorId]
+          );
+
+          if (existingIndicatorAssignment.length === 0) {
+            // Insert indicator-level assignment
+            await insertAssignment({
+              userId,
+              accredInfoId,
+              levelId,
+              programId,
+              areaId,
+              parameterId,
+              subParameterId,
+              indicatorId,
+            }, connection);
+
+            results.push({ type: 'insert-indicator', userId, indicatorId });
+          }
+        }
+      }
+
       // --- Decision making ---
       if (existingArea.length > 0) {
         if (parameterId !== null || subParameterId !== null || indicatorId !== null) {
@@ -215,7 +255,7 @@ const addAssignment = async (req, res) => {
         });
 
       } else if (
-        // 🚫 Block less-specific if more-specific exists
+        // Block less-specific if more-specific exists
         (parameterId === null && subParameterId === null && indicatorId === null && existingAnySpecific.length > 0) ||
         (parameterId !== null && subParameterId === null && indicatorId === null && existingMoreSpecificParam.length > 0) ||
         (parameterId !== null && subParameterId !== null && indicatorId === null && existingMoreSpecificSubParam.length > 0)

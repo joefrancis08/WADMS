@@ -1,6 +1,12 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import DeanLayout from '../../components/Layout/Dean/DeanLayout';
-import { ChevronRight, FileStack, Plus, Ellipsis, LoaderCircle, Upload, X, Check, FileText, FilePenLine, Trash2, FolderOpen, CirclePlus } from 'lucide-react';
+import {
+  ChevronRight,
+  FolderOpen,
+  Plus,
+  CirclePlus,
+  Search,
+} from 'lucide-react';
 import ContentHeader from '../../components/Dean/ContentHeader';
 import formatParameterName from '../../utils/formatParameterName';
 import useParamSubparam from '../../hooks/Dean/useParamSubparam';
@@ -8,9 +14,10 @@ import PATH from '../../constants/path';
 import SubParamModal from '../../components/Dean/Accreditation/SubParameter/SubParamModal';
 import PDFViewer from '../../components/PDFViewer';
 import SubParamCard from '../../components/Dean/Accreditation/SubParameter/SubParamCard';
-import DocumentList from '../../components/Document/DocumentList';
 import DocumentDropdown from '../../components/Document/DocumentDropdown';
 import formatAreaName from '../../utils/formatAreaName';
+import Breadcrumb from '../../components/Breadcrumb';
+import useDebouncedValue from '../../hooks/useDebouncedValue';
 
 const { PROGRAMS_TO_BE_ACCREDITED, AREA_PARAMETERS, PROGRAM_AREAS } = PATH.DEAN;
 
@@ -18,9 +25,9 @@ const ParamSubparam = () => {
   const { navigate, modalType, modalData, refs, params, datas, states, handlers } = useParamSubparam();
   const { accredInfoUUID, level, programUUID, areaUUID } = params;
   const { previewFile, setPreviewFile, activeDocId, renameInput, renameDocId, loadingFileId } = states;
-  const { 
-    navEllipsisRef, subParamInputRef, fileOptionRef, 
-    renameFileRef, subParamOptionRef, assignedTaskForceRef 
+  console.log(previewFile);
+  const {
+    subParamInputRef, fileOptionRef, renameFileRef, subParamOptionRef, assignedTaskForceRef,
   } = refs;
 
   const {
@@ -30,6 +37,7 @@ const ParamSubparam = () => {
     program,
     levelName,
     subParamsData,
+    subParamsByParamIdData,
     subParameterInput,
     subParamsArr,
     duplicateValues,
@@ -40,7 +48,6 @@ const ParamSubparam = () => {
     expandedId,
     selectedFiles,
     isRename,
-    isNavEllipsisClick,
     activeSubParamId,
     taskForce,
     taskForceLoading,
@@ -49,8 +56,10 @@ const ParamSubparam = () => {
     selectedTaskForce,
     assignmentData,
     activeTaskForceId,
-    showConfirmUnassign
+    showConfirmUnassign,
   } = datas;
+
+  console.log(documentsBySubParam);
 
   const {
     handleAddSubparamClick,
@@ -72,7 +81,6 @@ const ParamSubparam = () => {
     handleKeyDown,
     handleRemoveClick,
     handleConfirmRemove,
-    handleNavEllipsis,
     handleSubParamOption,
     handleSubParamOptionItem,
     handleFileUserClick,
@@ -85,128 +93,134 @@ const ParamSubparam = () => {
     handleATFEllipsisClick,
     handleUnassignedAllClick,
     handleAssignedOptionsClick,
-    handleConfirmUnassign
+    handleConfirmUnassign,
   } = handlers;
+
+  // SEARCH STATE
+  const [searchQuery, setSearchQuery] = useState('');
+  const debouncedQuery = useDebouncedValue(searchQuery, 250);
+  const lowerQ = debouncedQuery.toLowerCase();
+
+  // Filter subparameters by query
+  const filteredSubparams = useMemo(() => {
+    if (!lowerQ) return subParamsData;
+    return subParamsData.filter(({ sub_parameter }) =>
+      sub_parameter.toLowerCase().includes(lowerQ)
+    );
+  }, [subParamsData, lowerQ]);
+
+  // Breadcrumbs
+  const breadcrumbItems = [
+    {
+      label: `${title} ${year}`,
+      onClick: () => {
+        localStorage.removeItem('modal-type');
+        localStorage.removeItem('modal-data');
+        localStorage.removeItem('lastProgramId');
+        localStorage.setItem('accreditation-title', `${title} ${year}`);
+        navigate(PROGRAMS_TO_BE_ACCREDITED);
+      },
+    },
+    {
+      label: program,
+      onClick: () => {
+        localStorage.removeItem('accreditation-title');
+        navigate(PATH.DEAN.PROGRAMS_TO_BE_ACCREDITED);
+      },
+    },
+    {
+      label: formatAreaName(area),
+      onClick: () => navigate(PROGRAM_AREAS({ accredInfoUUID, level, programUUID })),
+    },
+    {
+      label: parameter,
+      onClick: () => navigate(AREA_PARAMETERS({ accredInfoUUID, level, programUUID, areaUUID })),
+    },
+    {
+      label: subParamsData.length > 1 ? 'Sub-Parameters' : 'Sub-Parameter',
+      isActive: true,
+    },
+  ];
 
   return (
     <DeanLayout>
       <div className='flex-1 p-3'>
-        {/* Breadcrumb navigation */}
         <div className='bg-slate-900 m-2 pb-2 border border-slate-700 rounded-lg'>
-          <div className='flex justify-between shadow px-4 pt-4 bg-black/40 p-4 rounded-t-lg'>
-            <div 
-              onClick={() => {
-                localStorage.removeItem('modal-type');
-                localStorage.removeItem('modal-data');
-              }}  
-              className='relative flex flex-row items-center text-slate-100 text-sm gap-1'>
-              <span
-                onClick={() => {
-                  localStorage.removeItem('lastProgramId');
-                  localStorage.setItem('accreditation-title', `${title} ${year}`);
-                  navigate(PROGRAMS_TO_BE_ACCREDITED);
-                }}
-                className='hover:underline cursor-pointer transition-all'
-              >
-                {`${title} ${year}`}
-              </span>
-              <ChevronRight className='h-5 w-5'/>
-              <p ref={navEllipsisRef}>
-                <span onClick={handleNavEllipsis} className=' rounded-full text-slate-100 cursor-pointer'>
-                  <Ellipsis className='h-4 w-4 -mb-2 hover:bg-slate-700 rounded-lg'/>
-                </span>
-                {isNavEllipsisClick && (
-                  <div className='absolute right-1/2 translate-1/2 -bottom-1/2'>
-                    <p className='flex flex-col bg-slate-700 px-2 py-2 rounded-lg transition-all -mb-5'>
-                      <span 
-                        title='Back to Programs'
-                        onClick={() => {
-                          localStorage.removeItem('accreditation-title');
-                          navigate(PROGRAMS_TO_BE_ACCREDITED);
-                        }}
-                        className='hover:underline active:scale-99 cursor-pointer '
-                      >
-                        {program}
-                      </span>
-                      <span 
-                        title='Back to Areas'
-                        onClick={() => {
-                          localStorage.removeItem('modal-type');
-                          localStorage.removeItem('modal-data');
-                          navigate(PROGRAM_AREAS({ accredInfoUUID, level, programUUID }));
-                        }}
-                        className='hover:underline active:scale-99 cursor-pointer '
-                      >
-                        {formatAreaName(area)}
-                      </span>
-                    </p>
-                  </div>
-                )}
-              </p>
-              <ChevronRight className='h-4 w-4 text-slate-100'/>
-              <span
-                title={parameter}
-                onClick={() => navigate(AREA_PARAMETERS({ accredInfoUUID, level, programUUID, areaUUID }))} 
-                className='hover:underline w-10 truncate cursor-pointer transition-all'
-              >
-                {parameter}
-              </span>
-              <ChevronRight className='h-5 w-5'/>
-              <span className='font-semibold text-lg'>
-                {subParamsData.length > 1 ? 'Sub-Parameters' : 'Sub-Parameter'}
-              </span>
+          {/* Header: Breadcrumb + Search (aligned opposite) */}
+          <div className='flex flex-col md:flex-row md:items-center md:justify-between shadow px-4 pt-4 bg-black/40 p-4 rounded-t-lg gap-4'>
+            {/* Breadcrumbs (left) */}
+            <Breadcrumb items={breadcrumbItems} />
+
+            {/* Search (right on desktop, below on mobile) */}
+            <div className='relative w-full md:w-1/3 lg:w-1/4'>
+              <Search className='absolute left-3 top-2.5 h-5 w-5 text-slate-400' />
+              <input
+                type='text'
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder='Search sub-parameter...'
+                className='pl-10 pr-3 py-2 rounded-full bg-slate-800 text-slate-100 border border-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 w-full transition-all'
+              />
             </div>
           </div>
-          {/* Program and Level Display */}
-          <div className='flex items-center justify-center mt-4 max-md:mt-10 w-auto mx-auto'>
+
+
+          {/* Program + level display */}
+          <div className='flex items-center justify-center mt-4 max-md:mt-10 w-auto mx-auto mb-8'>
             <p className='relative text-center gap-2 w-full'>
               <span className='text-yellow-400 font-bold text-xl md:text-2xl lg:text-3xl tracking-wide'>
                 {program}
               </span>
-              <span className='absolute -bottom-10 right-1/2 translate-x-1/2 text-xs md:text-lg px-4 bg-green-700 text-white font-medium rounded-md'>
-                {levelName} &#8226; {formatAreaName(area)} &#8226; Parameter {formatParameterName(parameter)}
+              <span className='absolute -bottom-10 right-1/2 translate-x-1/2 text-xs md:text-lg px-6 bg-green-700 text-white font-medium'>
+                {levelName} &#8226; {formatAreaName(area)} &#8226; Parameter{' '}
+                {formatParameterName(parameter)}
               </span>
             </p>
           </div>
-          <hr className='my-6 w-[50%] mx-auto border text-green-500' />
 
-          {/* Sub-parameters list */}
-          <div className={`flex flex-wrap gap-8 justify-center mb-8 py-8 px-2 mx-2 rounded ${subParamsData.length ? 'items-start' : 'items-center'}`}>
-            {subParamsData.length === 0 && (
+          {/* Subparameters list */}
+          <div
+            className={`flex flex-wrap gap-8 justify-center mb-8 py-8 px-2 mx-2 rounded ${
+              filteredSubparams.length ? 'items-start' : 'items-center'
+            }`}
+          >
+            {/* Empty state */}
+            {filteredSubparams.length === 0 && (
               <div className='flex flex-col items-center justify-center'>
-                <FolderOpen className='text-slate-600' size={200}/>
-                <p className='text-lg font-medium text-slate-200'>
-                  No sub-parameters to display for Parameter {formatParameterName(parameter)}.
+                <FolderOpen className='text-slate-600' size={160} />
+                <p className='text-lg font-medium text-slate-300 mt-2'>
+                  {subParamsData.length === 0
+                    ? `No sub-parameters to display for Parameter ${formatParameterName(parameter)}.`
+                    : `No sub-parameters found for “${searchQuery}”.`}
                 </p>
-                {/* Add Parameter Button */}
-                <div className='max-md:hidden flex justify-end px-5 p-2'>
+                {/* Add Subparameter Button */}
+                <div className='max-md:hidden flex justify-end px-5 p-2 mt-3'>
                   <button
                     onClick={handleAddSubparamClick}
-                    className='flex gap-x-1 text-white text-sm lg:text-base justify-center items-center cursor-pointer rounded-full px-4 py-2 hover:opacity-90 active:opacity-80 bg-green-600 shadow hover:shadow-md'
+                    className='flex gap-x-1 text-white text-sm lg:text-base justify-center items-center cursor-pointer rounded-full px-5 py-2 hover:opacity-90 active:scale-98 border-3 border-slate-500 bg-slate-700/50 shadow hover:shadow-md hover:border-green-600 transition'
                   >
-                    <Plus className='h-5 w-5' />
+                    <Plus className='h-6 w-6' />
                     Add
                   </button>
                 </div>
               </div>
             )}
-            {console.log(subParamsData)}
-            {subParamsData.map(({ pspmId, sub_parameter_uuid, sub_parameter, sub_parameter_id }) => {
-              const docsArray = documentsBySubParam[sub_parameter_id] ?? []
-              const isExpanded = expandedId === sub_parameter_id
+
+            {/* Cards */}
+            {filteredSubparams.map(({ pspmId, sub_parameter_uuid, sub_parameter, sub_parameter_id }) => {
+              const docsArray = documentsBySubParam[sub_parameter_id] ?? [];
+              const isExpanded = expandedId === sub_parameter_id;
 
               return (
-                // Wrapper must be relative to scope the dropdown
                 <div key={sub_parameter_uuid} className='mb-4 w-full md:w-[45%] relative'>
-                  {/* Sub-Parameter Card */}
                   <SubParamCard
                     refs={{ subParamOptionRef }}
-                    activeSubParamId={activeSubParamId} 
+                    activeSubParamId={activeSubParamId}
                     subParam={{
                       pspmId,
                       sub_parameter_id,
-                      sub_parameter_uuid, 
-                      sub_parameter, 
+                      sub_parameter_uuid,
+                      sub_parameter,
                     }}
                     docsArray={docsArray}
                     selectedFiles={selectedFiles}
@@ -223,8 +237,8 @@ const ParamSubparam = () => {
                     handleSubParamOptionItem={handleSubParamOptionItem}
                     handleProfileStackClick={handleProfileStackClick}
                   />
-                  
-                  {/* Dropdown section aligned with card */}
+
+                  {/* Dropdown */}
                   {isExpanded && docsArray.length > 0 && (
                     <DocumentDropdown
                       docsArray={docsArray}
@@ -252,23 +266,24 @@ const ParamSubparam = () => {
                       handleSaveFile={handleSaveFile}
                     />
                   )}
-                  {/* Hidden input per subparam */}
-                  <input 
+                  <input
                     id={`file-input-${sub_parameter_id}`}
-                    type='file' 
+                    type='file'
                     onChange={(e) => handleFileChange(e, sub_parameter_id)}
-                    accept='application/pdf,image/*' 
-                    className='hidden' 
+                    accept='application/pdf,image/*'
+                    className='hidden'
                   />
                 </div>
               );
             })}
-            {subParamsData.length > 0 && (
+
+            {/* Add Sub-parameter button */}
+            {filteredSubparams.length > 0 && (
               <div
                 onClick={handleAddSubparamClick}
                 className='flex flex-col gap-y-2 items-center justify-center border border-slate-700 hover:scale-102 hover:shadow shadow-slate-600 p-4 rounded-md transition cursor-pointer bg-slate-800 active:opacity-90 w-[45%] py-12 text-slate-100 active:scale-98'
               >
-                <CirclePlus className='h-12 w-12 flex shrink-0'/>
+                <CirclePlus className='h-12 w-12 flex shrink-0' />
                 <p>Add Sub-parameter</p>
               </div>
             )}
@@ -276,14 +291,15 @@ const ParamSubparam = () => {
         </div>
       </div>
 
-      {/* Sub-parameter modal for adding/editing */}
-      <SubParamModal 
+      {/* SubParam Modal */}
+      <SubParamModal
         modalType={modalType}
         refs={{ subParamInputRef }}
-        datas={{ 
-          subParamsArr, 
-          subParameterInput, 
-          duplicateValues, 
+        datas={{
+          subParamsArr,
+          subParamsByParamIdData,
+          subParameterInput,
+          duplicateValues,
           modalData,
           taskForce,
           taskForceLoading,
@@ -292,7 +308,7 @@ const ParamSubparam = () => {
           selectedTaskForce,
           activeTaskForceId,
           showConfirmUnassign,
-          assignedTaskForceRef
+          assignedTaskForceRef,
         }}
         handlers={{
           handleCloseModal,
@@ -309,9 +325,10 @@ const ParamSubparam = () => {
           handleATFEllipsisClick,
           handleUnassignedAllClick,
           handleAssignedOptionsClick,
-          handleConfirmUnassign
+          handleConfirmUnassign,
         }}
       />
+
       {previewFile && (
         <PDFViewer file={previewFile} onClose={() => setPreviewFile(null)} />
       )}

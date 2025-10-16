@@ -6,7 +6,7 @@ import Popover from '../Popover';
 import DatePickerComponent from '../DatePickerComponent';
 import { getUserRolesDropdown } from '../../utils/dropdownOptions';
 import useOutsideClick from '../../hooks/useOutsideClick';
-import { AreaDropdownItems } from '../Dropdown/DropdownOptions';
+import { AreaDropdownItems, DropdownItems, ParamDropdownItems } from '../Dropdown/DropdownOptions';
 
 const AddField = ({
   ref,
@@ -15,6 +15,7 @@ const AddField = ({
   type = 'text',
   name,
   formValue,
+  dropdownScope = 'area',
   dropdownItems = [],
   dropDownCondition,
   multiValue = false, // Enable multi-value mode (for textarea)
@@ -57,7 +58,7 @@ const AddField = ({
     (type === 'date'
       ? (formValue !== null)
       : multiValue
-        ? multiValues.length > 0 || (formValue ?? '').trim() !== ''
+        ? multiValues?.length > 0 || (formValue ?? '').trim() !== ''
         : (formValue ?? '').trim() !== ''
     );
 
@@ -222,7 +223,7 @@ const AddField = ({
                     ? 'border-gray-400 text-gray-800 focus-within:ring-2 focus-within:ring-green-600' 
                     : 'border-red-500 text-red-500 focus-within:ring-1 focus-within:ring-red-500'}`}
               >
-                {multiValues.map((val, index) => {
+                {multiValues?.map((val, index) => {
                   const isValueDuplicate = duplicateValues?.includes(val);
 
                   return (
@@ -264,7 +265,7 @@ const AddField = ({
                   onBlur={() => handleBlur({hideDropdown: true})}
                   rows={1}
                   className={`flex resize-none overflow-hidden text-wrap w-full py-2 focus:outline-none 
-                  ${multiValues.length > 0 && 'border px-4 border-slate-300 bg-slate-100 rounded'}`}
+                  ${multiValues?.length > 0 && 'border px-4 border-slate-300 bg-slate-100 rounded'}`}
                   onInput={(e) => {
                     e.target.style.height = "auto";
                     e.target.style.height = e.target.scrollHeight + "px";
@@ -330,23 +331,88 @@ const AddField = ({
                 {dropDownCondition !== "canSelectAll" ? (
                   dropdownContent
                 ) : (
-                  <AreaDropdownItems
-                    areas={dropdownItems}
-                    selected={multiValues}
-                    onChange={(newSelected) => {
-                      if (newSelected.length === 0) {
-                        multiValues.forEach((_, idx) => onRemoveValue(0));
-                        return;
-                      }
-                      const deselected = multiValues.filter(val => !newSelected.includes(val));
-                      deselected.forEach(val => {
-                        const idx = multiValues.indexOf(val);
-                        if (idx !== -1) onRemoveValue(idx);
-                      });
-                      const added = newSelected.filter(val => !multiValues.includes(val));
-                      added.forEach(val => onAddValue(val));
-                    }}
-                  />
+                  <>
+                    {dropdownScope === 'area' && (
+                      <DropdownItems
+                        label='Area'
+                        items={dropdownItems}
+                        selected={multiValues}
+                        onChange={(newSelected) => {
+                          if (newSelected.length === 0) {
+                            multiValues.forEach((_, idx) => onRemoveValue(0));
+                            return;
+                          }
+                          const deselected = multiValues.filter(val => !newSelected.includes(val));
+                          deselected.forEach(val => {
+                            const idx = multiValues.indexOf(val);
+                            if (idx !== -1) onRemoveValue(idx);
+                          });
+                          const added = newSelected.filter(val => !multiValues.includes(val));
+                          added.forEach(val => onAddValue(val));
+                        }}
+                      />
+                    )}
+                    {dropdownScope === 'parameter' && (
+                      <DropdownItems
+                        label='Parameter'
+                        items={dropdownItems}
+                        selected={multiValues}
+                        onChange={(newSelected) => {
+                          if (newSelected.length === 0) {
+                            multiValues.forEach((_, idx) => onRemoveValue(0));
+                            return;
+                          }
+                          const deselected = multiValues.filter(val => !newSelected.includes(val));
+                          deselected.forEach(val => {
+                            const idx = multiValues.indexOf(val);
+                            if (idx !== -1) onRemoveValue(idx);
+                          });
+                          const added = newSelected.filter(val => !multiValues.includes(val));
+                          added.forEach(val => onAddValue(val));
+                        }}
+                      />
+                    )}
+                    {dropdownScope === 'sub-parameter' && (
+                      <DropdownItems
+                        label='Sub-Parameter'
+                        items={dropdownItems}
+                        selected={multiValues}
+                        onChange={(newSelected) => {
+                          if (newSelected.length === 0) {
+                            multiValues.forEach((_, idx) => onRemoveValue(0));
+                            return;
+                          }
+                          const deselected = multiValues.filter(val => !newSelected.includes(val));
+                          deselected.forEach(val => {
+                            const idx = multiValues.indexOf(val);
+                            if (idx !== -1) onRemoveValue(idx);
+                          });
+                          const added = newSelected.filter(val => !multiValues.includes(val));
+                          added.forEach(val => onAddValue(val));
+                        }}
+                      />
+                    )}
+                    {dropdownScope === 'indicator' && (
+                      <DropdownItems
+                        label='Indicator'
+                        items={dropdownItems}
+                        selected={multiValues}
+                        onChange={(newSelected) => {
+                          if (newSelected.length === 0) {
+                            multiValues.forEach((_, idx) => onRemoveValue(0));
+                            return;
+                          }
+                          const deselected = multiValues.filter(val => !newSelected.includes(val));
+                          deselected.forEach(val => {
+                            const idx = multiValues.indexOf(val);
+                            if (idx !== -1) onRemoveValue(idx);
+                          });
+                          const added = newSelected.filter(val => !multiValues.includes(val));
+                          added.forEach(val => onAddValue(val));
+                        }}
+                      />
+                    )}
+                  </>
                 )}
               </div>
             </Dropdown>

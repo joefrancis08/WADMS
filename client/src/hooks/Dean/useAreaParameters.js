@@ -15,6 +15,7 @@ import usePageTitle from "../usePageTitle";
 import { getFullNameById } from "../../utils/getUserInfo";
 import useFetchAssignments from "../fetch-react-query/useFetchAssignments";
 import { USER_ROLES } from "../../constants/user";
+import useFetchParamByAreaId from "../fetch-react-query/useFetchParamByAreaId";
 
 const { PARAMETER_ADDITION, ASSIGNMENT } = TOAST_MESSAGES;
 
@@ -46,6 +47,13 @@ const useAreaParameters = () => {
   });
   console.log(area);
 
+  const {
+    paramsByAreaId,
+    loadingParam,
+    errorParam,
+    refetchParam
+  } = useFetchParamByAreaId(areaId);
+
   const { parameters, loading, error, refetch } = useFetchAreaParameters({
     title, 
     year, 
@@ -74,6 +82,9 @@ const useAreaParameters = () => {
   console.log(taskForce);
 
   const parameterData = parameters.data ?? [];
+  const paramsByAreaIdData = paramsByAreaId?.parameters ?? [];
+  console.log(paramsByAreaIdData);
+  console.log(paramsByAreaId);
 
   const [modalType, setModalType] = useState(null);
   const [modalData, setModalData] = useState({});
@@ -481,6 +492,7 @@ const useAreaParameters = () => {
       loading,
       error,
       parameterData,
+      paramsByAreaIdData,
       parametersArr,
       duplicateValues,
       isEllipsisClick,
