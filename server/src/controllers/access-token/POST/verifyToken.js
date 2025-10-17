@@ -1,5 +1,6 @@
 import db from "../../../config/db.js";
 import updateToken from "../../../models/access-token/PATCH/updateToken.js";
+import JWTSign from "../../auth/helpers/jwtSign.js";
 
 const verifyToken = async (req, res) => {
   const { token } = req.body;
@@ -95,12 +96,23 @@ const verifyToken = async (req, res) => {
       status,
     };
 
+    const JWToken = JWTSign({
+      id: user_id,
+      email,
+      fullName: full_name,
+      profilePicPath: profile_pic_path,
+      role,
+      status
+    });
+
     return res.status(200).json({
       message: "Valid token.",
       success: true,
       isValidToken: true,
+      token: JWToken,
       userData: req.session.user,
     });
+
   } catch (error) {
     try {
       await connection.rollback();
