@@ -9,6 +9,7 @@ import Dropdown from '../../components/Dropdown/Dropdown';
 import MODAL_TYPE from '../../constants/modalTypes';
 import formatAccreditationTitle from '../../utils/formatAccreditationTitle';
 import LEVEL from '../../constants/accreditationLevels';
+import { toga } from '../../assets/icons';
 
 const ProgramsToAccredit = () => {
   const { refs, datas, handlers } = useProgramsToBeAccredited();
@@ -401,17 +402,18 @@ const ProgramsToAccredit = () => {
                                     }
                                   })}
                                 }
-                                
-                                className='relative flex items-center justify-center h-100 p-8 shadow-md border border-slate-600 hover:shadow-slate-700 transition w-100 bg-[url("/pit-bg-5.png")] bg-cover bg-center rounded-lg cursor-pointer'
+                                className='relative flex items-center justify-center h-100 p-8 shadow-md border border-slate-600 hover:shadow-slate-700 transition w-100 bg-gradient-to-b from-green-700 to-amber-300 rounded-lg cursor-pointer'
                               >
-                                <div className='absolute inset-0 bg-black/60 z-10 rounded-lg'></div>
                                 <div 
                                   id={`${accredBody}-${accredYear}-${level}-${program}`}
                                   className='z-20'
                                 >
-                                   <p className='text-center leading-snug tracking-widest text-yellow-300 text-xl md:text-2xl lg:text-4xl font-bold'>
-                                    {program}
-                                  </p>
+                                  <div className='relative flex items-center justify-center'>
+                                    <img src={toga} alt="Toga Icon" loading='lazy' className='opacity-10 h-40 w-40'/>
+                                    <p className='absolute top-1/2 left-1/2 -translate-1/2 text-center text-4xl tracking-wide text-white font-bold z-30'>
+                                      {program}
+                                    </p>
+                                  </div>
                                 </div>
                                 {/* Render program options when option button is clicked */}
                                 {activeProgramID === programId && (
@@ -478,23 +480,43 @@ const ProgramsToAccredit = () => {
                                   <EllipsisVertical size={24}/>
                                 </button>
                                 {progressData?.map((item, index) => {
-                                  console.log(item);
                                   const matchAccredInfo = item.accreditation_info_id === accredId;
-                                  console.log(matchAccredInfo);
                                   const matchLevel = String(item.level_name).toLowerCase().split(' ').join('-') === accredLevel;
-                                  console.log(String(item.level_name).toLowerCase().replace(/\s+/g, '-'));
-                                  console.log(accredLevel);
-                                  console.log(matchLevel);
                                   const matchProgram = item.program_id === programObj.id;
-                                  console.log(matchProgram);
 
-                                  return (matchAccredInfo && matchLevel && matchProgram) && (
-                                    <div className='w-90 flex items-center justify-start rounded-full border border-white absolute bottom-3 left-1/2 -translate-x-1/2 z-20 h-4'>
-                                      <div style={{ width: `${item.progress}%`}} className='bg-green-500 h-3 rounded-full'>
-                                        
+                                  if (!(matchAccredInfo && matchLevel && matchProgram)) return null;
+
+                                  const progress = Number(item.progress);
+                                  let color = 'bg-orange-600';
+                                  let labelColor = 'text-red-500';
+                                  let status = 'Not Started';
+
+                                  if (progress >= 80) {
+                                    color = 'bg-green-500';
+                                    labelColor = 'text-green-600';
+                                    status = 'Excellent';
+                                  } else if (progress >= 50) {
+                                    color = 'bg-green-700';
+                                    labelColor = 'text-green-700';
+                                    status = 'In Progress';
+                                  } else if (progress >= 20) {
+                                    color = 'bg-orange-100';
+                                    labelColor = 'text-orange-300';
+                                    status = 'Partial';
+                                  }
+
+                                  return (
+                                    <div className='absolute bottom-4 left-1/2 -translate-x-1/2 w-[90%] z-20'>
+                                      <div className='relative w-full bg-slate-700 border border-slate-600 rounded-full h-5 shadow-inner overflow-hidden'>
+                                        <div
+                                          style={{ width: `${progress}%` }}
+                                          className={`h-full ${color} transition-all duration-700 ease-in-out rounded-full`}
+                                        ></div>
+                                        <span className={`absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 font-semibold text-xs text-white`}>
+                                          {progress.toFixed(2)}%
+                                        </span>
                                       </div>
-                                      <p className='absolute -top-5 right-0 text-sm text-white text-end'>{Number(item.progress).toFixed(2)}%</p>
-                                      <p className='absolute -top-5 left-0 text-sm text-white text-end'>Status</p>
+                                      <p className={`mt-1 text-center text-sm font-medium ${labelColor}`}>{status}</p>
                                     </div>
                                   );
                                 })}

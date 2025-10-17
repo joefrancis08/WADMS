@@ -1,8 +1,8 @@
 import db from "../../../../config/db.js";
 
-const getProgramProgress = async () => {
+const getAreaProgress = async () => {
   const query = `
-    SELECT * FROM vw_program_progress
+    SELECT * FROM vw_area_progress
   `;
 
   try {
@@ -11,9 +11,9 @@ const getProgramProgress = async () => {
     return progress;
 
   } catch (error) {
-    console.error('Error getting program progress:', error);
+    console.error('Error getting area progress:', error);
     throw error;
   }
 };
 
-export default getProgramProgress;
+export default getAreaProgress;

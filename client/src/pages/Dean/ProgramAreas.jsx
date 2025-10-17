@@ -69,6 +69,7 @@ const ProgramAreas = () => {
     handleSelectAll,
     handleAssignTaskForce,
     handleProfileStackClick,
+    handleEllipsisClick,
     handleUserCircleClick,
     handleAddTaskForceClick,
     handleUnassignedAllClick,
@@ -148,7 +149,7 @@ const ProgramAreas = () => {
 
           {/* Areas List */}
           <div
-            className={`flex flex-wrap gap-10 justify-center mb-8 py-8 px-2 mx-2 rounded ${
+            className={`flex flex-wrap gap-x-10 gap-y-20 justify-center mb-8 py-8 px-2 mx-2 rounded ${
               filteredAreas.length ? 'items-start' : 'items-center'
             }`}
           >
@@ -269,6 +270,18 @@ const ProgramAreas = () => {
                     <FileUser />
                   </button>
                 </div>
+                <div className='absolute bottom-4 left-1/2 -translate-x-1/2 w-full z-20 -mb-16'>
+                  <div className='relative w-full bg-slate-700 border border-slate-600 rounded-full h-4 shadow-inner overflow-hidden'>
+                    <div
+                      style={{ width: `50%` }}
+                      className={`h-full ${'bg-green-500'} transition-all duration-700 ease-in-out rounded-full`}
+                    ></div>
+                    <span className={`absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 font-semibold text-xs text-white`}>
+                      {100}%
+                    </span>
+                  </div>
+                  <p className={`mt-1 text-center text-sm font-medium ${'text-white'}`}>Complete</p>
+                </div>
 
                 {/* Dropdown */}
                 {activeAreaId === areaData.area_uuid && (
@@ -372,6 +385,7 @@ const ProgramAreas = () => {
           handleSelectAll,
           handleAssignTaskForce,
           handleAddTaskForceClick,
+          handleEllipsisClick,
           handleUnassignedClick,
           handleUnassignedAllClick,
           handleAssignedOptionsClick,
