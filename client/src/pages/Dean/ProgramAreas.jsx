@@ -20,6 +20,7 @@ import ProfileStack from '../../components/ProfileStack';
 import deduplicateAssignments from '../../utils/deduplicateAssignments';
 import Breadcrumb from '../../components/Breadcrumb';
 import useDebouncedValue from '../../hooks/useDebouncedValue';
+import { getProgressStyle } from '../../helpers/progressHelper';
 
 const { PROGRAMS_TO_BE_ACCREDITED, AREA_PARAMETERS } = PATH.DEAN;
 
@@ -51,6 +52,7 @@ const ProgramAreas = () => {
     assignmentData,
     activeTaskForceId,
     showConfirmUnassign,
+    areaProgress
   } = datas;
 
   const {
@@ -182,9 +184,10 @@ const ProgramAreas = () => {
                 onClick={() =>
                   !activeAreaId && handleAreaCardClick(areaData.area_uuid)
                 }
-                className="relative flex flex-col items-start justify-center px-2 max-sm:w-full md:w-75 lg:w-50 h-60 bg-[url('/cgs-bg-2.png')] bg-cover bg-center shadow-slate-800 border border-slate-600 hover:shadow hover:scale-102 transition duration-300 cursor-pointer active:shadow"
+                className="relative flex flex-col items-start justify-center px-2 max-sm:w-full md:w-75 lg:w-50 h-60 bg-[url('/cgs-bg-2.png')] bg-cover bg-center shadow-slate-800 border border-slate-600 hover:shadow-md transition cursor-pointer active:shadow"
               >
                 <div className="absolute inset-0 bg-black/50"></div>
+                {activeAreaId && <div className='absolute inset-0 z-20'></div>}
 
                 {/* Area Title */}
                 {String(areaData.area)
@@ -215,7 +218,7 @@ const ProgramAreas = () => {
                     handleAreaOptionClick(e, { areaID: areaData.area_uuid })
                   }
                   title="Options"
-                  className="absolute top-0 right-0 text-white cursor-pointer active:opacity-50 rounded-full hover:bg-slate-200/20 p-2 z-10"
+                  className={`absolute top-1 right-1 text-white cursor-pointer active:opacity-50 rounded-full hover:bg-slate-200/20 p-1 z-10 ${activeAreaId === areaData.area_uuid && 'bg-slate-200/10'}`}
                 >
                   <EllipsisVertical className="h-5 w-5" />
                 </button>
@@ -270,19 +273,41 @@ const ProgramAreas = () => {
                     <FileUser />
                   </button>
                 </div>
-                <div className='absolute bottom-4 left-1/2 -translate-x-1/2 w-full z-20 -mb-16'>
-                  <div className='relative w-full bg-slate-700 border border-slate-600 rounded-full h-4 shadow-inner overflow-hidden'>
-                    <div
-                      style={{ width: `50%` }}
-                      className={`h-full ${'bg-green-500'} transition-all duration-700 ease-in-out rounded-full`}
-                    ></div>
-                    <span className={`absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 font-semibold text-xs text-white`}>
-                      {100}%
-                    </span>
-                  </div>
-                  <p className={`mt-1 text-center text-sm font-medium ${'text-white'}`}>Complete</p>
-                </div>
+                
+                {(() => {
+                    if (!areaProgress || !Array.isArray(areaProgress)) return null;
 
+                    
+
+                    const matchedProgress = areaProgress.find(
+                      (item) =>
+                        Number(item.programId) === Number(areaData.programId) &&
+                        Number(item.areaId) === Number(areaData.area_id) &&
+                        Number(item.pamId) === Number(areaData.pamId)
+                    );
+
+                    if (!matchedProgress) return null;
+
+                    const progress = Number(matchedProgress.progress || 0).toFixed(1);
+                    const { color, status } = getProgressStyle(progress);
+
+                    return (
+                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-full z-20 -mb-16">
+                        <div className="relative w-full bg-slate-700 border border-slate-600 rounded-full h-4 shadow-inner overflow-hidden">
+                          <div
+                            style={{ width: `${progress}%` }}
+                            className={`h-full ${color} transition-all duration-700 ease-in-out rounded-full`}
+                          ></div>
+                          <span className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 font-semibold text-xs text-white">
+                            {progress}%
+                          </span>
+                        </div>
+                        <p className="mt-1 text-center text-sm font-medium text-white">
+                          {status}
+                        </p>
+                      </div>
+                    );
+                  })()}
                 {/* Dropdown */}
                 {activeAreaId === areaData.area_uuid && (
                   <div

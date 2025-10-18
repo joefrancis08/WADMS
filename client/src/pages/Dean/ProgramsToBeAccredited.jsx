@@ -10,6 +10,7 @@ import MODAL_TYPE from '../../constants/modalTypes';
 import formatAccreditationTitle from '../../utils/formatAccreditationTitle';
 import LEVEL from '../../constants/accreditationLevels';
 import { toga } from '../../assets/icons';
+import { getProgressStyle } from '../../helpers/progressHelper';
 
 const ProgramsToAccredit = () => {
   const { refs, datas, handlers } = useProgramsToBeAccredited();
@@ -121,6 +122,7 @@ const ProgramsToAccredit = () => {
 
       acc[accredTitle][item.level].push({
         ...item.program,       // { program_uuid, program }
+        ilpmId: item.ilpmId,
         level: item.level,
         accred_id: item.accreditationInfo.id,
         accred_uuid: item.accreditationInfo.accred_uuid,
@@ -479,32 +481,18 @@ const ProgramsToAccredit = () => {
                                   className='absolute top-2 p-2 right-2 text-slate-100 rounded-full hover:shadow hover:text-slate-200 hover:bg-slate-100/20 active:opacity-50 transition cursor-pointer z-10'>
                                   <EllipsisVertical size={24}/>
                                 </button>
+                                {console.log(progressData)}
+                                {console.log(programObj)}
                                 {progressData?.map((item, index) => {
-                                  const matchAccredInfo = item.accreditation_info_id === accredId;
+                                  const matchAccredInfo = item.accred_info_id === accredId;
                                   const matchLevel = String(item.level_name).toLowerCase().split(' ').join('-') === accredLevel;
-                                  const matchProgram = item.program_id === programObj.id;
+                                  const matchIlpmID = item.ilpm_id === programObj.ilpmId;
 
-                                  if (!(matchAccredInfo && matchLevel && matchProgram)) return null;
+                                  if (!(matchIlpmID)) return null;
 
-                                  const progress = Number(item.progress);
-                                  let color = 'bg-orange-600';
-                                  let labelColor = 'text-red-500';
-                                  let status = 'Not Started';
-
-                                  if (progress >= 80) {
-                                    color = 'bg-green-500';
-                                    labelColor = 'text-green-600';
-                                    status = 'Excellent';
-                                  } else if (progress >= 50) {
-                                    color = 'bg-green-700';
-                                    labelColor = 'text-green-700';
-                                    status = 'In Progress';
-                                  } else if (progress >= 20) {
-                                    color = 'bg-orange-100';
-                                    labelColor = 'text-orange-300';
-                                    status = 'Partial';
-                                  }
-
+                                  const progress = Number(item.progress || 0).toFixed(1);
+                                  const { status, color } = getProgressStyle(progress);
+                                  
                                   return (
                                     <div className='absolute bottom-4 left-1/2 -translate-x-1/2 w-[90%] z-20'>
                                       <div className='relative w-full bg-slate-700 border border-slate-600 rounded-full h-5 shadow-inner overflow-hidden'>
@@ -513,10 +501,12 @@ const ProgramsToAccredit = () => {
                                           className={`h-full ${color} transition-all duration-700 ease-in-out rounded-full`}
                                         ></div>
                                         <span className={`absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 font-semibold text-xs text-white`}>
-                                          {progress.toFixed(2)}%
+                                          {progress}%
                                         </span>
                                       </div>
-                                      <p className={`mt-1 text-center text-sm font-medium ${labelColor}`}>{status}</p>
+                                      <p className={`mt-1 text-center text-sm font-medium ${progress > 1 ? 'text-green-700' : 'text-red-500'}`}>
+                                        {status}
+                                      </p>
                                     </div>
                                   );
                                 })}

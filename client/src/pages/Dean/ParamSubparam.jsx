@@ -18,6 +18,8 @@ import DocumentDropdown from '../../components/Document/DocumentDropdown';
 import formatAreaName from '../../utils/formatAreaName';
 import Breadcrumb from '../../components/Breadcrumb';
 import useDebouncedValue from '../../hooks/useDebouncedValue';
+import { messageHandler } from '../../services/websocket/messageHandler';
+import { useEffect } from 'react';
 
 const { PROGRAMS_TO_BE_ACCREDITED, AREA_PARAMETERS, PROGRAM_AREAS } = PATH.DEAN;
 
@@ -96,10 +98,25 @@ const ParamSubparam = () => {
     handleConfirmUnassign,
   } = handlers;
 
+  const [payload, setPayload] = useState();
+
   // SEARCH STATE
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedQuery = useDebouncedValue(searchQuery, 250);
   const lowerQ = debouncedQuery.toLowerCase();
+
+  useEffect(() => {
+    // Listen for all WebSocket updates
+    const { cleanup } = messageHandler((type, payload) => {
+      console.log('📡 WebSocket Update:', type, payload);
+      setPayload(payload);
+    });
+
+    // Cleanup on unmount to avoid memory leaks
+    return cleanup;
+  }, []);
+
+  console.log(payload);
 
   // Filter subparameters by query
   const filteredSubparams = useMemo(() => {

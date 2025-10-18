@@ -42,6 +42,7 @@ export const useProgramsToBeAccredited = () => {
     refetchProgramProgress
   } = useFetchProgramProgress()
   const progressData = programProgressData.programProgressData;
+  console.log(progressData);
   
   useScrollSaver(scrollContainerRef);
 

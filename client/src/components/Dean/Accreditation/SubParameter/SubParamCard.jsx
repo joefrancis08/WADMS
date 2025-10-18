@@ -41,6 +41,7 @@ const SubParamCard = ({
       }}
       className='flex flex-col border border-slate-700 hover:shadow shadow-slate-600 p-4 rounded-md transition cursor-pointer bg-slate-800 h-auto'
     >
+      {activeSubParamId && <div className='absolute inset-0 z-20'></div>}
       <div className='relative flex items-center justify-between mb-3'>
         {/* Sub-Parameter Title */}
         <p className='font-medium text-slate-100 text-lg'>

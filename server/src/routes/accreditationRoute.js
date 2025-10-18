@@ -19,6 +19,9 @@ import fetchIndicatorBy from '../controllers/accreditation/indicator/GET/fetchIn
 import { authorize } from '../middlewares/auth/authMiddleware.js';
 import allowedRoles from './obj/allowedRoles.js';
 import fetchAreaProgress from '../controllers/progress/area-progress/fetchAreaProgress.js';
+import fetchParamProgress from '../controllers/progress/parameter-progress/fetchParamProgress.js';
+import fetchSubParamProgress from '../controllers/progress/subparameter-progress/fetchSubParamProgress.js';
+import fetchIndicatorProgress from '../controllers/progress/indicator-progress/fetchIndicatorProgress.js';
 
 const { D, M, C, I, A } = allowedRoles();
 
@@ -32,7 +35,7 @@ accreditationRouter.post('/add-area-parameters', authorize([D, M, C]), addAreaPa
 accreditationRouter.post('/add-parameter-subparameters', authorize([D, M, C]), addParamSubParamController);
 accreditationRouter.post('/add-subparameter-indicators', authorize([D, M, C]), addSIMController);
 accreditationRouter.post('/add-document', authorize([D, M, C]), upload.single('file'), addDocumentController);
-accreditationRouter.post('/add-assignment', authorize([D]),  addAssignmentController);
+accreditationRouter.post('/add-assignment', authorize([D]), addAssignmentController);
 
 accreditationRouter.get('/fetch-accreditation-levels', authorize([D, M, C, I, A]), fetchLevelsController);
 accreditationRouter.get('/fetch-accreditation-period', authorize([D, M, C, I, A]), fetchPeriodController);
@@ -49,6 +52,9 @@ accreditationRouter.get('/fetch-documents', authorize([D, M, C, I, A]), fetchDoc
 accreditationRouter.get('/fetch-assignments', authorize([D, M, C]), fetchAssignmentController);
 accreditationRouter.get('/fetch-program-progress', authorize([D]), fetchProgramProgress);
 accreditationRouter.get('/fetch-area-progress', authorize([D]), fetchAreaProgress);
+accreditationRouter.get('/fetch-parameter-progress', authorize([D]), fetchParamProgress);
+accreditationRouter.get('/fetch-subparameter-progress', authorize([D]), fetchSubParamProgress);
+accreditationRouter.get('/fetch-indicator-progress', authorize([D]), fetchIndicatorProgress);
 
 accreditationRouter.patch('/rename-document/:docId', authorize([D, M, C]), updateDocController);
 

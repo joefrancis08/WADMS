@@ -18,6 +18,7 @@ import useFetchAssignments from "../fetch-react-query/useFetchAssignments";
 import formatAreaName from "../../utils/formatAreaName";
 import { getFullNameById } from "../../utils/getUserInfo";
 import useFetchProgramProgress from "../fetch-react-query/useFetchProgramProgress";
+import useFetchAreaProgress from "../fetch-react-query/useFetchAreaProgress";
 
 const { AREA_PARAMETERS } = PATH.DEAN;
 const { ASSIGNMENT, UNASSIGN } = TOAST_MESSAGES;
@@ -62,12 +63,19 @@ const useProgramAreas = () => {
     refetch: taskForceRefetch 
   } = useUsersBy({ role: ['Task Force Chair', 'Task Force Member'] });
 
+  const {
+    areaProgressData,
+    loadingAreaProgress,
+    errorAreaProgress,
+    refetchAreaProgress
+  } = useFetchAreaProgress(programId);
+
+  console.log(areasData);
+
   const data = areasData?.data ?? [];
   const areasByLevelData = areasByLevel?.areas ?? [];
-  console.log(data);
-  const areaArray = data.map((item) => {
-    return item.area_id;
-  });
+  const areaProgress = areaProgressData?.areaProgressData ?? [];
+  console.log(areaProgress);
 
   const [modalType, setModalType] = useState(null);
   const [modalData, setModalData] = useState(null);
@@ -483,7 +491,8 @@ const useProgramAreas = () => {
       errorAssignments,
       refetchAssignments,
       activeTaskForceId,
-      showConfirmUnassign
+      showConfirmUnassign,
+      areaProgress
     },
 
     inputs: {
