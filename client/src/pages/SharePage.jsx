@@ -16,7 +16,7 @@ const SharePage = () => {
     const queryFn = async () => {
       try {
         const res = await verifyToken(token);
-        console.log(res);
+        localStorage.setItem('token', res.data.token);
         const userData = res.data.userData;
         const { email, fullName, profilePicPath, role, status } = userData;
         login(email, fullName, profilePicPath, role, status);

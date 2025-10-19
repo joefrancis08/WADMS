@@ -9,6 +9,9 @@ import Dropdown from '../../components/Dropdown/Dropdown';
 import MODAL_TYPE from '../../constants/modalTypes';
 import formatAccreditationTitle from '../../utils/formatAccreditationTitle';
 import LEVEL from '../../constants/accreditationLevels';
+import { toga } from '../../assets/icons';
+import { getProgressStyle } from '../../helpers/progressHelper';
+import ProgressBar from '../../components/ProgressBar';
 
 const ProgramsToAccredit = () => {
   const { refs, datas, handlers } = useProgramsToBeAccredited();
@@ -120,6 +123,7 @@ const ProgramsToAccredit = () => {
 
       acc[accredTitle][item.level].push({
         ...item.program,       // { program_uuid, program }
+        ilpmId: item.ilpmId,
         level: item.level,
         accred_id: item.accreditationInfo.id,
         accred_uuid: item.accreditationInfo.accred_uuid,
@@ -170,27 +174,26 @@ const ProgramsToAccredit = () => {
           <h2 className='text-xl text-slate-100 font-bold'>
             Programs
           </h2>
-
-            <div className="relative w-full md:w-1/3 lg:w-90">
-              <Search className="absolute left-3 top-2.5 h-5 w-5 text-slate-400" />
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search title, year, level, or program..."
-                className="pl-10 pr-3 py-2 rounded-full bg-slate-800 text-slate-100 border border-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 w-full transition-all"
-              />
-            </div>
+          <div className="flex items-center gap-x-4 justify-center relative">
+            <Search className="absolute left-3 top-2.5 h-5 w-5 text-slate-400" />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search title, year, level, or program..."
+              className="md:w-1/3 lg:w-90 pl-10 pr-3 py-2 rounded-full bg-slate-800 text-slate-100 border border-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 w-full transition-all"
+            />
+            {/* Add button */}
+            <button 
+              title='Add new accreditation' 
+              onClick={handleAddClick} 
+              className='flex items-center justify-center text-white gap-1 px-3 rounded-full cursor-pointer transition py-2 border border-slate-600 bg-green-600 hover:bg-green-600/90 hover:shadow-slate-700 shadow active:opacity-90 z-50 active:scale-99'
+            >
+              <Plus className='text-white' size={22}/>
+              Add new
+            </button>
+          </div>
         </div>
-
-        {/* Add button */}
-        <button 
-          title='Add new accreditation' 
-          onClick={handleAddClick} 
-          className='fixed bottom-6 right-10 flex items-center justify-center gap-2 p-4 rounded-full cursor-pointer transition-all shadow-lg bg-slate-600 hover:bg-slate-700 active:opacity-90 z-50'
-        >
-          <Plus className='text-white' size={28}/>
-        </button>
 
         {/* Render fallback UI if data is empty */}
         {loading ? (
@@ -401,17 +404,18 @@ const ProgramsToAccredit = () => {
                                     }
                                   })}
                                 }
-                                
-                                className='relative flex items-center justify-center h-100 p-8 shadow-md border border-slate-600 hover:shadow-slate-700 transition w-100 bg-[url("/pit-bg-5.png")] bg-cover bg-center rounded-lg cursor-pointer'
+                                className='relative flex items-center mb-5 justify-center h-100 p-8 shadow-lg border border-slate-600 hover:shadow-slate-600 transition w-100 bg-gradient-to-b from-green-700 to-amber-300 rounded-lg cursor-pointer'
                               >
-                                <div className='absolute inset-0 bg-black/60 z-10 rounded-lg'></div>
                                 <div 
                                   id={`${accredBody}-${accredYear}-${level}-${program}`}
                                   className='z-20'
                                 >
-                                   <p className='text-center leading-snug tracking-widest text-yellow-300 text-xl md:text-2xl lg:text-4xl font-bold'>
-                                    {program}
-                                  </p>
+                                  <div className='relative flex items-center justify-center'>
+                                    <img src={toga} alt="Toga Icon" loading='lazy' className='opacity-10 h-40 w-40'/>
+                                    <p className='absolute top-1/2 left-1/2 -translate-1/2 text-center text-4xl tracking-wide text-white font-bold z-30'>
+                                      {program}
+                                    </p>
+                                  </div>
                                 </div>
                                 {/* Render program options when option button is clicked */}
                                 {activeProgramID === programId && (
@@ -474,28 +478,26 @@ const ProgramsToAccredit = () => {
                                       }
                                     }))}
                                   title='Options'
-                                  className='absolute top-2 p-2 right-2 text-slate-100 rounded-full hover:shadow hover:text-slate-200 hover:bg-slate-100/20 active:opacity-50 transition cursor-pointer z-10'>
+                                  className={`absolute top-2 p-2 right-2 text-slate-100 rounded-full hover:shadow hover:text-slate-200 hover:bg-slate-100/20 active:opacity-50 transition cursor-pointer z-10 ${activeProgramID === programId && 'bg-slate-100/20'}`}>
                                   <EllipsisVertical size={24}/>
                                 </button>
-                                {progressData?.map((item, index) => {
-                                  console.log(item);
-                                  const matchAccredInfo = item.accreditation_info_id === accredId;
-                                  console.log(matchAccredInfo);
-                                  const matchLevel = String(item.level_name).toLowerCase().split(' ').join('-') === accredLevel;
-                                  console.log(String(item.level_name).toLowerCase().replace(/\s+/g, '-'));
-                                  console.log(accredLevel);
-                                  console.log(matchLevel);
-                                  const matchProgram = item.program_id === programObj.id;
-                                  console.log(matchProgram);
 
-                                  return (matchAccredInfo && matchLevel && matchProgram) && (
-                                    <div className='w-90 flex items-center justify-start rounded-full border border-white absolute bottom-3 left-1/2 -translate-x-1/2 z-20 h-4'>
-                                      <div style={{ width: `${item.progress}%`}} className='bg-green-500 h-3 rounded-full'>
-                                        
-                                      </div>
-                                      <p className='absolute -top-5 right-0 text-sm text-white text-end'>{Number(item.progress).toFixed(2)}%</p>
-                                      <p className='absolute -top-5 left-0 text-sm text-white text-end'>Status</p>
-                                    </div>
+                                {/* Progress Bar */}
+                                {progressData?.map((item, index) => {
+                                  const matchIlpmID = item.ilpm_id === programObj.ilpmId;
+
+                                  if (!(matchIlpmID)) return null;
+
+                                  const progress = Number(item.progress || 0).toFixed(1);
+                                  const { status, color } = getProgressStyle(progress);
+                                  
+                                  return (
+                                    <ProgressBar
+                                      key={index} 
+                                      progress={progress}
+                                      status={status}
+                                      color={color}
+                                    />
                                   );
                                 })}
                               </div>

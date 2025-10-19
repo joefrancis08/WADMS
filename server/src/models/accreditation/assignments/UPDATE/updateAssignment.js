@@ -13,7 +13,7 @@ const updateAssignment = async (data = {}, connection = null) => {
 
   const query = `
     UPDATE accreditation_assignment
-    SET parameter_id = ?, sub_parameter_id = ?, indicator_id = ?
+    SET parameter_id = ?, subparameter_id = ?, indicator_id = ?
     WHERE user_id = ?
       AND accred_info_id = ?
       AND level_id = ?

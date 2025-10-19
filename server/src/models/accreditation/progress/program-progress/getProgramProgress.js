@@ -6,9 +6,9 @@ const getProgramProgress = async () => {
   `;
 
   try {
-    const [program] = await db.query(query);
+    const [progress] = await db.query(query);
 
-    return program;
+    return progress;
 
   } catch (error) {
     console.error('Error getting program progress:', error);

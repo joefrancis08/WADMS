@@ -1,9 +1,9 @@
-import axios from "axios";
+import apiClient from "../../services/axios/apiClient";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const addInfoLevelProgram = ({ title, year, accredBody, level, programNames }) => {
-  return axios.post(`${API_BASE_URL}/accreditation/add-info-level-programs`, {
+  return apiClient.post(`/accreditation/add-info-level-programs`, {
     title,
     year,
     accredBody, 
@@ -13,7 +13,7 @@ export const addInfoLevelProgram = ({ title, year, accredBody, level, programNam
 };
 
 export const addProgramAreas = ({ title, year, accredBody, level, program, areaNames }) => {
-  return axios.post(`${API_BASE_URL}/accreditation/add-program-areas`, {
+  return apiClient.post(`/accreditation/add-program-areas`, {
     title, 
     year, 
     accredBody, 
@@ -24,7 +24,7 @@ export const addProgramAreas = ({ title, year, accredBody, level, program, areaN
 };
 
 export const addAreaParameters = ({ title, year, accredBody, level, program, area, parameterNames }) => {
-  return axios.post(`${API_BASE_URL}/accreditation/add-area-parameters`, {
+  return apiClient.post(`/accreditation/add-area-parameters`, {
     title,
     year,
     accredBody,
@@ -45,7 +45,7 @@ export const addSubParams = ({
   parameter, 
   subParameterNames 
 }) => {
-  return axios.post(`${API_BASE_URL}/accreditation/add-parameter-subparameters`, {
+  return apiClient.post(`/accreditation/add-parameter-subparameters`, {
     title,
     year,
     accredBody,
@@ -68,7 +68,7 @@ export const addIndicators = ({
   subParameter,
   indicatorNames
 }) => {
-  return axios.post(`${API_BASE_URL}/accreditation/add-subparameter-indicators`, {
+  return apiClient.post(`/accreditation/add-subparameter-indicators`, {
     title,
     year,
     accredBody,
@@ -82,7 +82,7 @@ export const addIndicators = ({
 };
 
 export const addDocument = async (formData) => {
-  return axios.post(`${API_BASE_URL}/accreditation/add-document`, formData, {
+  return apiClient.post(`/accreditation/add-document`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -90,7 +90,7 @@ export const addDocument = async (formData) => {
 };
 
 export const addAssignment = async (data = {}, condition = {}) => {
-  return axios.post(`${API_BASE_URL}/accreditation/add-assignment`, {
+  return apiClient.post(`${API_BASE_URL}/accreditation/add-assignment`, {
     userIDList: data.userIDList,
     accredInfoId: data.accredInfoId,
     levelId: data.levelId,
@@ -103,25 +103,25 @@ export const addAssignment = async (data = {}, condition = {}) => {
 };
 
 export const fetchILP = (controller) => {
-  return axios.get(`${API_BASE_URL}/accreditation/fetch-info-level-programs`, {
+  return apiClient.get(`/accreditation/fetch-info-level-programs`, {
     signal: controller.signal
   });
 };
 
 export const fetchProgramProgress = (signal) => {
-  return axios.get(`${API_BASE_URL}/accreditation/fetch-program-progress`, {
+  return apiClient.get(`/accreditation/fetch-program-progress`, {
     signal
   });
-}
+};
 
 export const fetchAccreditationLevels = (controller) => {
-  return axios.get(`${API_BASE_URL}/accreditation/fetch-accreditation-levels`, {
+  return apiClient.get(`/accreditation/fetch-accreditation-levels`, {
     signal: controller.signal
   });
 };
 
 export const fetchAreasByLevel = (level, controller) => {
-  return axios.get(`${API_BASE_URL}/accreditation/fetch-program-areas-by`, {
+  return apiClient.get(`/accreditation/fetch-program-areas-by`, {
     params: {
       level
     },
@@ -129,8 +129,15 @@ export const fetchAreasByLevel = (level, controller) => {
   });
 };
 
+export const fetchAreaProgress = (programId, signal) => {
+  return apiClient.get(`/accreditation/fetch-area-progress`, {
+    params: { programId },
+    signal
+  });
+};
+
 export const fetchParamByAreaId = (areaId, signal) => {
-  return axios.get(`${API_BASE_URL}/accreditation/fetch-area-parameters-by`, {
+  return apiClient.get(`/accreditation/fetch-area-parameters-by`, {
     params: {
       areaId
     },
@@ -138,8 +145,15 @@ export const fetchParamByAreaId = (areaId, signal) => {
   });
 };
 
+export const fetchParameterProgress = (areaId, signal) => {
+  return apiClient.get(`/accreditation/fetch-parameter-progress`, {
+    params: { areaId },
+    signal
+  });
+}
+
 export const fetchSubParamByParamId = (parameterId, signal) => {
-  return axios.get(`${API_BASE_URL}/accreditation/fetch-parameter-subparameters-by`, {
+  return apiClient.get(`/accreditation/fetch-parameter-subparameters-by`, {
     params: {
       parameterId
     },
@@ -148,7 +162,7 @@ export const fetchSubParamByParamId = (parameterId, signal) => {
 };
 
 export const fetchIndicatorBySubparamId = (subParamId, signal) => {
-  return axios.get(`${API_BASE_URL}/accreditation/fetch-subparameter-indicators-by`, {
+  return apiClient.get(`/accreditation/fetch-subparameter-indicators-by`, {
     params: {
       subParamId
     },
@@ -157,13 +171,13 @@ export const fetchIndicatorBySubparamId = (subParamId, signal) => {
 };
 
 export const fetchAccreditationPeriod = (controller) => {
-  return axios.get(`${API_BASE_URL}/accreditation/fetch-accreditation-period`, {
+  return apiClient.get(`/accreditation/fetch-accreditation-period`, {
     signal: controller.signal
   });
 };
 
 export const fetchProgramAreas = ({ title, year, accredBody, level, program }, controller) => {
-  return axios.get(`${API_BASE_URL}/accreditation/fetch-program-areas`, {
+  return apiClient.get(`/accreditation/fetch-program-areas`, {
     params: {
       title,
       year,
@@ -176,7 +190,7 @@ export const fetchProgramAreas = ({ title, year, accredBody, level, program }, c
 };
 
 export const fetchAreaParameters = ({ title, year, accredBody, level, program, area }, controller) => {
-  return axios.get(`${API_BASE_URL}/accreditation/fetch-area-parameters`, {
+  return apiClient.get(`/accreditation/fetch-area-parameters`, {
     params: {
       title,
       year,
@@ -198,7 +212,7 @@ export const fetchParamSubparams = ({
   area,
   parameter
  }, controller) => {
-  return axios.get(`${API_BASE_URL}/accreditation/fetch-parameter-subparameters`, {
+  return apiClient.get(`/accreditation/fetch-parameter-subparameters`, {
     params: {
       title,
       year,
@@ -222,7 +236,7 @@ export const fetchSubparamIndicators = ({
   parameter,
   subParameter
 }, controller) => {
-  return axios.get(`${API_BASE_URL}/accreditation/fetch-subparameter-indicators`, {
+  return apiClient.get(`/accreditation/fetch-subparameter-indicators`, {
     params: {
       title,
       year,
@@ -250,7 +264,7 @@ export const fetchDocuments = (data = {}, controller) => {
     indicator
   } = data;
 
-  return axios.get(`${API_BASE_URL}/accreditation/fetch-documents`, {
+  return apiClient.get(`/accreditation/fetch-documents`, {
     params: {
       title,
       year,
@@ -277,7 +291,7 @@ export const fetchDocumentsDynamically = async (data = {}) => {
     indicatorId
   } = data;
 
-  return axios.get(`${API_BASE_URL}/accreditation/fetch-documents`, {
+  return apiClient.get(`/accreditation/fetch-documents`, {
     params: {
       accredInfoId,
       levelId,
@@ -295,7 +309,7 @@ export const fetchAssignments = (data = {}, signal) => {
     accredInfoId, levelId, programId, areaId, 
     parameterId, subParameterId, indicatorId
   } = data;
-  return axios.get(`${API_BASE_URL}/accreditation/fetch-assignments`, {
+  return apiClient.get(`${API_BASE_URL}/accreditation/fetch-assignments`, {
     params: {
       accredInfoId,
       levelId,
@@ -310,13 +324,13 @@ export const fetchAssignments = (data = {}, signal) => {
 };
 
 export const fetchAccreditationBodies = (signal) => {
-  return axios.get(`${API_BASE_URL}/accreditation-body/fetch-accreditation-bodies`, {
+  return apiClient.get(`/accreditation-body/fetch-accreditation-bodies`, {
     signal
   });
 };
 
 export const updateDocName = (docId, newFileName) => {
-  return axios.patch(`${API_BASE_URL}/accreditation/rename-document/${docId}`, {
+  return apiClient.patch(`/accreditation/rename-document/${docId}`, {
     newFileName
   }, {
     headers: { 'Content-Type': 'application/json' }
@@ -324,7 +338,7 @@ export const updateDocName = (docId, newFileName) => {
 };
 
 export const deleteAccredInfo = (data = {}, condition = {}) => {
-  return axios.delete(`${API_BASE_URL}/accreditation/delete-info-level-program`, {
+  return apiClient.delete(`/accreditation/delete-info-level-program`, {
     params: {
       title: data.title,
       year: data.year,
@@ -343,7 +357,7 @@ export const deletePAM = ({
   program,
   area
 }) => {
-  return axios.delete(`${API_BASE_URL}/accreditation/delete-program-area`, {
+  return apiClient.delete(`/accreditation/delete-program-area`, {
     params: {
       title,
       year,
@@ -358,7 +372,7 @@ export const deletePAM = ({
 export const deleteAPM = (data = {}) => {
   const { id, parameter } = data;
   
-  return axios.delete(`${API_BASE_URL}/accreditation/delete-area-parameter`, {
+  return apiClient.delete(`/accreditation/delete-area-parameter`, {
     params: {
       id,
       parameter
@@ -369,7 +383,7 @@ export const deleteAPM = (data = {}) => {
 export const deletePSPM = (data = {}) => {
   const { pspmId, subParameterId, subParameter } = data;
 
-  return axios.delete(`${API_BASE_URL}/accreditation/delete-param-subparam`, {
+  return apiClient.delete(`/accreditation/delete-param-subparam`, {
     params: {
       pspmId,
       subParameterId,
@@ -379,7 +393,7 @@ export const deletePSPM = (data = {}) => {
 };
 
 export const deleteDoc = (docId) => {
-  return axios.delete(`${API_BASE_URL}/accreditation/delete-document`, {
+  return apiClient.delete(`/accreditation/delete-document`, {
     params: {
       docId
     }
@@ -391,7 +405,7 @@ export const deleteAssignment = (data = {}) => {
     accredInfoId, levelId, programId, areaId, parameterId, subParameterId, indicatorId, taskForceId 
   } = data;
 
-  return axios.delete(`${API_BASE_URL}/accreditation/delete-assignment`, {
+  return apiClient.delete(`/accreditation/delete-assignment`, {
     params: {
       taskForceId,
       accredInfoId, 

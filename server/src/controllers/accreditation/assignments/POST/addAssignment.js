@@ -68,7 +68,7 @@ const addAssignment = async (req, res) => {
            AND program_id = ? 
            AND area_id = ? 
            AND parameter_id IS NULL 
-           AND sub_parameter_id IS NULL
+           AND subparameter_id IS NULL
            AND indicator_id IS NULL`,
         [userId, accredInfoId, levelId, programId, areaId]
       );
@@ -83,7 +83,7 @@ const addAssignment = async (req, res) => {
              AND program_id = ? 
              AND area_id = ? 
              AND parameter_id = ? 
-             AND sub_parameter_id IS NULL
+             AND subparameter_id IS NULL
              AND indicator_id IS NULL`,
           [userId, accredInfoId, levelId, programId, areaId, parameterId]
         )
@@ -99,7 +99,7 @@ const addAssignment = async (req, res) => {
              AND program_id = ? 
              AND area_id = ? 
              AND parameter_id = ? 
-             AND sub_parameter_id = ?
+             AND subparameter_id = ?
              AND indicator_id IS NULL`,
           [userId, accredInfoId, levelId, programId, areaId, parameterId, subParameterId]
         )
@@ -115,7 +115,7 @@ const addAssignment = async (req, res) => {
              AND program_id = ? 
              AND area_id = ? 
              AND parameter_id = ? 
-             AND sub_parameter_id = ?
+             AND subparameter_id = ?
              AND indicator_id = ?`,
           [userId, accredInfoId, levelId, programId, areaId, parameterId, subParameterId, indicatorId]
         )
@@ -131,7 +131,7 @@ const addAssignment = async (req, res) => {
            AND area_id = ?
            AND (
              parameter_id IS NOT NULL
-             OR sub_parameter_id IS NOT NULL
+             OR subparameter_id IS NOT NULL
              OR indicator_id IS NOT NULL
            )`,
         [userId, accredInfoId, levelId, programId, areaId]
@@ -146,7 +146,7 @@ const addAssignment = async (req, res) => {
              AND program_id = ?
              AND area_id = ?
              AND parameter_id = ?
-             AND (sub_parameter_id IS NOT NULL OR indicator_id IS NOT NULL)`,
+             AND (subparameter_id IS NOT NULL OR indicator_id IS NOT NULL)`,
           [userId, accredInfoId, levelId, programId, areaId, parameterId]
         )
         : [[]];
@@ -160,7 +160,7 @@ const addAssignment = async (req, res) => {
              AND program_id = ?
              AND area_id = ?
              AND parameter_id = ?
-             AND sub_parameter_id = ?
+             AND subparameter_id = ?
              AND indicator_id IS NOT NULL`,
           [userId, accredInfoId, levelId, programId, areaId, parameterId, subParameterId]
         )
@@ -183,7 +183,7 @@ const addAssignment = async (req, res) => {
               AND program_id = ?
               AND area_id = ?
               AND parameter_id = ?
-              AND sub_parameter_id = ?
+              AND subparameter_id = ?
               AND indicator_id = ?`,
             [userId, accredInfoId, levelId, programId, areaId, parameterId, subParameterId, indicatorId]
           );
@@ -282,6 +282,7 @@ const addAssignment = async (req, res) => {
       success: true,
       results,
     });
+    
   } catch (error) {
     if (connection) {
       try {
@@ -306,6 +307,7 @@ const addAssignment = async (req, res) => {
       message: 'An unexpected error occurred.',
       success: false,
     });
+
   } finally {
     if (connection) connection.release();
   }

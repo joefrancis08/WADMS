@@ -20,7 +20,7 @@ const insertAssignment = async (data, connection = null) => {
       program_id,
       area_id,
       parameter_id,
-      sub_parameter_id,
+      subparameter_id,
       indicator_id
     )
     VALUES (?, ?, ?, ?, ?, ?, ?, ?);

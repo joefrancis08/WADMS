@@ -6,7 +6,7 @@ const fetchProgramProgress = async (req, res) => {
     const programProgressData = await getProgramProgress();
 
     res.status(200).json({
-      message: 'Program progress fetch successfully!',
+      message: 'Program progress fetched successfully!',
       success: true,
       programProgressData
     });

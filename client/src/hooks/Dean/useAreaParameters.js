@@ -16,6 +16,7 @@ import { getFullNameById } from "../../utils/getUserInfo";
 import useFetchAssignments from "../fetch-react-query/useFetchAssignments";
 import { USER_ROLES } from "../../constants/user";
 import useFetchParamByAreaId from "../fetch-react-query/useFetchParamByAreaId";
+import useFetchParameterProgress from "../fetch-react-query/fetchParameterProgress";
 
 const { PARAMETER_ADDITION, ASSIGNMENT } = TOAST_MESSAGES;
 
@@ -69,8 +70,17 @@ const useAreaParameters = () => {
     error: errorAssignments,
     refetch: refetchAssignments 
   } = useFetchAssignments({ accredInfoId, levelId, programId, areaId });
+
+  const { 
+    paramProgressData, loadingParamProgress, errorParamProgress, refetchParamProgress 
+  } = useFetchParameterProgress(areaId);
+
+  console.log(paramProgressData);
   console.log(assignments.assignmentData);
   const assignmentData = assignments?.assignmentData ?? [];
+  const paramProgress = paramProgressData.paramProgressData ?? [];
+
+  console.log(paramProgress);
   
   const { 
     users: taskForce, 
@@ -505,7 +515,10 @@ const useAreaParameters = () => {
       selectedTaskForce,
       assignmentData,
       activeTaskForceId,
-      showConfirmUnassign
+      showConfirmUnassign,
+      paramProgress,
+      loadingParamProgress,
+      errorParamProgress
     },
 
     handlers: {

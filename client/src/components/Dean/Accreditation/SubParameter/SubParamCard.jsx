@@ -7,6 +7,7 @@ import deduplicateAssignments from '../../../../utils/deduplicateAssignments';
 
 const SubParamCard = ({
   refs,
+  commonData,
   subParam,             // object: { sub_parameter_uuid, sub_parameter, sub_parameter_id }
   activeSubParamId,     // activeId of subparameter
   docsArray = [],       // documents array for this subparam
@@ -27,6 +28,10 @@ const SubParamCard = ({
 }) => {
   const { subParamOptionRef } = refs;
   const { pspmId, sub_parameter_uuid, sub_parameter, sub_parameter_id } = subParam;
+  const { 
+    accredInfoId, levelId, programId, 
+    areaId, parameterId, subParameterId 
+  } = commonData;
 
   console.log(pspmId);
 
@@ -41,6 +46,7 @@ const SubParamCard = ({
       }}
       className='flex flex-col border border-slate-700 hover:shadow shadow-slate-600 p-4 rounded-md transition cursor-pointer bg-slate-800 h-auto'
     >
+      {activeSubParamId && <div className='absolute inset-0 z-20'></div>}
       <div className='relative flex items-center justify-between mb-3'>
         {/* Sub-Parameter Title */}
         <p className='font-medium text-slate-100 text-lg'>
@@ -172,7 +178,12 @@ const SubParamCard = ({
           <ProfileStack 
             data={{ 
               assignmentData: deduplicateAssignments(assignmentData, 'subParameter'), 
-              taskForce, 
+              taskForce,
+              accredInfoId,
+              levelId,
+              programId,
+              areaId,
+              parameterId, 
               subParameterId: sub_parameter_id }}
             handlers={{ handleProfileStackClick }}
             scope='subParameter'

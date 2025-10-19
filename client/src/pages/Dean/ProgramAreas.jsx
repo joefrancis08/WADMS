@@ -20,6 +20,8 @@ import ProfileStack from '../../components/ProfileStack';
 import deduplicateAssignments from '../../utils/deduplicateAssignments';
 import Breadcrumb from '../../components/Breadcrumb';
 import useDebouncedValue from '../../hooks/useDebouncedValue';
+import { getProgressStyle } from '../../helpers/progressHelper';
+import ProgressBar from '../../components/ProgressBar';
 
 const { PROGRAMS_TO_BE_ACCREDITED, AREA_PARAMETERS } = PATH.DEAN;
 
@@ -51,6 +53,7 @@ const ProgramAreas = () => {
     assignmentData,
     activeTaskForceId,
     showConfirmUnassign,
+    areaProgress
   } = datas;
 
   const {
@@ -69,6 +72,7 @@ const ProgramAreas = () => {
     handleSelectAll,
     handleAssignTaskForce,
     handleProfileStackClick,
+    handleEllipsisClick,
     handleUserCircleClick,
     handleAddTaskForceClick,
     handleUnassignedAllClick,
@@ -107,7 +111,10 @@ const ProgramAreas = () => {
     },
     {
       label: program,
-      onClick: () => navigate(PROGRAMS_TO_BE_ACCREDITED),
+      onClick: () => {
+        localStorage.removeItem('accreditation-title');
+        navigate(PROGRAMS_TO_BE_ACCREDITED);
+      }
     },
     {
       label: 'Areas',
@@ -148,7 +155,7 @@ const ProgramAreas = () => {
 
           {/* Areas List */}
           <div
-            className={`flex flex-wrap gap-10 justify-center mb-8 py-8 px-2 mx-2 rounded ${
+            className={`flex flex-wrap gap-x-10 gap-y-20 justify-center mb-8 py-8 px-2 mx-2 rounded ${
               filteredAreas.length ? 'items-start' : 'items-center'
             }`}
           >
@@ -181,9 +188,14 @@ const ProgramAreas = () => {
                 onClick={() =>
                   !activeAreaId && handleAreaCardClick(areaData.area_uuid)
                 }
-                className="relative flex flex-col items-start justify-center px-2 max-sm:w-full md:w-75 lg:w-50 h-60 bg-[url('/cgs-bg-2.png')] bg-cover bg-center shadow-slate-800 border border-slate-600 hover:shadow hover:scale-102 transition duration-300 cursor-pointer active:shadow"
+                className="relative flex flex-col items-start justify-center px-2 max-sm:w-full md:w-75 lg:w-50 h-60 bg-[url('/cgs-bg-2.png')] bg-cover bg-center shadow-slate-800 border border-slate-600 hover:shadow-md transition cursor-pointer active:shadow"
               >
+                {console.log(areaData.accredId)}
+                {console.log(areaData.levelId)}
+                {console.log(areaData.programId)}
+                {console.log(assignmentData)}
                 <div className="absolute inset-0 bg-black/50"></div>
+                {activeAreaId && <div className='absolute inset-0 z-20'></div>}
 
                 {/* Area Title */}
                 {String(areaData.area)
@@ -214,7 +226,7 @@ const ProgramAreas = () => {
                     handleAreaOptionClick(e, { areaID: areaData.area_uuid })
                   }
                   title="Options"
-                  className="absolute top-0 right-0 text-white cursor-pointer active:opacity-50 rounded-full hover:bg-slate-200/20 p-2 z-10"
+                  className={`absolute top-1 right-1 text-white cursor-pointer active:opacity-50 rounded-full hover:bg-slate-200/20 p-1 z-10 ${activeAreaId === areaData.area_uuid && 'bg-slate-200/10'}`}
                 >
                   <EllipsisVertical className="h-5 w-5" />
                 </button>
@@ -240,6 +252,9 @@ const ProgramAreas = () => {
                           'area'
                         ),
                         taskForce,
+                        accredInfoId: areaData.accredId,
+                        levelId: areaData.levelId,
+                        programId: areaData.programId,
                         area_id: areaData.area_id,
                         area: formatAreaName(areaData.area),
                       }}
@@ -269,7 +284,30 @@ const ProgramAreas = () => {
                     <FileUser />
                   </button>
                 </div>
+                
+                {(() => {
+                  if (!areaProgress || !Array.isArray(areaProgress)) return null;
 
+                  const matchedProgress = areaProgress.find(
+                    (item) =>
+                      Number(item.programId) === Number(areaData.programId) &&
+                      Number(item.areaId) === Number(areaData.area_id) &&
+                      Number(item.pamId) === Number(areaData.pamId)
+                  );
+
+                  if (!matchedProgress) return null;
+
+                  const progress = Number(matchedProgress.progress || 0).toFixed(1);
+                  const { color, status } = getProgressStyle(progress);
+
+                  return (
+                    <ProgressBar 
+                      progress={progress} 
+                      color={color} 
+                      status={status}
+                    />
+                  );
+                })()}
                 {/* Dropdown */}
                 {activeAreaId === areaData.area_uuid && (
                   <div
@@ -372,6 +410,7 @@ const ProgramAreas = () => {
           handleSelectAll,
           handleAssignTaskForce,
           handleAddTaskForceClick,
+          handleEllipsisClick,
           handleUnassignedClick,
           handleUnassignedAllClick,
           handleAssignedOptionsClick,

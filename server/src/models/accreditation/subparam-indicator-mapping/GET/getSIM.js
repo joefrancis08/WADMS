@@ -14,6 +14,7 @@ const getSIM = async ({
   const query = `
     SELECT 
       sim.id,
+      sim.param_subparam_mapping_id AS psmp_id,
       ai.title               AS accred_title,
       ai.year                AS accred_year,
       ab.name                AS accred_body_name,

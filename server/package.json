@@ -15,6 +15,7 @@
   "dependencies": {
     "axios": "^1.12.2",
     "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv-flow": "^4.1.0",
     "express": "^5.1.0",
@@ -30,6 +31,7 @@
     "ws": "^8.18.3"
   },
   "devDependencies": {
-    "cross-env": "^7.0.3"
+    "cross-env": "^7.0.3",
+    "eslint": "^9.38.0"
   }
 }

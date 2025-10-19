@@ -105,7 +105,7 @@ const getAssignments = async (accredData = {}, userData = {}, condition = {}, co
     LEFT JOIN parameter pa
       ON aa.parameter_id = pa.id
     LEFT JOIN sub_parameter spa
-      ON aa.sub_parameter_id = spa.id
+      ON aa.subparameter_id = spa.id
     LEFT JOIN indicator i
       ON aa.indicator_id = i.id
     ${whereClause.length ? `WHERE ${whereClause.join(" AND ")}` : ""}

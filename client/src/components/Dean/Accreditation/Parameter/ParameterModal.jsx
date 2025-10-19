@@ -52,7 +52,7 @@ const ParameterModal = ({ refs, modalType, datas, inputs, handlers }) => {
           disabled={parametersArr.length === 0}
           secondaryButton={'Cancel'}
           mode='add'
-          headerContent={<p className='text-xl font-semibold'>Add Parameters</p>}
+          headerContent={<p className='text-lg text-slate-800 font-semibold'>Add Parameters</p>}
           bodyContent={
             <div className='relative w-full'>
               <AddField
@@ -99,7 +99,7 @@ const ParameterModal = ({ refs, modalType, datas, inputs, handlers }) => {
           headerContent={
             <p 
               title={`Assign Task Force to ${modalData?.parameter}`}
-              className='text-xl font-semibold w-full truncate'>
+              className='text-xl text-slate-800 font-semibold w-full truncate'>
               Assign Task Force to {modalData?.parameter}
             </p>
           }

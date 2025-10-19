@@ -14,6 +14,7 @@ import areaRouter from './src/routes/areaRoute.js';
 import parameterRouter from './src/routes/parameterRoute.js';
 import authRouter from './src/routes/authRoute.js';
 import accredBodyRouter from './src/routes/accredBodyRoute.js';
+import cookieParser from 'cookie-parser';
 
 dotenv.config({ quiet: true });
 const __filename = fileURLToPath(import.meta.url);
@@ -30,6 +31,7 @@ const port = process.env.PORT || 5000; // Configure the port to specify where th
 app.use(corsMiddleware); // Use the custom CORS middleware
 app.use(sessionMiddleware); // Middleware for session management
 app.use(express.json()); // Passing json data from incoming http request
+app.use(cookieParser()); // Automatically reads and parses cookies from incoming HTTP request
 app.use(express.urlencoded({ extended: true })); // Middleware to parse URL-encoded data
 
 // Add this in your server.js after routes

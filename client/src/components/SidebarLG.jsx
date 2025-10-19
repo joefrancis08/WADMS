@@ -122,9 +122,9 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
   return (
     <aside className={`sidebar-container ${isCollapsed ? 'w-20' : 'w-65'} bg-slate-900 text-white h-screen flex flex-col shadow-lg`}>
       {/* Header */}
-      <header className="relative flex items-center justify-between px-2 py-3 border-b border-slate-700 h-14 shadow-lg">
+      <header className="relative flex items-center justify-between px-2 py-3 border-b border-slate-700 h-14.5 shadow-lg">
         {!isCollapsed && (
-          <div className="h-8 flex items-center transition-all duration-300">
+          <div className="h-8.5 flex items-center transition-all duration-300">
             <img className="h-10 w-auto" src="/cgs-logo.png" alt="Logo" loading='lazy'/>
             <div className="ml-2 overflow-hidden">
               <p className="text-xl font-bold whitespace-nowrap">DMS</p>

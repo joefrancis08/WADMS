@@ -18,6 +18,7 @@ import useFetchAssignments from "../fetch-react-query/useFetchAssignments";
 import formatAreaName from "../../utils/formatAreaName";
 import { getFullNameById } from "../../utils/getUserInfo";
 import useFetchProgramProgress from "../fetch-react-query/useFetchProgramProgress";
+import useFetchAreaProgress from "../fetch-react-query/useFetchAreaProgress";
 
 const { AREA_PARAMETERS } = PATH.DEAN;
 const { ASSIGNMENT, UNASSIGN } = TOAST_MESSAGES;
@@ -33,18 +34,10 @@ const useProgramAreas = () => {
   const { areas: areasByLevel } = useFetchAreasByLevel(formattedLevel);
 
   const { 
-    accredInfoId, title, year, accredBody, 
-    levelId, programId, program 
+    ilpmId, accredInfoId, title, year, accredBody, 
+    levelId, programId, program, programObj 
   } = useProgramToBeAccreditedDetails(accredInfoUUID, programUUID);
-
-  const { 
-    assignments, 
-    loading: loadingAssignments, 
-    error: errorAssignments,
-    refetch: refetchAssignments 
-  } = useFetchAssignments({ accredInfoId, levelId, programId });
-  console.log(assignments.assignmentData);
-  const assignmentData = assignments?.assignmentData ?? [];
+  console.log(programObj);
 
   // Only fetch areas if programObj is ready
   const { areas: areasData, loading, error, refetch } = useFetchProgramAreas({
@@ -62,12 +55,28 @@ const useProgramAreas = () => {
     refetch: taskForceRefetch 
   } = useUsersBy({ role: ['Task Force Chair', 'Task Force Member'] });
 
+  const { 
+    assignments, 
+    loading: loadingAssignments, 
+    error: errorAssignments,
+    refetch: refetchAssignments 
+  } = useFetchAssignments({ accredInfoId, levelId, programId });
+  console.log(assignments.assignmentData);
+  const assignmentData = assignments?.assignmentData ?? [];
+
+  const {
+    areaProgressData,
+    loadingAreaProgress,
+    errorAreaProgress,
+    refetchAreaProgress
+  } = useFetchAreaProgress(programId);
+
+  console.log(areasData);
+
   const data = areasData?.data ?? [];
   const areasByLevelData = areasByLevel?.areas ?? [];
-  console.log(data);
-  const areaArray = data.map((item) => {
-    return item.area_id;
-  });
+  const areaProgress = areaProgressData?.areaProgressData ?? [];
+  console.log(areaProgress);
 
   const [modalType, setModalType] = useState(null);
   const [modalData, setModalData] = useState(null);
@@ -247,9 +256,7 @@ const useProgramAreas = () => {
         program: data.program,
         area: data.area
       });
-
     }
-    
   };
 
   const handleConfirmRemoval = async (data = {}) => {
@@ -287,7 +294,7 @@ const useProgramAreas = () => {
     if (selectedTaskForce.length === taskForce.length) {
       setSelectedTaskForce([]); // Unselect all
     } else {
-      setSelectedTaskForce(taskForce.map((user) => user.id)); // select all by id
+      setSelectedTaskForce(taskForce.map((user) => user.id)); // Select all by id
     }
   };
 
@@ -462,6 +469,7 @@ const useProgramAreas = () => {
     }, 
 
     datas: {
+      ilpmId,
       title,
       year,
       accredBody,
@@ -483,7 +491,8 @@ const useProgramAreas = () => {
       errorAssignments,
       refetchAssignments,
       activeTaskForceId,
-      showConfirmUnassign
+      showConfirmUnassign,
+      areaProgress
     },
 
     inputs: {

@@ -16,42 +16,54 @@ import fetchProgramProgress from '../controllers/progress/program-progress/fetch
 import fetchParametersBy from '../controllers/accreditation/parameters/GET/fetchParametersBy.js';
 import fetchSubparametersBy from '../controllers/accreditation/sub-parameters/GET/fetchSubparametersBy.js';
 import fetchIndicatorBy from '../controllers/accreditation/indicator/GET/fetchIndicatorBy.js';
+import { authorize } from '../middlewares/auth/authMiddleware.js';
+import allowedRoles from './obj/allowedRoles.js';
+import fetchAreaProgress from '../controllers/progress/area-progress/fetchAreaProgress.js';
+import fetchParamProgress from '../controllers/progress/parameter-progress/fetchParamProgress.js';
+import fetchSubParamProgress from '../controllers/progress/subparameter-progress/fetchSubParamProgress.js';
+import fetchIndicatorProgress from '../controllers/progress/indicator-progress/fetchIndicatorProgress.js';
+
+const { D, M, C, I, A } = allowedRoles();
 
 const accreditationRouter = express.Router();
 
-accreditationRouter.post('/add-accreditation-level', addLevelController);
-accreditationRouter.post('/add-accreditation-info', addAccredInfoController);
-accreditationRouter.post('/add-info-level-programs', addILPController);
-accreditationRouter.post('/add-program-areas', addProgramAreaController);
-accreditationRouter.post('/add-area-parameters', addAreaParameterController);
-accreditationRouter.post('/add-parameter-subparameters', addParamSubParamController);
-accreditationRouter.post('/add-subparameter-indicators', addSIMController);
-accreditationRouter.post('/add-document', upload.single('file'), addDocumentController);
-accreditationRouter.post('/add-assignment', addAssignmentController);
+accreditationRouter.post('/add-accreditation-level', authorize([D]), addLevelController);
+accreditationRouter.post('/add-accreditation-info', authorize([D]), addAccredInfoController);
+accreditationRouter.post('/add-info-level-programs', authorize([D]), addILPController);
+accreditationRouter.post('/add-program-areas', authorize([D]), addProgramAreaController);
+accreditationRouter.post('/add-area-parameters', authorize([D, M, C]), addAreaParameterController);
+accreditationRouter.post('/add-parameter-subparameters', authorize([D, M, C]), addParamSubParamController);
+accreditationRouter.post('/add-subparameter-indicators', authorize([D, M, C]), addSIMController);
+accreditationRouter.post('/add-document', authorize([D, M, C]), upload.single('file'), addDocumentController);
+accreditationRouter.post('/add-assignment', authorize([D]), addAssignmentController);
 
-accreditationRouter.get('/fetch-accreditation-levels', fetchLevelsController);
-accreditationRouter.get('/fetch-accreditation-period', fetchPeriodController);
-accreditationRouter.get('/fetch-info-level-programs', fetchILPController);
-accreditationRouter.get('/fetch-program-areas', fetchProgramAreaController);
-accreditationRouter.get('/fetch-program-areas-by', fetchAreasBy);
-accreditationRouter.get('/fetch-area-parameters', fetchAreaParameterController);
-accreditationRouter.get('/fetch-area-parameters-by', fetchParametersBy);
-accreditationRouter.get('/fetch-parameter-subparameters', fetchParamSubParamController);
-accreditationRouter.get('/fetch-parameter-subparameters-by', fetchSubparametersBy);
-accreditationRouter.get('/fetch-subparameter-indicators', fetchSIMController);
-accreditationRouter.get('/fetch-subparameter-indicators-by', fetchIndicatorBy);
-accreditationRouter.get('/fetch-documents', fetchDocumentsController);
-accreditationRouter.get('/fetch-assignments', fetchAssignmentController);
-accreditationRouter.get('/fetch-program-progress', fetchProgramProgress);
+accreditationRouter.get('/fetch-accreditation-levels', authorize([D, M, C, I, A]), fetchLevelsController);
+accreditationRouter.get('/fetch-accreditation-period', authorize([D, M, C, I, A]), fetchPeriodController);
+accreditationRouter.get('/fetch-info-level-programs', authorize([D, M, C, I, A]), fetchILPController);
+accreditationRouter.get('/fetch-program-areas', authorize([D, M, C, I, A]), fetchProgramAreaController);
+accreditationRouter.get('/fetch-program-areas-by', authorize([D, M, C, I, A]), fetchAreasBy);
+accreditationRouter.get('/fetch-area-parameters', authorize([D, M, C, I, A]), fetchAreaParameterController);
+accreditationRouter.get('/fetch-area-parameters-by', authorize([D, M, C, I, A]), fetchParametersBy);
+accreditationRouter.get('/fetch-parameter-subparameters', authorize([D, M, C, I, A]), fetchParamSubParamController);
+accreditationRouter.get('/fetch-parameter-subparameters-by', authorize([D, M, C, I, A]), fetchSubparametersBy);
+accreditationRouter.get('/fetch-subparameter-indicators', authorize([D, M, C, I, A]), fetchSIMController);
+accreditationRouter.get('/fetch-subparameter-indicators-by', authorize([D, M, C, I, A]), fetchIndicatorBy);
+accreditationRouter.get('/fetch-documents', authorize([D, M, C, I, A]), fetchDocumentsController);
+accreditationRouter.get('/fetch-assignments', authorize([D, M, C]), fetchAssignmentController);
+accreditationRouter.get('/fetch-program-progress', authorize([D]), fetchProgramProgress);
+accreditationRouter.get('/fetch-area-progress', authorize([D]), fetchAreaProgress);
+accreditationRouter.get('/fetch-parameter-progress', authorize([D]), fetchParamProgress);
+accreditationRouter.get('/fetch-subparameter-progress', authorize([D]), fetchSubParamProgress);
+accreditationRouter.get('/fetch-indicator-progress', authorize([D]), fetchIndicatorProgress);
 
-accreditationRouter.patch('/rename-document/:docId', updateDocController);
+accreditationRouter.patch('/rename-document/:docId', authorize([D, M, C]), updateDocController);
 
-accreditationRouter.delete('/delete-accreditation-period', deletePeriodController);
-accreditationRouter.delete('/delete-info-level-program', deleteILP);
-accreditationRouter.delete('/delete-program-area', deletePAMController);
-accreditationRouter.delete('/delete-area-parameter', deleteAreaParameterController);
-accreditationRouter.delete('/delete-param-subparam', deleteParamSubParamController);
-accreditationRouter.delete('/delete-document', deleteDocController);
-accreditationRouter.delete('/delete-assignment', deleteAssignmentController);
+accreditationRouter.delete('/delete-accreditation-period', authorize([D]), deletePeriodController);
+accreditationRouter.delete('/delete-info-level-program', authorize([D]), deleteILP);
+accreditationRouter.delete('/delete-program-area', authorize([D]), deletePAMController);
+accreditationRouter.delete('/delete-area-parameter', authorize([D, M, C]), deleteAreaParameterController);
+accreditationRouter.delete('/delete-param-subparam', authorize([D, M, C]), deleteParamSubParamController);
+accreditationRouter.delete('/delete-document', authorize([D, M, C]), deleteDocController);
+accreditationRouter.delete('/delete-assignment', authorize([D, M, C]), deleteAssignmentController);
 
 export default accreditationRouter;
