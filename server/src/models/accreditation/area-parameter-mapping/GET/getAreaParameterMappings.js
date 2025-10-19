@@ -12,10 +12,13 @@ const getAreaParameterMappings = async ({
   const query = `
     SELECT
       apm.id            AS apmId,
+      ai.id             AS accredInfoId,
       ai.title          AS accred_title,
       ai.year           AS accred_year,
       ab.name           AS accred_body_name,
+      al.id             AS levelId,
       al.level_name     AS level,
+      pr.id             AS programId,
       pr.program_name   AS program,
       a.id              AS areaId,
       a.area_name       AS area,

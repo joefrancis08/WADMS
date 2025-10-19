@@ -80,7 +80,7 @@ const ImageUpload = (
         )}
 
         {/* Upload Button */}
-        <label className="flex items-center gap-2 bg-gradient-to-br from-green-800 to-green-500 px-5 py-2 rounded-full text-slate-100 cursor-pointer hover:bg-gradient-to-tr hover:from-green-800 hover:to-green-500 hover:shadow-lg active:opacity-50">
+        <label className="flex items-center gap-2 border border-slate-400 px-5 py-2 rounded-full text-slate-800 cursor-pointer hover:bg-slate-100 transition">
           {preview ? (
             <>
               <Pen size={20} />

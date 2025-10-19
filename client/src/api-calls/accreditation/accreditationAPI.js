@@ -1,4 +1,3 @@
-import axios from "axios";
 import apiClient from "../../services/axios/apiClient";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -91,7 +90,7 @@ export const addDocument = async (formData) => {
 };
 
 export const addAssignment = async (data = {}, condition = {}) => {
-  return apiClient.post(`/accreditation/add-assignment`, {
+  return apiClient.post(`${API_BASE_URL}/accreditation/add-assignment`, {
     userIDList: data.userIDList,
     accredInfoId: data.accredInfoId,
     levelId: data.levelId,
@@ -310,7 +309,7 @@ export const fetchAssignments = (data = {}, signal) => {
     accredInfoId, levelId, programId, areaId, 
     parameterId, subParameterId, indicatorId
   } = data;
-  return apiClient.get(`/accreditation/fetch-assignments`, {
+  return apiClient.get(`${API_BASE_URL}/accreditation/fetch-assignments`, {
     params: {
       accredInfoId,
       levelId,

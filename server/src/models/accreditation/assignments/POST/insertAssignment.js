@@ -3,34 +3,40 @@ import db from "../../../../config/db.js";
 const insertAssignment = async (data, connection = null) => {
   const {
     userId,
-    ilpmId,
-    pamId, 
-    apmId,
-    pspmId,
-    simId
+    accredInfoId,
+    levelId,
+    programId,
+    areaId,
+    parameterId,
+    subParameterId,
+    indicatorId
   } = data;
 
   const query = `
     INSERT INTO accreditation_assignment (
       user_id,
-      ilpm_id,
-      pam_id,
-      apm_id,
-      pspm_id,
-      sim_id
+      accred_info_id,
+      level_id,
+      program_id,
+      area_id,
+      parameter_id,
+      subparameter_id,
+      indicator_id
     )
-    VALUES (?, ?, ?, ?, ?, ?);
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?);
   `;
 
   try {
     const executor = connection || db;
     const [result] = await executor.execute(query, [
       userId,
-      ilpmId,
-      pamId,
-      apmId,
-      pspmId,
-      simId
+      accredInfoId,
+      levelId,
+      programId,
+      areaId,
+      parameterId,
+      subParameterId,
+      indicatorId
     ]);
 
     return result;

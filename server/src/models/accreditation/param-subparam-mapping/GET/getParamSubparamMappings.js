@@ -4,12 +4,17 @@ const getParamSubparamMappings = async ({ title, year, accredBody, level, progra
   const query = `
     SELECT
       pspm.id                AS pspmId,
+      ai.id                  AS accredInfoId,
       ai.title               AS accred_title,
       ai.year                AS accred_year,
       ab.name                AS accred_body_name,
       al.level_name          AS level,
+      al.id                  AS levelId,
+      pr.id                  AS programId,
       pr.program_name        AS program,
+      a.id                   AS areaId,
       a.area_name            AS area,
+      pa.id                  AS parameterId,
       pa.parameter_name      AS parameter,
       spa.id                 AS sub_parameter_id,
       spa.uuid               AS sub_parameter_uuid,

@@ -195,7 +195,11 @@ const AreaParameters = () => {
             {/* Parameter Cards */}
             {filteredParameters.map((data) => {
               const { label, content } = formatParameter(data.parameter);
-
+              const accredInfoId = data.accredInfoId;
+              const levelId = data.levelId;
+              const programId = data.programId;
+              const areaId = data.areaId;
+              const parameterId = data.parameter_id;
               return (
                 <div
                   key={data.parameter_uuid}
@@ -265,12 +269,15 @@ const AreaParameters = () => {
                   <hr className={`text-slate-700 mt-4`}></hr>
 
                   {/* Bottom: Task Force + FileUser */}
-                  <div className='flex items-center justify-between'>
+                  <div className='relative h-7 flex items-center justify-between'>
                     <ProfileStack
                       data={{
                         assignmentData: deduplicateAssignments(assignmentData, 'parameter'),
                         taskForce,
-                        parameter_id: data.parameter_id,
+                        accredInfoId,
+                        levelId,
+                        programId,
+                        parameterId,
                       }}
                       handlers={{ handleProfileStackClick }}
                       scope='parameter'
@@ -284,7 +291,7 @@ const AreaParameters = () => {
                           parameter: data.parameter,
                         })
                       }
-                      className='text-white hover:bg-white/20 p-1 rounded-full transition cursor-pointer'
+                      className='absolute right-0 text-white hover:bg-white/20 p-1 rounded-full transition cursor-pointer'
                     >
                       <FileUser />
                     </button>
@@ -310,12 +317,12 @@ const AreaParameters = () => {
                       if (!matchedProgress) return null;
 
                       const progress = Number(matchedProgress.progress || 0).toFixed(1);
-                      const { status } = getProgressStyle(progress);
+                      const { status, color } = getProgressStyle(progress);
 
                       return (
                         <ProgressBar 
                           progress={progress} 
-                          color={'bg-'} 
+                          color={color} 
                           status={status}
                         />
                       );
@@ -368,7 +375,7 @@ const AreaParameters = () => {
             {filteredParameters.length > 0 && (
               <div
                 onClick={handlePlusClick}
-                className='flex flex-col gap-y-2 items-center justify-center border border-slate-700 hover:scale-101 hover:shadow shadow-slate-600 p-4 rounded-md transition cursor-pointer bg-slate-800 active:opacity-90 w-full h-45 sm:w-[45%] lg:w-[30%] py-12 text-slate-100 active:scale-98'
+                className='flex flex-col gap-y-2 items-center justify-center border border-slate-700 hover:shadow-lg shadow-slate-800 p-4 rounded-md transition cursor-pointer bg-slate-800 active:opacity-90 w-full h-45 sm:w-[45%] lg:w-[30%] py-12 text-slate-100 active:scale-98'
               >
                 <CirclePlus className='h-12 w-12 flex shrink-0' />
                 <p>Add Parameter</p>

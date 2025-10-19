@@ -132,11 +132,15 @@ const TaskForceModal = ({ data, handlers }) => {
             !emailRegex.test(formValue.email)
           }
           disabledMessage={'Fields should not be empty, except profile picture.'}
-          primaryButton="Create"
+          primaryButton={
+            taskForceChair.length > 0 || taskForceMember.length > 0
+            ? 'Add'
+            : 'Create'
+          }
           secondaryButton="Cancel"
           headerContent={
             <div className='relative flex items-center transition-all duration-300'>
-              <p className='mr-2 text-lg font-semibold text-slate-700'>
+              <p className='mr-2 text-lg font-semibold text-slate-800'>
                 {taskForceChair.length > 0 || taskForceMember.length > 0 
                   ? 'Add Task Force'
                   : 'Create Task Force'
@@ -170,11 +174,11 @@ const TaskForceModal = ({ data, handlers }) => {
             !emailRegex.test(formValue.email)
           }
           disabledMessage='Fields should not be empty, except profile picture.'
-          primaryButton={`Add ${modalData.role}`}
+          primaryButton={`Add`}
           secondaryButton="Cancel"
           headerContent={
             <div className='relative flex items-center transition-all duration-300'>
-              <p className='mr-2 text-2xl font-bold text-slate-700'>
+              <p className='mr-2 text-lg font-semibold text-slate-800'>
                 Add {modalData.role}
               </p>
             </div>

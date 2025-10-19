@@ -2,24 +2,26 @@ import db from "../../../../config/db.js";
 
 const deleteAssignment = async (accredData = {}, userData = {}, condition = {}, connection = null) => {
   const { 
-    ilpmId = null, 
-    pamId = null, 
-    apmId = null, 
-    pspmId = null, 
-    simId = null, 
+    accredInfoId = null, 
+    levelId = null, 
+    programId = null, 
+    areaId = null, 
+    parameterId = null, 
+    subParameterId = null, 
+    indicatorId = null
   } = accredData;
 
   const {
     taskForceId = null
   } = userData;
 
-  console.log('From model:', { 
-    ilpmId,
-    pamId,
-    apmId,
-    pspmId,
-    simId
-   });
+  console.log('From model:', { accredInfoId, 
+    levelId, 
+    programId, 
+    areaId, 
+    parameterId, 
+    subParameterId, 
+    indicatorId, taskForceId })
 
   const {
     forDeanTaskForceDetailPage,
@@ -36,27 +38,35 @@ const deleteAssignment = async (accredData = {}, userData = {}, condition = {}, 
   }
 
   if (forDeanAssignmentPage) {
-    if (ilpmId !== null) {
-      whereClause.push('ilpm_id = ?');
-      params.push(ilpmId);
+    if (accredInfoId !== null) {
+      whereClause.push('accred_info_id = ?');
+      params.push(accredInfoId);
     }
   }
 
-  if (pamId !== null) {
-      whereClause.push('pam_id = ?');
-      params.push(pamId);
+  if (levelId !== null) {
+      whereClause.push('level_id = ?');
+      params.push(levelId);
     }
-    if (apmId !== null) {
-      whereClause.push('apm_id = ?');
-      params.push(apmId);
+    if (programId !== null) {
+      whereClause.push('program_id = ?');
+      params.push(programId);
     }
-    if (pspmId !== null) {
-      whereClause.push('pspm_id = ?');
-      params.push(pspmId);
+    if (areaId !== null) {
+      whereClause.push('area_id = ?');
+      params.push(areaId);
     }
-    if (simId !== null) {
-      whereClause.push('sim_id = ?');
-      params.push(simId);
+    if (parameterId !== null) {
+      whereClause.push('parameter_id = ?');
+      params.push(parameterId);
+    }
+    if (subParameterId !== null) {
+      whereClause.push('sub_parameter_id = ?');
+      params.push(subParameterId);
+    }
+    if (indicatorId !== null) {
+      whereClause.push('indicator_id = ?');
+      params.push(indicatorId);
     }
 
   const query = `

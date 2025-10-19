@@ -7,6 +7,7 @@ import deduplicateAssignments from '../../../../utils/deduplicateAssignments';
 
 const SubParamCard = ({
   refs,
+  commonData,
   subParam,             // object: { sub_parameter_uuid, sub_parameter, sub_parameter_id }
   activeSubParamId,     // activeId of subparameter
   docsArray = [],       // documents array for this subparam
@@ -27,6 +28,10 @@ const SubParamCard = ({
 }) => {
   const { subParamOptionRef } = refs;
   const { pspmId, sub_parameter_uuid, sub_parameter, sub_parameter_id } = subParam;
+  const { 
+    accredInfoId, levelId, programId, 
+    areaId, parameterId, subParameterId 
+  } = commonData;
 
   console.log(pspmId);
 
@@ -173,7 +178,12 @@ const SubParamCard = ({
           <ProfileStack 
             data={{ 
               assignmentData: deduplicateAssignments(assignmentData, 'subParameter'), 
-              taskForce, 
+              taskForce,
+              accredInfoId,
+              levelId,
+              programId,
+              areaId,
+              parameterId, 
               subParameterId: sub_parameter_id }}
             handlers={{ handleProfileStackClick }}
             scope='subParameter'

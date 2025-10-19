@@ -2,39 +2,44 @@ import deleteAssignmentModel from "../../../../models/accreditation/assignments/
 import sendUpdate from "../../../../services/websocket/sendUpdate.js";
 
 const deleteAssignment = async (req, res) => {
-  const {
-    taskForceId,
-    ilpmId,
-    pamId,
-    apmId = null,
-    pspmId = null,
-    simId = null
-  } = req.query;
+  const accredInfoId = Number(req.query.accredInfoId);
+  const levelId = Number(req.query.levelId);
+  const programId = Number(req.query.programId);
+  const areaId = Number(req.query.areaId);
+  const parameterId = req.query.parameterId ? Number(req.query.parameterId) : null;
+  const subParameterId = req.query.subParameterId ? Number(req.query.subParameterId) : null;
+  const indicatorId = req.query.indicatorId ? Number(req.query.indicatorId) : null;
+
+  const taskForceId = Number(req.query.taskForceId);
 
   console.log({ 
-    taskForceId,
-    ilpmId,
-    pamId,
-    apmId,
-    pspmId,
-    simId
+    accredInfoId, 
+    levelId, 
+    programId, 
+    areaId, 
+    parameterId, 
+    subParameterId, 
+    indicatorId,
+    taskForceId
   });
 
   try {
     const result = await deleteAssignmentModel(
       {
-        ilpmId,
-        pamId,
-        apmId,
-        pspmId,
-        simId,
+        accredInfoId,
+        levelId,
+        programId,
+        areaId,
+        parameterId,
+        subParameterId,
+        indicatorId
       }, 
       {
         taskForceId
       },
       {
-        forDeanTaskForceDetailPage: !!taskForceId, // Only true if taskForceId exists
-        forDeanAssignmentPage: !! (ilpmId && pamId) // Only true if these two are given
+        forDeanTaskForceDetailPage: !!taskForceId, // Only true if userId exists
+        forDeanAssignmentPage: !! (accredInfoId && levelId && programId && areaId) // Only true if these are given
       }
     );
 

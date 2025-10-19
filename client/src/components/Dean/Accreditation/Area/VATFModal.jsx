@@ -143,6 +143,12 @@ const VATFModal = ({ data = {}, handlers = {}, scope = 'area' }) => {
           })}
           primaryButton={'Unassign'}
           secondaryButton={'Cancel'}
+          hasHeader={true}
+          headerContent={
+            <div>
+              <h2 className='text-slate-800 text-lg font-semibold'>Unassign</h2>
+            </div>
+          }
           bodyContent={
             <div className='flex flex-col gap-4 items-center justify-center mb-8'>
               <img 

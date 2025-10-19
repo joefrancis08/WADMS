@@ -223,21 +223,43 @@ const ParamSubparam = () => {
               </div>
             )}
 
-            {/* Cards */}
-            {filteredSubparams.map(({ pspmId, sub_parameter_uuid, sub_parameter, sub_parameter_id }) => {
-              const docsArray = documentsBySubParam[sub_parameter_id] ?? [];
-              const isExpanded = expandedId === sub_parameter_id;
+            {/* Cards pspmId, sub_parameter_uuid, sub_parameter, sub_parameter_id*/}
+            {filteredSubparams.map((data) => {
+              const docsArray = documentsBySubParam[data.sub_parameter_id] ?? [];
+              const isExpanded = expandedId === data.sub_parameter_id;
+              const accredInfoId = data.accredInfoId;
+              const levelId = data.levelId;
+              const programId = data.programId;
+              const areaId = data.areaId;
+              const parameterId = data.parameterId;
+              const subParameterId = data.sub_parameter_id;
+              console.log({
+                accredInfoId,
+                levelId,
+                programId,
+                areaId,
+                parameterId,
+                subParameterId
+              });
 
               return (
-                <div key={sub_parameter_uuid} className='mb-4 w-full md:w-[45%] relative'>
+                <div key={data.sub_parameter_uuid} className='mb-4 w-full md:w-[45%] relative'>
                   <SubParamCard
                     refs={{ subParamOptionRef }}
                     activeSubParamId={activeSubParamId}
+                    commonData={{
+                      accredInfoId,
+                      levelId,
+                      programId,
+                      areaId,
+                      parameterId,
+                      subParameterId
+                    }}
                     subParam={{
-                      pspmId,
-                      sub_parameter_id,
-                      sub_parameter_uuid,
-                      sub_parameter,
+                      pspmId: data.pspmId,
+                      sub_parameter_id: data.sub_parameter_id,
+                      sub_parameter_uuid: data.sub_parameter_uuid,
+                      sub_parameter: data.sub_parameter,
                     }}
                     docsArray={docsArray}
                     selectedFiles={selectedFiles}
@@ -262,7 +284,7 @@ const ParamSubparam = () => {
                       loadingDocs={loadingDocs}
                       errorDocs={errorDocs}
                       selectedFiles={selectedFiles}
-                      selectedFileKey={sub_parameter_id}
+                      selectedFileKey={data.sub_parameter_id}
                       removeSelectedFile={removeSelectedFile}
                       renameObj={{
                         isRename,
@@ -284,9 +306,9 @@ const ParamSubparam = () => {
                     />
                   )}
                   <input
-                    id={`file-input-${sub_parameter_id}`}
+                    id={`file-input-${data.sub_parameter_id}`}
                     type='file'
-                    onChange={(e) => handleFileChange(e, sub_parameter_id)}
+                    onChange={(e) => handleFileChange(e, data.sub_parameter_id)}
                     accept='application/pdf,image/*'
                     className='hidden'
                   />

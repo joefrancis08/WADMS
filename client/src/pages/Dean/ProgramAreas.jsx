@@ -111,7 +111,10 @@ const ProgramAreas = () => {
     },
     {
       label: program,
-      onClick: () => navigate(PROGRAMS_TO_BE_ACCREDITED),
+      onClick: () => {
+        localStorage.removeItem('accreditation-title');
+        navigate(PROGRAMS_TO_BE_ACCREDITED);
+      }
     },
     {
       label: 'Areas',
@@ -187,6 +190,10 @@ const ProgramAreas = () => {
                 }
                 className="relative flex flex-col items-start justify-center px-2 max-sm:w-full md:w-75 lg:w-50 h-60 bg-[url('/cgs-bg-2.png')] bg-cover bg-center shadow-slate-800 border border-slate-600 hover:shadow-md transition cursor-pointer active:shadow"
               >
+                {console.log(areaData.accredId)}
+                {console.log(areaData.levelId)}
+                {console.log(areaData.programId)}
+                {console.log(assignmentData)}
                 <div className="absolute inset-0 bg-black/50"></div>
                 {activeAreaId && <div className='absolute inset-0 z-20'></div>}
 
@@ -245,6 +252,9 @@ const ProgramAreas = () => {
                           'area'
                         ),
                         taskForce,
+                        accredInfoId: areaData.accredId,
+                        levelId: areaData.levelId,
+                        programId: areaData.programId,
                         area_id: areaData.area_id,
                         area: formatAreaName(areaData.area),
                       }}

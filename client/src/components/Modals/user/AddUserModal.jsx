@@ -38,8 +38,8 @@ const Footer = ({ onCancel, primaryButton, disabled, disabledMessage, secondaryB
         title={disabled && disabledMessage}
         disabled={disabled}
         className={disabled 
-          ? 'flex items-center justify-center bg-gray-500 text-white font-semibold py-2 px-6 rounded-full text-sm opacity-50 cursor-not-allowed transition'
-          : 'flex items-center justify-center bg-gradient-to-br from-green-800 to-green-500 text-white px-6 py-2 rounded-full text-sm hover:bg-gradient-to-tr hover:from-green-800 hover:to-green-500 hover:shadow-lg active:opacity-50 transition cursor-pointer'}
+          ? 'flex items-center justify-center min-w-30 bg-gray-500 text-white font-semibold py-2 px-6 rounded-full text-sm opacity-50 cursor-not-allowed transition'
+          : 'flex items-center justify-center min-w-20 bg-gradient-to-br from-green-800 to-green-500 text-white px-6 py-2 rounded-full text-sm hover:bg-gradient-to-tr hover:from-green-800 hover:to-green-500 hover:shadow-lg active:opacity-50 transition cursor-pointer'}
       >
         {primaryButton}
       </button>
@@ -74,6 +74,7 @@ const AddUserModal = ({
         bodyMargin={'my-4'}
         bodyPosition={'justify-start'}
         hasHR={false}
+        footerMargin={'mb-2'}
         body={
           <form 
           onSubmit={handleSubmit} 

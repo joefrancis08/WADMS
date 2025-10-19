@@ -174,27 +174,26 @@ const ProgramsToAccredit = () => {
           <h2 className='text-xl text-slate-100 font-bold'>
             Programs
           </h2>
-
-            <div className="relative w-full md:w-1/3 lg:w-90">
-              <Search className="absolute left-3 top-2.5 h-5 w-5 text-slate-400" />
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search title, year, level, or program..."
-                className="pl-10 pr-3 py-2 rounded-full bg-slate-800 text-slate-100 border border-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 w-full transition-all"
-              />
-            </div>
+          <div className="flex items-center gap-x-4 justify-center relative">
+            <Search className="absolute left-3 top-2.5 h-5 w-5 text-slate-400" />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search title, year, level, or program..."
+              className="md:w-1/3 lg:w-90 pl-10 pr-3 py-2 rounded-full bg-slate-800 text-slate-100 border border-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 w-full transition-all"
+            />
+            {/* Add button */}
+            <button 
+              title='Add new accreditation' 
+              onClick={handleAddClick} 
+              className='flex items-center justify-center text-white gap-1 px-3 rounded-full cursor-pointer transition py-2 border border-slate-600 bg-green-600 hover:bg-green-600/90 hover:shadow-slate-700 shadow active:opacity-90 z-50 active:scale-99'
+            >
+              <Plus className='text-white' size={22}/>
+              Add new
+            </button>
+          </div>
         </div>
-
-        {/* Add button */}
-        <button 
-          title='Add new accreditation' 
-          onClick={handleAddClick} 
-          className='fixed bottom-6 right-10 flex items-center justify-center gap-2 p-4 rounded-full cursor-pointer transition-all shadow-lg bg-slate-600 hover:bg-slate-700 active:opacity-90 z-50'
-        >
-          <Plus className='text-white' size={28}/>
-        </button>
 
         {/* Render fallback UI if data is empty */}
         {loading ? (
