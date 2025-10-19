@@ -21,6 +21,7 @@ import deduplicateAssignments from '../../utils/deduplicateAssignments';
 import Breadcrumb from '../../components/Breadcrumb';
 import useDebouncedValue from '../../hooks/useDebouncedValue';
 import { getProgressStyle } from '../../helpers/progressHelper';
+import ProgressBar from '../../components/ProgressBar';
 
 const { PROGRAMS_TO_BE_ACCREDITED, AREA_PARAMETERS } = PATH.DEAN;
 
@@ -275,39 +276,28 @@ const ProgramAreas = () => {
                 </div>
                 
                 {(() => {
-                    if (!areaProgress || !Array.isArray(areaProgress)) return null;
+                  if (!areaProgress || !Array.isArray(areaProgress)) return null;
 
-                    
+                  const matchedProgress = areaProgress.find(
+                    (item) =>
+                      Number(item.programId) === Number(areaData.programId) &&
+                      Number(item.areaId) === Number(areaData.area_id) &&
+                      Number(item.pamId) === Number(areaData.pamId)
+                  );
 
-                    const matchedProgress = areaProgress.find(
-                      (item) =>
-                        Number(item.programId) === Number(areaData.programId) &&
-                        Number(item.areaId) === Number(areaData.area_id) &&
-                        Number(item.pamId) === Number(areaData.pamId)
-                    );
+                  if (!matchedProgress) return null;
 
-                    if (!matchedProgress) return null;
+                  const progress = Number(matchedProgress.progress || 0).toFixed(1);
+                  const { color, status } = getProgressStyle(progress);
 
-                    const progress = Number(matchedProgress.progress || 0).toFixed(1);
-                    const { color, status } = getProgressStyle(progress);
-
-                    return (
-                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-full z-20 -mb-16">
-                        <div className="relative w-full bg-slate-700 border border-slate-600 rounded-full h-4 shadow-inner overflow-hidden">
-                          <div
-                            style={{ width: `${progress}%` }}
-                            className={`h-full ${color} transition-all duration-700 ease-in-out rounded-full`}
-                          ></div>
-                          <span className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 font-semibold text-xs text-white">
-                            {progress}%
-                          </span>
-                        </div>
-                        <p className="mt-1 text-center text-sm font-medium text-white">
-                          {status}
-                        </p>
-                      </div>
-                    );
-                  })()}
+                  return (
+                    <ProgressBar 
+                      progress={progress} 
+                      color={color} 
+                      status={status}
+                    />
+                  );
+                })()}
                 {/* Dropdown */}
                 {activeAreaId === areaData.area_uuid && (
                   <div

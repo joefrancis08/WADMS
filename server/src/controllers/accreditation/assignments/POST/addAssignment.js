@@ -5,28 +5,23 @@ import sendUpdate from '../../../../services/websocket/sendUpdate.js';
 
 const addAssignment = async (req, res) => {
   const {
-    userIDList,
-    accredInfoId,
-    levelId,
-    programId,
-    areaId,
-    parameterId = null,
-    subParameterId = null,
-    indicatorId = null
+    userIDList, ilpmId, pamId,
+    apmId, pspmId, simId
   } = req.body;
+  
 
-  console.log({ userIDList,
-    accredInfoId,
-    levelId,
-    programId,
-    areaId,
-    parameterId,
-    subParameterId,
-    indicatorId })
+  console.log({ 
+    userIDList,
+    ilpmId,
+    pamId,
+    apmId,
+    pspmId,
+    simId
+  });
 
-  if (!accredInfoId || !levelId || !programId || !areaId) {
+  if (!ilpmId || !pamId || !apmId || !pspmId || !simId) {
     return res.status(400).json({
-      message: 'IDs of accreditation, level, program, and area are required.',
+      message: 'IDs of ILPM, PAM, APM, PSPM, and SIM are required.',
       success: false,
     });
   }
@@ -45,170 +40,141 @@ const addAssignment = async (req, res) => {
     connection = await db.getConnection();
     await connection.beginTransaction();
 
-    const commonData = {
-      accredInfoId,
-      levelId,
-      programId,
-      areaId,
-      parameterId,
-      subParameterId,
-      indicatorId,
-    };
+    const commonData = { ilpmId, pamId, apmId, pspmId, simId };
 
     const results = [];
 
     for (const userId of userIDs) {
-      // --- Queries with proper NULL handling ---
+      // Queries with proper NULL handling
       const [existingArea] = await connection.execute(
         `SELECT id 
          FROM accreditation_assignment 
          WHERE user_id = ? 
-           AND accred_info_id = ? 
-           AND level_id = ? 
-           AND program_id = ? 
-           AND area_id = ? 
-           AND parameter_id IS NULL 
-           AND sub_parameter_id IS NULL
-           AND indicator_id IS NULL`,
-        [userId, accredInfoId, levelId, programId, areaId]
+           AND ilpm_id = ? 
+           AND pam_id = ? 
+           AND apm_id IS NULL
+           AND pspm_id IS NULL 
+           AND sim_id IS NULL`, 
+           [userId, ilpmId, pamId]
       );
 
-      const [existingParam] = parameterId !== null
+      const [existingParam] = apmId !== null
         ? await connection.execute(
           `SELECT id 
            FROM accreditation_assignment 
            WHERE user_id = ? 
-             AND accred_info_id = ? 
-             AND level_id = ? 
-             AND program_id = ? 
-             AND area_id = ? 
-             AND parameter_id = ? 
-             AND sub_parameter_id IS NULL
-             AND indicator_id IS NULL`,
-          [userId, accredInfoId, levelId, programId, areaId, parameterId]
+             AND ilpm_id = ? 
+             AND pam_id = ? 
+             AND apm_id = ? 
+             AND pspm_id IS NULL
+             AND sim_id IS NULL`,
+          [userId, ilpmId, pamId, apmId]
         )
         : [[]];
 
-      const [existingSubParam] = parameterId !== null && subParameterId !== null
+      const [existingSubParam] = apmId !== null && pspmId !== null
         ? await connection.execute(
           `SELECT id 
            FROM accreditation_assignment 
            WHERE user_id = ? 
-             AND accred_info_id = ? 
-             AND level_id = ? 
-             AND program_id = ? 
-             AND area_id = ? 
-             AND parameter_id = ? 
-             AND sub_parameter_id = ?
-             AND indicator_id IS NULL`,
-          [userId, accredInfoId, levelId, programId, areaId, parameterId, subParameterId]
+             AND ilpm_id = ? 
+             AND pam_id = ? 
+             AND apm_id = ? 
+             AND pspm_id = ? 
+             AND sim_id IS NULL`,
+          [userId, ilpmId, pamId, apmId, pspmId]
         )
         : [[]];
 
-      const [existingIndicator] = parameterId !== null && subParameterId !== null && indicatorId !== null
+      const [existingIndicator] = apmId !== null && pspmId !== null && simId !== null
         ? await connection.execute(
           `SELECT id 
            FROM accreditation_assignment 
            WHERE user_id = ? 
-             AND accred_info_id = ? 
-             AND level_id = ? 
-             AND program_id = ? 
-             AND area_id = ? 
-             AND parameter_id = ? 
-             AND sub_parameter_id = ?
-             AND indicator_id = ?`,
-          [userId, accredInfoId, levelId, programId, areaId, parameterId, subParameterId, indicatorId]
+             AND ilpm_id = ? 
+             AND pam_id = ? 
+             AND apm_id = ? 
+             AND pspm_id = ? 
+             AND sim_id = ?`,
+          [userId, ilpmId, pamId, apmId, pspmId, simId]
         )
         : [[]];
 
-      // --- New guards to block less-specific inserts ---
+      // New guards to block less-specific inserts
       const [existingAnySpecific] = await connection.execute(
         `SELECT id FROM accreditation_assignment
          WHERE user_id = ?
-           AND accred_info_id = ?
-           AND level_id = ?
-           AND program_id = ?
-           AND area_id = ?
+           AND ilpm_id = ?
+           AND pam_id = ?
+           AND apm_id = ?
            AND (
-             parameter_id IS NOT NULL
-             OR sub_parameter_id IS NOT NULL
-             OR indicator_id IS NOT NULL
+             pspm_id IS NOT NULL
+             OR sim_id IS NOT NULL
            )`,
-        [userId, accredInfoId, levelId, programId, areaId]
+        [userId, ilpmId, pamId, apmId]
       );
 
-      const [existingMoreSpecificParam] = parameterId !== null
+      const [existingMoreSpecificParam] = apmId !== null
         ? await connection.execute(
           `SELECT id FROM accreditation_assignment
            WHERE user_id = ?
-             AND accred_info_id = ?
-             AND level_id = ?
-             AND program_id = ?
-             AND area_id = ?
-             AND parameter_id = ?
-             AND (sub_parameter_id IS NOT NULL OR indicator_id IS NOT NULL)`,
-          [userId, accredInfoId, levelId, programId, areaId, parameterId]
+             AND ilpm_id = ?
+             AND pam_id = ?
+             AND apm_id = ?
+             AND (pspm_id IS NOT NULL OR sim_id IS NOT NULL)`,
+          [userId, ilpmId, pamId, apmId]
         )
         : [[]];
 
-      const [existingMoreSpecificSubParam] = parameterId !== null && subParameterId !== null
+      const [existingMoreSpecificSubParam] = apmId !== null && simId !== null
         ? await connection.execute(
           `SELECT id FROM accreditation_assignment
            WHERE user_id = ?
-             AND accred_info_id = ?
-             AND level_id = ?
-             AND program_id = ?
-             AND area_id = ?
-             AND parameter_id = ?
-             AND sub_parameter_id = ?
-             AND indicator_id IS NOT NULL`,
-          [userId, accredInfoId, levelId, programId, areaId, parameterId, subParameterId]
+             AND ilpm_id = ?
+             AND pam_id = ?
+             AND apm_id = ?
+             AND pspm_id = ?
+             AND sim_id IS NOT NULL`,
+          [userId, ilpmId, pamId, apmId, pspmId]
         )
         : [[]];
 
-      if (subParameterId !== null && indicatorId === null) {
-        // Get all indicators belonging to this subparameter
-        const [indicators] = await connection.execute(
-          `SELECT id FROM indicator WHERE subparam_id = ?`,
-          [subParameterId]
+      if (pspmId !== null && simId === null) {
+        // Get all simId belong to pspmId
+        const [sim] = await connection.execute(
+          `SELECT id FROM subparam_indicator_mapping
+          WHERE param_subparam_mapping_id = ?`,
+          [pspmId]
         );
 
-        for (const { id: indicatorId } of indicators) {
+        for (const { id: simId } of sim) {
           // Check if assignment already exists for this indicator
           const [existingIndicatorAssignment] = await connection.execute(
             `SELECT id FROM accreditation_assignment
             WHERE user_id = ?
-              AND accred_info_id = ?
-              AND level_id = ?
-              AND program_id = ?
-              AND area_id = ?
-              AND parameter_id = ?
-              AND sub_parameter_id = ?
-              AND indicator_id = ?`,
-            [userId, accredInfoId, levelId, programId, areaId, parameterId, subParameterId, indicatorId]
+              AND ilpm_id = ?
+              AND pam_id = ?
+              AND apm_id = ?
+              AND pspm_id = ?
+              AND sim_id = ?`,
+            [userId, ilpmId, pamId, apmId, pspmId, simId]
           );
 
           if (existingIndicatorAssignment.length === 0) {
             // Insert indicator-level assignment
             await insertAssignment({
-              userId,
-              accredInfoId,
-              levelId,
-              programId,
-              areaId,
-              parameterId,
-              subParameterId,
-              indicatorId,
+              userId, ilpmId, pamId,
+              apmId, pspmId, simId
             }, connection);
 
-            results.push({ type: 'insert-indicator', userId, indicatorId });
+            results.push({ type: 'insert-sim', userId, simId });
           }
         }
       }
 
-      // --- Decision making ---
+      // Decision making
       if (existingArea.length > 0) {
-        if (parameterId !== null || subParameterId !== null || indicatorId !== null) {
+        if (apmId !== null || pspmId !== null || simId !== null) {
           await updateAssignment({ userId, ...commonData }, connection);
           results.push({ type: 'update', userId });
         } else {
@@ -221,7 +187,7 @@ const addAssignment = async (req, res) => {
         }
 
       } else if (existingParam.length > 0) {
-        if (subParameterId !== null || indicatorId !== null) {
+        if (pspmId !== null || simId !== null) {
           await updateAssignment({ userId, ...commonData }, connection);
           results.push({ type: 'update', userId });
         } else {
@@ -234,7 +200,7 @@ const addAssignment = async (req, res) => {
         }
 
       } else if (existingSubParam.length > 0) {
-        if (indicatorId !== null) {
+        if (simId !== null) {
           await updateAssignment({ userId, ...commonData }, connection);
           results.push({ type: 'update', userId });
         } else {
@@ -256,9 +222,9 @@ const addAssignment = async (req, res) => {
 
       } else if (
         // Block less-specific if more-specific exists
-        (parameterId === null && subParameterId === null && indicatorId === null && existingAnySpecific.length > 0) ||
-        (parameterId !== null && subParameterId === null && indicatorId === null && existingMoreSpecificParam.length > 0) ||
-        (parameterId !== null && subParameterId !== null && indicatorId === null && existingMoreSpecificSubParam.length > 0)
+        (apmId === null && pspmId === null && simId === null && existingAnySpecific.length > 0) ||
+        (apmId !== null && pspmId === null && simId === null && existingMoreSpecificParam.length > 0) ||
+        (apmId !== null && pspmId !== null && simId === null && existingMoreSpecificSubParam.length > 0)
       ) {
         await connection.rollback();
         return res.status(409).json({
@@ -282,6 +248,7 @@ const addAssignment = async (req, res) => {
       success: true,
       results,
     });
+
   } catch (error) {
     if (connection) {
       try {
@@ -306,6 +273,7 @@ const addAssignment = async (req, res) => {
       message: 'An unexpected error occurred.',
       success: false,
     });
+
   } finally {
     if (connection) connection.release();
   }

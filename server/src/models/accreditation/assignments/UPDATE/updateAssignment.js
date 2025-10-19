@@ -2,31 +2,24 @@ import db from "../../../../config/db.js";
 
 const updateAssignment = async (data = {}, connection = null) => {
   const { 
-    userId, accredInfoId, levelId, programId, 
-    areaId, parameterId = null, subParameterId = null, indicatorId = null
+    userId, ilpmId, pamId, 
+    apmId = null, pspmId = null,
+    simId = null
   } = data;
-
-  console.log({
-    parameterId, subParameterId, indicatorId,
-    userId, accredInfoId, levelId, programId, areaId
-  });
 
   const query = `
     UPDATE accreditation_assignment
-    SET parameter_id = ?, sub_parameter_id = ?, indicator_id = ?
+    SET apm_id = ?, pspm_id = ?, sim_id = ?
     WHERE user_id = ?
-      AND accred_info_id = ?
-      AND level_id = ?
-      AND program_id = ?
-      AND area_id = ?
+      AND ilpm_id = ?
+      AND pam_id = ?
   `;
 
   try {
     const executor = connection || db;
     const [result] = await executor.execute(query, [
-      parameterId, subParameterId, indicatorId,
-      userId, accredInfoId, levelId,
-      programId, areaId
+      apmId, pspmId, simId, userId,
+      ilpmId, pamId
     ]);
 
     return result;

@@ -135,7 +135,7 @@ export const fetchAreaProgress = (programId, signal) => {
     params: { programId },
     signal
   });
-}
+};
 
 export const fetchParamByAreaId = (areaId, signal) => {
   return apiClient.get(`/accreditation/fetch-area-parameters-by`, {
@@ -145,6 +145,13 @@ export const fetchParamByAreaId = (areaId, signal) => {
     signal
   });
 };
+
+export const fetchParameterProgress = (areaId, signal) => {
+  return apiClient.get(`/accreditation/fetch-parameter-progress`, {
+    params: { areaId },
+    signal
+  });
+}
 
 export const fetchSubParamByParamId = (parameterId, signal) => {
   return apiClient.get(`/accreditation/fetch-parameter-subparameters-by`, {

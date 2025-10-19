@@ -20,6 +20,8 @@ import ProfileStack from '../../components/ProfileStack';
 import deduplicateAssignments from '../../utils/deduplicateAssignments';
 import Breadcrumb from '../../components/Breadcrumb';
 import useDebouncedValue from '../../hooks/useDebouncedValue';
+import ProgressBar from '../../components/ProgressBar';
+import { getProgressStyle } from '../../helpers/progressHelper';
 
 const { PROGRAMS_TO_BE_ACCREDITED, PROGRAM_AREAS, PARAM_SUBPARAMS } = PATH.DEAN;
 
@@ -60,6 +62,9 @@ const AreaParameters = () => {
     activeTaskForceId,
     showConfirmUnassign,
     activeParamId,
+    paramProgress,
+    loadingParamProgress,
+    errorParamProgress
   } = datas;
 
   const {
@@ -207,11 +212,11 @@ const AreaParameters = () => {
                     localStorage.removeItem('modal-type');
                     localStorage.removeItem('modal-data');
                   }}
-                  className='flex flex-col justify-between border border-slate-700 hover:shadow-md shadow-slate-800 transition rounded-md bg-slate-800 p-5 w-full h-45 sm:w-[45%] lg:w-[30%] relative'
+                  className='flex flex-col mb-8 justify-between border border-slate-600 hover:shadow-lg hover:cursor-pointer shadow-slate-800 transition rounded-md bg-slate-800 p-5 w-full h-45 sm:w-[45%] lg:w-[30%] relative'
                 >
                   {/* Top Row: Label + Ellipsis */}
                   {activeParamId && <div className='absolute inset-0 z-20'></div>}
-                  <div className='flex items-center justify-between mb-2'>
+                  <div className='flex items-center justify-between'>
                     <h3
                       className='font-semibold text-lg text-slate-300 cursor-pointer'
                       onClick={() => {
@@ -231,7 +236,7 @@ const AreaParameters = () => {
                       {label}
                     </h3>
 
-                    {/* Ellipsis (Opposite Side) */}
+                    {/* Ellipsis */}
                     <button
                       onClick={(e) =>
                         handleParamOptionClick(e, {
@@ -239,7 +244,7 @@ const AreaParameters = () => {
                         })
                       }
                       title='Options'
-                      className='text-white hover:bg-slate-700 p-1 rounded-full transition cursor-pointer'
+                      className={`text-white hover:bg-slate-700 ${activeParamId === data.parameter_uuid && 'bg-slate-700'} p-1 rounded-full transition cursor-pointer`}
                     >
                       <EllipsisVertical className='h-5 w-5' />
                     </button>
@@ -256,9 +261,11 @@ const AreaParameters = () => {
                     </p>
                     {hoveredId === data.parameter_uuid && <Popover content={content} />}
                   </div>
+                  
+                  <hr className={`text-slate-700 mt-4`}></hr>
 
                   {/* Bottom: Task Force + FileUser */}
-                  <div className='flex items-center justify-between mt-4'>
+                  <div className='flex items-center justify-between'>
                     <ProfileStack
                       data={{
                         assignmentData: deduplicateAssignments(assignmentData, 'parameter'),
@@ -283,24 +290,40 @@ const AreaParameters = () => {
                     </button>
                   </div>
 
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-full z-20 -mb-16">
-                    <div className="relative w-full bg-slate-700 border border-slate-600 rounded-full h-4 shadow-inner overflow-hidden">
-                      <div
-                        style={{ width: `${100}%` }}
-                        className={`h-full ${'bg-green-500'} transition-all duration-700 ease-in-out rounded-full`}
-                      ></div>
-                      <span className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 font-semibold text-xs text-white">
-                        {100}%
-                      </span>
-                    </div>
-                    <p className="mt-1 text-center text-sm font-medium text-white">
-                      {'Complete'}
-                    </p>
-                  </div>
+                  {/* Progress Bar */}
+                  {loadingParamProgress ? (
+                    <p className='mt-4 text-sm text-slate-400'>Loading progress...</p>
+                  ) : errorParamProgress ? (
+                    <p className='mt-4 text-sm text-red-400'>Error loading progress</p>
+                  ) : (() => {
+                    if (!paramProgress || !Array.isArray(paramProgress)) return null;
+                      
+                      const matchedProgress = paramProgress.find(
+                        (item) =>
+                          Number(item.apmId) === Number(data.apmId) &&
+                          Number(item.areaId) === Number(data.areaId) &&
+                          Number(item.parameterId) === Number(data.parameter_id)
+                      );
+
+                      console.log(matchedProgress);
+
+                      if (!matchedProgress) return null;
+
+                      const progress = Number(matchedProgress.progress || 0).toFixed(1);
+                      const { status } = getProgressStyle(progress);
+
+                      return (
+                        <ProgressBar 
+                          progress={progress} 
+                          color={'bg-'} 
+                          status={status}
+                        />
+                      );
+                    })()}
 
                   {/* Dropdown */}
                   {activeParamId === data.parameter_uuid && (
-                    <div ref={paramOptionRef} className='absolute right-5 top-12 z-30'>
+                    <div ref={paramOptionRef} className='absolute left-36 top-12 z-30'>
                       <Dropdown
                         width={'w-48'}
                         border={'border border-slate-300 rounded-lg bg-slate-800'}
@@ -340,7 +363,6 @@ const AreaParameters = () => {
                 </div>
               );
             })}
-
 
             {/* Add Parameter Button */}
             {filteredParameters.length > 0 && (

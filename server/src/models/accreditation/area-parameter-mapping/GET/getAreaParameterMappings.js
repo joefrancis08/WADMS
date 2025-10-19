@@ -17,6 +17,7 @@ const getAreaParameterMappings = async ({
       ab.name           AS accred_body_name,
       al.level_name     AS level,
       pr.program_name   AS program,
+      a.id              AS areaId,
       a.area_name       AS area,
       pa.id             AS parameter_id,
       pa.uuid           AS parameter_uuid,
