@@ -33,3 +33,4 @@ export { default as notAssignedDM } from './icons/denied-darkmode.png';
 export { default as deleteFolder } from './icons/delete-folder.png';
 export { default as googleIcon } from './icons/google.png';
 export { default as gmailIcon } from './icons/gmail-logo.png';
+export { default as checkIcon } from './icons/check.png';

@@ -47,7 +47,7 @@ const UpdateUserModalFooter = ({
         {secondaryButton}
       </button>
       <button
-        title={disabled && disabledMessage}
+        title={disabled ? disabledMessage : undefined}
         type='submit'
         disabled={disabled}
         onClick={onSaveClick}

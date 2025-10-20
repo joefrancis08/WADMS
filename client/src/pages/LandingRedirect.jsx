@@ -33,7 +33,7 @@ const LandingRedirect = () => {
         
         // Verified user that hasn't seen the welcome page
         if (user.isShowWelcome && user.status === USER_STATUS.VERIFIED) {
-          navigate();
+          navigate(PATH.VERIFIED_USER.VERIFIED);
           return;
         }
         

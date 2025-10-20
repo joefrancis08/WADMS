@@ -6,14 +6,14 @@ import LoadSpinner from '../components/Loaders/LoadSpinner';
 import { USER_ROLES } from '../constants/user';
 import VerifiedPage from '../pages/Verified/VerifiedPage';
 
-const { VERIFIED } = PATH.VERIFIED_USER;
+const { VERIFIED_TEMPLATE } = PATH.VERIFIED_USER;
 const { REGISTER } = PATH.PUBLIC;
 const { 
   UU, TASK_FORCE_CHAIR, TASK_FORCE_MEMBER, IA, ACCREDITOR, DEAN 
 } = USER_ROLES;
 
 const protectedRoutes = [
-  { path: VERIFIED, element: <VerifiedPage /> }
+  { path: VERIFIED_TEMPLATE, element: <VerifiedPage /> }
 ];
 
 const Loader = (
@@ -29,12 +29,7 @@ path, element }) => (
     path={path}
     element={
       <ProtectedRoute
-        allowedRoles={[
-          TASK_FORCE_CHAIR,
-          TASK_FORCE_MEMBER,
-          IA,
-          ACCREDITOR
-        ]} // Allowed all: 
+        allowedRoles={[]} // Allowed all: 
         loader={Loader}
         fallbackRoute={REGISTER}
       >

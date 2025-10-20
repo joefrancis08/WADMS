@@ -84,6 +84,13 @@ export const fetchUserBy = async (key, value, controller) => {
   }
 };
 
+export const fetchUserStatus = async (email, signal) => {
+  return await axios.get(`${API_BASE_URL}/users/fetch-user-status`, {
+    params: { email },
+    signal
+  });
+};
+ 
 export const fetchUserAssignments = async (userId, signal) =>
   apiClient.get(`/accreditation/fetch-assignments`, {
     params: { userId },
@@ -109,7 +116,6 @@ export const generateNewToken = (userUUID) => {
 export const updateUserRole = async (selectedUserUUID, newRole) =>
   apiClient.patch(`/users/role/${selectedUserUUID}`, {
     role: newRole,
-    status: "Verified",
   });
 
 export const deleteUser = async (uuid) =>

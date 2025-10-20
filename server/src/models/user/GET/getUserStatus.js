@@ -1,6 +1,6 @@
 import db from "../../../config/db.js";
 
-const getUserStatus = async (userId, email) => {
+const getUserStatus = async (email) => {
   const query = `
     SELECT
       id AS userId,
@@ -10,14 +10,13 @@ const getUserStatus = async (userId, email) => {
       email,
       role,
       status,
-      is_show_welcome
+      is_show_welcome AS isShowWelcome
     FROM user
-    WHERE id = ?
-      AND email = ?
+    WHERE email = ?
   `;
 
   try {
-    const [rows] = await db.execute(query, [userId, email]);
+    const [rows] = await db.execute(query, [email]);
 
     return rows[0];
 

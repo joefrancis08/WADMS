@@ -1,25 +1,24 @@
 import getUserStatus from "../../../../models/user/GET/getUserStatus.js";
 
 const fetchUserStatus = async (req, res) => {
-  const { userId, email } = req.query;
+  const { email } = req.query;
   console.log({
-    userId,
     email
   });
 
-  if (!userId || !email) {
+  if (!email) {
     return res.status(400).json({
-      message: 'User ID and email is required.',
+      message: 'Email is required.',
       success: false
     });
   } 
 
   try {
-    const user = await getUserStatus(userId, email);
+    const user = await getUserStatus(email);
 
     if (!user) {
       return res.status(404).json({
-        message: `No user found with the id ${userId}`,
+        message: `No user found.`,
         success: false
       });
     }

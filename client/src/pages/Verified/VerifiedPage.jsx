@@ -4,6 +4,7 @@ import PendingSkeletonLoader from '../Pending/PendingSkeletonLoader.jsx';
 import { useNavigate } from 'react-router-dom';
 import PATH from '../../constants/path.js';
 import usePageTitle from '../../hooks/usePageTitle.js';
+import { checkIcon } from '../../assets/icons.js';
 
 /**
  * Verified Page
@@ -76,7 +77,7 @@ const VerifiedPage = () => {
     <div className='min-h-screen flex items-center justify-center bg-gray-200'>
       <div className='w-full max-w-md bg-white p-4 sm:p-6 md:p-8 rounded-lg shadow-lg'>
         <div className='justify-center flex mb-6'>
-          <img className='w-24 md:w-32 h-auto' src={null} alt='Verified Icon' />
+          <img className='w-24 md:w-32 h-32' src={checkIcon} alt='Verified Icon' />
         </div>
 
         <div className='content border-2 border-green-500 rounded-3xl pt-4'>
@@ -91,7 +92,7 @@ const VerifiedPage = () => {
           </p>
 
           <p className='text-center mt-4 m-2'>
-            You now have full access to the system.
+            You can now login to the system.
           </p>
 
           <div className='flex justify-center mt-6 pb-6'>

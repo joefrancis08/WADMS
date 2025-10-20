@@ -7,11 +7,11 @@ export const updateUserModel = async (profilePicPath, fullName, email, role, uui
   return result;
 }
 
-export const updateUserRoleModel = async (uuid, role, status) => {
-  const query = 'UPDATE user SET role = ?, status = ?, is_show_welcome = 1 WHERE user_uuid = ?';
+export const updateUserRoleModel = async (uuid, role) => {
+  const query = 'UPDATE user SET role = ?, is_show_welcome = 1 WHERE user_uuid = ?';
 
   try {
-    const [result] = await db.execute(query, [role, status, uuid]);
+    const [result] = await db.execute(query, [role, uuid]);
     return result;
 
   } catch (error) {

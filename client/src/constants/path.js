@@ -16,7 +16,8 @@ const PATH = {
   },
 
   VERIFIED_USER: {
-    VERIFIED: '/account-verified'
+    VERIFIED: (uuid) => `/verified-account/${uuid}`,
+    VERIFIED_TEMPLATE: '/verified-account/:uuid'
   },
 
   DEAN: {

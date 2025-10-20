@@ -9,8 +9,7 @@ export const getUsers = async (condition = {}) => {
   if (forTaskForce) {
     // Only Chairs and Members
     whereClause = `
-      role IN ('Task Force Chair', 'Task Force Member') AND 
-      status = 'Verified'
+      role IN ('Task Force Chair', 'Task Force Member')
     `;
   }
 
