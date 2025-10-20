@@ -8,7 +8,7 @@ export const updateUserModel = async (profilePicPath, fullName, email, role, uui
 }
 
 export const updateUserRoleModel = async (uuid, role, status) => {
-  const query = 'UPDATE user SET role = ?, status = ? WHERE user_uuid = ?';
+  const query = 'UPDATE user SET role = ?, status = ?, is_show_welcome = 1 WHERE user_uuid = ?';
 
   try {
     const [result] = await db.execute(query, [role, status, uuid]);

@@ -105,7 +105,6 @@ export const useRegister = () => {
       setIsLoading(true); // Set loading state to true while waiting to post the data
       const data = await registerUser(values);
       const { email, fullName, profilePicPath, role, status } = data.user; // Destructure the data for easy access and usage
-      console.log(data.user);
       
       // Step 5: If registration unsuccessful, let the user know thru toast notification
       if (!data?.success) {

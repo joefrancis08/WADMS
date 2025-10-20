@@ -38,16 +38,13 @@ const ProfileStack = ({
       case 'parameter':
         // Include parameter + any assignments that belong to its subparameters/indicators
         return (
-          a.parameterID === currentScopeId ||
-          a.subParameterID !== null ||
-          a.indicatorID !== null
+          a.parameterID === currentScopeId
         );
 
       case 'subParameter':
         // Include subparameter + any assignments tied to its indicators
         return (
-          a.subParameterID === currentScopeId ||
-          a.indicatorID !== null
+          a.subParameterID === currentScopeId
         );
 
       case 'indicator':

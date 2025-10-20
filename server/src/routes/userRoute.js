@@ -8,6 +8,7 @@ import shareToken from '../controllers/access-token/POST/shareToken.js';
 import verifyToken from '../controllers/access-token/POST/verifyToken.js';
 import { authorize } from '../middlewares/auth/authMiddleware.js';
 import allowedRoles from './obj/allowedRoles.js';
+import fetchUserStatus from '../controllers/user/Dean/GET/fetchUserStatus.js';
 
 const { D, M, C, I, A } = allowedRoles();
 
@@ -21,6 +22,7 @@ userRouter.post('/verify-token', verifyToken);
 userRouter.post('/share-token', authorize([D]), shareToken);
 userRouter.post('/logout', logoutUser);
 userRouter.get('/check-email', checkEmail);
+userRouter.get('/fetch-user-status', fetchUserStatus);
 userRouter.get('/session', userSession);
 userRouter.get('/', authorize([D]), fetchUsersController);
 userRouter.get('/by-role', authorize([D, C, M]), fetchUserByRole);

@@ -134,11 +134,8 @@ const useLogin = () => {
       console.log('Backend response:', data);
 
       const { 
-        email, 
-        fullName,
-        profile_pic_path, 
-        role, 
-        status 
+        email, fullName, profile_pic_path, 
+        role,status 
       } = data.user;
 
       console.log(data);

@@ -203,7 +203,7 @@ const ParamSubparam = () => {
           >
             {/* Empty state */}
             {filteredSubparams.length === 0 && (
-              <div className='flex flex-col items-center justify-center'>
+              <div className='flex flex-col items-center justify-center py-8'>
                 <FolderOpen className='text-slate-600' size={160} />
                 <p className='text-lg font-medium text-slate-300 mt-2'>
                   {subParamsData.length === 0

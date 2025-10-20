@@ -1,5 +1,5 @@
 import axios from "axios";
-import apiClient from "../../services/axios/apiClient"; // authenticated instance
+import apiClient from "../../services/axios/apiClient.js";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 

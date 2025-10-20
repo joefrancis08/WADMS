@@ -47,8 +47,8 @@ export const getUsers = async (condition = {}) => {
 
 
 // GET User(s) By
-export const getUserBy = async (column, value, single = true, isLogin = false, includeUnverified = false) => {
-  const allowedColumns = ['id', 'user_uuid', 'email', 'full_name', 'role', 'status'];
+export const getUserBy = async (column, value, single = true, isLogin = false, includeUnverified = false, is) => {
+  const allowedColumns = ['id', 'user_uuid', 'email', 'full_name', 'role', 'status', 'is_show_welcome'];
 
   if (!allowedColumns.includes(column)) {
     throw new Error('Invalid column specified');
@@ -66,6 +66,7 @@ export const getUserBy = async (column, value, single = true, isLogin = false, i
       password,
       role,
       status,
+      is_show_welcome,
       created_at 
     FROM user 
     WHERE ${column} = ? 

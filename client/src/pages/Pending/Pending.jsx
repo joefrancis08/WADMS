@@ -1,15 +1,15 @@
-import React from 'react';
 import { pendingIcon } from '../../assets/icons.js';
 import { useAuth } from '../../contexts/AuthContext';
 import PendingSkeletonLoader from '../Pending/PendingSkeletonLoader.jsx';
 import { useNavigate } from 'react-router-dom';
-import PATH from '../../constants/path.js';
 import usePageTitle from '../../hooks/usePageTitle.js';
 
 const Pending = () => {
   const navigate = useNavigate();
   const { user, isLoading } = useAuth();
   usePageTitle('Pending Verification');
+
+  console.log();
 
   if (isLoading) 
     return (

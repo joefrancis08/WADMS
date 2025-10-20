@@ -15,6 +15,10 @@ const PATH = {
     PENDING: '/pending-verification',
   },
 
+  VERIFIED_USER: {
+    VERIFIED: '/account-verified'
+  },
+
   DEAN: {
     DASHBOARD: '/d',
     UNVERIFIED_USER: '/d/unverified-user',

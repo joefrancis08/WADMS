@@ -75,7 +75,7 @@ export const registerUserController = async (req, res) => {
       fullName: newUser.full_name,
       profilePicPath: newUser.profile_pic_path,
       role: newUser.role,
-      status: newUser.status
+      status: newUser.status,
     };
 
     console.log(req.session.user);

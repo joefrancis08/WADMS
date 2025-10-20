@@ -1,3 +1,4 @@
+import { getUserBy } from "../../../../models/user/GET/getUser.js";
 import { updateUserRoleModel } from "../../../../models/user/UPDATE/updateUserModel.js";
 import sendUpdate from "../../../../services/websocket/sendUpdate.js";
 
@@ -17,7 +18,10 @@ export const updateUserRoleController = async (req, res) => {
       });
     }
 
-    sendUpdate('user-update');
+    const user = await getUserBy('user_uuid', uuid, true);
+    console.log(user.is_show_welcome);
+
+    sendUpdate('user-update', { isShowWelcome: user.is_show_welcome });
 
     return res.json({
       message: 'User role updated successfully.',
