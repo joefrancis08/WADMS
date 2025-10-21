@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { fetchUserStatus } from "../../api-calls/Users/userAPI";
+import { fetchUserStatus } from "../../api-calls/users/userAPI";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { messageHandler } from "../../services/websocket/messageHandler";
