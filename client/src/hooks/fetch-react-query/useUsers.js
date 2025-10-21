@@ -1,6 +1,6 @@
 // useUsersBy.js
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { fetchAllUsers, fetchUserBy } from '../../api-calls/Users/userAPI';
+import { fetchAllUsers, fetchUserBy } from '../../api-calls/users/userAPI';
 // import { fetchUsersBy } from '../../api-calls/Users/userAPI'; // if you add a multi-filter endpoint
 import { messageHandler } from '../../services/websocket/messageHandler';
 import { useEffect, useMemo } from 'react';
