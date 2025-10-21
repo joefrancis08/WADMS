@@ -33,7 +33,7 @@ const login = async (req, res) => {
     if (otpRow?.id) {
       await updateOTP({ otpCode: otp, expiresAt, email });
     } else {
-      await insertOTP({ otpCode: otp, expiresAt, userId: user.user_id });
+      await insertOTP({ otpCode: otp, expiresAt, userId: user.id });
     }
 
     // Store a minimal pending login marker in the server session

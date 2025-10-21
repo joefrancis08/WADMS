@@ -206,7 +206,7 @@ const useLogin = () => {
     if (!tempUser) return;
 
     try {
-      const { data } = await verifyOTP(tempUser.email,otpCode);
+      const { data } = await verifyOTP(tempUser.email, otpCode);
       const user = data.user;
       localStorage.setItem('token', data.token);
 
@@ -218,8 +218,9 @@ const useLogin = () => {
       }
 
       // Now save the user in the context to be use by other components
-      const { userId, userUUID, email, fullName, profile_pic_path, role, status } = user;
-      login(userId, userUUID, email, fullName, profile_pic_path, role, status);
+      const { userId, userUUID, email, fullName, profilePicPath, role, status } = user;
+      console.log(user);
+      login(userId, userUUID, email, fullName, profilePicPath, role, status);
       
       showSuccessToast('Logged in successfully!', 'top-center', 5000);
 
@@ -234,10 +235,7 @@ const useLogin = () => {
     } catch (error) {
       console.error(error);
       showErrorToast(error.response?.data?.message || 'OTP verification error', 'top-center', 5000);
-
-    } finally {
-      setTempUser(null);
-    }
+    } 
   };
 
   const handleResendOtp = async (email) => {

@@ -72,7 +72,7 @@ const verifyOTP = async (req, res) => {
       {
         id: user.id,
         fullName: user.full_name,
-        profilePicPath: user.profile_pic_path,
+        profilePicPath: user.profilePicPath,
         role: user.role,
         status: user.status
       },

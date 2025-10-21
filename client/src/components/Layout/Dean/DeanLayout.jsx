@@ -9,7 +9,7 @@ import { BookCopy, CalendarDays, FolderArchive, LayoutDashboard, NotepadText, Sh
 import { useUsersBy } from '../../../hooks/fetch-react-query/useUsers';
 
 const DeanLayout = ({ children, ref }) => {
-  const { UNVERIFIED_USER } = USER_ROLES;
+  const { UU } = USER_ROLES;
   const { 
     DASHBOARD, 
     TASK_FORCE, 
@@ -18,17 +18,24 @@ const DeanLayout = ({ children, ref }) => {
     ARCHIVE,
     PROGRAMS_TO_BE_ACCREDITED 
   } = PATH.DEAN;
-  const unverifiedUsers = useUsersBy('role', UNVERIFIED_USER).users;
+  const { users: unverifiedUsers } = useUsersBy({ role: UU });
   const [menuIsClicked, setMenuIsClicked] = useState(false);
   const [unverifiedUserCount, setUnverifiedUserCount] = useState(null);
 
+  console.log(unverifiedUsers.length);
+  console.log(unverifiedUserCount);
+  console.log(Array.isArray(Object.entries(unverifiedUsers)));
+ 
+
   useEffect(() => {
   // Only run this if users is an array (not loading or error)
-  if (Array.isArray(unverifiedUsers?.data)) {
-      const count = unverifiedUsers.data.length;
+  if (Array.isArray(Object.entries(unverifiedUsers))) {
+      const count = unverifiedUsers.length;
       setUnverifiedUserCount(count);
     }
   }, [unverifiedUsers]);
+
+  console.log(unverifiedUserCount);
 
   useEffect(() => {
     document.body.style.overflow = menuIsClicked ? 'hidden' : '';
@@ -71,7 +78,8 @@ const DeanLayout = ({ children, ref }) => {
           icon: UserRoundX,
           label: 'Unverified Users',
           link: UNVERIFIED_USERS,
-          hasHR: true
+          hasHR: true,
+          hasCount: true,
         }
       ]
     },
