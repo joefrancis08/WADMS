@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Popover from '../components/Popover';
 import SubmitButton from '../components/Auth/SubmitButton';
 import { emailRegex } from '../utils/regEx';
-import { confirmEmail } from '../api-calls/Users/userAPI';
+import { confirmEmail } from '../api-calls/users/userAPI';
 
 const EmailConfirmation = () => {
   const [loading, setLoading] = useState(null);
