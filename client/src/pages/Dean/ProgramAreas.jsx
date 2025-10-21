@@ -259,7 +259,7 @@ const ProgramAreas = () => {
                         area: formatAreaName(areaData.area),
                       }}
                       handlers={{ handleProfileStackClick }}
-                      scope="area"
+                      scope='area'
                     />
                   </div>
                   <button

@@ -20,16 +20,25 @@ const LandingRedirect = () => {
     if (!isLoading) {
       if (!user) {
         navigate(LOGIN, { replace: true });
+        return;
 
       } else {
+        // Pending users
         if (user.status === USER_STATUS.PENDING) {
           if (user.role === USER_ROLES.UU) {
             navigate(PATH.UNVERIFIED_USER.PENDING, { replace: true });
+            return;
           }
         }
         
-         // Logged in user
-        if (user.status === USER_STATUS.VERIFIED) {
+        // Verified user that hasn't seen the welcome page
+        if (user.isShowWelcome && user.status === USER_STATUS.VERIFIED) {
+          navigate(PATH.VERIFIED_USER.VERIFIED);
+          return;
+        }
+        
+         // Logged in user that already seen the verified page
+        if (user.status === USER_STATUS.VERIFIED && !user.isShowWelcome) {
           if (user.role === USER_ROLES.DEAN) {
             navigate('/d', { replace: true });
 

@@ -1,5 +1,5 @@
 import axios from "axios";
-import apiClient from "../../services/axios/apiClient"; // authenticated instance
+import apiClient from "../../services/axios/apiClient.js";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -15,9 +15,16 @@ export const registerUser = async (values) => {
     const { data } = await axios.post(`${API_BASE_URL}/users/register`, values, {
       withCredentials: true,
     });
+    // data should include { success, user, message, alreadyExists? }
     return data;
-  } catch (error) {
-    console.log("Error registering the user: ", error);
+  } catch (err) {
+    // If server sent a response, surface that; otherwise return a generic shape
+    const data = err?.response?.data ?? {
+      message: 'Network or unexpected error.',
+      success: false,
+      user: null,
+    };
+    return data; // <-- crucial: always return a value
   }
 };
 
@@ -84,6 +91,13 @@ export const fetchUserBy = async (key, value, controller) => {
   }
 };
 
+export const fetchUserStatus = async (email, signal) => {
+  return await axios.get(`${API_BASE_URL}/users/fetch-user-status`, {
+    params: { email },
+    signal
+  });
+};
+ 
 export const fetchUserAssignments = async (userId, signal) =>
   apiClient.get(`/accreditation/fetch-assignments`, {
     params: { userId },
@@ -109,8 +123,13 @@ export const generateNewToken = (userUUID) => {
 export const updateUserRole = async (selectedUserUUID, newRole) =>
   apiClient.patch(`/users/role/${selectedUserUUID}`, {
     role: newRole,
-    status: "Verified",
   });
+
+export const updateUserStatus = (uuid, status) => {
+  return axios.patch(`${API_BASE_URL}/users/status/${uuid}`, {
+    status
+  });
+}
 
 export const deleteUser = async (uuid) =>
   apiClient.delete(`/users/delete-user`, { params: { uuid } });

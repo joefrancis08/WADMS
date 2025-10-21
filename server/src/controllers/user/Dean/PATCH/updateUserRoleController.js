@@ -1,14 +1,15 @@
+import { getUserBy } from "../../../../models/user/GET/getUser.js";
 import { updateUserRoleModel } from "../../../../models/user/UPDATE/updateUserModel.js";
 import sendUpdate from "../../../../services/websocket/sendUpdate.js";
 
 export const updateUserRoleController = async (req, res) => {
   const { uuid } = req.params;
-  const { role, status } = req.body;
+  const { role } = req.body;
 
-  console.log({uuid, role, status});
+  console.log({uuid, role });
 
   try {
-    const result = await updateUserRoleModel(uuid, role, status);
+    const result = await updateUserRoleModel(uuid, role);
 
     if (result.affectedRows === 0) {
       return res.status(200).json({
@@ -16,6 +17,9 @@ export const updateUserRoleController = async (req, res) => {
         success: false
       });
     }
+
+    const user = await getUserBy('user_uuid', uuid, true);
+    console.log(user.is_show_welcome);
 
     sendUpdate('user-update');
 

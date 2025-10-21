@@ -14,6 +14,7 @@ import formatAreaName from '../../utils/formatAreaName';
 import formatParameterName from '../../utils/formatParameterName';
 import Breadcrumb from '../../components/Breadcrumb';
 import useDebouncedValue from '../../hooks/useDebouncedValue';
+import formatSubparameter from '../../utils/formatSP';
 
 const { 
   PROGRAMS_TO_BE_ACCREDITED,
@@ -141,7 +142,7 @@ const SubparamIndicator = () => {
                 {program}
               </span>
               <span className='absolute -bottom-10 right-1/2 translate-x-1/2 text-xs md:text-lg px-6 bg-green-700 text-white font-medium'>
-                {levelName} &#8226; {formatAreaName(area)} &#8226; Parameter {formatParameterName(parameter)} &#8226; {subParam}
+                {levelName} &#8226; {formatAreaName(area)} &#8226; {formatSubparameter('Parameter', subParam)}
               </span>
             </p>
           </div>

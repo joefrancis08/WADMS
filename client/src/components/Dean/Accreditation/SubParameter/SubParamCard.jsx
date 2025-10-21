@@ -49,7 +49,7 @@ const SubParamCard = ({
       {activeSubParamId && <div className='absolute inset-0 z-20'></div>}
       <div className='relative flex items-center justify-between mb-3'>
         {/* Sub-Parameter Title */}
-        <p className='font-medium text-slate-100 text-lg'>
+        <p className='font-medium text-slate-100 text-lg truncate'>
           {sub_parameter}
         </p>
         <button 
@@ -157,7 +157,7 @@ const SubParamCard = ({
               </div>
             </div>
           ) : (
-            <p className='text-sm mt-2 text-slate-100'>
+            <p className='flex items-center gap-2 text-sm text-center my-1.5 max-w-[150px] lg:max-w-[300px] text-slate-100'>
               No uploaded document.{'\n'}
               <span
                 onClick={(e) => {

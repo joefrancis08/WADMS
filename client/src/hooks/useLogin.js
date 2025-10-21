@@ -54,8 +54,6 @@ const useLogin = () => {
 
   usePageTitle('Login');
 
-  console.log(user);
-
   useEffect(() => {
     let timer;
     if (nextStep === 2 && timeLeft > 0) {
@@ -133,16 +131,10 @@ const useLogin = () => {
 
       console.log('Backend response:', data);
 
-      const { 
-        email, 
-        fullName,
-        profile_pic_path, 
-        role, 
-        status 
-      } = data.user;
+      const { email } = data.tempUser;
 
-      console.log(data);
-      console.log('User:', { email, fullName, profile_pic_path, role, status });
+      console.log(data.tempUser);
+      console.log('User:', { email,  });
 
       // Step 3.1: Show toast notif if login is unsuccessful
       if (!data?.success) {
@@ -151,7 +143,7 @@ const useLogin = () => {
       }
 
       // Step 3.2: Save the data of the logged in user temporarily so that it can be use in creating session after OTP verification
-      setTempUser(data.user);
+      setTempUser(data.tempUser);
 
       // Step 3.4: Reset field values after successful form submission
       setValues({
@@ -165,7 +157,7 @@ const useLogin = () => {
       setOtpExpired(false);
 
     } catch (error) {
-      console.error(error.message);
+      console.error(error);
       const { response } = error;
       const { data } = response;
       const { emailNotFound, wrongPassword } = data;
@@ -208,18 +200,15 @@ const useLogin = () => {
     setOtp(newOtp);
   };
 
-  const handleVerifyOtp = async (e) => {
-    e.preventDefault(); // prevent default form submit
-
+  const handleVerifyOtp = async () => {
     const otpCode = otp.join(''); // combine all OTP digits
 
     if (!tempUser) return;
 
     try {
-      const { data } = await verifyOTP(
-        tempUser.email, // or user.email if saved in context
-        otpCode
-      );
+      const { data } = await verifyOTP(tempUser.email, otpCode);
+      const user = data.user;
+      localStorage.setItem('token', data.token);
 
       console.log(data);
 
@@ -229,14 +218,16 @@ const useLogin = () => {
       }
 
       // Now save the user in the context to be use by other components
-      const { email, fullName, profile_pic_path, role, status } = tempUser;
-      login(email, fullName, profile_pic_path, role, status);
+      const { userId, userUUID, email, fullName, profilePicPath, role, status } = user;
+      console.log(user);
+      login(userId, userUUID, email, fullName, profilePicPath, role, status);
       
       showSuccessToast('Logged in successfully!', 'top-center', 5000);
 
       // Navigate to dashboard or home page after OTP verification
-      if (tempUser.role === USER_ROLES.DEAN) {
+      if (user.role === USER_ROLES.DEAN) {
         navigate('/d', { replace: true });
+
       } else {
         navigate('/');
       }
@@ -244,10 +235,7 @@ const useLogin = () => {
     } catch (error) {
       console.error(error);
       showErrorToast(error.response?.data?.message || 'OTP verification error', 'top-center', 5000);
-
-    } finally {
-      setTempUser(null);
-    }
+    } 
   };
 
   const handleResendOtp = async (email) => {

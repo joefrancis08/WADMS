@@ -117,7 +117,7 @@ export const useUnverifiedUsers = () => {
       const res = await updateUserRole(selectedUser.user_uuid, selectedRole);
       console.log(res);
       if (res.data.success) {
-        showSuccessToast(UU_VERIFICATION);
+        showSuccessToast(UU_VERIFICATION.SUCCESS);
       }
 
       setSelectedRole(UU);

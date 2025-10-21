@@ -9,8 +9,7 @@ export const getUsers = async (condition = {}) => {
   if (forTaskForce) {
     // Only Chairs and Members
     whereClause = `
-      role IN ('Task Force Chair', 'Task Force Member') AND 
-      status = 'Verified'
+      role IN ('Task Force Chair', 'Task Force Member')
     `;
   }
 
@@ -47,8 +46,8 @@ export const getUsers = async (condition = {}) => {
 
 
 // GET User(s) By
-export const getUserBy = async (column, value, single = true, isLogin = false, includeUnverified = false) => {
-  const allowedColumns = ['id', 'user_uuid', 'email', 'full_name', 'role', 'status'];
+export const getUserBy = async (column, value, single = true, isLogin = false, includeUnverified = false, is) => {
+  const allowedColumns = ['id', 'user_uuid', 'email', 'full_name', 'role', 'status', 'is_show_welcome'];
 
   if (!allowedColumns.includes(column)) {
     throw new Error('Invalid column specified');
@@ -58,14 +57,15 @@ export const getUserBy = async (column, value, single = true, isLogin = false, i
 
   const query = `
     SELECT 
-      id AS user_id,
-      user_uuid, 
+      id,
+      user_uuid,
       profile_pic_path, 
       full_name, 
       email, 
       password,
       role,
       status,
+      is_show_welcome,
       created_at 
     FROM user 
     WHERE ${column} = ? 

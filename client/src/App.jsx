@@ -5,6 +5,7 @@ import publicRoute from './routes/PublicRoute';
 import taskForceRoutes from './routes/TaskForceRoute';
 import unverifiedUserRoutes from './routes/UnverifiedUserRoute';
 import internalAssessorRoutes from './routes/InternalAssessor';
+import verifiedUserRoutes from './routes/VerifiedUserRoute';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Routes>
         {publicRoute}
         {unverifiedUserRoutes}
+        {verifiedUserRoutes}
         {deanRoutes}
         {taskForceRoutes}
         {internalAssessorRoutes}

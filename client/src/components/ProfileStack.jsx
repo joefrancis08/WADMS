@@ -3,7 +3,8 @@ const PROFILE_PIC_PATH = import.meta.env.VITE_PROFILE_PIC_PATH;
 const ProfileStack = ({ 
   data = {}, 
   handlers = {}, 
-  scope = 'area' // Can be 'area', 'parameter', or 'subparameter'
+  scope = 'area', // Can be 'area', 'parameter', or 'subparameter',
+  showBorder = false,
 }) => {
   const { assignmentData = [], taskForce = [], accredInfoId, levelId, programId } = data;
   const { handleProfileStackClick } = handlers;
@@ -38,16 +39,13 @@ const ProfileStack = ({
       case 'parameter':
         // Include parameter + any assignments that belong to its subparameters/indicators
         return (
-          a.parameterID === currentScopeId ||
-          a.subParameterID !== null ||
-          a.indicatorID !== null
+          a.parameterID === currentScopeId
         );
 
       case 'subParameter':
         // Include subparameter + any assignments tied to its indicators
         return (
-          a.subParameterID === currentScopeId ||
-          a.indicatorID !== null
+          a.subParameterID === currentScopeId
         );
 
       case 'indicator':
@@ -110,7 +108,7 @@ const ProfileStack = ({
           <img
             src={`${PROFILE_PIC_PATH}/${tf.profilePicPath || 'default-profile-picture.png'}`}
             alt='Task Force Profile Picture'
-            className='h-5 w-5 rounded-full border-l border-white/80'
+            className={`h-5 w-5 rounded-full ${showBorder && 'outline-2 outline-slate-800'}`}
             loading='lazy'
           />
         </div>

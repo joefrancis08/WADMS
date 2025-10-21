@@ -1,14 +1,24 @@
-import React from 'react';
 import { pendingIcon } from '../../assets/icons.js';
 import { useAuth } from '../../contexts/AuthContext';
 import PendingSkeletonLoader from '../Pending/PendingSkeletonLoader.jsx';
 import { useNavigate } from 'react-router-dom';
-import PATH from '../../constants/path.js';
 import usePageTitle from '../../hooks/usePageTitle.js';
+import useFetchUserStatus from '../../hooks/fetch-react-query/useFetchUserStatus.js';
+import PATH from '../../constants/path.js';
+import { useEffect } from 'react';
+import shortId from '../../utils/shortId.js';
 
 const Pending = () => {
   const navigate = useNavigate();
   const { user, isLoading } = useAuth();
+  const { userData } = useFetchUserStatus(user.email);
+
+  useEffect(() => {
+    if(userData?.user?.isShowWelcome === 1) {
+      navigate(PATH.VERIFIED_USER.VERIFIED(userData?.user?.userUUID + shortId()))
+    }
+  }, [navigate, userData?.user?.isShowWelcome, userData?.user?.userUUID]);
+  
   usePageTitle('Pending Verification');
 
   if (isLoading) 

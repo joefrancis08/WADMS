@@ -8,6 +8,8 @@ import shareToken from '../controllers/access-token/POST/shareToken.js';
 import verifyToken from '../controllers/access-token/POST/verifyToken.js';
 import { authorize } from '../middlewares/auth/authMiddleware.js';
 import allowedRoles from './obj/allowedRoles.js';
+import fetchUserStatus from '../controllers/user/Dean/GET/fetchUserStatus.js';
+import updateUserStatus from '../controllers/user/Dean/PATCH/updateUserStatus.js';
 
 const { D, M, C, I, A } = allowedRoles();
 
@@ -18,9 +20,10 @@ userRouter.post('/add-user', authorize([D]), upload.single('profilePic'), addUse
 userRouter.post('/confirm-email', confirmEmail);
 userRouter.post('/login', loginController);
 userRouter.post('/verify-token', verifyToken);
-userRouter.post('/share-token', authorize([D]), shareToken);
+userRouter.post('/share-token', shareToken);
 userRouter.post('/logout', logoutUser);
 userRouter.get('/check-email', checkEmail);
+userRouter.get('/fetch-user-status', fetchUserStatus);
 userRouter.get('/session', userSession);
 userRouter.get('/', authorize([D]), fetchUsersController);
 userRouter.get('/by-role', authorize([D, C, M]), fetchUserByRole);
@@ -31,6 +34,7 @@ userRouter.get('/:id', authorize([D]), fetchUserById);
 userRouter.patch('/generate-new-token', authorize([D]), generateNewToken);
 userRouter.patch('/:uuid', authorize([D, C, M, A, I]), upload.single('newProfilePic'), updateUser);
 userRouter.patch('/role/:uuid', authorize([D]), updateUserRole);
+userRouter.patch('/status/:uuid', updateUserStatus);
 userRouter.delete('/', authorize([D]), deleteAllUsers);
 userRouter.delete('/delete-user', authorize([D]), deleteUser);
 
