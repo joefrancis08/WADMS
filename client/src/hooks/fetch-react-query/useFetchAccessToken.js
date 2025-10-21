@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
-import { fetchAccessToken } from "../../api-calls/Users/userAPI";
+import { fetchAccessToken } from "../../api-calls/users/userAPI";
 import { messageHandler } from "../../services/websocket/messageHandler";
 
 const useFetchAccessToken = () => {
