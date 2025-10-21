@@ -3,7 +3,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useState } from "react";
 import { useRef } from "react";
 import { validateForm } from "../utils/validateForm";
-import { loginUser } from "../api-calls/Users/userAPI";
+import { loginUser } from "../api-calls/users/userAPI";
 import { showErrorToast, showSuccessToast } from "../utils/toastNotification";
 import { TOAST_MESSAGES } from "../constants/messages";
 import { useEffect } from "react";
