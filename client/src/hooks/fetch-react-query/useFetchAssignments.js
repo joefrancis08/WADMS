@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
-import { fetchUserAssignments } from "../../api-calls/Users/userAPI";
+import { fetchUserAssignments } from "../../api-calls/users/userAPI";
 import { messageHandler } from "../../services/websocket/messageHandler";
 
 const useFetchAssignments = (IDs = {}) => {
