@@ -5,7 +5,7 @@ import PATH from "../../constants/path";
 import { useUsersBy } from "../fetch-react-query/useUsers"; // your improved hook that returns an array
 import MODAL_TYPES from "../../constants/modalTypes";
 import { TOAST_MESSAGES } from "../../constants/messages";
-import { checkUserEmail, deleteUser, fetchAccessToken, postUser, updateUser } from "../../api-calls/Users/userAPI";
+import { checkUserEmail, deleteUser, fetchAccessToken, postUser, updateUser } from "../../api-calls/users/userAPI";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
 import { emailRegex } from "../../utils/regEx";
 import useOutsideClick from "../useOutsideClick";
