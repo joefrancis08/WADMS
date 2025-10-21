@@ -12,7 +12,7 @@ import Popover from '../../Popover';
 import { deleteUser, gmailIcon } from '../../../assets/icons';
 import { useState } from 'react';
 import { showSuccessToast } from '../../../utils/toastNotification';
-import { generateNewToken, shareToken } from '../../../api-calls/Users/userAPI';
+import { generateNewToken, shareToken } from '../../../api-calls/users/userAPI';
 
 const CLIENT_BASE_URL = import.meta.env.VITE_CLIENT_BASE_URL;
 
