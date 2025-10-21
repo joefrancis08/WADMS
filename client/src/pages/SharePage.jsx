@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { verifyToken } from '../api-calls/Users/userAPI';
+import { verifyToken } from '../api-calls/users/userAPI';
 import { useAuth } from '../contexts/AuthContext';
 import { USER_ROLES, USER_STATUS } from '../constants/user';
 import { useNavigate, useParams } from 'react-router-dom';
