@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import useOutsideClick from '../hooks/useOutsideClick';
 import MODAL_TYPE from '../constants/modalTypes';
 import ConfirmationModal from './Modals/ConfirmationModal';
-import { logoutUser } from '../api-calls/Users/userAPI';
+import { logoutUser } from '../api-calls/users/userAPI';
 import { showErrorToast, showSuccessToast } from '../utils/toastNotification';
 import { logoutIcon } from '../assets/icons';
 
