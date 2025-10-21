@@ -238,7 +238,7 @@ const Login = () => {
               <div className="flex flex-col justify-center items-center">
                 {!otpExpired ? (
                   <>
-                    <SubmitButton onClick={(e) => handleVerifyOtp(e)}>
+                    <SubmitButton onClick={handleVerifyOtp}>
                       <p>Verify OTP</p>
                     </SubmitButton>
                     <p className="mt-4 text-sm text-slate-600">
@@ -247,6 +247,7 @@ const Login = () => {
                   </>
                 ) : (
                   <>
+                    {console.log(tempUser)}
                     <p className="text-red-600 font-semibold mb-3">OTP expired!</p>
                     <button
                       onClick={() => handleResendOtp(tempUser.email)}

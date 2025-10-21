@@ -17,7 +17,7 @@ const profileOptions = [
 ];
 
 const ProfileAction = ({ onViewProfile, onLogout }) => (
-  profileOptions.map((item) => {
+  profileOptions.map((item, index) => {
     const Icon = item.icon;
 
     const handleClick = () => {
@@ -29,7 +29,7 @@ const ProfileAction = ({ onViewProfile, onLogout }) => (
     };
 
     return (
-      <>
+      <React.Fragment key={index}>
         {item.id === 'logout' && <hr className='text-slate-700 my-1 w-[90%] mx-auto'></hr>}
         <button
           key={item.id}
@@ -39,7 +39,7 @@ const ProfileAction = ({ onViewProfile, onLogout }) => (
           <Icon className='w-5 h-5 mr-2'/>
           {item.label}
         </button>
-      </>
+      </React.Fragment>
     );
   })
 );

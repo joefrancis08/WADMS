@@ -1,10 +1,14 @@
+import jwt from 'jsonwebtoken';
 import getOTP from "../../../models/OTP/GET/getOTP.js";
 import updateOTP from "../../../models/OTP/UPDATE/updateOTP.js";
+import { getUserBy } from "../../../models/user/GET/getUser.js";
+
+const JWT_SECRET = process.env.JWT_SECRET;
 
 const verifyOTP = async (req, res) => {
   const { email, otp = null } = req.body;
 
-  console.log({ email, otp });
+  console.log('OTP cred:', { email, otp });
 
   try {
     if (!email) {
@@ -45,10 +49,43 @@ const verifyOTP = async (req, res) => {
     // Step 4: Mark OTP as used (optional)
     await updateOTP({ otpCode: null, expiresAt: null, email });
 
+    // Fetch the user for session/JWT payload
+    const user = await getUserBy('email', email, true, true, false);
+
+    // Mark OTP as used / clear it
+    await updateOTP({ otpCode: null, expiresAt: null, email });
+
+    // Create full authenticated session
+    req.session.user = {
+      userId: user.id,
+      userUUID: user.user_uuid,
+      email: user.email,
+      fullName: user.full_name,
+      profilePicPath: user.profile_pic_path,
+      role: user.role,
+      status: user.status
+    };
+    delete req.session.pendingUser;
+
+    // Issue JWT
+    const token = jwt.sign(
+      {
+        id: user.id,
+        fullName: user.full_name,
+        profilePicPath: user.profile_pic_path,
+        role: user.role,
+        status: user.status
+      },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
     // Step 5: Return success
     res.status(200).json({
       message: 'OTP verified successfully!',
-      success: true
+      success: true,
+      token,
+      user: req.session.user
     });
 
   } catch (error) {

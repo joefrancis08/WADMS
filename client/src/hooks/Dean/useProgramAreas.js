@@ -294,7 +294,7 @@ const useProgramAreas = () => {
     if (selectedTaskForce.length === taskForce.length) {
       setSelectedTaskForce([]); // Unselect all
     } else {
-      setSelectedTaskForce(taskForce.map((user) => user.id)); // Select all by id
+      setSelectedTaskForce(taskForce.map((user) => user.userId)); // Select all by id
     }
   };
 

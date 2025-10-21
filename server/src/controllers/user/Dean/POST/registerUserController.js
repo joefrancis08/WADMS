@@ -22,10 +22,11 @@ export const registerUserController = async (req, res) => {
     // Step 4: Check if email already exists in the database and return a response
     const user = await getUserByEmail(email);
     if (user && user.email === email) {
-      console.log(user, user.email);
-      return res.status(200).json({
+      return res.status(409).json({
         message: 'Email already exists.',
-        alreadyExists: true, 
+        success: false,
+        alreadyExists: true,
+        user: null,
       });
     }
 
@@ -55,8 +56,6 @@ export const registerUserController = async (req, res) => {
       status
     });
 
-    console.log('line 60:', insertResult.insertId);
-
     // After successful insert:
     const newUser = {
       user_id: insertResult.insertId,
@@ -78,8 +77,6 @@ export const registerUserController = async (req, res) => {
       status: newUser.status,
     };
 
-    console.log(req.session.user);
-
     return res.status(201).json({ 
       message: 'User created successfully.', 
       success: true, 
@@ -92,13 +89,15 @@ export const registerUserController = async (req, res) => {
       return res.status(409).json({
         message: 'Email already exists.',
         success: false,
-        alreadyExists: true, 
+        alreadyExists: true,
+        user: null,
       });
     }
     console.error(error);
-    return res.status(500).json({ 
-      message: 'Something went wrong in our server.', 
-      success: false 
+    return res.status(500).json({
+      message: 'Something went wrong in our server.',
+      success: false,
+      user: null,
     });
   }
 };

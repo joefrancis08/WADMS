@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import PATH from '../../constants/path.js';
 import usePageTitle from '../../hooks/usePageTitle.js';
 import { checkIcon } from '../../assets/icons.js';
+import { updateUserStatus } from '../../api-calls/users/userAPI.js';
 
 /**
  * Verified Page
@@ -22,41 +23,20 @@ const VerifiedPage = () => {
   const { user, isLoading } = useAuth();
   usePageTitle('Account Verified');
 
-  // Gatekeeping + first-load decisions
-  useEffect(() => {
-    if (isLoading) return;
-
-    // Not logged in / no user
-    if (!user) return; // We render a small message below
-
-    // If somehow the user hits this page but isn't verified yet, send back to Pending
-    if (user?.status !== 'verified') {
-      navigate(PATH.PENDING, { replace: true });
-      return;
-    }
-
-    // If they have already seen the Verified screen on this device, go straight to dashboard
-    const hasSeen = localStorage.getItem('hasSeenVerified') === 'true';
-    if (hasSeen) {
-      navigate(PATH.PUBLIC.LOGIN, { replace: true });
-    }
-  }, [user, isLoading, navigate]);
+  console.log(user);
 
   const handleContinue = async () => {
     try {
-      // Optional: Let the backend know this user has acknowledged the verified screen
-      // If you maintain an `isFirst` flag server-side, you can flip it here.
-      await fetch('/api/set-isFirst-false', { method: 'POST' });
+      const res = await updateUserStatus(user.userUUID, 'Verified');
+
+      console.log(res);
+      if (res?.data?.success) {
+        navigate(PATH.PUBLIC.LOGIN, { replace: true });
+      }
+
     } catch (err) {
-      // Silently ignore if endpoint doesn't exist yet
-      // console.warn('set-isFirst-false endpoint not available:', err);
+      console.error(err);
     }
-
-    // Persist locally so this page won’t appear again on this browser
-    localStorage.setItem('hasSeenVerified', 'true');
-
-    // Continue to the main app area
-    navigate(PATH.DASHBOARD, { replace: true });
   };
 
   if (isLoading) return <PendingSkeletonLoader />;
@@ -65,13 +45,12 @@ const VerifiedPage = () => {
     return (
       <div className='min-h-screen flex items-center justify-center bg-gray-200'>
         <div className='w-full max-w-md bg-white p-4 sm:p-6 md:p-8 rounded-lg shadow-lg text-center'>
-          <p>You are not logged in. Please sign in first.</p>
+          <p>You are not registered. Please registered first.</p>
         </div>
       </div>
     );
   }
 
-  // If user exists but is not verified, the effect above will redirect to Pending.
   // Render the Verified UI when we have a verified user and they haven't seen the page yet on this device.
   return (
     <div className='min-h-screen flex items-center justify-center bg-gray-200'>

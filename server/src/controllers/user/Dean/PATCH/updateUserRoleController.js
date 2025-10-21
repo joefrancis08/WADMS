@@ -6,7 +6,7 @@ export const updateUserRoleController = async (req, res) => {
   const { uuid } = req.params;
   const { role } = req.body;
 
-  console.log({uuid, role, status});
+  console.log({uuid, role });
 
   try {
     const result = await updateUserRoleModel(uuid, role);

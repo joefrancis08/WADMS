@@ -8,6 +8,7 @@ import { useAuth } from "../../../contexts/AuthContext";
 import { showErrorToast, showSuccessToast } from "../../../utils/toastNotification";
 
 const { DASHBOARD, ACCREDITATION } = PATH.TASK_FORCE;
+const PROFILE_PIC_PATH = import.meta.env.VITE_PROFILE_PIC_PATH;
 
 const navItems = [
   { id: "home", label: "Home", link: DASHBOARD },
@@ -16,9 +17,12 @@ const navItems = [
 ];
 
 const TaskForceLayout = ({ children }) => {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
+  const { email, fullName, profilePicPath, role } = user;
   const profileOptionRef = useRef();
   const location = useLocation();
+
+  console.log(user);
 
   const [isDark, setIsDark] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -111,7 +115,11 @@ const TaskForceLayout = ({ children }) => {
                 className="flex items-center space-x-2 p-2 rounded-full hover:bg-slate-700 cursor-pointer"
               >
                 <img
-                  src="/sample-profile-picture.webp"
+                  src={
+                  profilePicPath?.startsWith('http')
+                    ? profilePicPath
+                    : `${PROFILE_PIC_PATH}/${user.profilePicPath || 'default-profile-picture.png'}`
+                  }
                   alt="Profile"
                   className="h-8 w-8 rounded-full"
                 />
@@ -140,14 +148,18 @@ const TaskForceLayout = ({ children }) => {
             <div className="w-[24rem] min-h-[20rem] bg-slate-900 p-3 rounded-lg outline outline-slate-700">
               <div className="relative flex flex-col gap-y-4 justify-center items-center bg-slate-800 outline outline-slate-700 min-w-[5rem] min-h-[12rem] rounded-lg ">
                 <img
-                  src="/sample-profile-picture.webp"
+                  src={
+                  profilePicPath?.startsWith('http')
+                    ? profilePicPath
+                    : `${PROFILE_PIC_PATH}/${user.profilePicPath || 'default-profile-picture.png'}`
+                  }
                   alt="Profile"
                   className="h-20 w-20 rounded-full"
                 />
                 <div className="flex flex-col items-center justify-center">
-                  <p className="text-slate-100 text-xl font-bold">Stephen Curry</p>
-                  <p className="text-slate-200 text-sm">Task Force</p>
-                  <p className="text-slate-200 text-xs font-light pt-2">stephencurry@test.com</p>
+                  <p className="text-slate-100 text-xl font-bold">{fullName}</p>
+                  <p className="text-slate-200 text-sm">{role}</p>
+                  <p className="text-slate-200 text-xs font-light pt-2">{email}</p>
                 </div>
                 <button
                   title="Update info"

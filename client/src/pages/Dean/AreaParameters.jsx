@@ -281,6 +281,7 @@ const AreaParameters = () => {
                       }}
                       handlers={{ handleProfileStackClick }}
                       scope='parameter'
+                      showBorder={true}
                     />
 
                     <button

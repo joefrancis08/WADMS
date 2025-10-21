@@ -132,7 +132,7 @@ const AreaModal = ({ navigation, params, refs, modalType, datas, inputs, handler
           disabled={selectedTaskForce.length === 0}
           secondaryButton={'Cancel'}
           headerContent={
-            <p className='text-xl font-semibold w-full truncate'>
+            <p className='text-lg text-slate-800 font-semibold w-full truncate'>
               Assign Task Force to {modalData?.area}
             </p>
           }

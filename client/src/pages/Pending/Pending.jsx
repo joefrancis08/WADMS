@@ -11,11 +11,7 @@ import shortId from '../../utils/shortId.js';
 const Pending = () => {
   const navigate = useNavigate();
   const { user, isLoading } = useAuth();
-
   const { userData } = useFetchUserStatus(user.email);
-
-  console.log(userData);
-  console.log(user);
 
   useEffect(() => {
     if(userData?.user?.isShowWelcome === 1) {
@@ -24,8 +20,6 @@ const Pending = () => {
   }, [navigate, userData?.user?.isShowWelcome, userData?.user?.userUUID]);
   
   usePageTitle('Pending Verification');
-
-  console.log(user);
 
   if (isLoading) 
     return (

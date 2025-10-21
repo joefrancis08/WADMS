@@ -57,8 +57,8 @@ export const getUserBy = async (column, value, single = true, isLogin = false, i
 
   const query = `
     SELECT 
-      id AS user_id,
-      user_uuid, 
+      id,
+      user_uuid,
       profile_pic_path, 
       full_name, 
       email, 

@@ -68,73 +68,57 @@ export const useRegister = () => {
 
   // Create function to handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Stop default form behavior
+    e.preventDefault();
 
-    // Step 1: Validate form for common errors (i.e., empty fields, invalid email, weak passwords)
     const formErrors = validateForm(values);
     setErrors(formErrors);
-
-    // Step 2: Stop submitting form if there are any form errors and focus on the first error in the field
     if (Object.keys(formErrors).length > 0) {
       const firstErrorKey = Object.keys(formErrors)[0];
       const ref = fieldRefs[firstErrorKey];
       ref?.current?.focus();
-      ref?.current?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-      });
-
+      ref?.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
 
     try {
-      // Step 3: Check if email already exists
-      // Note: This is a server-side validation so I think it's good to keep the code here, still I update the errors if there's any.
+      // (Optional) If you keep the pre-check:
       const res = await checkUserEmail(values.email);
-      const emailAlreadyExists = res?.data?.alreadyExists;
-
-      if (emailAlreadyExists) {
-        setErrors(prev => ({
-          ...prev, email: 'This email was already registered. Try another.'
-        }));
-
+      if (res?.data?.alreadyExists) {
+        setErrors(prev => ({ ...prev, email: 'This email was already registered. Try another.' }));
         return;
       }
 
-      // Step 4: Register the user if there are no errors
-      setIsLoading(true); // Set loading state to true while waiting to post the data
-      const data = await registerUser(values);
-      const { email, fullName, profilePicPath, role, status } = data.user; // Destructure the data for easy access and usage
-      
-      // Step 5: If registration unsuccessful, let the user know thru toast notification
-      if (!data?.success) {
-        showErrorToast(data?.message || REGISTRATION.UNSUCCESSFUL);
+      setIsLoading(true);
+      const data = await registerUser(values); // ← always returns an object now
+      setIsLoading(false);
+
+      if (!data?.success || !data?.user) {
+        // server tells you what happened
+        if (data?.alreadyExists) {
+          setErrors(prev => ({ ...prev, email: 'This email was already registered. Try another.' }));
+        } else {
+          // toast the message if present; fall back to generic
+          showErrorToast(data?.message || REGISTRATION.UNSUCCESSFUL);
+        }
         return;
       }
 
-      setIsLoading(false); // Set loading to false after posting the data
+      // safe to destructure now
+      const { userId, userUUID, email, fullName, profilePicPath, role, status } = data.user;
 
-      // Step 6: Save the data of the registered user to the context so that it can be used in other components
-      register(email, fullName, profilePicPath, role, status);
+      register(userId, userUUID, email, fullName, profilePicPath, role, status);
 
-      // Step 7: Reset field values after successful form submission
-      setValues({
-        ...values,
-        fullName: '', 
-        email: '',
-        password: ''
-      });
-      showSuccessToast(REGISTRATION.SUCCESS); // Show success toast notification
-
-      // Step 8: Redirect to pedinding verification page
+      setValues({ fullName: '', email: '', password: '' });
+      showSuccessToast(REGISTRATION.SUCCESS);
       navigate(PATH.UNVERIFIED_USER.PENDING);
 
     } catch (error) {
-      // Additional step: Log the error and let the user know thru toast notification
       console.error(error);
+      setIsLoading(false);
       showErrorToast(REGISTRATION.ERROR);
     }
-  }
+  };
+
 
   return {
     formValues: {values, setValues},

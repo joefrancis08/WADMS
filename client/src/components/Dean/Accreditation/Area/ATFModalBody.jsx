@@ -15,8 +15,8 @@ const ATFModalBody = ({ data = {}, handlers = {} }) => {
         <h2>Select or Add Task Force</h2>
         <button 
           title='Add Task Force'
-          className='p-1 hover:bg-slate-200 rounded-full cursor-pointer active:scale-95'>
-          <Plus className='active:scale-95'/>
+          className='p-1 hover:bg-slate-200 text-slate-600 rounded-full cursor-pointer active:scale-95'>
+          <Plus className='active:scale-95' size={22}/>
         </button>
       </div>
       <hr className='text-slate-200'></hr>
