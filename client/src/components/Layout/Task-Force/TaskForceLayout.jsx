@@ -3,7 +3,7 @@ import { Menu, X, Bell, Pen, LogOut, Sun, Moon } from "lucide-react";
 import PATH from "../../../constants/path";
 import { Link, useLocation } from "react-router-dom";
 import useOutsideClick from "../../../hooks/useOutsideClick";
-import { logoutUser } from "../../../api-calls/Users/userAPI";
+import { logoutUser } from "../../../api-calls/users/userAPI";
 import { useAuth } from "../../../contexts/AuthContext";
 import { showErrorToast, showSuccessToast } from "../../../utils/toastNotification";
 
