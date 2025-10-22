@@ -72,7 +72,7 @@ export const useTaskForce = () => {
 
   // Close dropdowns on outside click
   useOutsideClick(dropdownRef, () => setActiveDropdownId(null));
-  usePageTitle("Task Force");
+  usePageTitle('Task Force');
 
   console.log(accessTokens);
 
@@ -156,6 +156,7 @@ export const useTaskForce = () => {
       const res = await postUser(data);
       if (res?.data?.success) showSuccessToast(TASK_FORCE_CREATION.SUCCESS);
       else showErrorToast(TASK_FORCE_CREATION.ERROR);
+      
     } catch (error) {
       console.error(error);
       showErrorToast(TASK_FORCE_CREATION.ERROR);

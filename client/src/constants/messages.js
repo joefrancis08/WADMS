@@ -46,6 +46,16 @@ export const TOAST_MESSAGES = Object.freeze({
     ERROR: 'Something went wrong while updating user. Try again.'
   },
 
+  IA_ADDITION: {
+    SUCCESS: 'New internal assessor added successfully!',
+    ERROR: 'Error adding new internal assessor'
+  },
+
+  IA_DELETION: {
+    SUCCESS: (fullName) => `${fullName} deleted successfully!`,
+    ERROR: (fullName) => `Error deleting ${fullName}`
+  },
+
   PROGRAMS_TO_BE_ACCREDITED_CREATION: {
     SUCCESS: 'Created successfully.',
     ERROR: 'Something went wrong while creating period, level, and programs.'

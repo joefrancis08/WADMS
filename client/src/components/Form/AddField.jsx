@@ -35,6 +35,7 @@ const AddField = ({
   onDropdownMenuClick,
   toggleDropdown,
   calendarClose,
+  autoFocus = false,
   invalid = false,
   isReadOnly = false,
   isClickable = false,
@@ -280,7 +281,7 @@ const AddField = ({
               type={type}
               name={name}
               value={formValue}
-              autoComplete='off'
+              autoFocus={autoFocus}
               onChange={(e) => onChange(e)}
               onClick={isClickable ? onClick : null}
               onFocus={() => handleFocus({ showDropdown: true })}

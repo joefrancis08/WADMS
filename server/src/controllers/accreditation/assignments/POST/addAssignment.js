@@ -1,6 +1,7 @@
 import db from '../../../../config/db.js';
 import insertAssignment from '../../../../models/accreditation/assignments/POST/insertAssignment.js';
 import updateAssignment from '../../../../models/accreditation/assignments/UPDATE/updateAssignment.js';
+import insertNotification from '../../../../models/notification/POST/insertNotification.js';
 import sendUpdate from '../../../../services/websocket/sendUpdate.js';
 
 const addAssignment = async (req, res) => {
@@ -271,6 +272,18 @@ const addAssignment = async (req, res) => {
         // Insert new assignment
         const insertRes = await insertAssignment({ userId, ...commonData }, connection);
         results.push({ type: 'insert', userId, insertId: insertRes.insertId });
+
+        await insertNotification({ 
+          userId,
+          accredInfoId,
+          levelId,
+          programId,
+          areaId,
+          parameterId,
+          subParameterId,
+          title: 'Assignment',
+          type: 'assignment'
+        });
       }
     }
 

@@ -126,7 +126,6 @@ const Dashboard = () => {
                       )
                     })
                   })()}
-                  {/* Correct “+x more” logic */}
                   {users.length > 3 && (
                     <span className='ml-3 text-xs text-slate-400'>
                       +{users.length - 5} more

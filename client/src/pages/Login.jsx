@@ -10,8 +10,10 @@ import { googleIcon } from '../assets/icons';
 import { showErrorToast, showSuccessToast } from '../utils/toastNotification';
 import { USER_ROLES } from '../constants/user';
 import PATH from '../constants/path';
+import { useAuth } from '../contexts/AuthContext';
 
 const Login = () => {
+  const { login } = useAuth();
   const { refs, datas, utils, handlers } = useLogin();
   const { emailRef, passwordRef } = refs;
   const { formatTime } = utils;
@@ -41,7 +43,8 @@ const Login = () => {
 
   // Handle response from Google login
   const handleGoogleLoginResult = (data) => {
-    const { success, registered, approved, message, user } = data;
+    const { success, registered, approved, message, token, user } = data;
+    const { userId, userUUID, email, fullName, profilePicPath, role, status } = user;
     console.log('Google login result:', data);
 
     if (success) {
@@ -50,7 +53,9 @@ const Login = () => {
         setTimeout(() => {
           window.location.href = '/pending-verification';
         }, 4000);
+        
       } else if (approved) {
+        localStorage.setItem('token', token);
         showSuccessToast('Login successful! Redirecting...', 'top-center', 2000);
         setTimeout(() => {
           const targetPath =

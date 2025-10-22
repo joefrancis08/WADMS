@@ -18,8 +18,8 @@ const SharePage = () => {
         const res = await verifyToken(token);
         localStorage.setItem('token', res.data.token);
         const userData = res.data.userData;
-        const { email, fullName, profilePicPath, role, status } = userData;
-        login(email, fullName, profilePicPath, role, status);
+        const { userId, userUUID, email, fullName, profilePicPath, role, status } = userData;
+        login(userId, userUUID, email, fullName, profilePicPath, role, status);
 
         if (userData.status === USER_STATUS.VERIFIED) {
           if (userData.role === USER_ROLES.DEAN) {

@@ -27,7 +27,7 @@ const TaskForceCard = ({
   handleAddCardClick,
 }) => {
   const menu = [
-    { icon: <FolderTree size={20} />, label: 'Assign Program, Area, & Parameter' },
+    { icon: <FolderTree size={20} />, label: 'Assign Area or Parameter' },
     { icon: <LinkIcon size={20} />, label: 'View Access Link' },
     { icon: <FileUser size={20} />, label: 'View Details' },
     { icon: <UserRoundPen size={20} />, label: 'Update' },
@@ -76,6 +76,7 @@ const TaskForceCard = ({
       {/* switched to flex + wrap + justify-center */}
       <div className='flex flex-wrap justify-center gap-5'>
         {taskForce?.map((user) => {
+          console.log(user);
           const id = getUserId(user);
           const isChair = label === 'Task Force Chair';
           return (
@@ -103,6 +104,7 @@ const TaskForceCard = ({
               </button>
 
               {renderDropdown(user)}
+              {console.log(profilePic(user))}
 
               {/* content */}
               <div className='px-4 pt-6 pb-5 flex flex-col items-center text-center'>

@@ -7,6 +7,8 @@ const ProfilePicture = ({
   border = 'rounded-full'
 }) => {
 
+  console.log(profilePic);
+
   return (
     <div className={`flex items-center justify-center ${height} ${width} ${border} overflow-hidden bg-slate-100`}>
       <img

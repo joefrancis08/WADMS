@@ -15,7 +15,7 @@ const {
 const { LOGIN, NOT_FOUND_URL } = PATH.PUBLIC;
 
 const protectedRoutes = [
-  { path: DASHBOARD, element: <Dashboard />},
+  { path: DASHBOARD, element: <Accreditation />},
   { path: ACCREDITATION, element: <Accreditation />}
 ];
 
@@ -31,7 +31,7 @@ const taskForceRoutes = protectedRoutes.map(({ path, element }) => (
     path={path}
     element={
       <ProtectedRoute
-        allowedRoles={[USER_ROLES.TASK_FORCE_CHAIR, USER_ROLES.TASK_FORCE_MEMBER]} // Allowed Role: Task Force
+        allowedRoles={[]} // Allowed Role: Task Force
         loader={Loader}
         fallbackRoute={LOGIN}
       >
