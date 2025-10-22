@@ -111,7 +111,7 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
       if (res.data.success) {
         logout();
         showSuccessToast('Logged out successfully!', 'top-center');
-        localStorage.remove('token');
+        localStorage.removeItem('token');
         
       } else {
         showErrorToast('Logout failed. Try again.');
