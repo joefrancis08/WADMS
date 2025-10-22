@@ -7,6 +7,10 @@ const MODAL_TYPES = Object.freeze({
   ADD_TF: 'add-task-force',
   ADD_TF_CARD: 'add-task-force-from-card',
   UPDATE_TF: 'update-user',
+  ADD_ASSESSOR: 'add-assessor',
+  UPDATE_ASSESSOR: 'update-assessor',
+  DELETE_ASSESSOR: 'delete-assessor',
+  IA_CONFIRM_DELETION: 'assessor-confirm-deletion',
 
   ADD_PROGRAM_TO_BE_ACCREDITED_CARD: 'add-program-to-be-accredited-card',
   ADD_PROGRAM_TO_BE_ACCREDITED: 'add-program-to-be-accredited',

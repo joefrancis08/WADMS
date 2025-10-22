@@ -5,14 +5,14 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // Public Routes (No Token required)
 export const confirmEmail = (email) =>
-  axios.post(`${API_BASE_URL}/users/confirm-email`, { email });
+  apiClient.post(`${API_BASE_URL}/users/confirm-email`, { email });
 
 export const verifyToken = (token) =>
-  axios.post(`${API_BASE_URL}/users/verify-token`, { token }, { withCredentials: true });
+  apiClient.post(`${API_BASE_URL}/users/verify-token`, { token }, { withCredentials: true });
 
 export const registerUser = async (values) => {
   try {
-    const { data } = await axios.post(`${API_BASE_URL}/users/register`, values, {
+    const { data } = await  apiClient.post(`${API_BASE_URL}/users/register`, values, {
       withCredentials: true,
     });
     // data should include { success, user, message, alreadyExists? }
@@ -29,7 +29,7 @@ export const registerUser = async (values) => {
 };
 
 export const loginUser = async ({ email, password }) => {
-  return axios.post(
+  return  apiClient.post(
     `${API_BASE_URL}/users/login`,
     { email, password },
     { withCredentials: true }
@@ -37,7 +37,7 @@ export const loginUser = async ({ email, password }) => {
 };
 
 export const checkUserEmail = async (email) =>
-  axios.get(`${API_BASE_URL}/users/check-email`, { params: { email } });
+  apiClient.get(`${API_BASE_URL}/users/check-email`, { params: { email } });
 
 // Authenticated Routes (Token required)
 export const postUser = async (data) => {
@@ -66,6 +66,7 @@ export const getUserSession = async () => {
     return res.data.user;
   } catch (error) {
     console.error("Error getting user session:", error);
+    throw error;
   }
 };
 
@@ -92,7 +93,7 @@ export const fetchUserBy = async (key, value, controller) => {
 };
 
 export const fetchUserStatus = async (email, signal) => {
-  return await axios.get(`${API_BASE_URL}/users/fetch-user-status`, {
+  return await  apiClient.get(`${API_BASE_URL}/users/fetch-user-status`, {
     params: { email },
     signal
   });
@@ -126,7 +127,7 @@ export const updateUserRole = async (selectedUserUUID, newRole) =>
   });
 
 export const updateUserStatus = (uuid, status) => {
-  return axios.patch(`${API_BASE_URL}/users/status/${uuid}`, {
+  return  apiClient.patch(`${API_BASE_URL}/users/status/${uuid}`, {
     status
   });
 }

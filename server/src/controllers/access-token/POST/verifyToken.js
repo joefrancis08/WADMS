@@ -18,6 +18,7 @@ const verifyToken = async (req, res) => {
       at.expire_at, 
       at.is_used, 
       at.user_id,
+      u.user_uuid,
       u.email,
       u.full_name,
       u.profile_pic_path,
@@ -47,6 +48,7 @@ const verifyToken = async (req, res) => {
       expire_at,
       is_used,
       user_id,
+      user_uuid,
       email,
       full_name,
       profile_pic_path,
@@ -89,6 +91,8 @@ const verifyToken = async (req, res) => {
 
     // Create session
     req.session.user = {
+      userId: user_id,
+      userUUID: user_uuid,
       email,
       fullName: full_name,
       profilePicPath: profile_pic_path,
@@ -97,12 +101,13 @@ const verifyToken = async (req, res) => {
     };
 
     const JWToken = JWTSign({
-      id: user_id,
+      userId: user_id,
+      userUUID: user_uuid,
       email,
       fullName: full_name,
       profilePicPath: profile_pic_path,
       role,
-      status
+      status,
     });
 
     return res.status(200).json({

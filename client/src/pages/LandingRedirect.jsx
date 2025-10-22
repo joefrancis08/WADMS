@@ -3,12 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { USER_ROLES, USER_STATUS } from '../constants/user';
 import PATH from '../constants/path';
-import LoadSpinner from '../components/Loaders/LoadSpinner';
 import { LoaderCircle } from 'lucide-react';
 
-const { EMAIL_CONFIRMATION, LOGIN } = PATH.PUBLIC;
-const { UU } = USER_ROLES;
-const { PENDING: PENDING_STATUS } = USER_STATUS;
+const { LOGIN } = PATH.PUBLIC;
 
 const LandingRedirect = () => {
   const { user, isLoading } = useAuth();

@@ -63,6 +63,7 @@ const GoogleLoginButton = forwardRef(({ onLogin, mode = 'register' }, ref) => {
             try {
               const res = await OAuth(tokenResponse, mode);
               onLogin(res.data);
+
             } catch (err) {
               console.error('Google login error:', err.response?.data || err.message);
               showErrorToast('Google sign-in failed. Please try again.', 'top-center', 5000);
@@ -78,7 +79,6 @@ const GoogleLoginButton = forwardRef(({ onLogin, mode = 'register' }, ref) => {
       }
     },
   }));
-
   return null;
 });
 

@@ -15,6 +15,7 @@ import parameterRouter from './src/routes/parameterRoute.js';
 import authRouter from './src/routes/authRoute.js';
 import accredBodyRouter from './src/routes/accredBodyRoute.js';
 import cookieParser from 'cookie-parser';
+import notificationRouter from './src/routes/notificationRoute.js';
 
 dotenv.config({ quiet: true });
 const __filename = fileURLToPath(import.meta.url);
@@ -44,6 +45,7 @@ app.use('/accreditation-body', accredBodyRouter);
 app.use('/programs', programRouter);
 app.use('/areas', areaRouter);
 app.use('/parameters', parameterRouter);
+app.use('/notifications', notificationRouter);
 
 const server = http.createServer(app);
 setupWebSocket(server);

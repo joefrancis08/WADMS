@@ -10,7 +10,7 @@ import { getUserBy } from '../../../../models/user/GET/getUser.js';
 export const addUserController = async (req, res) => {
   
   // Step 1: Get the data from the request body (from frontend) - Dean & SuperAdmin
-  const { fullName, email, password = null, role, status = 'Verified'} = req.body;
+  const { fullName, email, password = null, role = null, status = 'Verified'} = req.body;
   const profilePicPath = req.file ? req.file.filename : null;
 
   // Step 2: Check if there are blank inputs
@@ -23,10 +23,21 @@ export const addUserController = async (req, res) => {
 
     console.log('line 24:', user);
 
+    if (!fullName.trim() || !email.trim()) {
+      return res.status(400).json({
+        message: 'Full name and email are required.',
+        success: false,
+        errorCode: 'EMPTY_FIELD'
+      });
+    }
+
+    // Change status from 200 to 400 (in case something break)
+    // I change it when i create internal assessor
     if (user && user.email === email) {
       return res.status(200).json({
         message: 'Email already exists.',
-        alreadyExist: true, 
+        success: false,
+        errorCode: 'ALREADY_EXIST'
       });
     }
 
