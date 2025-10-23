@@ -11,17 +11,6 @@ const fetchAssignments = async (req, res) => {
 
   const userId = Number(req.query.userId);
 
-  console.table({
-    accredInfoId,
-    levelId,
-    programId,
-    areaId,
-    parameterId,
-    subParameterId,
-    indicatorId,
-    userId
-  });
-
   try {
     const data = await getAssignments(
       {
@@ -38,7 +27,7 @@ const fetchAssignments = async (req, res) => {
       },
       {
         forDeanTaskForceDetailPage: !!userId, // Only true if userId exists
-        forDeanAssignmentPage: !!(accredInfoId && levelId && programId && areaId) // Only true if these are given
+        forDeanAssignmentPage: !!(accredInfoId && levelId && programId && areaId), // Only true if these are given
       }
     );
 
