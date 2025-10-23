@@ -323,6 +323,12 @@ export const fetchAssignments = (data = {}, signal) => {
   });
 };
 
+export const fetchAssignmentsByUserId = (userId, signal) =>
+  apiClient.get('/accreditation/fetch-assignments-by-user-id', {
+    params: { userId },
+    signal
+  });
+
 export const fetchAccreditationBodies = (signal) => {
   return apiClient.get(`/accreditation-body/fetch-accreditation-bodies`, {
     signal

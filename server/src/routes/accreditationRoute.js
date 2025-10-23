@@ -22,6 +22,7 @@ import fetchAreaProgress from '../controllers/progress/area-progress/fetchAreaPr
 import fetchParamProgress from '../controllers/progress/parameter-progress/fetchParamProgress.js';
 import fetchSubParamProgress from '../controllers/progress/subparameter-progress/fetchSubParamProgress.js';
 import fetchIndicatorProgress from '../controllers/progress/indicator-progress/fetchIndicatorProgress.js';
+import fetchAssignmentsByUserId from '../controllers/accreditation/assignments/GET/fetchAssignmentsByUserId.js';
 
 const { D, M, C, I, A } = allowedRoles();
 
@@ -50,6 +51,7 @@ accreditationRouter.get('/fetch-subparameter-indicators', authorize([D, M, C, I,
 accreditationRouter.get('/fetch-subparameter-indicators-by', authorize([D, M, C, I, A]), fetchIndicatorBy);
 accreditationRouter.get('/fetch-documents', authorize([D, M, C, I, A]), fetchDocumentsController);
 accreditationRouter.get('/fetch-assignments', authorize([D, M, C]), fetchAssignmentController);
+accreditationRouter.get('/fetch-assignments-by-user-id', authorize([M, C]), fetchAssignmentsByUserId);
 accreditationRouter.get('/fetch-program-progress', authorize([D]), fetchProgramProgress);
 accreditationRouter.get('/fetch-area-progress', authorize([D]), fetchAreaProgress);
 accreditationRouter.get('/fetch-parameter-progress', authorize([D]), fetchParamProgress);

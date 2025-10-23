@@ -1,67 +1,7 @@
 import db from "../../../../config/db.js";
 
-const getAssignments = async (accredData = {}, userData = {}, condition = {}, connection = null) => {
-  const {
-    accredInfoId = null,
-    levelId = null,
-    programId = null,
-    areaId = null,
-    parameterId = null,
-    subParameterId = null,
-    indicatorId = null
-  } = accredData;
-
-  const {
-    userId = null
-  } = userData;
-
-  const {
-    forDeanTaskForceDetailPage,
-    forDeanAssignmentPage,
-    forSpecificTaskForce
-  } = condition;
-
-  // Build WHERE clause dynamically
-  let whereClause = [];
-  let params = [];
-
-  if (forDeanTaskForceDetailPage) {
-    whereClause.push("aa.user_id = ?");
-    params.push(userId);
-  }
-
-  if (forDeanAssignmentPage) {
-    if (accredInfoId !== null) {
-      whereClause.push("aa.accred_info_id = ?");
-      params.push(accredInfoId);
-    }
-    if (levelId !== null) {
-      whereClause.push("aa.level_id = ?");
-      params.push(levelId);
-    }
-    if (programId !== null) {
-      whereClause.push("aa.program_id = ?");
-      params.push(programId);
-    }
-    if (areaId !== null) {
-      whereClause.push("aa.area_id = ?");
-      params.push(areaId);
-    }
-    if (parameterId !== null) {
-      whereClause.push("aa.parameter_id = ?");
-      params.push(parameterId);
-    }
-    if (subParameterId !== null) {
-      whereClause.push("aa.sub_parameter_id = ?");
-      params.push(subParameterId);
-    }
-    if (indicatorId !== null) {
-      whereClause.push("aa.indicator_id = ?");
-      params.push(indicatorId);
-    }
-  }
-
-  const query = `
+const getAssignmentsByUserId = async (userId) => {
+   const query = `
     SELECT
       aa.id                        AS assignmentID,
       u.id                         AS taskForceID,
@@ -109,17 +49,17 @@ const getAssignments = async (accredData = {}, userData = {}, condition = {}, co
       ON aa.subparameter_id = spa.id
     LEFT JOIN indicator i
       ON aa.indicator_id = i.id
-    ${whereClause.length ? `WHERE ${whereClause.join(" AND ")}` : ""}
+    WHERE user_id = ?
   `;
 
   try {
-    const executor = connection || db;
-    const [rows] = await executor.execute(query, params);
+    const [rows] = await db.execute(query, [userId]);
     return rows;
+
   } catch (error) {
-    console.error("Error getting assignments:", error);
+    console.error("Error getting assignments by user id:", error);
     throw error;
   }
 };
 
-export default getAssignments;
+export default getAssignmentsByUserId;

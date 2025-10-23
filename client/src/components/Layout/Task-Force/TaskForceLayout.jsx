@@ -96,7 +96,7 @@ const TaskForceLayout = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col bg-slate-900">
       {/* Navbar */}
-      <nav className="bg-slate-800 border-b border-slate-600 sticky top-0 z-50">
+      <nav className="bg-slate-800 border-b border-slate-600 z-50">
         <div className="max-w-7xl px-2 sm:px-6">
           <div className="relative flex items-center h-16">
             {/* Left: Logo/Brand */}
@@ -185,7 +185,7 @@ const TaskForceLayout = ({ children }) => {
         {showProfileOption && (
           <div
             ref={profileOptionRef}
-            className="absolute top-[3.5rem] right-[1rem] rounded-lg shadow-md"
+            className="absolute top-[3.5rem] right-[1rem] rounded-lg shadow-md Z-50"
           >
             <div className="w-[24rem] min-h-[20rem] bg-slate-900 p-3 rounded-lg outline outline-slate-700">
               <div className="relative flex flex-col gap-y-4 justify-center items-center bg-slate-800 outline outline-slate-700 min-w-[5rem] min-h-[12rem] rounded-lg ">
@@ -227,7 +227,7 @@ const TaskForceLayout = ({ children }) => {
         {showNotif && (
           <div
             ref={notifRef}
-            className='absolute top-[3.5rem] right-[4rem] rounded-xl shadow-xl'
+            className='absolute top-[3.5rem] right-[4rem] rounded-xl shadow-xl z-[999]'
             aria-live='polite'
           >
             <div className='flex flex-col w-[32rem] max-h-[32rem] overflow-auto min-h-[30rem] bg-slate-900 p-0 rounded-xl outline outline-slate-700 scrollbar-hide'>
@@ -358,14 +358,14 @@ const TaskForceLayout = ({ children }) => {
                                       <hr className="text-slate-600 my-2"></hr>
                                       <div className="flex flex-wrap items-center gap-2 mt-1">
                                         {(item?.accredTitle || item?.accredYear) && (
-                                          <span className='inline-flex items-center text-[10px] rounded-full bg-slate-800 px-2 py-0.5 text-slate-200'>
+                                          <span className='inline-flex items-center text-[10px] rounded-full bg-yellow-600 px-2 py-0.5 text-white'>
                                             {(item?.accredTitle ?? '').trim()}
                                             {item?.accredTitle && item?.accredYear && ' '}
                                             {item?.accredYear ?? ''}
                                           </span>
                                         )}
                                         {(item?.program || item?.level) && (
-                                          <span className='inline-flex items-center text-[10px] rounded-full bg-slate-800 px-2 py-0.5 text-slate-300'>
+                                          <span className='inline-flex items-center text-[10px] rounded-full bg-white px-2 py-0.5 text-slate-900'>
                                             {(item?.program ?? '').trim()}
                                             {item?.program && item?.level ? ' – ' : ''}
                                             {item?.level ?? ''}
