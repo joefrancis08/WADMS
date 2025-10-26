@@ -1,21 +1,12 @@
-import React from 'react';
 import MODAL_TYPE from '../../../../constants/modalTypes';
 import AreaBaseModal from '../../../Modals/accreditation/AreaBaseModal';
 import AddField from '../../../Form/AddField';
 import ConfirmationModal from '../../../Modals/ConfirmationModal';
-import { Ellipsis, LoaderCircle, Plus, TriangleAlert, UserRoundMinus, UserRoundX, UserX, X } from 'lucide-react';
-import { deleteFolder, notAssignedDM, userIcon } from '../../../../assets/icons';
-import Popover from '../../../Popover';
-import { MENU_OPTIONS } from '../../../../constants/user';
-import PATH from '../../../../constants/path';
-import { replace } from 'react-router-dom';
+import { deleteFolder } from '../../../../assets/icons';
 import ATFModalBody from './ATFModalBody';
 import VATFModal from './VATFModal';
 
-const PROFILE_PIC_PATH = import.meta.env.VITE_PROFILE_PIC_PATH;
-
-const AreaModal = ({ navigation, params, refs, modalType, datas, inputs, handlers }) => {
-  const { navigate } = navigation;
+const AreaModal = ({ refs, modalType, datas, inputs, handlers }) => {
   const { areaInputRef, assignedTaskForceRef } = refs;
   const { areaInput } = inputs;
   const {
@@ -53,30 +44,6 @@ const AreaModal = ({ navigation, params, refs, modalType, datas, inputs, handler
     handleConfirmUnassign
   } = handlers;
 
-  console.log(taskForce);
-
-  function formatAreaName(text) {
-    // Words that should always be lowercase
-    const lowerWords = ['and', 'or'];
-    // Roman numerals that should always stay uppercase
-    const toUpperWords = ['i:', 'ii:', 'iii:', 'iv:', 'v:', 'vi:'];
-
-    return text
-      .toLowerCase()
-      .split(' ')
-      .map(word => {
-        if (lowerWords.includes(word)) {
-          return word; // Keep as lowercase
-        }
-        console.log(word)
-        if (toUpperWords.includes(word)) {
-          return word.toUpperCase(); // Force Roman numerals uppercase
-        }
-        return word.charAt(0).toUpperCase() + word.slice(1);
-      })
-      .join(' ');
-  }
-
   switch (modalType) {
     case MODAL_TYPE.ADD_AREA:
       return (
@@ -91,7 +58,6 @@ const AreaModal = ({ navigation, params, refs, modalType, datas, inputs, handler
           headerContent={<p className='text-xl font-semibold'>Add Areas</p>}
           bodyContent={
             <div className='relative w-full'>
-              {console.log(areasByLevelData)}
               <AddField
                 ref={areaInputRef}
                 fieldName={areas.length > 1 ? 'Areas' : 'Area'}

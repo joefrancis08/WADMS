@@ -23,6 +23,7 @@ import fetchParamProgress from '../controllers/progress/parameter-progress/fetch
 import fetchSubParamProgress from '../controllers/progress/subparameter-progress/fetchSubParamProgress.js';
 import fetchIndicatorProgress from '../controllers/progress/indicator-progress/fetchIndicatorProgress.js';
 import fetchAssignmentsByUserId from '../controllers/accreditation/assignments/GET/fetchAssignmentsByUserId.js';
+import fetchDocumentsBy from '../controllers/accreditation/document/GET/fetchDocumentsBy.js';
 
 const { D, M, C, I, A } = allowedRoles();
 
@@ -35,7 +36,7 @@ accreditationRouter.post('/add-program-areas', authorize([D]), addProgramAreaCon
 accreditationRouter.post('/add-area-parameters', authorize([D, M, C]), addAreaParameterController);
 accreditationRouter.post('/add-parameter-subparameters', authorize([D, M, C]), addParamSubParamController);
 accreditationRouter.post('/add-subparameter-indicators', authorize([D, M, C]), addSIMController);
-accreditationRouter.post('/add-document', authorize([D, M, C]), upload.single('file'), addDocumentController);
+accreditationRouter.post('/add-document', authorize([D, M, C]), upload.array('files', 10), addDocumentController);
 accreditationRouter.post('/add-assignment', authorize([D]), addAssignmentController);
 
 accreditationRouter.get('/fetch-accreditation-levels', authorize([D, M, C, I, A]), fetchLevelsController);
@@ -50,6 +51,7 @@ accreditationRouter.get('/fetch-parameter-subparameters-by', authorize([D, M, C,
 accreditationRouter.get('/fetch-subparameter-indicators', authorize([D, M, C, I, A]), fetchSIMController);
 accreditationRouter.get('/fetch-subparameter-indicators-by', authorize([D, M, C, I, A]), fetchIndicatorBy);
 accreditationRouter.get('/fetch-documents', authorize([D, M, C, I, A]), fetchDocumentsController);
+accreditationRouter.get('/fetch-documents-by', authorize([D, M, C]), fetchDocumentsBy);
 accreditationRouter.get('/fetch-assignments', authorize([D, M, C]), fetchAssignmentController);
 accreditationRouter.get('/fetch-assignments-by-user-id', authorize([M, C]), fetchAssignmentsByUserId);
 accreditationRouter.get('/fetch-program-progress', authorize([D]), fetchProgramProgress);

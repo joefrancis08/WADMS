@@ -50,8 +50,6 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
   const location = useLocation();
   const userMenuRef = useRef();
 
-  console.log(unverifiedUserCount);
-
   const { user, isLoading } = useAuth();
   const { logout } = useAuth();
 
@@ -92,7 +90,6 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
   };
 
   const handleLogoutClick = () => {
-    console.log('Logout clicked');
     setOpenUserMenu(false);
     setModalType(MODAL_TYPE.LOGOUT);
   };
@@ -212,14 +209,14 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
                           {child.hasHR && <hr className='my-2 text-slate-600'></hr>}
                           <Link
                             to={child.link}
-                            className={`relative text-sm flex items-center space-x-3 px-4 py-2 rounded-md transition ${
+                            className={`relative flex items-center space-x-3 px-4 py-2 rounded-md transition ${
                               childActive ? 'bg-slate-700 text-white' : 'hover:bg-slate-800'
                             }`}
                           >
                             <ChildIcon
                               className="flex-shrink-0 w-6 h-6"
                             />
-                            <span className="text-sm">{child.label}</span>
+                            <span className="text-xs">{child.label}</span>
                             {child.hasCount && 
                               unverifiedUserCount > 0 && (
                                 <p className='absolute flex items-center justify-center text-xs font-semibold text-slate-900 top-2.5 right-3 bg-slate-200 p-2 w-5 h-5 rounded-full'>
@@ -275,10 +272,7 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
             className={`fixed bottom-2 ${isCollapsed ? 'left-[6rem]' : 'left-[17rem]'} p-2 bg-slate-900 rounded-md shadow-lg z-50 transition-all outline outline-slate-700`}
           >
             <ProfileAction 
-              onViewProfile={() => {
-                console.log('View Profile clicked');
-                setOpenUserMenu(false);
-              }}
+              onViewProfile={() => setOpenUserMenu(false)}
               onLogout={handleLogoutClick}
             />
           </div>

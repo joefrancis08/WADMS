@@ -62,7 +62,11 @@ const ATFModalBody = ({ data = {}, handlers = {} }) => {
                     className="cursor-pointer"
                   />
                   <img 
-                    src={`${PROFILE_PIC_PATH}/${data.profilePicPath || '/default-profile-picture.png'}`} 
+                    src={
+                      data?.profilePicPath?.startsWith?.('http')
+                        ? data.profilePicPath
+                        : `${PROFILE_PIC_PATH}/${data.profilePicPath || '/default-profile-picture.png'}`
+                    }
                     alt="Profile Picture" 
                     loading='lazy' 
                     className='h-12 w-12 p-0.5 rounded-full border-2 border-green-600'

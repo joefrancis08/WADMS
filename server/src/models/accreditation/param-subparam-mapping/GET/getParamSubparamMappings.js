@@ -47,6 +47,7 @@ const getParamSubparamMappings = async ({ title, year, accredBody, level, progra
       AND pr.program_name = ?
       AND a.area_name = ?
       AND pa.parameter_name = ?
+    ORDER by spa.sub_parameter_name ASC
   `;
 
   try {

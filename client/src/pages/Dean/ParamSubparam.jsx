@@ -6,6 +6,7 @@ import {
   Plus,
   CirclePlus,
   Search,
+  FolderPlus,
 } from 'lucide-react';
 import ContentHeader from '../../components/Dean/ContentHeader';
 import formatParameterName from '../../utils/formatParameterName';
@@ -164,12 +165,12 @@ const ParamSubparam = () => {
       <div className='flex-1 p-3'>
         <div className='bg-slate-900 m-2 pb-2 border border-slate-700 rounded-lg'>
           {/* Header: Breadcrumb + Search (aligned opposite) */}
-          <div className='flex flex-col md:flex-row md:items-center md:justify-between shadow px-4 pt-4 bg-black/40 p-4 rounded-t-lg gap-4'>
+          <div className='sticky top-0 z-50 flex flex-col md:flex-row md:items-center md:justify-between shadow px-4 pt-4 bg-slate-900 p-4 rounded-t-lg gap-4 border-b border-slate-700'>
             {/* Breadcrumbs (left) */}
             <Breadcrumb items={breadcrumbItems} />
 
             {/* Search (right on desktop, below on mobile) */}
-            <div className='relative w-full md:w-1/3 lg:w-1/4'>
+            <div className='relative flex items-center gap-x-2 w-full md:w-120'>
               <Search className='absolute left-3 top-2.5 h-5 w-5 text-slate-400' />
               <input
                 type='text'
@@ -178,9 +179,16 @@ const ParamSubparam = () => {
                 placeholder='Search sub-parameter...'
                 className='pl-10 pr-3 py-2 rounded-full bg-slate-800 text-slate-100 border border-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 w-full transition-all'
               />
+              <button
+                title='Add new area'
+                onClick={handleAddSubparamClick}
+                className="inline-flex min-w-32 items-center justify-center gap-1 px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-full shadow active:scale-95 transition cursor-pointer"
+              >
+                <FolderPlus className="h-5 w-5" />
+                <span>Add New</span>
+              </button>
             </div>
           </div>
-
 
           {/* Program + level display */}
           <div className='flex items-center justify-center mt-4 max-md:mt-10 w-auto mx-auto mb-8'>
@@ -210,16 +218,6 @@ const ParamSubparam = () => {
                     ? `No sub-parameters to display for Parameter ${formatParameterName(parameter)}.`
                     : `No sub-parameters found for “${searchQuery}”.`}
                 </p>
-                {/* Add Subparameter Button */}
-                <div className='max-md:hidden flex justify-end px-5 p-2 mt-3'>
-                  <button
-                    onClick={handleAddSubparamClick}
-                    className='flex gap-x-1 text-white text-sm lg:text-base justify-center items-center cursor-pointer rounded-full px-5 py-2 hover:opacity-90 active:scale-98 border-3 border-slate-500 bg-slate-700/50 shadow hover:shadow-md hover:border-green-600 transition'
-                  >
-                    <Plus className='h-6 w-6' />
-                    Add
-                  </button>
-                </div>
               </div>
             )}
 
@@ -315,17 +313,6 @@ const ParamSubparam = () => {
                 </div>
               );
             })}
-
-            {/* Add Sub-parameter button */}
-            {filteredSubparams.length > 0 && (
-              <div
-                onClick={handleAddSubparamClick}
-                className='flex flex-col gap-y-2 items-center justify-center border border-slate-700 hover:scale-102 hover:shadow shadow-slate-600 p-4 rounded-md transition cursor-pointer bg-slate-800 active:opacity-90 w-[45%] py-12 text-slate-100 active:scale-98'
-              >
-                <CirclePlus className='h-12 w-12 flex shrink-0' />
-                <p>Add Sub-parameter</p>
-              </div>
-            )}
           </div>
         </div>
       </div>

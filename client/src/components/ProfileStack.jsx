@@ -56,15 +56,6 @@ const ProfileStack = ({
     }
   });
 
-  console.log({
-    scope,
-    currentScopeId,
-    programId,
-    levelId,
-    accredInfoId,
-    filteredAssignments,
-  });
-
   // Deduplicate by Task Force ID
   const uniqueTaskForceIds = [
     ...new Set(filteredAssignments.map(a => a.taskForceID))
@@ -85,6 +76,7 @@ const ProfileStack = ({
           onClick={(e) => {
             const taskForcesForScope = filteredAssignments.map(a => {
               const match = taskForce.find(tf => tf.id === a.taskForceID);
+              console.log(match);
               return {
                 uuid: match?.uuid,
                 id: match?.id,
@@ -106,7 +98,9 @@ const ProfileStack = ({
           className='first:m-0 -ml-2 flex items-center justify-start cursor-pointer'
         >
           <img
-            src={`${PROFILE_PIC_PATH}/${tf.profilePicPath || 'default-profile-picture.png'}`}
+            src={tf?.profilePicPath?.startsWith?.('http')
+              ? tf.profilePicPath
+              : `${PROFILE_PIC_PATH}/${tf.profilePicPath || 'default-profile-picture.png'}`}
             alt='Task Force Profile Picture'
             className={`h-5 w-5 rounded-full ${showBorder && 'outline-2 outline-slate-800'}`}
             loading='lazy'

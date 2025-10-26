@@ -278,7 +278,14 @@ export const fetchDocuments = (data = {}, controller) => {
     },
     signal: controller.signal
   });
-}
+};
+
+export const fetchDocumentsByUploaderId = (uploaderId, signal) => (
+  apiClient.get(`/accreditation/fetch-documents-by`, {
+    params: { uploaderId },
+    signal
+  })
+);
 
 export const fetchDocumentsDynamically = async (data = {}) => {
   const {

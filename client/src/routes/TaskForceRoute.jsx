@@ -6,17 +6,27 @@ import ProtectedRoute from './ProtectedRoute';
 import LoadSpinner from '../components/Loaders/LoadSpinner';
 import Accreditation from '../pages/Task-Force/Accreditation';
 import { USER_ROLES } from '../constants/user';
+import ProgramAreas from '../pages/Task-Force/ProgramAreas';
+import AreaParameters from '../pages/Task-Force/AreaParameters';
+import ParamSubparam from '../pages/Task-Force/ParamSubparam';
+import SubparamIndicator from '../pages/Task-Force/SubparamIndicator';
 
 const { 
-  DASHBOARD,
-  ACCREDITATION
+  ACCREDITATION,
+  PROGRAM_AREAS_TEMPLATE,
+  AREA_PARAMETERS_TEMPLATE,
+  PARAM_SUBPARAMS_TEMPLATE,
+  SUBPARAM_INDICATORS_TEMPLATE
 } = PATH.TASK_FORCE;
 
 const { LOGIN, NOT_FOUND_URL } = PATH.PUBLIC;
 
 const protectedRoutes = [
-  { path: DASHBOARD, element: <Accreditation />},
-  { path: ACCREDITATION, element: <Accreditation />}
+  { path: ACCREDITATION, element: <Accreditation />},
+  { path: PROGRAM_AREAS_TEMPLATE, element: <ProgramAreas />},
+  { path: AREA_PARAMETERS_TEMPLATE, element: <AreaParameters />},
+  { path: PARAM_SUBPARAMS_TEMPLATE, element: <ParamSubparam />},
+  { path: SUBPARAM_INDICATORS_TEMPLATE, element: <SubparamIndicator />}
 ];
 
 const Loader = (

@@ -7,6 +7,7 @@ import {
   Search,
   FileUser,
   EllipsisVertical,
+  FolderPlus,
 } from 'lucide-react';
 import PATH from '../../constants/path';
 import formatAreaName from '../../utils/formatAreaName';
@@ -139,9 +140,9 @@ const AreaParameters = () => {
       <div className='flex-1 p-3'>
         <div className='bg-slate-900 m-2 pb-2 border border-slate-700 rounded-lg'>
           {/* Header: Breadcrumb + Search */}
-          <div className='flex flex-col md:flex-row md:items-center md:justify-between shadow px-4 pt-4 bg-black/40 p-4 rounded-t-lg gap-4'>
+          <div className='sticky top-0 z-50 flex flex-col md:flex-row md:items-center md:justify-between shadow px-4 pt-4 bg-slate-900 p-4 rounded-t-lg gap-4 border-b border-slate-700'>
             <Breadcrumb items={breadcrumbItems} />
-            <div className='relative w-full md:w-1/3 lg:w-1/4'>
+            <div className='relative flex items-center gap-x-2 w-full md:w-120'>
               <Search className='absolute left-3 top-2.5 h-5 w-5 text-slate-400' />
               <input
                 type='text'
@@ -150,6 +151,14 @@ const AreaParameters = () => {
                 placeholder='Search parameter...'
                 className='pl-10 pr-3 py-2 rounded-full bg-slate-800 text-slate-100 border border-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 w-full transition-all'
               />
+              <button
+                title='Add new area'
+                onClick={handlePlusClick}
+                className="inline-flex min-w-32 items-center justify-center gap-1 px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-full shadow active:scale-95 transition cursor-pointer"
+              >
+                <FolderPlus className="h-5 w-5" />
+                <span>Add New</span>
+              </button>
             </div>
           </div>
 
@@ -193,13 +202,14 @@ const AreaParameters = () => {
             )}
 
             {/* Parameter Cards */}
-            {filteredParameters.map((data) => {
+            {filteredParameters.map((data, idx) => { 
               const { label, content } = formatParameter(data.parameter);
               const accredInfoId = data.accredInfoId;
               const levelId = data.levelId;
               const programId = data.programId;
               const areaId = data.areaId;
               const parameterId = data.parameter_id;
+              const childKey = `${accredInfoId}-${levelId}-${programId}-${areaId}-${parameterId}`;
               return (
                 <div
                   key={data.parameter_uuid}
@@ -271,6 +281,7 @@ const AreaParameters = () => {
                   {/* Bottom: Task Force + FileUser */}
                   <div className='relative h-7 flex items-center justify-between'>
                     <ProfileStack
+                      key={childKey}
                       data={{
                         assignmentData: deduplicateAssignments(assignmentData, 'parameter'),
                         taskForce,
@@ -321,7 +332,8 @@ const AreaParameters = () => {
                       const { status, color } = getProgressStyle(progress);
 
                       return (
-                        <ProgressBar 
+                        <ProgressBar
+                          key={childKey} 
                           progress={progress} 
                           color={color} 
                           status={status}
@@ -371,17 +383,6 @@ const AreaParameters = () => {
                 </div>
               );
             })}
-
-            {/* Add Parameter Button */}
-            {filteredParameters.length > 0 && (
-              <div
-                onClick={handlePlusClick}
-                className='flex flex-col gap-y-2 items-center justify-center border border-slate-700 hover:shadow-lg shadow-slate-800 p-4 rounded-md transition cursor-pointer bg-slate-800 active:opacity-90 w-full h-45 sm:w-[45%] lg:w-[30%] py-12 text-slate-100 active:scale-98'
-              >
-                <CirclePlus className='h-12 w-12 flex shrink-0' />
-                <p>Add Parameter</p>
-              </div>
-            )}
           </div>
         </div>
       </div>

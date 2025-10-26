@@ -32,6 +32,7 @@ const getNotifications = async (userId) => {
     LEFT JOIN sub_parameter sp
       ON n.subparameter_id = sp.id
     WHERE user_id = ?
+    ORDER BY n.is_read ASC, n.created_at DESC
   `;
 
   try {

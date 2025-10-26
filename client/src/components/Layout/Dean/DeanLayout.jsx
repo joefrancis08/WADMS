@@ -22,11 +22,6 @@ const DeanLayout = ({ children, ref }) => {
   const [menuIsClicked, setMenuIsClicked] = useState(false);
   const [unverifiedUserCount, setUnverifiedUserCount] = useState(null);
 
-  console.log(unverifiedUsers.length);
-  console.log(unverifiedUserCount);
-  console.log(Array.isArray(Object.entries(unverifiedUsers)));
- 
-
   useEffect(() => {
   // Only run this if users is an array (not loading or error)
   if (Array.isArray(Object.entries(unverifiedUsers))) {
@@ -34,8 +29,6 @@ const DeanLayout = ({ children, ref }) => {
       setUnverifiedUserCount(count);
     }
   }, [unverifiedUsers]);
-
-  console.log(unverifiedUserCount);
 
   useEffect(() => {
     document.body.style.overflow = menuIsClicked ? 'hidden' : '';

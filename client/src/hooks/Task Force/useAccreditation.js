@@ -2,78 +2,45 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useFetchILP } from "../fetch-react-query/useFetchILP";
 import { useAuth } from "../../contexts/AuthContext";
 import useFetchAssignmentsByUserId from "../fetch-react-query/useFetchAssignmentsByUserId";
+import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
+import { addDocument, deleteDoc } from "../../api-calls/accreditation/accreditationAPI";
+import useFetchDocumentsByUploader from "../fetch-react-query/useFetchDocumentsByUploader";
+import useOutsideClick from "../useOutsideClick";
+import PATH from "../../constants/path";
+import { useNavigate } from "react-router-dom";
 
 const LEVEL_ORDER = ['Preliminary', 'Level I', 'Level II', 'Level III', 'Level IV', 'Unspecified'];
+const { PROGRAM_AREAS } = PATH.TASK_FORCE;
 
 const useAccreditation = () => {
   const { user } = useAuth();
+  const docOptionRef = useRef();
+  const navigate = useNavigate();
 
-  // ---- Programs API ----
   const { accredInfoLevelPrograms, loading, error, refetch } = useFetchILP();
   const infoLevelPrograms = useMemo(
     () => accredInfoLevelPrograms?.data ?? [],
     [accredInfoLevelPrograms]
   );
 
-  // ---- Assignments API (by user) ----
   const { assignments } = useFetchAssignmentsByUserId(user?.userId);
-  const taskForceAssignments = assignments?.assignmentData ?? [];
+  const taskForceAssignments = useMemo(() => assignments?.assignmentData ?? [], [assignments?.assignmentData]);
+
+  const {
+    uploaderDocuments,
+    loadingUploaderDocuments,
+    errorUploaderDocuments,
+    refetchUploaderDocuments
+  } = useFetchDocumentsByUploader(user.userId);
+  const uploaderDocs = useMemo(() => uploaderDocuments?.documents ?? [], [uploaderDocuments?.documents]);
+
+  console.log(loadingUploaderDocuments);
 
   const items = [
     { id: 'programs', name: 'Programs' },
     { id: 'assignments', name: 'Assignments' },
   ];
 
-  // ---- optional fallback / empty-state ----
-  const dummyPrograms = [
-    {
-      accredTitle: 'Institutional Accreditation 2025',
-      levels: {
-        Preliminary: [
-          { id: 1, program: 'BS Information Technology' },
-          { id: 2, program: 'BS Computer Science' },
-        ],
-        'Level I': [{ id: 3, program: 'BS Mechanical Engineering' }],
-      },
-    },
-    {
-      accredTitle: 'Program Accreditation 2024',
-      levels: {
-        'Level II': [
-          { id: 4, program: 'BS Architecture' },
-          { id: 5, program: 'BS Civil Engineering' },
-        ],
-      },
-    },
-  ];
-
-  const dummyAssignments = [
-    {
-      accredTitle: 'Institutional Accreditation 2025',
-      levels: {
-        'Level I': [
-          {
-            program: 'BS Information Technology',
-            areas: [
-              {
-                area: 'Area I – Vision, Mission, Goals',
-                parameters: [
-                  {
-                    parameter: 'Parameter A – Implementation',
-                    subParameters: [
-                      { subParameter: 'Sub-Parameter 1', indicators: ['Indicator 1', 'Indicator 2'] },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    },
-  ];
-
-  // UI helper: "Institutional Accreditation 2025" -> ["Institutional", "Accreditation 2025"]
   function formatAccreditationTitleForUI(title) {
     if (!title) return ['',''];
     const parts = title.split(' ');
@@ -86,21 +53,23 @@ const useAccreditation = () => {
   const [activeItemId, setActiveItemId] = useState('programs');
   const [query, setQuery] = useState('');
   const [showSearch, setShowSearch] = useState(true);
-  const [showParameters, setShowParameters] = useState(false);
-  const [showSubParam, setShowSubParam] = useState(false);
-  const [showIndicator, setShowIndicator] = useState(false);
+  const [activeParamId, setActiveParamId] = useState(null);
+  const [activeSubparamId, setActiveSubparamId] = useState(null);
+  const [activeIndicatorId, setActiveIndicatorId] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState({}); // { [id]: File[] }
+  const [uploadingIds, setUploadingIds] = useState([]); // store subParameter IDs currently uploading
+  const [activeDocId, setActiveDocId] = useState(null);
 
   const searchInputRef = useRef(null);
   const levelRef = useRef({});
   const scrollContainerRef = useRef(null);
 
+  useOutsideClick(docOptionRef, () => setActiveDocId(null));
+
   useEffect(() => {
     if (showSearch) searchInputRef.current?.focus();
   }, [showSearch]);
 
-  // --------------------------------------------------
-  // PROGRAMS: rows + grouping (unchanged from your version)
-  // --------------------------------------------------
   const rows = useMemo(() => {
     if (Array.isArray(infoLevelPrograms)) return infoLevelPrograms;
     if (infoLevelPrograms) return [infoLevelPrograms];
@@ -165,12 +134,9 @@ const useAccreditation = () => {
   }, [groupedPrograms]);
 
   const programsRaw = useMemo(() => {
-    return apiProgramsArray.length ? apiProgramsArray : dummyPrograms;
+    return apiProgramsArray.length ? apiProgramsArray : [];
   }, [apiProgramsArray]);
 
-  // --------------------------------------------------
-  // ASSIGNMENTS: transform API -> UI shape
-  // --------------------------------------------------
   const assignmentRows = useMemo(() => {
     if (Array.isArray(taskForceAssignments)) return taskForceAssignments;
     if (taskForceAssignments) return [taskForceAssignments];
@@ -182,16 +148,23 @@ const useAccreditation = () => {
     const acc = {};
 
     for (const row of assignmentRows) {
+      console.log(row);
       const titleBase = row.accredTitle || 'Accreditation';
       const year = row.accredYear || '';
+      const accredID = row.accredID || null;
       const accredTitle = year ? `${titleBase} ${year}` : titleBase;
+      const levelID = row.levelID || null;
       const level = row.level || 'Unspecified';
+      const programID = row.programID || null;
       const programName = row.program || 'Unnamed Program';
 
       if (!acc[accredTitle]) acc[accredTitle] = {};
       if (!acc[accredTitle][level]) acc[accredTitle][level] = {};
       if (!acc[accredTitle][level][programName]) {
         acc[accredTitle][level][programName] = {
+          accredID,
+          levelID,
+          programID,
           program: programName,
           areas: [],
         };
@@ -202,32 +175,40 @@ const useAccreditation = () => {
 
       // Area (may be null)
       if (row.area) {
-        let areaObj = programObj.areas.find(a => a.area === row.area);
+        let areaObj = programObj.areas.find(a => a.areaID === row.areaID);
         if (!areaObj) {
-          areaObj = { area: row.area, parameters: [] };
+          areaObj = { 
+            areaID: row.areaID,
+            area: row.area, 
+            parameters: [] 
+          };
           programObj.areas.push(areaObj);
         }
 
         // Parameter
         if (row.parameter) {
-          let paramObj = areaObj.parameters.find(p => p.parameter === row.parameter);
+          let paramObj = areaObj.parameters.find(p => p.parameterID === row.parameterID);
           if (!paramObj) {
-            paramObj = { parameter: row.parameter, subParameters: [] };
+            paramObj = { 
+              parameterID: row.parameterID,
+              parameter: row.parameter, 
+              subParameters: [] 
+            };
             areaObj.parameters.push(paramObj);
           }
 
           // Sub-Parameter
           if (row.subParameter) {
-            let subParamObj = paramObj.subParameters.find(s => s.subParameter === row.subParameter);
+            let subParamObj = paramObj.subParameters.find(s => s.subParameterID === row.subParameterID);
             if (!subParamObj) {
-              subParamObj = { subParameter: row.subParameter, indicators: [] };
+              subParamObj = { subParameterID: row.subParameterID, subParameter: row.subParameter, indicators: [] };
               paramObj.subParameters.push(subParamObj);
             }
 
             // Indicator
             if (row.indicator) {
-              if (!subParamObj.indicators.includes(row.indicator)) {
-                subParamObj.indicators.push(row.indicator);
+              if (!subParamObj.indicators.includes(row.indicatorID)) {
+                subParamObj.indicators.push(row.indicatorID);
               }
             }
           }
@@ -235,8 +216,6 @@ const useAccreditation = () => {
       }
     }
 
-    // Convert to array shape your UI expects:
-    // [{ accredTitle, levels: { [level]: [ { program, areas } ] } }]
     const result = Object.entries(acc).map(([accredTitle, levelsObj]) => {
       // Optionally re-order levels by LEVEL_ORDER
       const orderedLevels = {};
@@ -256,12 +235,9 @@ const useAccreditation = () => {
 
   // Use API assignments if present; fallback to dummy
   const assignmentsRaw = useMemo(() => {
-    return apiAssignmentsArray.length ? apiAssignmentsArray : dummyAssignments;
+    return apiAssignmentsArray.length ? apiAssignmentsArray : [];
   }, [apiAssignmentsArray]);
 
-  // --------------------------------------------------
-  // Filtering
-  // --------------------------------------------------
   const filteredPrograms = useMemo(() => {
     if (!query) return programsRaw;
     const q = normalize(query);
@@ -323,26 +299,21 @@ const useAccreditation = () => {
       .filter(Boolean);
   }, [assignmentsRaw, query]);
 
-  // --------------------------------------------------
-  // UI helpers & collapsibles
-  // --------------------------------------------------
   const handleItemClick = (item) => setActiveItemId(item.id);
   const handleLevelScroll = (id) => levelRef.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   const handleDropdownClick = (opts = {}) => {
-    if (opts.isShowParameter) setShowParameters((v) => !v);
-    if (opts.isShowSubParam) setShowSubParam((v) => !v);
-    if (opts.isShowIndicator) setShowIndicator((v) => !v);
+    if (opts.isShowParameter && opts.id) setActiveParamId(prev => prev !== opts.id ? opts.id : null);
+    if (opts.isShowSubParam && opts.id) setActiveSubparamId(prev => prev !== opts.id ? opts.id : null);
+    if (opts.isShowIndicator && opts.id) setActiveIndicatorId(prev => prev !== opts.id ? opts.id : null);
   };
 
-  const [openAreas, setOpenAreas] = useState({});
-  const [openParams, setOpenParams] = useState({});
-  const toggleArea = (key) => setOpenAreas((s) => ({ ...s, [key]: !s[key] }));
-  const toggleParam = (key) => setOpenParams((s) => ({ ...s, [key]: !s[key] }));
+  console.log({
+    activeParamId,
+    activeSubparamId,
+    activeIndicatorId
+  });
 
-  // --------------------------------------------------
-  // Choose + group for assignments UI
-  // --------------------------------------------------
-  const dataPrograms = filteredPrograms;      // array: [{accredTitle, levels}]
+  const dataPrograms = filteredPrograms;    
   const dataAssignments = filteredAssignments;
 
   const groupedAssignments = useMemo(() => {
@@ -357,34 +328,193 @@ const useAccreditation = () => {
     return acc;
   }, [dataAssignments]);
 
-  // --------------------------------------------------
-  // Return
-  // --------------------------------------------------
+  console.log(groupedAssignments);
+
+  /* -----------Program tab handlers ----------- */
+  const handleProgramCardClick = (accredInfoUUID, level, programUUID) => {
+    const formattedLevel = String(level).toLowerCase().split(' ').join('-');
+    localStorage.setItem('a_uuid', accredInfoUUID);
+    localStorage.setItem('a_level', level);
+    localStorage.setItem('f_a_level', formattedLevel);
+    console.log({accredInfoUUID, formattedLevel, programUUID})
+    navigate(PROGRAM_AREAS(programUUID));
+  };
+
+  /* -----------Assignment tab handlers ----------- */
+  const handleUploadClick = (id) => {
+    document.getElementById(`file-input-${id}`).click();
+  };
+
+  const handleFileChange = async (e, id) => {
+    const { 
+      accredInfoId, levelId, programId, areaId, 
+      paramId = null, subParameterId = null,
+      indicatorId = null
+    } = e.target.dataset; 
+
+    console.log(e.target.dataset);
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
+
+    const allowedTypes = [
+      'application/pdf',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation', // .pptx
+      'image/jpeg',
+      'image/png',
+      'image/gif'
+    ];
+
+    const validFiles = files.filter(file => allowedTypes.includes(file.type));
+    const invalidFiles = files.filter(file => !allowedTypes.includes(file.type));
+
+    if (invalidFiles.length > 0) {
+      showErrorToast(
+        'Only PDF, DOCX, PPTX, and image files are allowed.',
+        'top-center',
+        5000
+      );
+      e.target.value = ''; // reset input
+      return;
+    }
+
+    setSelectedFiles(prev => ({
+      ...prev,
+      [id]: validFiles
+    }));
+
+    setUploadingIds(prev => [...prev, id]);
+
+    await handleSaveFile({
+      validFiles,
+      accredInfoId,
+      levelId,
+      programId,
+      areaId,
+      paramId,
+      subParameterId,
+      indicatorId
+    });
+
+    // Once upload completes (success or fail), remove it
+    setUploadingIds(prev => prev.filter(id => id !== subParameterId));
+
+    refetchUploaderDocuments();
+  };
+
+  console.log({ selectedFiles });
+
+  const handleSaveFile = async (data = {}) => {
+    const { 
+      validFiles, accredInfoId, levelId, programId, areaId, 
+      paramId = null, subParameterId = null, indicatorId = null 
+    } = data;
+
+    if (!accredInfoId || !levelId || !programId || !areaId) {
+      showErrorToast('Missing required data for upload.');
+      return;
+    }
+    
+    if (validFiles.length === 0) {
+      showErrorToast('No file selected!');
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      validFiles.forEach(file => {
+        formData.append('files', file);
+      });
+      formData.append('accredInfoId', accredInfoId);
+      formData.append('levelId', levelId);
+      formData.append('programId', programId);
+      formData.append('areaId', areaId);
+      paramId && formData.append('parameterId', paramId);
+      subParameterId && formData.append('subParameterId', subParameterId);
+      indicatorId && formData.append('indicatorId', indicatorId);
+      user.userId && formData.append('uploadBy', user.userId);
+
+      const res = await addDocument(formData);
+
+      if (res.data.success) {
+        showSuccessToast(res?.data?.message || 'File uploaded successfully!');
+        // Clear selection
+        setSelectedFiles(prev => {
+          const newFiles = { ...prev };
+          delete newFiles[subParameterId];
+          return newFiles;
+        });
+
+        // Refetch docs so UI updates
+        await refetch();
+      }
+      console.log(res);
+
+      return res;
+  
+    } catch (error) {
+      console.error('Upload failed:', error);
+      showErrorToast('Upload failed. Try again.');
+    }
+  };
+
+  const handleDocOptionClick = (docId) => {
+    setActiveDocId(prev => prev !== docId ? docId : null);
+  };
+
+  const handleDelete = async (e, docId) => {
+    e.stopPropagation();
+
+    try {
+      const res = await deleteDoc(docId);
+
+      if (res.data?.success) {
+        showSuccessToast(res?.data?.message || 'Deleted successfully!');
+      }
+
+    } catch (error) {
+      console.error(error);
+      showErrorToast('Something went wrong. Try again.');
+      throw error;
+    }
+  };
+
+  console.log({ selectedFiles });
+
   return {
-    refs: { searchInputRef, scrollContainerRef, levelRef },
+    refs: { searchInputRef, scrollContainerRef, levelRef, docOptionRef },
     states: {
       setQuery,
-      showParameters,
-      showSubParam,
-      showIndicator,
+      activeParamId,
+      activeSubparamId,
+      activeIndicatorId,
       loading,
       error,
+      activeDocId
     },
     datas: {
       items,
       activeItemId,
       query,
       dataPrograms,
-      groupedPrograms,      // programs map
-      dummyPrograms,        // optional
-      groupedAssignments,   // used by your Assignments tab component
+      groupedPrograms,      
+      groupedAssignments, 
+      selectedFiles,
+      uploaderDocs,
+      loadingUploaderDocuments,
+      errorUploaderDocuments, 
     },
     helpers: { formatAccreditationTitleForUI },
     handlers: {
+      handleProgramCardClick,
       handleItemClick,
       handleLevelScroll,
       handleDropdownClick,
       refetch,
+      handleUploadClick,
+      handleFileChange,
+      handleDocOptionClick,
+      handleDelete
     },
   };
 };

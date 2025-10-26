@@ -59,6 +59,7 @@ const getSIM = async ({
       AND a.area_name = ?
       AND pa.parameter_name = ?
       AND spa.sub_parameter_name = ?
+    ORDER BY i.indicator_name ASC
   `;
 
   try {

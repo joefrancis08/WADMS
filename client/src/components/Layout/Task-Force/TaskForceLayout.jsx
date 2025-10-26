@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Menu, X, Bell, Pen, LogOut, Sun, Moon, ClipboardPenLine, CheckCheck, RefreshCw } from "lucide-react";
 import PATH from "../../../constants/path";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import useOutsideClick from "../../../hooks/useOutsideClick";
 import { logoutUser } from "../../../api-calls/users/userAPI";
 import { useAuth } from "../../../contexts/AuthContext";
@@ -22,7 +22,8 @@ const navItems = [
 
 const TaskForceLayout = ({ children }) => {
   const { user, logout } = useAuth();
-  console.log(user);
+
+  const navigate = useNavigate();
   const { email, fullName, profilePicPath, role } = user;
   const { 
     notificationsData,
@@ -33,12 +34,9 @@ const TaskForceLayout = ({ children }) => {
 
   const notifications = notificationsData.notificationData ?? [];
 
-  console.log(notifications);
   const notifRef = useRef();
   const profileOptionRef = useRef();
   const location = useLocation();
-
-  console.log(user);
 
   const [isDark, setIsDark] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -81,13 +79,10 @@ const TaskForceLayout = ({ children }) => {
 
   const handleMarkAsRead = async (notifId, userId) => {
     try {
-      const res = await patchNotification(notifId, userId);
-      
-      console.log(res);
+      await patchNotification(notifId, userId);
       notifRefetch();
 
     } catch (error) {
-      console.log(user.userId);
       console.log('Error updating notification:', error);
       throw error;
     }
@@ -100,7 +95,9 @@ const TaskForceLayout = ({ children }) => {
         <div className="max-w-7xl px-2 sm:px-6">
           <div className="relative flex items-center h-16">
             {/* Left: Logo/Brand */}
-            <div className="flex items-center gap-x-4 text-xl font-bold text-yellow-400">
+            <div 
+              onClick={() => navigate(PATH.TASK_FORCE.ACCREDITATION)}
+              className="flex items-center gap-x-4 text-xl font-bold text-yellow-400 cursor-pointer">
               <img
                 className="h-10 w-10"
                 src="/pit-logo-outlined.png"
@@ -301,7 +298,14 @@ const TaskForceLayout = ({ children }) => {
               {!notifLoading && !notifError && notifications.length > 0 && (
                 (() => {
                   const toDate = n => new Date(n?.notifDate || n?.createdAt || Date.now());
-                  const sorted = [...notifications].sort((a, b) => toDate(b) - toDate(a));
+                  const sorted = [...notifications].sort((a, b) => {
+                    // unread first
+                    if (Number(a.isRead) !== Number(b.isRead)) {
+                      return Number(a.isRead) - Number(b.isRead);
+                    }
+                    // then newest first
+                    return toDate(b) - toDate(a);
+                  });
 
                   // group by humanized calendar day in Asia/Manila
                   const groups = sorted.reduce((acc, item) => {

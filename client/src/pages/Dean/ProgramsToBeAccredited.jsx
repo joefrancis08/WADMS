@@ -230,7 +230,7 @@ const ProgramsToAccredit = () => {
                   ref={scrollContainerRef}
                   className='relative border rounded-lg flex flex-col bg-slate-900 m-4 pb-15 p-4 shadow-lg overflow-auto border-slate-700 '
                 >
-                  <div id={accredTitle} className='relative w-full h-100 bg-[url("/pit-bg.jpg")] bg-cover bg-center rounded-lg'>
+                  <div id={accredTitle} className='relative w-full h-100 bg-[url("/pit-bg-6.jpg")] bg-cover bg-center rounded-lg'>
                     <div className='absolute inset-0 bg-black/70 rounded-lg border border-slate-700 shadow shadow-slate-800'></div>
                     {/* Content */}
                     <div className='absolute flex top-2 right-2'>

@@ -16,7 +16,7 @@ const getSubParamDocuments = async ({
       ad.uuid           AS doc_uuid,
       ad.file_name,
       ad.file_path,
-      ad.upload_by,
+      u.full_name       AS uploaded_by,
       ad.upload_at,
       ai.title          AS accred_title,
       ai.year           AS accred_year,
@@ -28,6 +28,8 @@ const getSubParamDocuments = async ({
       spa.id            AS sub_parameter_id,
       spa.uuid          AS sub_parameter_uuid
     FROM accreditation_documents ad
+    LEFT JOIN user u
+      ON ad.upload_by = u.id
     JOIN accreditation_info ai
       ON ad.accred_info_id = ai.id
     JOIN accreditation_body ab
