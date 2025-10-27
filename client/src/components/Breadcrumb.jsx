@@ -43,7 +43,7 @@ const Breadcrumb = ({ items = [] }) => {
           <div ref={dropdownRef} className='relative'>
             <button
               onClick={() => setShowMore(!showMore)}
-              className='p-1 hover:bg-slate-700 rounded-md transition'
+              className='p-1 hover:bg-slate-700 rounded-md transition cursor-pointer'
               aria-label='Show hidden breadcrumbs'
             >
               <Ellipsis className='h-4 w-4 -mb-2 text-slate-300' />
@@ -61,7 +61,8 @@ const Breadcrumb = ({ items = [] }) => {
                       setShowMore(false);
                     }}
                     title={item.label}
-                    className={`text-left px-2 py-1 rounded transition truncate max-w-[200px] ${
+                    className={`text-left px-2 py-1 rounded transition truncate max-w-[200px] cursor-pointer hover:underline
+                    ${
                       item.isActive
                         ? 'font-semibold text-green-400 bg-slate-700'
                         : 'text-slate-200 hover:bg-slate-700 hover:text-white'

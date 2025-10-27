@@ -32,7 +32,7 @@ const Dashboard = () => {
     <AdminLayout>
       <div className='relative min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-slate-200 p-8'>
         {/* Subtle background texture */}
-        <div className='absolute inset-0 bg-[url("/pit-bg.jpg")] bg-cover bg-center opacity-[0.07]'></div>
+        <div className='absolute inset-0 bg-[url("/cgs-bg-3.jpg")] bg-cover bg-center opacity-[0.10]'></div>
 
         {/* Welcome */}
         <motion.div

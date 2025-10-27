@@ -61,7 +61,7 @@ const deleteAssignment = async (accredData = {}, userData = {}, condition = {}, 
       params.push(parameterId);
     }
     if (subParameterId !== null) {
-      whereClause.push('sub_parameter_id = ?');
+      whereClause.push('subparameter_id = ?');
       params.push(subParameterId);
     }
     if (indicatorId !== null) {

@@ -37,7 +37,6 @@ const useProgramAreas = () => {
     ilpmId, accredInfoId, title, year, accredBody, 
     levelId, programId, program, programObj 
   } = useProgramToBeAccreditedDetails(accredInfoUUID, programUUID);
-  console.log(programObj);
 
   // Only fetch areas if programObj is ready
   const { areas: areasData, loading, error, refetch } = useFetchProgramAreas({
@@ -61,7 +60,6 @@ const useProgramAreas = () => {
     error: errorAssignments,
     refetch: refetchAssignments 
   } = useFetchAssignments({ accredInfoId, levelId, programId });
-  console.log(assignments.assignmentData);
   const assignmentData = assignments?.assignmentData ?? [];
 
   const {
@@ -71,12 +69,9 @@ const useProgramAreas = () => {
     refetchAreaProgress
   } = useFetchAreaProgress(programId);
 
-  console.log(areasData);
-
   const data = areasData?.data ?? [];
   const areasByLevelData = areasByLevel?.areas ?? [];
   const areaProgress = areaProgressData?.areaProgressData ?? [];
-  console.log(areaProgress);
 
   const [modalType, setModalType] = useState(null);
   const [modalData, setModalData] = useState(null);
@@ -87,8 +82,6 @@ const useProgramAreas = () => {
   const [selectedTaskForce, setSelectedTaskForce] = useState([]); // State for selected checkboxes (AreaModal)
   const [activeTaskForceId, setActiveTaskForceId] = useState(null);
   const [showConfirmUnassign, setShowConfirmUnassign] = useState(false);
-
-  console.log('Active Task Force ID:', activeTaskForceId);
 
   // Auto focus input when 
   const areaInputRef = useAutoFocus(modalType, modalType === MODAL_TYPE.ADD_AREA);
@@ -105,8 +98,7 @@ const useProgramAreas = () => {
     setModalType(JSON.parse(modalType));
 
   }, []);
-  console.log(modalType);
-
+  
   // Reuse useOutsideClick hook to make area options disappear
   useOutsideClick(areaOptionsRef, () => setActiveAreaId(null));
 
@@ -260,7 +252,6 @@ const useProgramAreas = () => {
   };
 
   const handleConfirmRemoval = async (data = {}) => {
-    console.log(data.area);
     try {
       const res = await deletePAM({
         title: data.title,
@@ -294,7 +285,7 @@ const useProgramAreas = () => {
     if (selectedTaskForce.length === taskForce.length) {
       setSelectedTaskForce([]); // Unselect all
     } else {
-      setSelectedTaskForce(taskForce.map((user) => user.userId)); // Select all by id
+      setSelectedTaskForce(taskForce.map((user) => user.id)); // Select all by id
     }
   };
 
@@ -312,7 +303,6 @@ const useProgramAreas = () => {
         userIDList
       });
 
-      console.log(res);
       if (res?.data?.success) {
         showSuccessToast(ASSIGNMENT.SUCCESS);
       }
@@ -349,17 +339,11 @@ const useProgramAreas = () => {
       area,
       taskForces
     });
-    console.log('Profile stack is clicked!')
-    console.log(data);
-    
   };
-
-  console.log({ modalType, modalData });
 
   // For AreaModal.jsx
   const handleEllipsisClick = (data = {}) => {
     const { taskForceId } = data;
-    console.log('ellipsis clicked!');
     setActiveTaskForceId(prev => prev === taskForceId ? null : taskForceId);
   };
 
@@ -370,7 +354,7 @@ const useProgramAreas = () => {
 
   // For AreaModal.jsx
   const handleUnassignedAllClick = () => {
-    console.log('unassigned all clicked!')
+    // Unassigned all logic and api call here
   };
 
   // For AreaModal.jsx (Assigned Task Force Options)
@@ -390,7 +374,6 @@ const useProgramAreas = () => {
       }));
       
     } else if (option.label === 'Unassign') {
-      console.log('Unassigned clicked!');
       setModalData(prev => ({
         ...prev,
         selectedTaskForce: { id: data.taskForceId, fullName: data.taskForce, profilePic: data.taskForceImage }
@@ -404,7 +387,6 @@ const useProgramAreas = () => {
         taskForceId: data.taskForceId,
         taskForce: data.taskForce
       });
-      console.log(data);
     } 
   };
 
@@ -427,16 +409,11 @@ const useProgramAreas = () => {
       areaId, taskForceId 
     } = data;
 
-    console.log({ accredInfoId, levelId, programId, 
-      areaId, taskForceId });
-
     try {
       const res = await deleteAssignment({
         accredInfoId, levelId, programId,
         areaId, taskForceId
       });
-
-      console.log(res);
 
       handleCloseModal({ confirmUnassign: true });
       setModalData(prev => ({
@@ -454,8 +431,6 @@ const useProgramAreas = () => {
       throw error;
     }
   };
-
-  console.log(modalData?.taskForces?.length);
 
   return {
     navigation: {

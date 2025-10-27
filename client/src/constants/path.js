@@ -62,8 +62,19 @@ const PATH = {
   },
 
   TASK_FORCE: {
-    DASHBOARD: '/t/accreditation',
-    ACCREDITATION: '/t'
+    ACCREDITATION: '/t',
+
+    PROGRAM_AREAS: (programUUID) => `/a/${programUUID}`,
+    PROGRAM_AREAS_TEMPLATE: '/a/:programUUID',
+
+    AREA_PARAMETERS: (areaUUID) => `/p/${areaUUID}`,
+    AREA_PARAMETERS_TEMPLATE: '/p/:areaUUID',
+
+    PARAM_SUBPARAMS: (paramUUID) => `/s/${paramUUID}`,
+    PARAM_SUBPARAMS_TEMPLATE: '/s/:paramUUID',
+
+    SUBPARAM_INDICATORS: (subParamUUID) => `/i/${subParamUUID}`,
+    SUBPARAM_INDICATORS_TEMPLATE: '/i/:subParamUUID',
   },
 
   INTERNAL_ASSESSOR: {

@@ -8,6 +8,7 @@ import {
   EllipsisVertical,
   Upload,
   Search,
+  FolderPlus,
 } from 'lucide-react';
 import PATH from '../../constants/path';
 import useProgramAreas from '../../hooks/Dean/useProgramAreas';
@@ -81,7 +82,7 @@ const ProgramAreas = () => {
     handleConfirmUnassign,
   } = handlers;
 
-  // 🔍 SEARCH STATE
+  // SEARCH STATE
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedQuery = useDebouncedValue(searchQuery, 250);
   const lowerQ = debouncedQuery.toLowerCase();
@@ -127,9 +128,9 @@ const ProgramAreas = () => {
       <div className="flex-1 p-3">
         <div className="bg-slate-900 m-2 pb-2 border border-slate-700 rounded-lg">
           {/* Header Section: Breadcrumb + Search */}
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between shadow px-4 pt-4 bg-black/40 p-4 rounded-t-lg gap-4">
+          <div className="sticky top-0 z-50 flex flex-col md:flex-row md:items-center md:justify-between shadow px-4 pt-4 bg-slate-900 p-4 rounded-t-lg gap-4 border-b border-slate-700">
             <Breadcrumb items={breadcrumbItems} />
-            <div className="relative w-full md:w-1/3 lg:w-1/4">
+            <div className="relative flex items-center gap-x-2 w-full md:w-120">
               <Search className="absolute left-3 top-2.5 h-5 w-5 text-slate-400" />
               <input
                 type="text"
@@ -138,6 +139,14 @@ const ProgramAreas = () => {
                 placeholder="Search area..."
                 className="pl-10 pr-3 py-2 rounded-full bg-slate-800 text-slate-100 border border-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 w-full transition-all"
               />
+              <button
+                title='Add new area'
+                onClick={handleAddAreaClick}
+                className="inline-flex min-w-32 items-center justify-center gap-1 px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-full shadow active:scale-95 transition cursor-pointer"
+              >
+                <FolderPlus className="h-5 w-5" />
+                <span>Add New</span>
+              </button>
             </div>
           </div>
 
@@ -180,7 +189,7 @@ const ProgramAreas = () => {
                 </div>
               </div>
             )}
-
+            {console.log('Filtered Areas:', filteredAreas)}
             {/* Area Cards */}
             {filteredAreas.map((areaData, index) => (
               <div
@@ -190,10 +199,6 @@ const ProgramAreas = () => {
                 }
                 className="relative flex flex-col items-start justify-center px-2 max-sm:w-full md:w-75 lg:w-50 h-60 bg-[url('/cgs-bg-2.png')] bg-cover bg-center shadow-slate-800 border border-slate-600 hover:shadow-md transition cursor-pointer active:shadow"
               >
-                {console.log(areaData.accredId)}
-                {console.log(areaData.levelId)}
-                {console.log(areaData.programId)}
-                {console.log(assignmentData)}
                 <div className="absolute inset-0 bg-black/50"></div>
                 {activeAreaId && <div className='absolute inset-0 z-20'></div>}
 
@@ -246,6 +251,7 @@ const ProgramAreas = () => {
                 <div className="flex items-center justify-between px-1">
                   <div className="absolute bottom-2.5 z-20">
                     <ProfileStack
+                      key={areaData.area_uuid}
                       data={{
                         assignmentData: deduplicateAssignments(
                           assignmentData,
@@ -301,7 +307,8 @@ const ProgramAreas = () => {
                   const { color, status } = getProgressStyle(progress);
 
                   return (
-                    <ProgressBar 
+                    <ProgressBar
+                      key={areaData.area_uuid} 
                       progress={progress} 
                       color={color} 
                       status={status}
@@ -361,17 +368,6 @@ const ProgramAreas = () => {
                 )}
               </div>
             ))}
-
-            {/* Add Area Card */}
-            {filteredAreas.length > 0 && (
-              <button
-                onClick={handleAddAreaClick}
-                className="relative flex flex-col items-center rounded-lg gap-4 justify-center px-2 max-sm:w-full md:w-75 lg:w-50 h-60 shadow-slate-800 border bg-slate-800 border-slate-700 hover:shadow hover:scale-105 transition cursor-pointer active:shadow active:scale-95"
-              >
-                <PlusCircle className="h-16 w-16 text-slate-100" />
-                <p className="text-slate-100 text-lg">Add Area</p>
-              </button>
-            )}
           </div>
         </div>
       </div>

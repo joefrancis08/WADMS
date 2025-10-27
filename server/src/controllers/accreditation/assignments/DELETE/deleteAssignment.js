@@ -1,4 +1,5 @@
 import deleteAssignmentModel from "../../../../models/accreditation/assignments/DELETE/deleteAssignment.js";
+import insertNotification from "../../../../models/notification/POST/insertNotification.js";
 import sendUpdate from "../../../../services/websocket/sendUpdate.js";
 
 const deleteAssignment = async (req, res) => {
@@ -11,17 +12,6 @@ const deleteAssignment = async (req, res) => {
   const indicatorId = req.query.indicatorId ? Number(req.query.indicatorId) : null;
 
   const taskForceId = Number(req.query.taskForceId);
-
-  console.log({ 
-    accredInfoId, 
-    levelId, 
-    programId, 
-    areaId, 
-    parameterId, 
-    subParameterId, 
-    indicatorId,
-    taskForceId
-  });
 
   try {
     const result = await deleteAssignmentModel(
@@ -51,6 +41,17 @@ const deleteAssignment = async (req, res) => {
     }
 
     sendUpdate('assignment-update');
+    await insertNotification({ 
+      userId: taskForceId, 
+      accredInfoId, 
+      levelId, 
+      programId, 
+      areaId, 
+      parameterId, 
+      subParameterId,
+      title: 'Unassign',
+      type: 'Unassign',
+    });
 
     return res.status(200).json({
       message:'Assigment deleted successfully!',

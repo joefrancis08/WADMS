@@ -1,3 +1,5 @@
+import Popover from "./Popover";
+
 const PROFILE_PIC_PATH = import.meta.env.VITE_PROFILE_PIC_PATH;
 
 const ProfileStack = ({ 
@@ -5,9 +7,12 @@ const ProfileStack = ({
   handlers = {}, 
   scope = 'area', // Can be 'area', 'parameter', or 'subparameter',
   showBorder = false,
+  ui = 'dean'
 }) => {
   const { assignmentData = [], taskForce = [], accredInfoId, levelId, programId } = data;
   const { handleProfileStackClick } = handlers;
+
+  console.log({ assignmentData, taskForce, accredInfoId, levelId, programId });
 
   // Mapping for dynamic IDs
   const idMapping = {
@@ -15,6 +20,8 @@ const ProfileStack = ({
     parameter: 'parameterID',
     subParameter: 'subParameterID',
   };
+
+  console.log(assignmentData);
 
   const scopeIdKey = idMapping[scope];
   const currentScopeId = data[`${scope}ID`] || data[`${scope}_ID`] || data[`${scope}_id`] || data[`${scope}Id`];
@@ -56,15 +63,6 @@ const ProfileStack = ({
     }
   });
 
-  console.log({
-    scope,
-    currentScopeId,
-    programId,
-    levelId,
-    accredInfoId,
-    filteredAssignments,
-  });
-
   // Deduplicate by Task Force ID
   const uniqueTaskForceIds = [
     ...new Set(filteredAssignments.map(a => a.taskForceID))
@@ -77,7 +75,7 @@ const ProfileStack = ({
   if (assignedTaskForces.length === 0) return null;
 
   return (
-    <div className='flex hover:bg-slate-200/20 items-center rounded-full p-1'>
+    <div className='relative flex hover:bg-slate-200/20 items-center rounded-full p-1'>
       {assignedTaskForces.map((tf, idx) => (
         <div
           key={`${tf.id}-${idx}`}
@@ -85,6 +83,7 @@ const ProfileStack = ({
           onClick={(e) => {
             const taskForcesForScope = filteredAssignments.map(a => {
               const match = taskForce.find(tf => tf.id === a.taskForceID);
+              console.log(match);
               return {
                 uuid: match?.uuid,
                 id: match?.id,
@@ -106,7 +105,9 @@ const ProfileStack = ({
           className='first:m-0 -ml-2 flex items-center justify-start cursor-pointer'
         >
           <img
-            src={`${PROFILE_PIC_PATH}/${tf.profilePicPath || 'default-profile-picture.png'}`}
+            src={tf?.profilePicPath?.startsWith?.('http')
+              ? tf.profilePicPath
+              : `${PROFILE_PIC_PATH}/${tf.profilePicPath || 'default-profile-picture.png'}`}
             alt='Task Force Profile Picture'
             className={`h-5 w-5 rounded-full ${showBorder && 'outline-2 outline-slate-800'}`}
             loading='lazy'
