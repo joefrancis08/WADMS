@@ -1,19 +1,29 @@
 import React, { useState, useMemo } from 'react';
-import { FolderOpen, LoaderCircle, Search } from 'lucide-react';
+import { FolderOpen, LoaderCircle, Search, Upload } from 'lucide-react';
 import Breadcrumb from '../../components/Breadcrumb';
 import ProfileStack from '../../components/ProfileStack';
 import TaskForceLayout from '../../components/Layout/Task-Force/TaskForceLayout';
 import useProgramAreas from '../../hooks/Task Force/useProgramAreas';
 import PATH from '../../constants/path';
+import LEVEL from '../../constants/accreditationLevels';
+import Popover from '../../components/Popover';
+import TaskForceModal from '../../components/Task Force/TaskForceModal';
 
 const ProgramAreasDummy = () => {
   const { navigate, refs, params, states, datas, helpers, handlers } = useProgramAreas();
-  const { loading, error } = states;
-  const { 
-    title, year, accredBody, level,
-    program, areas
+  const { loading, error, modalType } = states;
+  const {
+    accredInfoId, accredInfoUUID, 
+    title, year, accredBody, levelId, 
+    level, programId, program, areas, 
+    assignmentData, user, taskForce,
+    modalData
   } = datas;
-  const { handleAreaCardClick } = handlers;
+  const { 
+    handleAreaCardClick,
+    handleCloseModal,
+    handleProfileStackClick
+  } = handlers;
 
   const [searchQuery, setSearchQuery] = useState('');
   const [activeAreaId, setActiveAreaId] = useState(null);
@@ -65,7 +75,7 @@ const ProgramAreasDummy = () => {
               <span className='text-yellow-400 font-bold text-xl md:text-2xl lg:text-3xl tracking-wide text-center'>
                 {program}
               </span>
-              <span className='absolute -bottom-5 right-1/2 translate-x-1/2 text-xs md:text-sm px-6 text-slate-200'>
+              <span className='absolute -bottom-6 right-1/2 translate-x-1/2 text-xs md:text-sm px-6 text-slate-100'>
                 {level}
               </span>
             </p>
@@ -79,7 +89,7 @@ const ProgramAreasDummy = () => {
                 <p className='text-lg text-slate-100'>No areas found.</p>
               </div>
             )}
-
+            {console.log(filteredAreas)}
             {!loading ? (
               filteredAreas.map((areaData) => (
                 <div
@@ -99,15 +109,26 @@ const ProgramAreasDummy = () => {
                     </p>
                   </div>
 
-                  {/* <button
-                    title='Upload document'
-                    className='absolute bottom-2.5 right-2 text-white cursor-pointer active:opacity-50 rounded-full hover:bg-white/20 p-1'
-                  >
-                    <Upload />
-                  </button> */}
-
-                  <div className='absolute bottom-2.5 left-1 z-20'>
-                    <ProfileStack data={{ dummy: true }} />
+                  {areaData.level === LEVEL.LIV && (
+                    <button
+                      title='Upload document'
+                      className='absolute bottom-2.5 right-2 text-white cursor-pointer active:opacity-50 rounded-full hover:bg-white/20 p-1'
+                    >
+                      <Upload />
+                    </button>
+                  )}
+                  <div className='absolute bottom-2.5 left-2 z-20'>
+                    <ProfileStack 
+                      data={{ 
+                        taskForce, assignmentData, accredInfoId, 
+                        levelId, programId, areaId: areaData.area_id
+                      }} 
+                      handlers={{ 
+                        handleProfileStackClick 
+                      }}
+                      scope='area'
+                      ui='task-force'
+                    />
                   </div>
                 </div>
               ))
@@ -122,6 +143,15 @@ const ProgramAreasDummy = () => {
           </div>
         </div>
       </div>
+      <TaskForceModal
+        modalType={modalType} 
+        datas={{
+          modalData,
+          user
+        }}
+        handlers={{ handleCloseModal }}
+        scope='parameter'
+      />
     </TaskForceLayout>
   );
 };

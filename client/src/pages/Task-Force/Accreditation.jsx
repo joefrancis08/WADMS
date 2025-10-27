@@ -54,7 +54,7 @@ export default function Accreditation() {
       <div className="flex-1">
         {/* Header */}
         <div className="sticky top-0 z-40 mb-8 bg-slate-900/95 backdrop-blur border-b border-slate-700">
-          <div className="flex items-center justify-between py-2 px-4">
+          <div className="flex items-center justify-between py-2">
             <h2 className="text-2xl text-slate-100 font-bold">Accreditation</h2>
             <div
                 role="tablist"

@@ -92,8 +92,8 @@ const TaskForceLayout = ({ children }) => {
     <div className="min-h-screen flex flex-col bg-slate-900">
       {/* Navbar */}
       <nav className="bg-slate-800 border-b border-slate-600 z-50">
-        <div className="max-w-7xl px-2 sm:px-6">
-          <div className="relative flex items-center h-16">
+        <div className="w-full px-4 sm:px-6">
+          <div className="relative flex items-center justify-evenly h-16">
             {/* Left: Logo/Brand */}
             <div 
               onClick={() => navigate(PATH.TASK_FORCE.ACCREDITATION)}
@@ -125,7 +125,7 @@ const TaskForceLayout = ({ children }) => {
             </div>
 
             {/* Right: Actions */}
-            <div className="absolute -right-24 flex items-center space-x-4">
+            <div className="flex items-center gap-x-2">
               <button
                 title={isDark ? 'Light Mode' : 'Dark Mode'}
                 onClick={toggleDarkMode}
@@ -137,7 +137,7 @@ const TaskForceLayout = ({ children }) => {
                 }
               </button>
               <button 
-                title="3 notifications"
+                title={`${notifications.filter(n => Number(n?.isRead) === 0).length} unread notifications`}
                 onClick={handleBellClick}
                 className="relative p-2 rounded-full hover:bg-slate-700 cursor-pointer"
               >
@@ -315,11 +315,22 @@ const TaskForceLayout = ({ children }) => {
                     return acc;
                   }, {});
 
+                  // --- helpers updated for 'unassign' ---
                   const typeText = t =>
                     (t === 'assignment' && 'Assignment') ||
-                    (t === 'reminder' && 'Reminder') ||
-                    (t === 'deadline' && 'Deadline') ||
+                    (t === 'unassign'   && 'Unassigned') ||
+                    (t === 'reminder'   && 'Reminder') ||
+                    (t === 'deadline'   && 'Deadline') ||
                     'Update';
+
+                  const typeChipClass = t =>
+                    t === 'unassign'
+                      ? 'bg-red-700'
+                      : t === 'deadline'
+                      ? 'bg-orange-700'
+                      : t === 'reminder'
+                      ? 'bg-blue-700'
+                      : 'bg-green-700'; // default for assignment/others
 
                   return (
                     <div className='p-4 space-y-6'>
@@ -347,7 +358,9 @@ const TaskForceLayout = ({ children }) => {
                                     <div className='flex-1 min-w-0'>
                                       {/* chips */}
                                       <div className='flex flex-wrap items-center justify-between gap-2'>
-                                        <span className='inline-flex items-center text-[12px] uppercase tracking-wide rounded-full bg-green-700 px-3 py-0.5 text-slate-100 font-semibold'>
+                                        <span
+                                          className={`inline-flex items-center text-[12px] uppercase tracking-wide rounded-full px-3 py-0.5 text-slate-100 font-semibold ${typeChipClass(item?.notifType)}`}
+                                        >
                                           {typeText(item?.notifType)}
                                         </span>
                                         {item.isRead === 0 && (
@@ -379,7 +392,9 @@ const TaskForceLayout = ({ children }) => {
 
                                       {/* message */}
                                       <p className={`text-[13px] mt-1.5 leading-snug ${isUnread ? 'text-slate-50' : 'text-slate-100'}`}>
-                                        <span className='text-slate-300'>You are assigned to</span>{' '}
+                                        <span className='text-slate-300'>
+                                          {item?.notifType === 'unassign' ? 'You are unassigned from' : 'You are assigned to'}
+                                        </span>{' '}
                                         <span className='font-semibold'>{formatAreaName(item?.area)}</span>
                                         {item?.parameter ? ` · Parameter ${item.parameter}` : ''}
                                         {item?.subparameter ? ` · ${item.subparameter}` : ''}.

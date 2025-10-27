@@ -1,28 +1,28 @@
 import React, { useState, useMemo } from 'react';
-import {
-  FolderOpen,
-  Plus,
-  Search,
-  FileUser,
-  EllipsisVertical,
-  FolderPlus,
-} from 'lucide-react';
+import { FolderOpen, Search } from 'lucide-react';
 import Breadcrumb from '../../components/Breadcrumb';
-import ProgressBar from '../../components/ProgressBar';
 import ProfileStack from '../../components/ProfileStack';
 import TaskForceLayout from '../../components/Layout/Task-Force/TaskForceLayout';
 import useAreaParameters from '../../hooks/Task Force/useAreaParameters';
 import formatAreaName from '../../utils/formatAreaName';
 import formatParameter from '../../utils/formatParameter';
 import PATH from '../../constants/path';
+import TaskForceModal from '../../components/Task Force/TaskForceModal';
 
 const AreaParameters = () => {
   const { navigate, datas, handlers } = useAreaParameters();
   const { 
-    title, year, accredBody, level,
-    programUUID, program, area, parameters 
+    accredInfoId, title, year, accredBody, 
+    levelId, level, programId, programUUID, 
+    program, areaId, area, parameters, 
+    taskForceData, assignmentData, modalType,
+    modalData, user
   } = datas;
-  const { handleParamCardClick } = handlers;
+  const { 
+    handleParamCardClick,
+    handleProfileStackClick,
+    handleCloseModal
+  } = handlers;
 
   const [searchQuery, setSearchQuery] = useState('');
   const [activeParamId, setActiveParamId] = useState(null);
@@ -105,18 +105,42 @@ const AreaParameters = () => {
               <div
                 key={param.parameter_uuid}
                 onClick={() => handleParamCardClick(param.parameter_uuid)}
-                className='flex flex-col mb-8 justify-between border border-slate-600 hover:shadow-lg hover:cursor-pointer shadow-slate-800 transition rounded-md bg-slate-800 p-5 w-full h-45 sm:w-[45%] lg:w-[30%] relative active:scale-98'
+                className='flex flex-col mb-8 justify-between border border-slate-600 hover:shadow-lg hover:cursor-pointer shadow-slate-800 transition rounded-md bg-slate-800 p-5 w-full h-45 sm:w-[45%] lg:w-[30%] relative'
               >
                 <div className='flex items-center justify-between'>
                   <h3 className='font-semibold text-lg text-slate-300'>{label}</h3>
                 </div>
                 <p className='text-white text-xl font-semibold mt-2 truncate'>{content}</p>
                 <hr className='text-slate-700 my-8' />
+                <div className='absolute bottom-2.5 left-3 z-20'>
+                  <ProfileStack 
+                    data={{ 
+                      accredInfoId, levelId, programId, areaId,
+                      parameterId: param.parameter_id, assignmentData,
+                      taskForce: taskForceData
+                    }}
+                    handlers={{
+                      handleProfileStackClick
+                    }}
+                    scope='parameter'
+                  />
+                </div>
               </div>
             )})}
           </div>
         </div>
       </div>
+      <TaskForceModal
+        modalType={modalType}
+        datas={{
+          modalData,
+          user
+        }}
+        handlers={{
+          handleCloseModal
+        }}
+        scope='parameter'
+      />
     </TaskForceLayout>
   );
 };

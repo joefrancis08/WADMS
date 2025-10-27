@@ -1,3 +1,5 @@
+import Popover from "./Popover";
+
 const PROFILE_PIC_PATH = import.meta.env.VITE_PROFILE_PIC_PATH;
 
 const ProfileStack = ({ 
@@ -5,9 +7,12 @@ const ProfileStack = ({
   handlers = {}, 
   scope = 'area', // Can be 'area', 'parameter', or 'subparameter',
   showBorder = false,
+  ui = 'dean'
 }) => {
   const { assignmentData = [], taskForce = [], accredInfoId, levelId, programId } = data;
   const { handleProfileStackClick } = handlers;
+
+  console.log({ assignmentData, taskForce, accredInfoId, levelId, programId });
 
   // Mapping for dynamic IDs
   const idMapping = {
@@ -15,6 +20,8 @@ const ProfileStack = ({
     parameter: 'parameterID',
     subParameter: 'subParameterID',
   };
+
+  console.log(assignmentData);
 
   const scopeIdKey = idMapping[scope];
   const currentScopeId = data[`${scope}ID`] || data[`${scope}_ID`] || data[`${scope}_id`] || data[`${scope}Id`];
@@ -68,7 +75,7 @@ const ProfileStack = ({
   if (assignedTaskForces.length === 0) return null;
 
   return (
-    <div className='flex hover:bg-slate-200/20 items-center rounded-full p-1'>
+    <div className='relative flex hover:bg-slate-200/20 items-center rounded-full p-1'>
       {assignedTaskForces.map((tf, idx) => (
         <div
           key={`${tf.id}-${idx}`}

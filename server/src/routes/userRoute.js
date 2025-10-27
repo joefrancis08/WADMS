@@ -25,7 +25,7 @@ userRouter.post('/logout', logoutUser);
 userRouter.get('/check-email', checkEmail);
 userRouter.get('/fetch-user-status', fetchUserStatus);
 userRouter.get('/session', userSession);
-userRouter.get('/', authorize([D]), fetchUsersController);
+userRouter.get('/', authorize([D, C, M]), fetchUsersController);
 userRouter.get('/by-role', authorize([D, C, M]), fetchUserByRole);
 userRouter.get('/unverified-users', authorize([D]), fetchUnverifiedUsers);
 userRouter.get('/access-token', authorize([D]), fetchAccessToken);

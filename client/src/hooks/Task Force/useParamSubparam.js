@@ -1,10 +1,16 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useAreaParamsDetails, useProgramAreaDetails, useProgramToBeAccreditedDetails } from "../useAccreditationDetails";
 import useFetchParamSubparam from "../fetch-react-query/useFetchParamSubparam";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import PATH from "../../constants/path";
+import { useAuth } from "../../contexts/AuthContext";
+import { useUsersBy } from "../fetch-react-query/useUsers";
+import { USER_ROLES } from "../../constants/user";
+import MODAL_TYPE from "../../constants/modalTypes";
+import useFetchAssignments from "../fetch-react-query/useFetchAssignments";
 
 const useParamSubparam = () => {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const { paramUUID } = useParams();
   const accredInfoUUID = localStorage.getItem('a_uuid');
@@ -32,32 +38,66 @@ const useParamSubparam = () => {
     program, area, parameter: paramName
   });
   const subParametersData = useMemo(() => subParameters?.data ?? [], [subParameters?.data]);
+
+  const {
+      users: taskForceData, loading: loadingTaskForce,
+      error: errorTaskForce, refetch: refetchTaskForce
+  } = useUsersBy({ role: [USER_ROLES.TASK_FORCE_CHAIR, USER_ROLES.TASK_FORCE_MEMBER]});
+
+  const {
+    assignments, loading: loadingAssignments,
+    error: errorAssignments, refetch: refetchAssignments
+  } = useFetchAssignments({ accredInfoId, levelId, programId, areaId });
+  const assignmentData = useMemo(() => assignments?.assignmentData ?? [], [assignments?.assignmentData]);
+  
+  // Modal States
+  const [modalType, setModalType] = useState(null);
+  const [modalData, setModalData] = useState({});
   
   const handleSubParamCardClick = (subParamUUID) => {
     localStorage.setItem('a_pa_uuid', paramUUID);
     navigate(PATH.TASK_FORCE.SUBPARAM_INDICATORS(subParamUUID))
   };
 
-  console.log(subParametersData);
+  const handleCloseModal = () => {
+    setModalType(null);
+    setModalData({});
+  };
+
+  const handleProfileStackClick = (e, data = {}) => {
+    e.stopPropagation();
+    const { 
+      accredInfoId, levelId, programId, 
+      areaId, parameterId, subParameter, taskForces 
+    } = data;
+    setModalType(MODAL_TYPE.VIEW_ASSIGNED_TASK_FORCE);
+    setModalData({
+      accredInfoId,
+      levelId,
+      programId,
+      areaId,
+      parameterId,
+      subParameter,
+      taskForces
+    });
+  };
 
   return {
     navigate,
     datas: {
-      accredInfoUUID,
-      title,
-      year,
-      accredBody,
-      level,
-      programUUID,
-      program,
-      areaUUID,
-      area,
-      paramUUID,
-      paramName, 
-      subParametersData
+      accredInfoId, accredInfoUUID, title,
+      year, accredBody, levelId, level,
+      programId, programUUID, program,
+      areaId, areaUUID, area,
+      paramId, paramUUID, paramName, 
+      subParametersData, modalType,
+      modalData, taskForceData,
+      assignmentData, user
     },
     handlers: {
-      handleSubParamCardClick
+      handleSubParamCardClick,
+      handleCloseModal,
+      handleProfileStackClick
     }
   };
 };

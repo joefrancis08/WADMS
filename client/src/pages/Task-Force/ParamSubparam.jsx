@@ -1,49 +1,39 @@
 import React, { useState, useMemo } from 'react';
 import {
-  FolderOpen,
-  Search,
-  File,
-  FileText,
-  EllipsisVertical,
-  ChevronRight,
-  FileUser,
+  FolderOpen, Search,
+  FileText, ChevronRight,
+  Upload,
 } from 'lucide-react';
 import Breadcrumb from '../../components/Breadcrumb';
 import PDFViewer from '../../components/PDFViewer';
 import DocumentDropdown from '../../components/Document/DocumentDropdown';
-
-
 import TaskForceLayout from '../../components/Layout/Task-Force/TaskForceLayout';
 import useParamSubparam from '../../hooks/Task Force/useParamSubparam';
 import PATH from '../../constants/path';
 import formatAreaName from '../../utils/formatAreaName';
 import formatParameterName from '../../utils/formatParameterName';
+import TaskForceModal from '../../components/Task Force/TaskForceModal';
+import ProfileStack from '../../components/ProfileStack';
 
 const ParamSubparam = () => {
   const { navigate, datas, handlers } = useParamSubparam();
   const {
-    accredInfoUUID,
-    title,
-    year,
-    accredBody,
-    level,
-    programUUID,
-    program,
-    areaUUID,
-    area,
-    paramUUID,
-    paramName, 
-    subParametersData
+    accredInfoId, accredInfoUUID, title, year, accredBody,
+    levelId, level, programId, programUUID, program, 
+    areaId, areaUUID,  area, paramId, paramUUID, paramName, 
+    subParametersData, modalType, modalData, 
+    taskForceData, assignmentData, user
   } = datas;
 
   const {
-    handleSubParamCardClick
+    handleSubParamCardClick,
+    handleCloseModal,
+    handleProfileStackClick
   } = handlers;
 
   const [searchQuery, setSearchQuery] = useState('');
   const [previewFile, setPreviewFile] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
-  const [activeSubParamId, setActiveSubParamId] = useState(null);
 
   // Search Filter
   const filteredSubparams = useMemo(() => {
@@ -90,10 +80,13 @@ const ParamSubparam = () => {
     setExpandedId(expandedId === id ? null : id)
   };
 
-  const handleSubParamOption = (e, uuid) => {
-    e.stopPropagation()
-    setActiveSubParamId(activeSubParamId === uuid ? null : uuid)
-  };
+  // Only logged in user should upload document
+  const canUploadFor = (subParamId) =>
+  Array.isArray(assignmentData) &&
+  assignmentData.some(a =>
+    String(a.taskForceID) === String(user?.userId) &&
+    String(a.subParameterID) === String(subParamId)
+  );
 
   return (
     <TaskForceLayout>
@@ -144,9 +137,10 @@ const ParamSubparam = () => {
             {filteredSubparams.map((data) => (
               <div
                 key={data.sub_parameter_uuid}
-                className='mb-4 w-full md:w-[45%] relative flex flex-col border border-slate-700 hover:shadow shadow-slate-600 p-4 rounded-md transition cursor-pointer bg-slate-800 active:scale-98'
+                className='mb-4 w-full md:w-[45%] relative flex flex-col border border-slate-700 hover:shadow shadow-slate-600 p-4 rounded-md transition cursor-pointer bg-slate-800'
                 onClick={() => handleSubParamCardClick(data.sub_parameter_uuid)}
               >
+                {console.log(data)}
                 {/* Header: Sub-Parameter Name + Options */}
                 <div className='relative flex items-center justify-between mb-3'>
                   <p className='font-medium text-slate-100 text-lg truncate'>
@@ -184,20 +178,29 @@ const ParamSubparam = () => {
                   <div className='flex flex-col items-start justify-center mt-2'>
                     <p className='flex items-center gap-2 text-sm text-center my-1.5 text-slate-100'>
                       No uploaded document.
-                      <span
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          alert(`Upload clicked for ${data.sub_parameter}`)
-                        }}
-                        className='hover:underline text-blue-400 cursor-pointer'
-                      >
-                        Upload
-                      </span>
+                      {canUploadFor(data.sub_parameter_id) && (
+                        <span
+                          onClick={(e) => { e.stopPropagation() }}
+                          className='flex items-center gap-x-1 bg-slate-700 px-2 py-1 rounded-full hover:bg-slate-600 text-slate-100 cursor-pointer transition  active:scale-95 hover:shadow shadow-slate-700'
+                        >
+                          <Upload size={18}/> Upload
+                        </span>
+                      )}
                     </p>
                   </div>
                 )}
-
                 <hr className='text-slate-700 my-2 mb-8' />
+                <div className='absolute bottom-2.5 left-3 z-20'>
+                  <ProfileStack 
+                    data={{
+                      accredInfoId, levelId, programId, areaId,
+                      paramId, subParameterId: data.sub_parameter_id,
+                      assignmentData, taskForce: taskForceData
+                    }}
+                    handlers={{ handleProfileStackClick }}
+                    scope='subParameter'
+                  />
+                </div>
 
                 {/* Expanded Document Dropdown */}
                 {expandedId === data.sub_parameter_id &&
@@ -221,8 +224,15 @@ const ParamSubparam = () => {
       {previewFile && (
         <PDFViewer file={previewFile} onClose={() => setPreviewFile(null)} />
       )}
+
+      <TaskForceModal 
+        modalType={modalType}
+        datas={{ modalData, user }}
+        handlers={{ handleCloseModal }}
+        scope='subParameter'
+      />
     </TaskForceLayout>
   )
 }
 
-export default ParamSubparam
+export default ParamSubparam;
