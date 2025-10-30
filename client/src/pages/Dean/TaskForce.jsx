@@ -44,7 +44,7 @@ const TaskForce = () => {
     accessTokens,
     loadingAccessTokens,
     errorAccessTokens,
-    refetchAccessTokens
+    refetchAccessTokens,
   } = datas;
 
   const {
@@ -104,7 +104,6 @@ const TaskForce = () => {
     }
   }, [activeTabId, taskForceChair, taskForceMember, filterByQuery]);
 
-  // add these near your other derived values, before return()
   const chairsFiltered = filterByQuery(taskForceChair);
   const membersFiltered = filterByQuery(taskForceMember);
   const allHasAny = chairsCount > 0 || membersCount > 0;
@@ -112,106 +111,56 @@ const TaskForce = () => {
 
   return (
     <DeanLayout>
-      <div className="flex-1 h-full bg-slate-800">
-        {/* Sticky toolbar */}
-        <div className="sticky top-0 z-50 bg-slate-900 border-l border-b border-slate-700">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="flex items-center justify-between gap-3 py-3">
-              <div className="flex items-center gap-3">
-                <h2 className="text-xl text-slate-100 font-bold flex items-center gap-2">
-                  Task Force
-                  <span className="px-2 py-0.5 text-xs rounded-full bg-slate-800 text-slate-200 border border-slate-600">{totalCount} total</span>
-                </h2>
-                <div className="hidden md:flex items-center gap-2">
-                  <span className="px-2 py-0.5 text-xs rounded-full bg-slate-800 text-slate-200 border border-slate-600">
-                    Chairs: {chairsCount}
-                  </span>
-                  <span className="px-2 py-0.5 text-xs rounded-full bg-slate-800 text-slate-200 border border-slate-600">
-                    Members: {membersCount}
-                  </span>
-                </div>
+      <div className='flex-1 min-h-screen bg-slate-50'>
+        {/* Page header */}
+        <div className='border-b border-slate-200 bg-white'>
+          <div className='max-w-7xl mx-auto px-4 py-6'>
+            <div className='flex flex-col gap-5 md:flex-row md:items-center md:justify-between'>
+              <div className='space-y-2'>
+                <h1 className='text-xl md:text-2xl font-semibold text-slate-900'>Task Force</h1>
               </div>
 
-              {/* Search + Add (desktop) */}
-              <div className="hidden md:flex items-center gap-3">
-                <div className="relative">
-                  <Search className="absolute left-4 top-2.5 h-5 w-5 text-slate-400" />
+              {/* Actions */}
+              <div className='flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-end md:w-auto'>
+                <div className='relative w-full sm:w-72'>
+                  <Search className='pointer-events-none absolute left-3 top-2.5 h-5 w-5 text-slate-400' />
                   <input
-                    type="text"
+                    type='text'
                     value={searchQuery}
                     onChange={(e) => handleSearchChange(e.target.value)}
-                    placeholder="Search name or email..."
-                    className="ml-1 pl-9 pr-20 py-2 rounded-full bg-slate-800 text-slate-100 border border-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200 w-72 transition-all"
+                    placeholder='Search name or email...'
+                    className='w-full rounded-full border border-slate-300 bg-white pl-10 pr-20 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400'
                   />
                   {searchQuery && (
                     <button
-                      type="button"
+                      type='button'
                       onClick={() => handleSearchChange('')}
-                      className="absolute right-2 top-1.5 rounded-full border border-slate-600 bg-slate-800 px-2 py-1 text-xs text-slate-200 hover:bg-slate-700 cursor-pointer"
+                      className='absolute right-2 top-1.5 rounded-full border border-slate-300 bg-white px-2 py-1 text-xs text-slate-700 hover:bg-slate-50'
                     >
                       Clear
                     </button>
                   )}
                 </div>
+
                 <button
                   title={totalCount > 0 ? 'Add Task Force' : 'Create Task Force'}
                   onClick={handleAddUser}
-                  className="inline-flex items-center gap-1 px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-full shadow active:scale-95 transition cursor-pointer"
+                  type='button'
+                  className='inline-flex items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-500 cursor-pointer active:scale-95'
                 >
-                  <UserRoundPlus className="h-5 w-5" />
+                  <UserRoundPlus className='h-5 w-5' />
                   <span>Add New</span>
                 </button>
               </div>
-
-              {/* Mobile: search toggle + add */}
-              <div className="flex md:hidden items-center gap-2">
-                <button
-                  onClick={handleSearchToggle}
-                  className="p-2 rounded-md hover:bg-slate-800 transition cursor-pointer"
-                  aria-label="Toggle search"
-                  type="button"
-                >
-                  <Search className="h-6 w-6 text-slate-100" />
-                </button>
-                <button
-                  title={totalCount > 0 ? 'Add Task Force' : 'Create Task Force'}
-                  onClick={handleAddUser}
-                  className="p-2 rounded-md bg-green-600 hover:bg-green-500 text-white active:scale-95 transition cursor-pointer"
-                  type="button"
-                >
-                  <UserRoundPlus className="h-6 w-6" />
-                </button>
-              </div>
             </div>
+          </div>
+        </div>
 
-            {/* Mobile search input */}
-            {searchOpen && (
-              <div className="pb-3 md:hidden">
-                <div className="relative">
-                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-                  <input
-                    autoFocus
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => handleSearchChange(e.target.value)}
-                    placeholder="Search name or email"
-                    className="pl-9 pr-16 py-2 rounded-md bg-slate-800 text-slate-100 border border-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-500 w-full"
-                  />
-                  {searchQuery && (
-                    <button
-                      type="button"
-                      onClick={() => handleSearchChange('')}
-                      className="absolute right-2 top-1.5 rounded-md border border-slate-600 bg-slate-800 px-2 py-1 text-xs text-slate-200 hover:bg-slate-700"
-                    >
-                      Clear
-                    </button>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Tabs */}
-            <div className="flex gap-2">
+        {/* Content */}
+        <div className='max-w-7xl mx-auto px-4 py-6'>
+          {/* Tabs */}
+          <div className='mb-5'>
+            <div className='inline-flex rounded-full border border-slate-300 bg-white p-1'>
               {TABS.map((t) => {
                 const preCount =
                   t.id === 'chairs' ? chairsCount : t.id === 'members' ? membersCount : totalCount;
@@ -220,13 +169,12 @@ const TaskForce = () => {
                   <button
                     key={t.id}
                     onClick={() => setActiveTabId(t.id)}
-                    className={`px-4 py-2 rounded-t-md border-b-4 transition text-sm ${
-                      active
-                        ? 'border-yellow-400 text-slate-100 bg-slate-800'
-                        : 'border-transparent text-slate-300 hover:text-slate-100 hover:bg-slate-800/60'
-                    }`}
+                    type='button'
+                    className={[
+                      'px-4 py-2 text-sm rounded-full transition cursor-pointer',
+                      active ? 'bg-emerald-600 text-white' : 'text-slate-700 hover:bg-slate-100',
+                    ].join(' ')}
                     title={`${t.label} (${preCount})`}
-                    type="button"
                   >
                     {t.label} {preCount ? `(${preCount})` : ''}
                   </button>
@@ -234,116 +182,112 @@ const TaskForce = () => {
               })}
             </div>
           </div>
-        </div>
 
-        {/* Content */}
-        <div className="max-w-7xl mx-auto px-4 py-6">
           {loading ? (
             <VerifiedUserSkeletonLoader />
           ) : (
             <>
               {activeTabId === 'all' ? (
-                  allHasAny && (
-                    allFilteredEmpty ? (
-                      // SEARCH-EMPTY state (All tab)
-                      <section className="border bg-slate-900 border-slate-700 rounded-lg shadow">
-                        <div className="min-h-[40vh] grid place-items-center p-6 text-center">
-                          <div>
-                            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-900">
-                              <UserRoundX className="h-8 w-8 text-slate-300" />
-                            </div>
-                            <h3 className="text-lg font-semibold text-slate-100">No results</h3>
-                            <p className="mt-1 text-sm text-slate-300">
-                              {debouncedQuery ? <>Nothing matched “{debouncedQuery}”.</> : "Try adjusting your search."}
-                            </p>
-                            <div className="mt-5 flex items-center justify-center gap-3">
-                              {debouncedQuery && (
-                                <button
-                                  type="button"
-                                  onClick={() => handleSearchChange('')}
-                                  className="rounded-xl border border-slate-600 bg-slate-800 px-4 py-2 text-sm font-medium text-slate-200 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500"
-                                >
-                                  Clear search
-                                </button>
-                              )}
-                              <button
-                                type="button"
-                                onClick={handleAddUser}
-                                className="inline-flex items-center gap-2 rounded-xl bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-green-600/90 focus:outline-none focus:ring-2 focus:ring-green-400"
-                              >
-                                <UserRoundPlus className="h-5 w-5" /> Add New
-                              </button>
-                            </div>
-                          </div>
+                allHasAny &&
+                (allFilteredEmpty ? (
+                  // SEARCH-EMPTY state (All tab)
+                  <section className='rounded-xl border border-slate-200 bg-white shadow-sm'>
+                    <div className='min-h-[40vh] grid place-items-center p-8 text-center'>
+                      <div>
+                        <div className='mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100'>
+                          <UserRoundX className='h-8 w-8 text-slate-400' />
+                        </div>
+                        <h3 className='text-lg font-semibold text-slate-900'>No results</h3>
+                        <p className='mt-1 text-sm text-slate-600'>
+                          {debouncedQuery ? <>Nothing matched ‘{debouncedQuery}’.</> : 'Try adjusting your search.'}
+                        </p>
+                        <div className='mt-5 flex items-center justify-center gap-3'>
+                          {debouncedQuery && (
+                            <button
+                              type='button'
+                              onClick={() => handleSearchChange('')}
+                              className='rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-400'
+                            >
+                              Clear search
+                            </button>
+                          )}
+                          <button
+                            type='button'
+                            onClick={handleAddUser}
+                            className='inline-flex items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-400'
+                          >
+                            <UserRoundPlus className='h-5 w-5' /> Add New
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                ) : (
+                  // NORMAL All-tab sections
+                  <div className='space-y-8'>
+                    {chairsFiltered.length > 0 && (
+                      <section className='rounded-xl border border-slate-200 bg-white shadow-sm'>
+                        <header className='px-4 py-3 border-b border-slate-200 flex items-center justify-between'>
+                          <h3 className='text-base font-semibold text-slate-900'>
+                            {chairsFiltered.length > 1 ? 'Chairs' : 'Chair'}
+                          </h3>
+                          <span className='text-xs text-slate-600'>{chairsFiltered.length}</span>
+                        </header>
+                        <div className='p-4'>
+                          <TaskForceCard
+                            dropdownRef={dropdownRef}
+                            activeDropdownId={activeDropdownId}
+                            setActiveDropdownId={setActiveDropdownId}
+                            label='Task Force Chair'
+                            taskForce={chairsFiltered}
+                            navigation={(user) => navigate(TASK_FORCE_DETAIL(getUserId(user)))}
+                            profilePic={(user) => getProfilePicPath(user.profilePicPath)}
+                            handleDropdown={handleDropdown}
+                            handleEllipsisClick={handleEllipsisClick}
+                            handleAddCardClick={handleAddCardClick}
+                          />
                         </div>
                       </section>
-                    ) : (
-                      // NORMAL All-tab sections (use precomputed filtered arrays)
-                      <div className="space-y-10">
-                        {chairsFiltered.length > 0 && (
-                          <section className="border bg-slate-900 border-slate-700 rounded-lg shadow">
-                            <header className="px-4 py-3 border-b border-slate-700 flex items-center justify-between">
-                              <h3 className="text-lg font-semibold text-slate-100">
-                                {chairsFiltered.length > 1 ? 'Chairs' : 'Chair'}
-                              </h3>
-                              <span className="text-xs text-slate-300">{chairsFiltered.length}</span>
-                            </header>
-                            <div className="p-4">
-                              <TaskForceCard
-                                dropdownRef={dropdownRef}
-                                activeDropdownId={activeDropdownId}
-                                setActiveDropdownId={setActiveDropdownId}
-                                label="Task Force Chair"
-                                taskForce={chairsFiltered}
-                                navigation={(user) => navigate(TASK_FORCE_DETAIL(getUserId(user)))}
-                                profilePic={(user) => getProfilePicPath(user.profilePicPath)}
-                                handleDropdown={handleDropdown}
-                                handleEllipsisClick={handleEllipsisClick}
-                                handleAddCardClick={handleAddCardClick}
-                              />
-                            </div>
-                          </section>
-                        )}
+                    )}
 
-                        {membersFiltered.length > 0 && (
-                          <section className="border bg-slate-900 border-slate-700 rounded-lg shadow">
-                            <header className="px-4 py-3 border-b border-slate-700 flex items-center justify-between">
-                              <h3 className="text-lg font-semibold text-slate-100">
-                                {membersFiltered.length > 1 ? 'Members' : 'Member'}
-                              </h3>
-                              <span className="text-xs text-slate-300">{membersFiltered.length}</span>
-                            </header>
-                            <div className="p-4">
-                              <TaskForceCard
-                                dropdownRef={dropdownRef}
-                                activeDropdownId={activeDropdownId}
-                                setActiveDropdownId={setActiveDropdownId}
-                                label="Task Force Member"
-                                taskForce={membersFiltered}
-                                navigation={(user) => navigate(TASK_FORCE_DETAIL(getUserId(user)))}
-                                profilePic={(user) => getProfilePicPath(user.profilePicPath)}
-                                handleDropdown={handleDropdown}
-                                handleEllipsisClick={handleEllipsisClick}
-                                handleAddCardClick={handleAddCardClick}
-                              />
-                            </div>
-                          </section>
-                        )}
-                      </div>
-                    )
-                  )
-                ) : (
+                    {membersFiltered.length > 0 && (
+                      <section className='rounded-xl border border-slate-200 bg-white shadow-sm'>
+                        <header className='px-4 py-3 border-b border-slate-200 flex items-center justify-between'>
+                          <h3 className='text-base font-semibold text-slate-900'>
+                            {membersFiltered.length > 1 ? 'Members' : 'Member'}
+                          </h3>
+                          <span className='text-xs text-slate-600'>{membersFiltered.length}</span>
+                        </header>
+                        <div className='p-4'>
+                          <TaskForceCard
+                            dropdownRef={dropdownRef}
+                            activeDropdownId={activeDropdownId}
+                            setActiveDropdownId={setActiveDropdownId}
+                            label='Task Force Member'
+                            taskForce={membersFiltered}
+                            navigation={(user) => navigate(TASK_FORCE_DETAIL(getUserId(user)))}
+                            profilePic={(user) => getProfilePicPath(user.profilePicPath)}
+                            handleDropdown={handleDropdown}
+                            handleEllipsisClick={handleEllipsisClick}
+                            handleAddCardClick={handleAddCardClick}
+                          />
+                        </div>
+                      </section>
+                    )}
+                  </div>
+                ))
+              ) : (
                 // Single tab (Chairs / Members)
                 tabbed.map(({ data, label }) =>
                   data.length > 0 ? (
-                    <section key={label} className="border bg-slate-900 border-slate-700 rounded-lg shadow">
-                      <header className="px-4 py-3 border-b border-slate-700 flex items-center justify-between">
-                        <h3 className="text-lg font-semibold text-slate-100">
+                    <section key={label} className='rounded-xl border border-slate-200 bg-white shadow-sm'>
+                      <header className='px-4 py-3 border-b border-slate-200 flex items-center justify-between'>
+                        <h3 className='text-base font-semibold text-slate-900'>
                           {data.length > 1 ? `${label}s` : label}
                         </h3>
-                        <span className="text-xs text-slate-300">{data.length}</span>
+                        <span className='text-xs text-slate-600'>{data.length}</span>
                       </header>
-                      <div className="p-4">
+                      <div className='p-4'>
                         <TaskForceCard
                           dropdownRef={dropdownRef}
                           activeDropdownId={activeDropdownId}
@@ -359,30 +303,30 @@ const TaskForce = () => {
                       </div>
                     </section>
                   ) : (
-                    <section key={label} className="border bg-slate-900 border-slate-700 rounded-lg shadow">
-                      <div className="min-h-[40vh] grid place-items-center p-6 text-center">
+                    <section key={label} className='rounded-xl border border-slate-200 bg-white shadow-sm'>
+                      <div className='min-h-[40vh] grid place-items-center p-8 text-center'>
                         <div>
-                          <img className="mx-auto h-48 w-48 opacity-80" src={searchUser} alt="No results" />
-                          <p className="mt-4 text-lg text-slate-200">
+                          <img className='mx-auto h-40 w-40 opacity-80' src={searchUser} alt='No results' />
+                          <p className='mt-4 text-base text-slate-700'>
                             No {label.toLowerCase()}s found
-                            {debouncedQuery ? ` for “${debouncedQuery}”` : ''}.
+                            {debouncedQuery ? ` for ‘${debouncedQuery}’` : ''}.
                           </p>
-                          <div className="mt-5 flex items-center justify-center gap-3">
+                          <div className='mt-5 flex items-center justify-center gap-3'>
                             {debouncedQuery && (
                               <button
-                                type="button"
+                                type='button'
                                 onClick={() => handleSearchChange('')}
-                                className="rounded-xl border border-slate-600 bg-slate-800 px-4 py-2 text-sm font-medium text-slate-200 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500"
+                                className='rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-400'
                               >
                                 Clear search
                               </button>
                             )}
                             <button
-                              type="button"
+                              type='button'
                               onClick={handleAddUser}
-                              className="inline-flex items-center gap-2 rounded-xl bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-green-600/90 focus:outline-none focus:ring-2 focus:ring-green-400"
+                              className='inline-flex items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-400'
                             >
-                              <UserRoundPlus className="h-5 w-5" /> Add New
+                              <UserRoundPlus className='h-5 w-5' /> Add New
                             </button>
                           </div>
                         </div>
@@ -394,26 +338,26 @@ const TaskForce = () => {
 
               {/* Page-level empty state */}
               {!loading && totalCount === 0 && activeTabId === 'all' && (
-                <div className="min-h-[60vh] grid place-items-center text-center">
+                <div className='min-h-[60vh] grid place-items-center text-center'>
                   <div>
-                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-900">
-                      <UserRoundX className="h-8 w-8 text-slate-300" />
+                    <div className='mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100'>
+                      <UserRoundX className='h-8 w-8 text-slate-400' />
                     </div>
-                    <h3 className="text-lg font-semibold text-slate-100">No task force data</h3>
-                    <p className="mt-1 text-sm text-slate-300">Create your first entry to get started.</p>
-                    <div className="mt-5 flex items-center justify-center gap-3">
+                    <h3 className='text-lg font-semibold text-slate-900'>No task force data</h3>
+                    <p className='mt-1 text-sm text-slate-600'>Create your first entry to get started.</p>
+                    <div className='mt-5 flex items-center justify-center gap-3'>
                       <button
-                        type="button"
+                        type='button'
                         onClick={handleAddUser}
-                        className="inline-flex items-center gap-2 rounded-xl bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-green-600/90 focus:outline-none focus:ring-2 focus:ring-green-400"
+                        className='inline-flex items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-400'
                       >
-                        <UserRoundPlus className="h-5 w-5" /> Create
+                        <UserRoundPlus className='h-5 w-5' /> Create
                       </button>
                       {searchQuery && (
                         <button
-                          type="button"
+                          type='button'
                           onClick={() => handleSearchChange('')}
-                          className="rounded-xl border border-slate-600 bg-slate-800 px-4 py-2 text-sm font-medium text-slate-200 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500"
+                          className='rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-400'
                         >
                           Clear search
                         </button>
@@ -444,7 +388,7 @@ const TaskForce = () => {
           accessTokens,
           loadingAccessTokens,
           errorAccessTokens,
-          refetchAccessTokens
+          refetchAccessTokens,
         }}
         handlers={{
           handleCloseModal,

@@ -108,7 +108,7 @@ const Login = () => {
 
           {/* Title */}
           <h2 className="text-green-700 text-3xl font-bold leading-tight mb-4">
-            Document Management System
+            Accreditation Document Management System
           </h2>
 
           {/* Divider */}

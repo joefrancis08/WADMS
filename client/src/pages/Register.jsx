@@ -62,7 +62,7 @@ function Register() {
           </div>
 
           <h2 className="text-green-700 text-3xl font-bold leading-tight mb-4">
-            Document Management System
+            Accreditation Document Management System
           </h2>
 
           <div className="w-24 h-1 bg-green-600 mb-6"></div>

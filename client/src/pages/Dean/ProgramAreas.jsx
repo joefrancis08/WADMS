@@ -3,7 +3,6 @@ import DeanLayout from '../../components/Layout/Dean/DeanLayout';
 import {
   FolderOpen,
   Plus,
-  PlusCircle,
   FileUser,
   EllipsisVertical,
   Upload,
@@ -24,11 +23,10 @@ import useDebouncedValue from '../../hooks/useDebouncedValue';
 import { getProgressStyle } from '../../helpers/progressHelper';
 import ProgressBar from '../../components/ProgressBar';
 
-const { PROGRAMS_TO_BE_ACCREDITED, AREA_PARAMETERS } = PATH.DEAN;
+const { PROGRAMS_TO_BE_ACCREDITED } = PATH.DEAN;
 
 const ProgramAreas = () => {
-  const { navigation, params, datas, inputs, refs, values, modals, handlers } =
-    useProgramAreas();
+  const { navigation, params, datas, inputs, refs, values, modals, handlers } = useProgramAreas();
 
   const { navigate } = navigation;
   const { accredInfoUUID, programUUID, level } = params;
@@ -82,12 +80,12 @@ const ProgramAreas = () => {
     handleConfirmUnassign,
   } = handlers;
 
-  // SEARCH STATE
+  // search
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedQuery = useDebouncedValue(searchQuery, 250);
   const lowerQ = debouncedQuery.toLowerCase();
 
-  // Filter Areas
+  // filter areas
   const filteredAreas = useMemo(() => {
     if (!lowerQ) return data;
     return data.filter((area) => {
@@ -97,8 +95,7 @@ const ProgramAreas = () => {
     });
   }, [data, lowerQ]);
 
-
-  // Breadcrumbs
+  // breadcrumbs
   const breadcrumbItems = [
     {
       label: `${title} ${year}`,
@@ -125,138 +122,125 @@ const ProgramAreas = () => {
 
   return (
     <DeanLayout>
-      <div className="flex-1 p-3">
-        <div className="bg-slate-900 m-2 pb-2 border border-slate-700 rounded-lg">
-          {/* Header Section: Breadcrumb + Search */}
-          <div className="sticky top-0 z-50 flex flex-col md:flex-row md:items-center md:justify-between shadow px-4 pt-4 bg-slate-900 p-4 rounded-t-lg gap-4 border-b border-slate-700">
+      <div className='flex-1 bg-slate-50'>
+
+        {/* Sticky header: breadcrumb + search + add (matches Programs) */}
+        <div className='sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur'>
+          <div className='mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between'>
             <Breadcrumb items={breadcrumbItems} />
-            <div className="relative flex items-center gap-x-2 w-full md:w-120">
-              <Search className="absolute left-3 top-2.5 h-5 w-5 text-slate-400" />
+            <div className='relative flex w-full items-center gap-2 md:w-[30rem]'>
+              <Search className='pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400' />
               <input
-                type="text"
+                type='text'
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search area..."
-                className="pl-10 pr-3 py-2 rounded-full bg-slate-800 text-slate-100 border border-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 w-full transition-all"
+                placeholder='Search area...'
+                className='w-full rounded-full border border-slate-300 bg-white px-10 py-2 text-slate-900 placeholder-slate-400 outline-none transition focus:border-emerald-400'
               />
               <button
                 title='Add new area'
                 onClick={handleAddAreaClick}
-                className="inline-flex min-w-32 items-center justify-center gap-1 px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-full shadow active:scale-95 transition cursor-pointer"
+                className='inline-flex min-w-32 cursor-pointer items-center justify-center gap-1 rounded-full bg-emerald-600 px-4 py-2 text-white shadow-sm ring-1 ring-emerald-300 transition hover:bg-emerald-500 active:scale-95'
               >
-                <FolderPlus className="h-5 w-5" />
-                <span>Add New</span>
+                <FolderPlus className='h-5 w-5' />
+                <span className='text-sm font-medium'>Add New</span>
               </button>
             </div>
           </div>
+        </div>
 
-          {/* Program + Level display */}
-          <div className="flex items-center justify-center mt-4 max-md:mt-10 w-[85%] md:w-[75%] lg:w-[50%] mx-auto">
-            <p className="relative text-center mb-8">
-              <span className="text-yellow-400 font-bold text-xl md:text-2xl lg:text-3xl tracking-wide text-center">
-                {program}
-              </span>
-              <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 text-lg px-4 bg-green-700 text-white font-bold">
-                {formattedLevel}
-              </span>
-            </p>
-          </div>
+        {/* Page header: Program + Level (emerald theme) */}
+        <div className='mx-auto mt-6 flex w-[85%] items-center justify-center md:mt-8 md:w-[75%] lg:w-[50%]'>
+          <p className='relative mb-8 text-center'>
+            <span className='text-lg font-bold tracking-wide text-emerald-800 md:text-2xl lg:text-2xl'>
+              {program}
+            </span>
+            <span className='absolute -bottom-7 left-1/2 -translate-x-1/2 rounded-full bg-emerald-700 px-4 py-1 text-sm font-bold text-white md:text-sm'>
+              {formattedLevel}
+            </span>
+          </p>
+        </div>
 
-          {/* Areas List */}
+        {/* Areas grid */}
+        <div className='mx-auto mb-10 max-w-7xl px-4'>
           <div
-            className={`flex flex-wrap gap-x-10 gap-y-20 justify-center mb-8 py-8 px-2 mx-2 rounded ${
+            className={`flex flex-wrap justify-center gap-6 rounded py-4 ${
               filteredAreas.length ? 'items-start' : 'items-center'
             }`}
           >
             {/* Empty state */}
             {!filteredAreas.length && (
-              <div className="flex flex-col items-center justify-center">
-                <FolderOpen className="text-slate-600" size={200} />
-                <p className="text-lg text-slate-100">
+              <div className='flex flex-col items-center justify-center rounded-xl border border-slate-200 bg-white p-10 text-center shadow-sm'>
+                <FolderOpen className='h-24 w-24 text-slate-400' />
+                <p className='mt-4 text-base font-medium text-slate-700'>
                   {data.length === 0
-                    ? `No areas yet. Click 'Add' to create one.`
+                    ? 'No areas yet. Click “Add New” to create one.'
                     : `No areas found for “${searchQuery}”.`}
                 </p>
-                {/* Add Subparameter Button */}
-                <div className='max-md:hidden flex justify-end px-5 p-2 mt-3'>
+
+                <div className='mt-4'>
                   <button
                     onClick={handleAddAreaClick}
-                    className='flex gap-x-1 text-white text-sm lg:text-base justify-center items-center cursor-pointer rounded-full px-5 py-2 hover:opacity-90 active:scale-98 border-3 border-slate-500 bg-slate-700/50 shadow hover:shadow-md hover:border-green-600 transition'
+                    className='flex cursor-pointer items-center justify-center gap-2 rounded-full border border-slate-300 bg-slate-900/90 px-5 py-2 text-white shadow transition hover:border-emerald-500 hover:bg-slate-900 active:scale-95'
                   >
-                    <Plus className='h-6 w-6' />
-                    Add
+                    <Plus className='h-5 w-5' />
+                    <span className='text-sm font-medium'>Add</span>
                   </button>
                 </div>
               </div>
             )}
-            {console.log('Filtered Areas:', filteredAreas)}
-            {/* Area Cards */}
-            {filteredAreas.map((areaData, index) => (
-              <div
-                key={index}
-                onClick={() =>
-                  !activeAreaId && handleAreaCardClick(areaData.area_uuid)
-                }
-                className="relative flex flex-col items-start justify-center px-2 max-sm:w-full md:w-75 lg:w-50 h-60 bg-[url('/cgs-bg-2.png')] bg-cover bg-center shadow-slate-800 border border-slate-600 hover:shadow-md transition cursor-pointer active:shadow"
-              >
-                <div className="absolute inset-0 bg-black/50"></div>
-                {activeAreaId && <div className='absolute inset-0 z-20'></div>}
 
-                {/* Area Title */}
-                {String(areaData.area)
-                  .toUpperCase()
-                  .split(/[:-]/)
-                  .map((s, i) => (
-                    <div
-                      key={i}
-                      className={`flex ${
-                        i === 0 ? '' : 'justify-center'
-                      } w-full z-20`}
-                    >
-                      <p
-                        className={`${
-                          i === 0
-                            ? 'text-md text-center font-bold text-white bg-yellow-400 py-1 px-5 shadow-md absolute top-10 w-30 left-1/2 -translate-x-1/2'
-                            : 'text-xl text-center mt-5 tracking-wide text-white font-semibold'
-                        }`}
-                      >
-                        {s.trim()}
-                      </p>
-                    </div>
-                  ))}
+            {/* Area cards (white card + emerald banner, consistent with Programs) */}
+            {filteredAreas.map((areaData, index) => {
+              const parts = String(areaData.area).toUpperCase().split(/[:-]/);
+              const areaTitle = parts[0]?.trim() || '';
+              const areaSubtitle = parts.slice(1).join(':').trim();
 
-                {/* Options Button */}
-                <button
-                  onClick={(e) =>
-                    handleAreaOptionClick(e, { areaID: areaData.area_uuid })
-                  }
-                  title="Options"
-                  className={`absolute top-1 right-1 text-white cursor-pointer active:opacity-50 rounded-full hover:bg-slate-200/20 p-1 z-10 ${activeAreaId === areaData.area_uuid && 'bg-slate-200/10'}`}
+              return (
+                <div
+                  key={index}
+                  onClick={() => !activeAreaId && handleAreaCardClick(areaData.area_uuid)}
+                  className='relative w-full max-w-[380px] cursor-pointer overflow-visible rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-emerald-300 hover:shadow-md'
                 >
-                  <EllipsisVertical className="h-5 w-5" />
-                </button>
+                  {activeAreaId === areaData.area_uuid && <div className='absolute inset-0 z-50'></div>}
+                  {/* Emerald banner with title */}
+                  <div className='relative overflow-hidden rounded-lg bg-emerald-700 py-6 ring-1 ring-emerald-900/10'>
+                    <p className='relative z-10 text-center text-lg font-bold text-white'>{areaTitle}</p>
+                    {areaSubtitle && (
+                      <p className='relative z-10 mt-1 text-center text-sm font-medium text-emerald-100'>
+                        {areaSubtitle}
+                      </p>
+                    )}
+                  </div>
 
-                {/* Upload button (for level IV) */}
-                {areaData.level === LEVEL.LIV && (
+                  {/* Options (top-right) */}
                   <button
-                    onClick={(e) => e.stopPropagation()}
-                    title="Upload document"
-                    className="absolute bottom-2 right-1 text-white cursor-pointer active:opacity-50 rounded-full hover:bg-white/20 p-2"
+                    onClick={(e) => handleAreaOptionClick(e, { areaID: areaData.area_uuid })}
+                    title='Options'
+                    className={`absolute right-3 top-3 z-30 rounded-full border border-slate-200 bg-white p-1.5 text-slate-700 shadow-sm transition hover:bg-slate-50 active:opacity-70 cursor-pointer ${
+                      activeAreaId === areaData.area_uuid ? 'ring-2 ring-emerald-200' : ''
+                    }`}
                   >
-                    <Upload />
+                    <EllipsisVertical className='h-5 w-5' />
                   </button>
-                )}
 
-                {/* Task Force */}
-                <div className="flex items-center justify-between px-1">
-                  <div className="absolute bottom-2.5 z-20">
+                  {/* Upload (Level IV) */}
+                  {areaData.level === LEVEL.LIV && (
+                    <button
+                      onClick={(e) => e.stopPropagation()}
+                      title='Upload document'
+                      className='absolute right-3 bottom-3 z-30 rounded-full border border-slate-200 bg-white p-2 text-slate-700 shadow-sm transition hover:bg-slate-50 active:opacity-70 cursor-pointer'
+                    >
+                      <Upload className='h-5 w-5' />
+                    </button>
+                  )}
+
+                  {/* Assignees + Assign button */}
+                  <div className='mt-4 flex items-center justify-between'>
                     <ProfileStack
                       key={areaData.area_uuid}
                       data={{
-                        assignmentData: deduplicateAssignments(
-                          assignmentData,
-                          'area'
-                        ),
+                        assignmentData: deduplicateAssignments(assignmentData, 'area'),
                         taskForce,
                         accredInfoId: areaData.accredId,
                         levelId: areaData.levelId,
@@ -267,112 +251,108 @@ const ProgramAreas = () => {
                       handlers={{ handleProfileStackClick }}
                       scope='area'
                     />
-                  </div>
-                  <button
-                    title="Assign Task Force"
-                    onClick={(e) =>
-                      handleUserCircleClick(e, {
-                        accredId: areaData.accredId,
-                        title,
-                        year,
-                        accredBody,
-                        levelId: areaData.levelId,
-                        level: formattedLevel,
-                        programId: areaData.programId,
-                        program,
-                        areaId: areaData.area_id,
-                        areaUUID: areaData.area_uuid,
-                        area: formatAreaName(areaData.area),
-                      })
-                    }
-                    className="absolute bottom-2.5 right-1 text-white cursor-pointer active:opacity-50 rounded-full hover:bg-white/20 p-1"
-                  >
-                    <FileUser />
-                  </button>
-                </div>
-                
-                {(() => {
-                  if (!areaProgress || !Array.isArray(areaProgress)) return null;
 
-                  const matchedProgress = areaProgress.find(
-                    (item) =>
-                      Number(item.programId) === Number(areaData.programId) &&
-                      Number(item.areaId) === Number(areaData.area_id) &&
-                      Number(item.pamId) === Number(areaData.pamId)
-                  );
-
-                  if (!matchedProgress) return null;
-
-                  const progress = Number(matchedProgress.progress || 0).toFixed(1);
-                  const { color, status } = getProgressStyle(progress);
-
-                  return (
-                    <ProgressBar
-                      key={areaData.area_uuid} 
-                      progress={progress} 
-                      color={color} 
-                      status={status}
-                    />
-                  );
-                })()}
-                {/* Dropdown */}
-                {activeAreaId === areaData.area_uuid && (
-                  <div
-                    ref={areaOptionsRef}
-                    className="absolute top-8 -left-2 flex items-center shadow-md z-30"
-                  >
-                    <Dropdown
-                      width={'w-50'}
-                      border={
-                        'border border-slate-300 rounded-lg bg-slate-800'
+                    <button
+                      title='Assign Task Force'
+                      onClick={(e) =>
+                        handleUserCircleClick(e, {
+                          accredId: areaData.accredId,
+                          title,
+                          year,
+                          accredBody,
+                          levelId: areaData.levelId,
+                          level: formattedLevel,
+                          programId: areaData.programId,
+                          program,
+                          areaId: areaData.area_id,
+                          areaUUID: areaData.area_uuid,
+                          area: formatAreaName(areaData.area),
+                        })
                       }
+                      className='rounded-full border border-slate-200 bg-white p-1.5 text-slate-700 shadow-sm transition hover:bg-slate-50 active:opacity-70 cursor-pointer'
                     >
-                      {MENU_OPTIONS.DEAN.AREA_OPTIONS.map((item) => {
-                        const Icon = item.icon;
-                        return (
-                          <React.Fragment key={item.id}>
-                            {item.label === 'Delete' && (
-                              <hr className="my-1 mx-auto w-[90%] text-slate-300"></hr>
-                            )}
-                            <p
-                              onClick={(e) =>
-                                handleOptionItemClick(e, {
-                                  label: item.label,
-                                  accredId: areaData.accredId,
-                                  title,
-                                  year,
-                                  accredBody,
-                                  levelId: areaData.levelId,
-                                  level: formattedLevel,
-                                  programId: areaData.programId,
-                                  program,
-                                  areaId: areaData.area_id,
-                                  areaUUID: areaData.area_uuid,
-                                  area: areaData.area,
-                                })
-                              }
-                              className={`flex items-center p-2 rounded-md text-sm ${
-                                item.label === 'Delete'
-                                  ? 'hover:bg-red-200 text-red-600'
-                                  : 'hover:bg-slate-200'
-                              }`}
-                            >
-                              <Icon />
-                              <span className="ml-2">{item.label}</span>
-                            </p>
-                          </React.Fragment>
-                        );
-                      })}
-                    </Dropdown>
+                      <FileUser className='h-5 w-5' />
+                    </button>
                   </div>
-                )}
-              </div>
-            ))}
+
+                  {/* Progress (matches compact block style used elsewhere) */}
+                  {(() => {
+                    if (!areaProgress || !Array.isArray(areaProgress)) return null;
+                    const matchedProgress = areaProgress.find(
+                      (item) =>
+                        Number(item.programId) === Number(areaData.programId) &&
+                        Number(item.areaId) === Number(areaData.area_id) &&
+                        Number(item.pamId) === Number(areaData.pamId)
+                    );
+                    if (!matchedProgress) return null;
+
+                    const progress = Number(matchedProgress.progress || 0).toFixed(1);
+                    const { color, status } = getProgressStyle(progress);
+
+                    return (
+                      <div className='mt-3 rounded-lg border border-slate-200 bg-white p-3'>
+                        <div className='mb-1.5 flex items-center justify-between'>
+                          <span className='text-xs font-semibold text-slate-700'>Progress</span>
+                          <span className='text-xs font-semibold text-slate-700'>{progress}%</span>
+                        </div>
+                        <ProgressBar progress={progress} color={color} status={status} />
+                      </div>
+                    );
+                  })()}
+
+                  {/* Dropdown (anchored; high z-index; click-through blocked) */}
+                  {activeAreaId === areaData.area_uuid && (
+                    <div
+                      ref={areaOptionsRef}
+                      className='absolute right-3 top-11 z-[60]'
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Dropdown width='w-56' border='border border-slate-200 rounded-lg bg-white shadow-lg'>
+                        {MENU_OPTIONS.DEAN.AREA_OPTIONS.map((item) => {
+                          const Icon = item.icon;
+                          return (
+                            <React.Fragment key={item.id}>
+                              {item.label === 'Delete' && <hr className='my-1 mx-auto w-[92%] text-slate-200' />}
+                              <p
+                                onClick={(e) =>
+                                  handleOptionItemClick(e, {
+                                    label: item.label,
+                                    accredId: areaData.accredId,
+                                    title,
+                                    year,
+                                    accredBody,
+                                    levelId: areaData.levelId,
+                                    level: formattedLevel,
+                                    programId: areaData.programId,
+                                    program,
+                                    areaId: areaData.area_id,
+                                    areaUUID: areaData.area_uuid,
+                                    area: areaData.area,
+                                  })
+                                }
+                                className={`flex cursor-pointer items-center rounded-md px-3 py-2 text-sm transition ${
+                                  item.label === 'Delete'
+                                    ? 'text-red-600 hover:bg-red-50'
+                                    : 'text-slate-700 hover:bg-slate-50'
+                                }`}
+                              >
+                                <Icon className='h-4 w-4' />
+                                <span className='ml-2'>{item.label}</span>
+                              </p>
+                            </React.Fragment>
+                          );
+                        })}
+                      </Dropdown>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
 
-      {/* Area Modal */}
+      {/* Modal (unchanged functionality) */}
       <AreaModal
         navigation={{ navigate }}
         modalType={modalType}

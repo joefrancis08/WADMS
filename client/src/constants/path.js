@@ -78,7 +78,8 @@ const PATH = {
   },
 
   INTERNAL_ASSESSOR: {
-    DASHBOARD: '/ia',
+    DASHBOARD: '/home',
+    CGS: '/cgs'
   },
 
   ACCREDITOR: {
