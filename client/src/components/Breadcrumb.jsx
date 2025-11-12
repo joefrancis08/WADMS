@@ -14,45 +14,45 @@ const Breadcrumb = ({ items = [] }) => {
   const lastTwo = items.slice(-2);
   const hiddenItems = items.slice(1, -2); // middle items
 
-  // Helper function to truncate long text
+  // Truncate helper
   const truncateLabel = (text, max = 18) =>
-    text.length <= max ? text : text.slice(0, max) + '…';
+    (text || '').length <= max ? text : `${text.slice(0, max)}…`;
 
   return (
     <nav
       aria-label='Breadcrumb'
-      className='flex flex-row items-center text-slate-100 text-sm gap-1 relative select-none'
+      className='relative flex select-none flex-row items-center gap-1 text-sm text-slate-700'
     >
-      {/* First (persistent) item */}
+      {/* First item */}
       <span
         title={firstItem.label}
         onClick={!firstItem.isActive ? firstItem.onClick : undefined}
-        className={`${
+        className={[
+          'max-w-[200px] truncate',
           firstItem.isActive
-            ? 'font-semibold text-base text-white cursor-default'
-            : 'hover:underline cursor-pointer transition-all'
-        } max-w-[180px] truncate`}
+            ? 'font-semibold text-emerald-700 cursor-default'
+            : 'hover:underline cursor-pointer transition-colors',
+        ].join(' ')}
       >
         {truncateLabel(firstItem.label)}
       </span>
 
-      {/* Ellipsis dropdown for middle items */}
+      {/* Ellipsis for hidden middle items */}
       {hiddenItems.length > 0 && (
         <>
           <ChevronRight className='h-4 w-4 text-slate-400' />
           <div ref={dropdownRef} className='relative'>
             <button
-              onClick={() => setShowMore(!showMore)}
-              className='p-1 hover:bg-slate-700 rounded-md transition cursor-pointer'
+              onClick={() => setShowMore((v) => !v)}
+              className='cursor-pointer rounded-md p-1 text-slate-600 transition hover:bg-slate-100'
               aria-label='Show hidden breadcrumbs'
+              type='button'
             >
-              <Ellipsis className='h-4 w-4 -mb-2 text-slate-300' />
+              <Ellipsis className='-mb-2 h-4 w-4' />
             </button>
 
             {showMore && (
-              <div
-                className='absolute left-0 mt-2 bg-slate-800 border border-slate-700 rounded-md shadow-lg p-2 flex flex-col gap-1 z-10 min-w-[12rem] animate-fade-slide'
-              >
+              <div className='absolute left-0 z-40 mt-2 min-w-[14rem] rounded-md border border-slate-200 bg-white p-2 shadow-lg'>
                 {hiddenItems.map((item, i) => (
                   <button
                     key={i}
@@ -61,12 +61,13 @@ const Breadcrumb = ({ items = [] }) => {
                       setShowMore(false);
                     }}
                     title={item.label}
-                    className={`text-left px-2 py-1 rounded transition truncate max-w-[200px] cursor-pointer hover:underline
-                    ${
+                    className={[
+                      'w-full truncate rounded-md px-2 py-1 text-left text-sm transition',
                       item.isActive
-                        ? 'font-semibold text-green-400 bg-slate-700'
-                        : 'text-slate-200 hover:bg-slate-700 hover:text-white'
-                    }`}
+                        ? 'bg-emerald-50 font-semibold text-emerald-700'
+                        : 'cursor-pointer text-slate-700 hover:bg-slate-50',
+                    ].join(' ')}
+                    type='button'
                   >
                     {truncateLabel(item.label)}
                   </button>
@@ -84,11 +85,12 @@ const Breadcrumb = ({ items = [] }) => {
           <span
             title={item.label}
             onClick={!item.isActive ? item.onClick : undefined}
-            className={`${
+            className={[
+              'max-w-[200px] truncate',
               item.isActive
-                ? 'font-semibold text-base cursor-default'
-                : 'hover:underline cursor-pointer transition-all'
-            } max-w-[180px] truncate`}
+                ? 'font-semibold text-emerald-700 cursor-default'
+                : 'hover:underline cursor-pointer transition-colors',
+            ].join(' ')}
           >
             {truncateLabel(item.label)}
           </span>

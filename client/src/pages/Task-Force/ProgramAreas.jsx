@@ -95,7 +95,7 @@ const ProgramAreasDummy = () => {
                 <div
                   key={areaData.area_uuid}
                   onClick={() => handleAreaCardClick(areaData.area_uuid)}
-                  className='relative flex flex-col items-start justify-center px-2 max-sm:w-full md:w-75 lg:w-50 h-60 bg-[url("/cgs-bg-2.png")] bg-cover bg-center shadow-slate-800 border border-slate-600 hover:shadow-md transition cursor-pointer active:shadow'
+                  className='relative flex flex-col items-start justify-center px-2 max-sm:w-full md:w-75 lg:w-50 h-60 bg-[url("/cgs-bg-2.png")] bg-cover bg-center shadow-slate-800 border border-slate-600 hover:shadow-lg transition cursor-pointer active:shadow'
                 >
                   <div className='absolute inset-0 bg-black/50'></div>
                   {activeAreaId === areaData.area_uuid && <div className='absolute inset-0 z-20 bg-black/30'></div>}
@@ -117,7 +117,7 @@ const ProgramAreasDummy = () => {
                       <Upload />
                     </button>
                   )}
-                  <div className='absolute bottom-2.5 left-2 z-20'>
+                  <div className='absolute bottom-1 left-1 z-20'>
                     <ProfileStack 
                       data={{ 
                         taskForce, assignmentData, accredInfoId, 
@@ -150,7 +150,7 @@ const ProgramAreasDummy = () => {
           user
         }}
         handlers={{ handleCloseModal }}
-        scope='parameter'
+        scope='area'
       />
     </TaskForceLayout>
   );

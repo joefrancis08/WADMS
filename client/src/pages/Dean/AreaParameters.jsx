@@ -2,7 +2,6 @@ import React, { useState, useMemo } from 'react';
 import DeanLayout from '../../components/Layout/Dean/DeanLayout';
 import {
   FolderOpen,
-  CirclePlus,
   Plus,
   Search,
   FileUser,
@@ -27,15 +26,7 @@ import { getProgressStyle } from '../../helpers/progressHelper';
 const { PROGRAMS_TO_BE_ACCREDITED, PROGRAM_AREAS, PARAM_SUBPARAMS } = PATH.DEAN;
 
 const AreaParameters = () => {
-  const {
-    params,
-    navigation,
-    refs,
-    datas,
-    modals,
-    inputs,
-    handlers,
-  } = useAreaParameters();
+  const { params, navigation, refs, datas, modals, inputs, handlers } = useAreaParameters();
 
   const { accredInfoUUID, level, programUUID, areaUUID, paramOptionRef } = params;
   const { navigate } = navigation;
@@ -92,20 +83,17 @@ const AreaParameters = () => {
     handleConfirmUnassign,
   } = handlers;
 
-  // Search State
+  // ---------- Search ----------
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedQuery = useDebouncedValue(searchQuery, 250);
   const lowerQ = debouncedQuery.toLowerCase();
 
-  // Filter parameters by search query
   const filteredParameters = useMemo(() => {
     if (!lowerQ) return parameterData;
-    return parameterData.filter((p) =>
-      p.parameter.toLowerCase().includes(lowerQ)
-    );
+    return parameterData.filter((p) => p.parameter.toLowerCase().includes(lowerQ));
   }, [parameterData, lowerQ]);
 
-  // Breadcrumbs
+  // ---------- Breadcrumbs ----------
   const breadcrumbItems = [
     {
       label: `${title} ${year}`,
@@ -119,7 +107,10 @@ const AreaParameters = () => {
     },
     {
       label: program,
-      onClick: () => navigate(PROGRAMS_TO_BE_ACCREDITED),
+      onClick: () => {
+        localStorage.removeItem('accreditation-title');
+        navigate(PROGRAMS_TO_BE_ACCREDITED);
+      },
     },
     {
       label: formatAreaName(area),
@@ -137,72 +128,80 @@ const AreaParameters = () => {
 
   return (
     <DeanLayout>
-      <div className='flex-1 p-3'>
-        <div className='bg-slate-900 m-2 pb-2 border border-slate-700 rounded-lg'>
-          {/* Header: Breadcrumb + Search */}
-          <div className='sticky top-0 z-50 flex flex-col md:flex-row md:items-center md:justify-between shadow px-4 pt-4 bg-slate-900 p-4 rounded-t-lg gap-4 border-b border-slate-700'>
-            <Breadcrumb items={breadcrumbItems} />
-            <div className='relative flex items-center gap-x-2 w-full md:w-120'>
-              <Search className='absolute left-3 top-2.5 h-5 w-5 text-slate-400' />
+      <div className="flex-1 bg-slate-50">
+        {/* Sticky header: breadcrumb + search + add */}
+        <div className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur">
+          <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between">
+            <Breadcrumb items={breadcrumbItems} variant="light" />
+
+            <div className="relative flex w-full items-center gap-2 md:w-[28rem]">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <input
-                type='text'
+                type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder='Search parameter...'
-                className='pl-10 pr-3 py-2 rounded-full bg-slate-800 text-slate-100 border border-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 w-full transition-all'
+                placeholder="Search parameter..."
+                className="w-full rounded-full border border-slate-300 bg-white px-9 py-2 text-sm text-slate-900 placeholder-slate-400 outline-none transition focus:border-emerald-400"
               />
               <button
-                title='Add new area'
+                title="Add new parameter"
                 onClick={handlePlusClick}
-                className="inline-flex min-w-32 items-center justify-center gap-1 px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-full shadow active:scale-95 transition cursor-pointer"
+                className="inline-flex min-w-28 cursor-pointer items-center justify-center gap-1 rounded-full bg-emerald-600 px-3 py-2 text-sm font-medium text-white shadow-sm ring-1 ring-emerald-300 transition hover:bg-emerald-500 active:scale-95"
               >
-                <FolderPlus className="h-5 w-5" />
+                <FolderPlus className="h-4 w-4" />
                 <span>Add New</span>
               </button>
             </div>
           </div>
+        </div>
 
-          {/* Program + Area Display */}
-          <div className='flex items-center justify-center mt-6 mb-8 w-auto mx-auto'>
-            <p className='relative text-center w-full'>
-              <span className='text-yellow-400 font-bold text-xl md:text-2xl lg:text-3xl tracking-wide'>
-                {program}
-              </span>
-              <span className='absolute -bottom-10 right-1/2 translate-x-1/2 text-xs md:text-lg px-6 bg-green-700 text-white font-medium'>
-                {levelName} &#8226; {formatAreaName(area)}
-              </span>
-            </p>
-          </div>
+        {/* MATCHED HEADER (like ProgramAreas): centered Program + auto-size pill */}
+        <div className="mx-auto mt-6 flex w-[85%] items-center justify-center md:mt-8 md:w-[75%] lg:w-[80%]">
+          <p className="relative mb-8 text-center min-w-0">
+            <span className="text-lg font-bold tracking-wide text-emerald-800 md:text-2xl lg:text-2xl">
+              {program}
+            </span>
+            {/* Auto-sizing pill (width adjusts to text) */}
+            <span
+              className="absolute -bottom-7 left-1/2 -translate-x-1/2 inline-flex max-w-[90vw] items-center whitespace-nowrap rounded-full bg-emerald-700 px-4 py-1 text-sm font-bold text-white shadow-sm ring-1 ring-emerald-900/10 md:text-sm"
+              title={`${levelName} • ${formatAreaName(area)}`}
+            >
+              {levelName} &bull; {formatAreaName(area)}
+            </span>
+          </p>
+        </div>
 
-          {/* Parameters List */}
+        {/* Parameters list */}
+        <div className="mx-auto mb-10 max-w-7xl px-4">
           <div
-            className={`flex flex-wrap gap-8 justify-center mb-8 py-8 px-4 mx-2 rounded ${
+            className={`mt-2 flex flex-wrap justify-center gap-5 rounded py-2 ${
               filteredParameters.length ? 'items-start' : 'items-center'
             }`}
           >
-            {/* Empty State */}
+            {/* Empty state */}
             {!filteredParameters.length && (
-              <div className='flex flex-col items-center justify-center text-center'>
-                <FolderOpen className='text-slate-600' size={160} />
-                <p className='text-lg font-medium text-slate-300 mt-2'>
+              <div className="flex flex-col items-center justify-center rounded-xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+                <FolderOpen className="h-20 w-20 text-slate-400" />
+                <p className="mt-3 text-sm font-medium text-slate-700">
                   {parameterData.length === 0
                     ? `No parameters to display for ${formatAreaName(area)}.`
                     : `No parameters found for “${searchQuery}”.`}
                 </p>
-                <div className='max-md:hidden flex justify-center p-2 mt-3'>
+
+                <div className="mt-3">
                   <button
                     onClick={handlePlusClick}
-                    className='flex gap-x-1 text-white text-sm lg:text-base justify-center items-center cursor-pointer rounded-full px-5 py-2 hover:opacity-90 active:scale-98 border-3 border-slate-500 bg-slate-700/50 shadow hover:shadow-md hover:border-green-600 transition'
+                    className="flex cursor-pointer items-center justify-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-1.5 text-sm font-medium text-slate-800 shadow transition hover:border-emerald-500 hover:bg-slate-50 active:scale-95"
                   >
-                    <Plus className='h-6 w-6' />
-                    Add
+                    <Plus className="h-4 w-4" />
+                    <span>Add</span>
                   </button>
                 </div>
               </div>
             )}
 
-            {/* Parameter Cards */}
-            {filteredParameters.map((data, idx) => { 
+            {/* Parameter cards — Assign button separated; Options floats beside card */}
+            {filteredParameters.map((data) => {
               const { label, content } = formatParameter(data.parameter);
               const accredInfoId = data.accredInfoId;
               const levelId = data.levelId;
@@ -210,6 +209,7 @@ const AreaParameters = () => {
               const areaId = data.areaId;
               const parameterId = data.parameter_id;
               const childKey = `${accredInfoId}-${levelId}-${programId}-${areaId}-${parameterId}`;
+
               return (
                 <div
                   key={data.parameter_uuid}
@@ -226,13 +226,15 @@ const AreaParameters = () => {
                     localStorage.removeItem('modal-type');
                     localStorage.removeItem('modal-data');
                   }}
-                  className='flex flex-col mb-8 justify-between border border-slate-600 hover:shadow-lg hover:cursor-pointer shadow-slate-800 transition rounded-md bg-slate-800 p-5 w-full h-45 sm:w-[45%] lg:w-[30%] relative'
+                  className="group relative flex w-full max-w-[380px] cursor-pointer flex-col justify-between overflow-visible rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-emerald-300 hover:shadow-md"
                 >
-                  {/* Top Row: Label + Ellipsis */}
-                  {activeParamId && <div className='absolute inset-0 z-20'></div>}
-                  <div className='flex items-center justify-between'>
+                  {/* Block background clicks while dropdown is open */}
+                  {activeParamId && <div className="absolute inset-0 z-10" />}
+
+                  {/* Header: title + menu button */}
+                  <div className="mb-1.5 flex items-center justify-between">
                     <h3
-                      className='font-semibold text-lg text-slate-300 cursor-pointer'
+                      className="truncate text-sm font-semibold text-slate-900"
                       onClick={() => {
                         navigate(
                           PARAM_SUBPARAMS({
@@ -246,40 +248,34 @@ const AreaParameters = () => {
                         localStorage.removeItem('modal-type');
                         localStorage.removeItem('modal-data');
                       }}
+                      title={label}
                     >
-                      {label}
+                      Parameter {label}
                     </h3>
 
-                    {/* Ellipsis */}
                     <button
-                      onClick={(e) =>
-                        handleParamOptionClick(e, {
-                          paramId: data.parameter_uuid,
-                        })
-                      }
-                      title='Options'
-                      className={`text-white hover:bg-slate-700 ${activeParamId === data.parameter_uuid && 'bg-slate-700'} p-1 rounded-full transition cursor-pointer`}
+                      onClick={(e) => handleParamOptionClick(e, { paramId: data.parameter_uuid })}
+                      title="Options"
+                      className={`rounded-full bg-white p-1.5 text-slate-700 shadow-sm transition hover:bg-slate-50 active:opacity-70 cursor-pointer ${
+                        activeParamId === data.parameter_uuid ? 'ring-2 ring-emerald-200' : ''
+                      }`}
                     >
-                      <EllipsisVertical className='h-5 w-5' />
+                      <EllipsisVertical className="h-4 w-4" />
                     </button>
                   </div>
 
-                  {/* Parameter Content */}
+                  {/* Content with popover on hover */}
                   <div
                     onMouseEnter={(e) => handleMouseEnter(e, data.parameter_uuid)}
-                    onMouseLeave={(e) => handleMouseLeave(e)}
-                    className='relative cursor-pointer'
+                    onMouseLeave={handleMouseLeave}
+                    className="relative"
                   >
-                    <p className='text-white text-xl font-semibold truncate'>
-                      {content}
-                    </p>
+                    <p className="truncate text-base font-semibold text-slate-900">{content}</p>
                     {hoveredId === data.parameter_uuid && <Popover content={content} />}
                   </div>
-                  
-                  <hr className={`text-slate-700 mt-4`}></hr>
 
-                  {/* Bottom: Task Force + FileUser */}
-                  <div className='relative h-7 flex items-center justify-between'>
+                  {/* Assignees & Assign button (separate row) */}
+                  <div className="mt-3 flex items-center justify-between">
                     <ProfileStack
                       key={childKey}
                       data={{
@@ -291,69 +287,68 @@ const AreaParameters = () => {
                         parameterId,
                       }}
                       handlers={{ handleProfileStackClick }}
-                      scope='parameter'
-                      showBorder={true}
+                      scope="parameter"
+                      showBorder
                     />
 
                     <button
-                      title='Assign Task Force'
+                      title="Assign Task Force"
                       onClick={(e) =>
                         handleFileUserClick(e, {
                           parameterId: data.parameter_id,
                           parameter: data.parameter,
                         })
                       }
-                      className='absolute right-0 text-white hover:bg-white/20 p-1 rounded-full transition cursor-pointer'
+                      className="rounded-full border border-slate-200 bg-white p-1.5 text-slate-700 shadow-sm transition hover:bg-slate-50 active:opacity-70 cursor-pointer"
                     >
-                      <FileUser />
+                      <FileUser className="h-4 w-4" />
                     </button>
                   </div>
 
-                  {/* Progress Bar */}
+                  {/* Progress (compact card) */}
                   {loadingParamProgress ? (
-                    <p className='mt-4 text-sm text-slate-400'>Loading progress...</p>
+                    <p className="mt-2 text-[11px] text-slate-600">Loading progress...</p>
                   ) : errorParamProgress ? (
-                    <p className='mt-4 text-sm text-red-400'>Error loading progress</p>
+                    <p className="mt-2 text-[11px] text-red-600">Error loading progress</p>
                   ) : (() => {
                     if (!paramProgress || !Array.isArray(paramProgress)) return null;
-                      
-                      const matchedProgress = paramProgress.find(
-                        (item) =>
-                          Number(item.apmId) === Number(data.apmId) &&
-                          Number(item.areaId) === Number(data.areaId) &&
-                          Number(item.parameterId) === Number(data.parameter_id)
-                      );
 
-                      console.log(matchedProgress);
+                    const matched = paramProgress.find(
+                      (item) =>
+                        Number(item.apmId) === Number(data.apmId) &&
+                        Number(item.areaId) === Number(data.areaId) &&
+                        Number(item.parameterId) === Number(data.parameter_id)
+                    );
+                    if (!matched) return null;
 
-                      if (!matchedProgress) return null;
+                    const progress = Number(matched.progress || 0).toFixed(1);
+                    const { status, color } = getProgressStyle(progress);
 
-                      const progress = Number(matchedProgress.progress || 0).toFixed(1);
-                      const { status, color } = getProgressStyle(progress);
+                    return (
+                      <div className="mt-2 rounded-lg border border-slate-200 bg-white p-3">
+                        <div className="mb-1 flex items-center justify-between">
+                          <span className="text-[11px] font-semibold text-slate-700">Progress</span>
+                          <span className="text-[11px] font-semibold text-slate-700">{progress}%</span>
+                        </div>
+                        <ProgressBar progress={progress} color={color} status={status} />
+                      </div>
+                    );
+                  })()}
 
-                      return (
-                        <ProgressBar
-                          key={childKey} 
-                          progress={progress} 
-                          color={color} 
-                          status={status}
-                        />
-                      );
-                    })()}
-
-                  {/* Dropdown */}
+                  {/* Dropdown — floats BESIDE the card (right side on ≥sm, hugs edge on xs) */}
                   {activeParamId === data.parameter_uuid && (
-                    <div ref={paramOptionRef} className='absolute left-36 top-12 z-30'>
-                      <Dropdown
-                        width={'w-48'}
-                        border={'border border-slate-300 rounded-lg bg-slate-800'}
-                      >
+                    <div
+                      ref={paramOptionRef}
+                      className="absolute z-40 top-11 right-11 sm:ml-2"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Dropdown width="w-56" border="border border-slate-200 rounded-lg bg-white shadow-lg">
                         {MENU_OPTIONS.DEAN.PARAMETER_OPTIONS.map((item) => {
                           const Icon = item.icon;
                           return (
                             <React.Fragment key={item.id}>
                               {item.label === 'Delete' && (
-                                <hr className='my-1 mx-auto w-[90%] text-slate-300' />
+                                <hr className="my-1 mx-auto w-[92%] text-slate-200" />
                               )}
                               <p
                                 onClick={(e) =>
@@ -365,14 +360,15 @@ const AreaParameters = () => {
                                     parameter: data.parameter,
                                   })
                                 }
-                                className={`flex items-center gap-2 p-2 rounded-md text-sm cursor-pointer active:scale-99 transition ${
-                                  item.label === 'Delete'
-                                    ? 'hover:bg-red-200 text-red-600'
-                                    : 'hover:bg-slate-200 text-slate-800'
-                                }`}
+                                className={`flex cursor-pointer items-center rounded-md px-3 py-2 text-sm transition
+                                  ${
+                                    item.label === 'Delete'
+                                      ? 'text-red-600 hover:bg-red-50'
+                                      : 'text-slate-700 hover:bg-slate-50'
+                                  }`}
                               >
-                                <Icon />
-                                <span>{item.label}</span>
+                                <Icon className="h-4 w-4" />
+                                <span className="ml-2">{item.label}</span>
                               </p>
                             </React.Fragment>
                           );

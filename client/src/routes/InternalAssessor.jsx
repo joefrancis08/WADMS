@@ -5,16 +5,20 @@ import ProtectedRoute from './ProtectedRoute';
 import LoadSpinner from '../components/Loaders/LoadSpinner';
 import Accreditation from '../pages/Task-Force/Accreditation';
 import { USER_ROLES } from '../constants/user';
-import Dashboard from '../pages/Internal-Assessor/Dashboard';
+import Dashboard from '../pages/Internal-Assessor/Home';
+import CGSPage from '../pages/Internal-Assessor/CGSPage';
+import Home from '../pages/Internal-Assessor/Home';
 
 const { 
-  DASHBOARD
+  DASHBOARD,
+  CGS
 } = PATH.INTERNAL_ASSESSOR;
 
 const { LOGIN, NOT_FOUND_URL } = PATH.PUBLIC;
 
 const protectedRoutes = [
-  { path: DASHBOARD, element: <Dashboard />},
+  { path: DASHBOARD, element: <Home />},
+  { path: CGS, element: <CGSPage />}
 ];
 
 const Loader = (

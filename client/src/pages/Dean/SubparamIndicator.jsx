@@ -120,7 +120,7 @@ const SubparamIndicator = () => {
         {/* Main Container */}
         <div className='bg-slate-900 m-2 pb-2 border border-slate-700 rounded-lg'>
           {/* Header Section: Breadcrumb + Search */}
-          <div className='sticky top-0 z-50 flex flex-col md:flex-row md:items-center md:justify-between shadow px-4 pt-4 bg-slate-900 p-4 rounded-t-lg gap-4 border-b border-slate-700'>
+          <div className='sticky top-0 z-40 flex flex-col md:flex-row md:items-center md:justify-between shadow px-4 pt-4 bg-slate-900 p-4 rounded-t-lg gap-4 border-b border-slate-700'>
             <Breadcrumb items={breadcrumbItems} />
 
             {/* Search bar */}

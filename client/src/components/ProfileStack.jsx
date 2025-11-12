@@ -1,119 +1,114 @@
-import Popover from "./Popover";
-
 const PROFILE_PIC_PATH = import.meta.env.VITE_PROFILE_PIC_PATH;
 
-const ProfileStack = ({ 
-  data = {}, 
-  handlers = {}, 
-  scope = 'area', // Can be 'area', 'parameter', or 'subparameter',
+const ProfileStack = ({
+  data = {},
+  handlers = {},
+  scope = 'area', // 'area' | 'parameter' | 'subParameter' | 'indicator'
   showBorder = false,
   ui = 'dean'
 }) => {
   const { assignmentData = [], taskForce = [], accredInfoId, levelId, programId } = data;
   const { handleProfileStackClick } = handlers;
 
-  console.log({ assignmentData, taskForce, accredInfoId, levelId, programId });
-
   // Mapping for dynamic IDs
   const idMapping = {
     area: 'areaID',
     parameter: 'parameterID',
     subParameter: 'subParameterID',
+    indicator: 'indicatorID'
   };
 
-  console.log(assignmentData);
-
   const scopeIdKey = idMapping[scope];
-  const currentScopeId = data[`${scope}ID`] || data[`${scope}_ID`] || data[`${scope}_id`] || data[`${scope}Id`];
+  const currentScopeId =
+    data[`${scope}ID`] ??
+    data[`${scope}_ID`] ??
+    data[`${scope}_id`] ??
+    data[`${scope}Id`];
 
+  // Filter assignments for current context (accred + level + program) and scope
   const filteredAssignments = assignmentData.filter((a) => {
-  const aProgramId = a.programID ?? a.programId;
-  const aLevelId = a.levelID ?? a.levelId;
-  const aAccredId = a.accredID ?? a.accredInfoId;
+    const aProgramId = a.programID ?? a.programId;
+    const aLevelId = a.levelID ?? a.levelId;
+    const aAccredId = a.accredID ?? a.accredInfoId;
 
-  const sameContext =
-    Number(aProgramId) === Number(programId) &&
-    Number(aLevelId) === Number(levelId) &&
-    Number(aAccredId) === Number(accredInfoId);
+    const sameContext =
+      Number(aProgramId) === Number(programId) &&
+      Number(aLevelId) === Number(levelId) &&
+      Number(aAccredId) === Number(accredInfoId);
 
-  if (!sameContext) return false;
+    if (!sameContext) return false;
 
     switch (scope) {
       case 'area':
-        // Include everything under same area
         return a.areaID === currentScopeId;
-
       case 'parameter':
-        // Include parameter + any assignments that belong to its subparameters/indicators
-        return (
-          a.parameterID === currentScopeId
-        );
-
+        return a.parameterID === currentScopeId;
       case 'subParameter':
-        // Include subparameter + any assignments tied to its indicators
-        return (
-          a.subParameterID === currentScopeId
-        );
-
+        return a.subParameterID === currentScopeId;
       case 'indicator':
         return a.indicatorID === currentScopeId;
-
       default:
         return false;
     }
   });
 
-  // Deduplicate by Task Force ID
-  const uniqueTaskForceIds = [
-    ...new Set(filteredAssignments.map(a => a.taskForceID))
-  ];
+  // Deduplicate by Task Force ID, then map to TF objects
+  const uniqueTaskForceIds = [...new Set(filteredAssignments.map((a) => a.taskForceID))];
 
   const assignedTaskForces = uniqueTaskForceIds
-    .map(id => taskForce.find(tf => tf.id === id))
-    .filter(Boolean); // remove nulls
+    .map((id) => taskForce.find((tf) => tf.id === id))
+    .filter(Boolean);
 
   if (assignedTaskForces.length === 0) return null;
 
   return (
-    <div className='relative flex hover:bg-slate-200/20 items-center rounded-full p-1'>
-      {assignedTaskForces.map((tf, idx) => (
-        <div
-          key={`${tf.id}-${idx}`}
-          title='Assigned Task Force (Click to see details)'
-          onClick={(e) => {
-            const taskForcesForScope = filteredAssignments.map(a => {
-              const match = taskForce.find(tf => tf.id === a.taskForceID);
-              console.log(match);
-              return {
-                uuid: match?.uuid,
-                id: match?.id,
-                fullName: match?.fullName || a.taskForce,
-                role: a.role,
-                profilePic: match?.profilePicPath || '/default-profile-picture.png',
-              };
-            });
+    <div className='relative flex items-center rounded-full p-0.5 hover:bg-slate-100/60'>
+      <div className='flex -space-x-2'>
+        {assignedTaskForces.map((tf, idx) => (
+          <button
+            key={`${tf.id}-${idx}`}
+            type='button'
+            title='Assigned Task Force (click to see details)'
+            aria-label='Assigned Task Force'
+            onClick={(e) => {
+              const taskForcesForScope = filteredAssignments.map((a) => {
+                const match = taskForce.find((t) => t.id === a.taskForceID);
+                return {
+                  uuid: match?.uuid,
+                  id: match?.id,
+                  fullName: match?.fullName || a.taskForce,
+                  role: a.role,
+                  profilePic: match?.profilePicPath || '/default-profile-picture.png'
+                };
+              });
 
-            handleProfileStackClick(e, {
-              accredInfoId,
-              levelId,
-              programId,
-              [`${scope}Id`]: currentScopeId,
-              [scope]: filteredAssignments[0]?.[scope],
-              taskForces: taskForcesForScope,
-            });
-          }}
-          className='first:m-0 -ml-2 flex items-center justify-start cursor-pointer'
-        >
-          <img
-            src={tf?.profilePicPath?.startsWith?.('http')
-              ? tf.profilePicPath
-              : `${PROFILE_PIC_PATH}/${tf.profilePicPath || 'default-profile-picture.png'}`}
-            alt='Task Force Profile Picture'
-            className={`h-5 w-5 rounded-full ${showBorder && 'outline-2 outline-slate-800'}`}
-            loading='lazy'
-          />
-        </div>
-      ))}
+              handleProfileStackClick?.(e, {
+                accredInfoId,
+                levelId,
+                programId,
+                [`${scope}Id`]: currentScopeId,
+                [scope]: filteredAssignments[0]?.[scope],
+                taskForces: taskForcesForScope
+              });
+            }}
+            className='relative inline-flex h-6 w-6 items-center justify-center rounded-full ring-1 ring-slate-200 hover:ring-emerald-300 transition cursor-pointer bg-white'
+          >
+            <img
+              src={
+                tf?.profilePicPath?.startsWith?.('http')
+                  ? tf.profilePicPath
+                  : `${PROFILE_PIC_PATH}/${tf?.profilePicPath || 'default-profile-picture.png'}`
+              }
+              alt={tf?.fullName ? `${tf.fullName}'s profile picture` : 'Task force profile picture'}
+              className={[
+                'h-6 w-6 rounded-full object-cover',
+                showBorder ? 'ring ring-emerald-400' : ''
+              ].join(' ')}
+              loading='lazy'
+            />
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

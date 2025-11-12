@@ -103,7 +103,10 @@ const TaskForceLayout = ({ children }) => {
                 src="/pit-logo-outlined.png"
                 alt="PIT Logo"
               />
-              <p>Palompon Institute of Technology</p>
+              <p className="flex flex-col">
+                <span>Palompon Institute of Technology</span>
+                <span className="text-slate-100 text-xs font-normal italic">College of Graduate Studies</span>
+              </p>
             </div>
 
             {/* Middle: Links (Desktop) */}
@@ -125,8 +128,8 @@ const TaskForceLayout = ({ children }) => {
             </div>
 
             {/* Right: Actions */}
-            <div className="flex items-center gap-x-2">
-              <button
+            <div className="flex items-center gap-x-3">
+              {/* <button
                 title={isDark ? 'Light Mode' : 'Dark Mode'}
                 onClick={toggleDarkMode}
                 className="p-2 rounded-full hover:bg-slate-700 cursor-pointer"
@@ -135,7 +138,7 @@ const TaskForceLayout = ({ children }) => {
                   ? <Sun className="h-6 w-6 text-slate-100"/> 
                   : <Moon className="h-6 w-6 text-slate-100"/>
                 }
-              </button>
+              </button> */}
               <button 
                 title={`${notifications.filter(n => Number(n?.isRead) === 0).length} unread notifications`}
                 onClick={handleBellClick}

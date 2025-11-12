@@ -89,20 +89,8 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
     localStorage.setItem('sidebar-open-dropdowns', JSON.stringify(newState));
   };
 
-  const handleLogoutClick = () => {
+  const handleLogoutClick = async () => {
     setOpenUserMenu(false);
-    setModalType(MODAL_TYPE.LOGOUT);
-  };
-
-  const handleOpenUserMenu = () => {
-    setOpenUserMenu(!openUserMenu);
-  };
-
-  const handleCloseModal = () => {
-    setModalType(null);
-  };
-
-  const handleLogout = async () => {
     try {
       const res = await logoutUser();
       if (res.data.success) {
@@ -113,10 +101,15 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
       } else {
         showErrorToast('Logout failed. Try again.');
       }
+
     } catch (error) {
       showErrorToast('Something went wrong. Try again.');
       console.error(error);
     }
+  };
+
+  const handleOpenUserMenu = () => {
+    setOpenUserMenu(!openUserMenu);
   };
 
   return (
@@ -278,23 +271,6 @@ const SidebarLG = ({ menuItems, unverifiedUserCount }) => {
           </div>
         )}
       </div>
-      {modalType === MODAL_TYPE.LOGOUT && (
-        <ConfirmationModal 
-          onClose={handleCloseModal}
-          onCancelClick={handleCloseModal}
-          onConfirmClick={handleLogout}
-          primaryButton={'Logout'}
-          secondaryButton={'Cancel'}
-          bodyContent={
-            <div className='flex flex-col items-center justify-center gap-y-5 mb-5'>
-              <img src={logoutIcon} alt="Log out Icon" className='h-28 w-28 text-white opacity-50' loading='lazy' />
-              <p className='text-lg text-black'>
-                Are you sure you want to logout?
-              </p>
-            </div>
-          }
-        />
-      )}
     </aside>
   );
 };

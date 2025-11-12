@@ -177,7 +177,7 @@ const ParamSubparam = () => {
                 ) : (
                   <div className='flex flex-col items-start justify-center mt-2'>
                     <p className='flex items-center gap-2 text-sm text-center my-1.5 text-slate-100'>
-                      No uploaded document.
+                      <span className='py-1'>No uploaded document.</span>
                       {canUploadFor(data.sub_parameter_id) && (
                         <span
                           onClick={(e) => { e.stopPropagation() }}

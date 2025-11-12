@@ -1,18 +1,40 @@
-import React from "react";
+import React from 'react';
 
-const ProgressBar = ({ progress, color = "bg-green-500", status }) => {
+/**
+ * ProgressBar
+ * - Keeps backward compatibility with existing props:
+ *   - progress: number (0-100)
+ *   - color: Tailwind bg- class (e.g. "bg-emerald-600")
+ *   - status: string (used for a11y label only)
+ * - No inline % text to avoid redundancy (your parent already shows it).
+ * - Light theme, subtle track and border, smooth animation.
+ */
+const ProgressBar = ({
+  progress = 0,
+  color = 'bg-emerald-600',
+  status = 'progress',
+  compact = false,          // optional: slightly thinner bar
+  className = ''            // optional: extra classes for outer wrapper
+}) => {
+  const pct = Math.max(0, Math.min(100, Number(progress) || 0));
+  const height = compact ? 'h-2' : 'h-2.5';
+
   return (
-    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-full z-20 -mb-16">
-      <div className="relative w-full bg-slate-700 border border-slate-600 rounded-full h-4 shadow-inner overflow-hidden">
+    <div
+      className={`relative w-full ${className}`}
+      role='progressbar'
+      aria-label={status || 'progress'}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={pct}
+      title={`${pct}%`}
+    >
+      <div className={`w-full ${height} rounded-full bg-slate-100 border border-slate-200 overflow-hidden`}>
         <div
-          style={{ width: `${progress}%` }}
-          className={`h-full ${color} transition-all duration-700 ease-in-out rounded-full`}
-        ></div>
-        <span className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 font-semibold text-xs text-white">
-          {progress}%
-        </span>
+          className={`${height} ${color} rounded-full transition-all duration-500 ease-in-out`}
+          style={{ width: `${pct}%` }}
+        />
       </div>
-      <p className="mt-1 text-center text-xs font-medium text-white">{status}</p>
     </div>
   );
 };

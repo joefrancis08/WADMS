@@ -1,10 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import DeanLayout from '../../components/Layout/Dean/DeanLayout';
 import {
-  ChevronRight,
   FolderOpen,
   Plus,
-  CirclePlus,
   Search,
   FolderPlus,
 } from 'lucide-react';
@@ -20,15 +18,12 @@ import formatAreaName from '../../utils/formatAreaName';
 import Breadcrumb from '../../components/Breadcrumb';
 import useDebouncedValue from '../../hooks/useDebouncedValue';
 import { messageHandler } from '../../services/websocket/messageHandler';
-import { useEffect } from 'react';
 
 const { PROGRAMS_TO_BE_ACCREDITED, AREA_PARAMETERS, PROGRAM_AREAS } = PATH.DEAN;
 
 const ParamSubparam = () => {
   const { navigate, modalType, modalData, refs, params, datas, states, handlers } = useParamSubparam();
   const { accredInfoUUID, level, programUUID, areaUUID } = params;
-  const { previewFile, setPreviewFile, activeDocId, renameInput, renameDocId, loadingFileId } = states;
-  console.log(previewFile);
   const {
     subParamInputRef, fileOptionRef, renameFileRef, subParamOptionRef, assignedTaskForceRef,
   } = refs;
@@ -60,9 +55,11 @@ const ParamSubparam = () => {
     assignmentData,
     activeTaskForceId,
     showConfirmUnassign,
+    activeDocId,
+    loadingFileId,
+    previewFile,
+    setPreviewFile,
   } = datas;
-
-  console.log(documentsBySubParam);
 
   const {
     handleAddSubparamClick,
@@ -99,27 +96,21 @@ const ParamSubparam = () => {
     handleConfirmUnassign,
   } = handlers;
 
+  // WebSocket updates (unchanged)
   const [payload, setPayload] = useState();
+  useEffect(() => {
+    const { cleanup } = messageHandler((type, payload) => {
+      // Keep behavior identical, just store latest payload for any side-effects the hook depends on
+      setPayload(payload);
+    });
+    return cleanup;
+  }, []);
 
-  // SEARCH STATE
+  // Search (debounced)
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedQuery = useDebouncedValue(searchQuery, 250);
   const lowerQ = debouncedQuery.toLowerCase();
 
-  useEffect(() => {
-    // Listen for all WebSocket updates
-    const { cleanup } = messageHandler((type, payload) => {
-      console.log('📡 WebSocket Update:', type, payload);
-      setPayload(payload);
-    });
-
-    // Cleanup on unmount to avoid memory leaks
-    return cleanup;
-  }, []);
-
-  console.log(payload);
-
-  // Filter subparameters by query
   const filteredSubparams = useMemo(() => {
     if (!lowerQ) return subParamsData;
     return subParamsData.filter(({ sub_parameter }) =>
@@ -151,7 +142,7 @@ const ParamSubparam = () => {
       onClick: () => navigate(PROGRAM_AREAS({ accredInfoUUID, level, programUUID })),
     },
     {
-      label: parameter,
+      label: `Parameter ${formatParameterName(parameter)}`,
       onClick: () => navigate(AREA_PARAMETERS({ accredInfoUUID, level, programUUID, areaUUID })),
     },
     {
@@ -162,66 +153,77 @@ const ParamSubparam = () => {
 
   return (
     <DeanLayout>
-      <div className='flex-1 p-3'>
-        <div className='bg-slate-900 m-2 pb-2 border border-slate-700 rounded-lg'>
-          {/* Header: Breadcrumb + Search (aligned opposite) */}
-          <div className='sticky top-0 z-50 flex flex-col md:flex-row md:items-center md:justify-between shadow px-4 pt-4 bg-slate-900 p-4 rounded-t-lg gap-4 border-b border-slate-700'>
-            {/* Breadcrumbs (left) */}
-            <Breadcrumb items={breadcrumbItems} />
+      <div className="flex-1 bg-slate-50">
+        {/* Sticky header: breadcrumb + search + add */}
+        <div className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur">
+          <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between">
+            <Breadcrumb items={breadcrumbItems} variant="light" />
 
-            {/* Search (right on desktop, below on mobile) */}
-            <div className='relative flex items-center gap-x-2 w-full md:w-120'>
-              <Search className='absolute left-3 top-2.5 h-5 w-5 text-slate-400' />
+            <div className="relative flex w-full items-center gap-2 md:w-[30rem]">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <input
-                type='text'
+                type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder='Search sub-parameter...'
-                className='pl-10 pr-3 py-2 rounded-full bg-slate-800 text-slate-100 border border-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 w-full transition-all'
+                placeholder="Search sub-parameter..."
+                className="w-full rounded-full border border-slate-300 bg-white px-9 py-2 text-sm text-slate-900 placeholder-slate-400 outline-none transition focus:border-emerald-400"
               />
               <button
-                title='Add new area'
+                title="Add new sub-parameter"
                 onClick={handleAddSubparamClick}
-                className="inline-flex min-w-32 items-center justify-center gap-1 px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-full shadow active:scale-95 transition cursor-pointer"
+                className="inline-flex min-w-28 cursor-pointer items-center justify-center gap-1 rounded-full bg-emerald-600 px-3 py-2 text-sm font-medium text-white shadow-sm ring-1 ring-emerald-300 transition hover:bg-emerald-500 active:scale-95"
               >
-                <FolderPlus className="h-5 w-5" />
+                <FolderPlus className="h-4 w-4" />
                 <span>Add New</span>
               </button>
             </div>
           </div>
+        </div>
 
-          {/* Program + level display */}
-          <div className='flex items-center justify-center mt-4 max-md:mt-10 w-auto mx-auto mb-8'>
-            <p className='relative text-center gap-2 w-full'>
-              <span className='text-yellow-400 font-bold text-xl md:text-2xl lg:text-3xl tracking-wide'>
-                {program}
-              </span>
-              <span className='absolute -bottom-10 right-1/2 translate-x-1/2 text-xs md:text-lg px-6 bg-green-700 text-white font-medium'>
-                {levelName} &#8226; {formatAreaName(area)} &#8226; Parameter{' '}
-                {formatParameterName(parameter)}
-              </span>
-            </p>
-          </div>
+        {/* Centered Program header with auto-size pill (matches other pages) */}
+        <div className="mx-auto mt-6 flex w-[85%] items-center justify-center md:mt-8 md:w-[75%] lg:w-[80%]">
+          <p className="relative mb-8 text-center min-w-0">
+            <span className="text-lg font-bold tracking-wide text-emerald-800 md:text-2xl lg:text-2xl">
+              {program}
+            </span>
+            <span
+              className="absolute -bottom-7 left-1/2 -translate-x-1/2 inline-flex max-w-[90vw] items-center whitespace-nowrap rounded-full bg-emerald-700 px-4 py-1 text-sm font-bold text-white shadow-sm ring-1 ring-emerald-900/10"
+              title={`${levelName} • ${formatAreaName(area)} • Parameter ${formatParameterName(parameter)}`}
+            >
+              {levelName} &bull; {formatAreaName(area)} &bull; Parameter {formatParameterName(parameter)}
+            </span>
+          </p>
+        </div>
 
-          {/* Subparameters list */}
+        {/* Sub-parameters list */}
+        <div className="mx-auto mb-10 max-w-7xl px-4">
           <div
-            className={`flex flex-wrap gap-8 justify-center mb-8 py-8 px-2 mx-2 rounded ${
+            className={`mt-2 flex flex-wrap justify-center gap-6 rounded py-2 ${
               filteredSubparams.length ? 'items-start' : 'items-center'
             }`}
           >
             {/* Empty state */}
             {filteredSubparams.length === 0 && (
-              <div className='flex flex-col items-center justify-center py-8'>
-                <FolderOpen className='text-slate-600' size={160} />
-                <p className='text-lg font-medium text-slate-300 mt-2'>
+              <div className="flex flex-col items-center justify-center rounded-xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+                <FolderOpen className="h-20 w-20 text-slate-400" />
+                <p className="mt-3 text-sm font-medium text-slate-700">
                   {subParamsData.length === 0
                     ? `No sub-parameters to display for Parameter ${formatParameterName(parameter)}.`
                     : `No sub-parameters found for “${searchQuery}”.`}
                 </p>
+                <div className="mt-3">
+                  <button
+                    onClick={handleAddSubparamClick}
+                    className="flex cursor-pointer items-center justify-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-1.5 text-sm font-medium text-slate-800 shadow transition hover:border-emerald-500 hover:bg-slate-50 active:scale-95"
+                  >
+                    <Plus className="h-4 w-4" />
+                    <span>Add</span>
+                  </button>
+                </div>
               </div>
             )}
 
-            {/* Cards pspmId, sub_parameter_uuid, sub_parameter, sub_parameter_id*/}
+            {/* Cards */}
             {filteredSubparams.map((data) => {
               const docsArray = documentsBySubParam[data.sub_parameter_id] ?? [];
               const isExpanded = expandedId === data.sub_parameter_id;
@@ -231,17 +233,9 @@ const ParamSubparam = () => {
               const areaId = data.areaId;
               const parameterId = data.parameterId;
               const subParameterId = data.sub_parameter_id;
-              console.log({
-                accredInfoId,
-                levelId,
-                programId,
-                areaId,
-                parameterId,
-                subParameterId
-              });
 
               return (
-                <div key={data.sub_parameter_uuid} className='mb-4 w-full md:w-[45%] relative'>
+                <div key={data.sub_parameter_uuid} className="mb-4 w-full md:w-[46%] relative">
                   <SubParamCard
                     refs={{ subParamOptionRef }}
                     activeSubParamId={activeSubParamId}
@@ -275,7 +269,7 @@ const ParamSubparam = () => {
                     handleProfileStackClick={handleProfileStackClick}
                   />
 
-                  {/* Dropdown */}
+                  {/* File actions dropdown (unchanged behavior) */}
                   {isExpanded && docsArray.length > 0 && (
                     <DocumentDropdown
                       docsArray={docsArray}
@@ -303,12 +297,14 @@ const ParamSubparam = () => {
                       handleSaveFile={handleSaveFile}
                     />
                   )}
+
+                  {/* Hidden input for uploads */}
                   <input
                     id={`file-input-${data.sub_parameter_id}`}
-                    type='file'
+                    type="file"
                     onChange={(e) => handleFileChange(e, data.sub_parameter_id)}
-                    accept='application/pdf,image/*'
-                    className='hidden'
+                    accept="application/pdf,image/*"
+                    className="hidden"
                   />
                 </div>
               );

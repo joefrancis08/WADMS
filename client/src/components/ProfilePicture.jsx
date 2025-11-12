@@ -17,7 +17,7 @@ const ProfilePicture = ({
             ? profilePic
             : `${PROFILE_PIC_PATH}/${profilePic || 'default-profile-picture.png'}`
         }
-        className="w-full h-full"
+        className="w-full h-full flex"
       />
     </div>
   );
