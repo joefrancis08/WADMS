@@ -1,39 +1,46 @@
 import React from 'react';
-import { ChevronRight, EllipsisVertical, File, FileSpreadsheet, FileText, FileUser } from 'lucide-react';
-import ProfileStack from '../../../ProfileStack';
+import {
+  ChevronRight,
+  EllipsisVertical,
+  File,
+  FileText,
+  FileUser,
+} from 'lucide-react';
 import Dropdown from '../../../Dropdown/Dropdown';
-import { MENU_OPTIONS } from '../../../../constants/user';
+import ProfileStack from '../../../ProfileStack';
 import deduplicateAssignments from '../../../../utils/deduplicateAssignments';
+import { MENU_OPTIONS } from '../../../../constants/user';
 
 const SubParamCard = ({
   refs,
   commonData,
-  subParam,             // object: { sub_parameter_uuid, sub_parameter, sub_parameter_id }
-  activeSubParamId,     // activeId of subparameter
-  docsArray = [],       // documents array for this subparam
-  selectedFiles = null,  // selected file for upload
-  isExpanded = false,   // whether the dropdown is expanded
+  subParam,
+  activeSubParamId,
+  docsArray = [],
+  selectedFiles = null,
+  isExpanded = false,
   assignmentData,
   taskForce,
-  handleSPCardClick,    // click handler for empty docs
-  toggleExpand,         // toggle expand handler
-  handleSaveFile,       // save selected file
-  removeSelectedFile,   // remove selected file
-  handleUploadClick,     // upload file click
+  handleSPCardClick,
+  toggleExpand,
+  handleSaveFile,
+  removeSelectedFile,
+  handleUploadClick,
   handleFileUserClick,
   handleSubParamOption,
   handleSubParamOptionItem,
-  handleProfileStackClick
-
+  handleProfileStackClick,
 }) => {
   const { subParamOptionRef } = refs;
-  const { pspmId, sub_parameter_uuid, sub_parameter, sub_parameter_id } = subParam;
-  const { 
-    accredInfoId, levelId, programId, 
-    areaId, parameterId, subParameterId 
+  const { sub_parameter_uuid, sub_parameter, sub_parameter_id, pspmId } = subParam;
+  const {
+    accredInfoId,
+    levelId,
+    programId,
+    areaId,
+    parameterId,
+    subParameterId,
   } = commonData;
-
-  console.log(pspmId);
 
   return (
     <div
@@ -44,68 +51,68 @@ const SubParamCard = ({
           toggleExpand(sub_parameter_id);
         }
       }}
-      className='flex flex-col border border-slate-700 hover:shadow shadow-slate-600 p-4 rounded-md transition cursor-pointer bg-slate-800 h-auto'
+      className="relative flex flex-col w-full rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-emerald-300 hover:shadow-md cursor-pointer"
     >
-      {activeSubParamId && <div className='absolute inset-0 z-20'></div>}
-      <div className='relative flex items-center justify-between mb-3'>
-        {/* Sub-Parameter Title */}
-        <p className='font-medium text-slate-100 text-lg truncate'>
+      {/* Header: title + ellipsis */}
+      <div className="relative flex items-center justify-between mb-3">
+        <p className="truncate text-lg font-semibold text-slate-900">
           {sub_parameter}
         </p>
-        <button 
+        <button
           onClick={(e) => handleSubParamOption(e, sub_parameter_uuid)}
-          className={`text-slate-100 cursor-pointer p-2 hover:bg-slate-700 rounded-full active:scale-98 ${activeSubParamId === sub_parameter_uuid && 'bg-slate-700'}`}
+          className={`rounded-full border border-slate-200 bg-white p-1.5 text-slate-700 shadow-sm transition hover:bg-slate-50 active:opacity-70 cursor-pointer ${
+            activeSubParamId === sub_parameter_uuid ? 'ring-2 ring-emerald-200' : ''
+          }`}
         >
-          <EllipsisVertical className='h-5 w-5'/>
+          <EllipsisVertical className="h-5 w-5" />
         </button>
-        {console.log(activeSubParamId)}
+
         {activeSubParamId === sub_parameter_uuid && (
-          <>
-            <div className='absolute inset-0 z-20'></div>
-            <div ref={subParamOptionRef} className='absolute top-0 right-5/11 flex items-center shadow-md z-40'>
-              <Dropdown 
-                width={'w-50'} 
-                border={'border border-slate-300 rounded-lg bg-slate-800'}
-              >
-                {MENU_OPTIONS.DEAN.SUB_PARAMETER_OPTIONS.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <React.Fragment key={item.id}>
-                      {item.label === 'Delete' && (
-                        <hr className='my-1 mx-auto w-[90%] text-slate-300'></hr>
-                      )}
-                      <p 
-                        onClick={(e) => handleSubParamOptionItem(e, {
+          <div
+            ref={subParamOptionRef}
+            className="absolute right-0 top-10 z-[60]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Dropdown width="w-56" border="border border-slate-200 rounded-lg bg-white shadow-lg">
+              {MENU_OPTIONS.DEAN.SUB_PARAMETER_OPTIONS.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <React.Fragment key={item.id}>
+                    {item.label === 'Delete' && (
+                      <hr className="my-1 mx-auto w-[92%] text-slate-200" />
+                    )}
+                    <p
+                      onClick={(e) =>
+                        handleSubParamOptionItem(e, {
                           label: item.label,
                           pspmId,
                           subParamId: sub_parameter_id,
                           subParamUUID: sub_parameter_uuid,
-                          subParameter: sub_parameter
-                        })}
-                        className={`flex items-center p-2 rounded-md text-sm active:scale-99 transition
-                          ${item.label === 'Delete' 
-                            ? 'hover:bg-red-200 text-red-600' 
-                            : 'hover:bg-slate-200'}`}
-                      >
-                        <Icon />
-                        <span className='ml-2'>
-                          {item.label}
-                        </span>
-                      </p>
-                    </React.Fragment>
-                  );
-                })}
-              </Dropdown>
-            </div>
-          </>
+                          subParameter: sub_parameter,
+                        })
+                      }
+                      className={`flex items-center rounded-md px-3 py-2 text-sm transition cursor-pointer ${
+                        item.label === 'Delete'
+                          ? 'text-red-600 hover:bg-red-50'
+                          : 'text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      <Icon className="h-4 w-4" />
+                      <span className="ml-2">{item.label}</span>
+                    </p>
+                  </React.Fragment>
+                );
+              })}
+            </Dropdown>
+          </div>
         )}
       </div>
 
-      {/* Document count + chevron */}
+      {/* Documents section */}
       {docsArray.length ? (
-        <div className='flex justify-between items-center mt-1 text-sm text-slate-100 hover:bg-slate-700 rounded'>
-          <p className='flex items-center gap-x-2 hover:bg-slate-700 rounded p-1'>
-            <FileText className='h-5 w-5'/>
+        <div className="flex justify-between items-center text-sm text-slate-700">
+          <p className="flex items-center gap-2">
+            <FileText className="h-5 w-5" />
             {docsArray.length} {docsArray.length === 1 ? 'document' : 'documents'}
           </p>
           <button
@@ -113,58 +120,53 @@ const SubParamCard = ({
               e.stopPropagation();
               toggleExpand(sub_parameter_id);
             }}
-            className='ml-2 p-2 rounded-full cursor-pointer'
+            className="p-1.5 rounded-full hover:bg-slate-50 cursor-pointer"
           >
             <ChevronRight
-              className={`h-5 w-5 transition-all duration-100 ${isExpanded ? 'rotate-90' : ''}`}
+              className={`h-5 w-5 transition-transform duration-150 ${
+                isExpanded ? 'rotate-90' : ''
+              }`}
             />
           </button>
         </div>
       ) : (
-        <div className='flex flex-col items-start justify-center mt-2'>
+        <div className="mt-2">
           {selectedFiles?.[sub_parameter_id] ? (
-            <div className='relative flex justify-between items-center mb-2 border-b border-slate-600 w-full'>
-              <p className='flex items-center gap-2 text-sm text-center mt-2 max-w-[150px] lg:max-w-[300px] mb-2 text-slate-100'>
-                <File className='h-5 w-5 flex-shrink-0' />
-                <span
-                  title={selectedFiles?.[sub_parameter_id]?.name}
-                  className='truncate'
-                >
-                  {selectedFiles?.[sub_parameter_id]?.name}
-                </span>
+            <div className="flex justify-between items-center border-b border-slate-200 pb-2 mb-2">
+              <p className="flex items-center gap-2 text-sm text-slate-700 truncate max-w-[200px]">
+                <File className="h-5 w-5" />
+                {selectedFiles[sub_parameter_id].name}
               </p>
-              <div>
-                <p className='text-sm text-slate-100'>
-                  <span
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSaveFile(sub_parameter_id);
-                    }}
-                    className='hover:bg-slate-700 px-3 py-1 rounded-full transition-all'
-                  >
-                    Confirm
-                  </span>
-                  <span
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeSelectedFile(sub_parameter_id);
-                    }}
-                    className='hover:bg-slate-200 px-3 py-1 rounded-full text-red-400 transition-all'
-                  >
-                    Remove
-                  </span>
-                </p>
+              <div className="flex gap-2">
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSaveFile(sub_parameter_id);
+                  }}
+                  className="text-emerald-700 hover:underline cursor-pointer"
+                >
+                  Confirm
+                </span>
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeSelectedFile(sub_parameter_id);
+                  }}
+                  className="text-red-500 hover:underline cursor-pointer"
+                >
+                  Remove
+                </span>
               </div>
             </div>
           ) : (
-            <p className='flex items-center gap-2 text-sm text-center my-1.5 max-w-[150px] lg:max-w-[300px] text-slate-100'>
-              No uploaded document.{'\n'}
+            <p className="text-sm text-slate-700">
+              No uploaded document.{' '}
               <span
                 onClick={(e) => {
                   e.stopPropagation();
                   handleUploadClick(sub_parameter_id);
                 }}
-                className='hover:underline text-blue-400'
+                className="text-emerald-700 hover:underline cursor-pointer"
               >
                 Upload
               </span>
@@ -172,32 +174,37 @@ const SubParamCard = ({
           )}
         </div>
       )}
-      <hr className='text-slate-700 my-2'></hr>
-      <div className='flex items-center justify-between px-1'>
-        <div className='-ml-2'>
-          <ProfileStack 
-            data={{ 
-              assignmentData: deduplicateAssignments(assignmentData, 'subParameter'), 
-              taskForce,
-              accredInfoId,
-              levelId,
-              programId,
-              areaId,
-              parameterId, 
-              subParameterId: sub_parameter_id }}
-            handlers={{ handleProfileStackClick }}
-            scope='subParameter'
-          />
-        </div>
+
+      <hr className="my-3 border-slate-200" />
+
+      {/* Footer: Taskforce / Assign */}
+      <div className="flex items-center justify-between">
+        <ProfileStack
+          data={{
+            assignmentData: deduplicateAssignments(assignmentData, 'subParameter'),
+            taskForce,
+            accredInfoId,
+            levelId,
+            programId,
+            areaId,
+            parameterId,
+            subParameterId: sub_parameter_id,
+          }}
+          handlers={{ handleProfileStackClick }}
+          scope="subParameter"
+        />
         <button
-          title='Assign Task Force' 
-          onClick={(e) => handleFileUserClick(e, {
-            subParamId: sub_parameter_id,
-            subParamUUID: sub_parameter_uuid,
-            subParameter: sub_parameter
-          })}
-          className='-mr-2 p-2 rounded-full hover:bg-slate-700 text-slate-100 active:scale-98 cursor-pointer'>
-          <FileUser />
+          title="Assign Task Force"
+          onClick={(e) =>
+            handleFileUserClick(e, {
+              subParamId: sub_parameter_id,
+              subParamUUID: sub_parameter_uuid,
+              subParameter: sub_parameter,
+            })
+          }
+          className="rounded-full border border-slate-200 bg-white p-1.5 text-slate-700 shadow-sm hover:bg-slate-50 active:opacity-70 cursor-pointer"
+        >
+          <FileUser className="h-5 w-5" />
         </button>
       </div>
     </div>

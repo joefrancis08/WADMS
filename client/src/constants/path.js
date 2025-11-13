@@ -64,17 +64,17 @@ const PATH = {
   TASK_FORCE: {
     ACCREDITATION: '/t',
 
-    PROGRAM_AREAS: (programUUID) => `/a/${programUUID}`,
-    PROGRAM_AREAS_TEMPLATE: '/a/:programUUID',
+    PROGRAM_AREAS: (programUUID) => `/t/${programUUID}`,
+    PROGRAM_AREAS_TEMPLATE: '/t/:programUUID',
 
-    AREA_PARAMETERS: (areaUUID) => `/p/${areaUUID}`,
-    AREA_PARAMETERS_TEMPLATE: '/p/:areaUUID',
+    AREA_PARAMETERS: (areaUUID) => `/t/${areaUUID}`,
+    AREA_PARAMETERS_TEMPLATE: '/t/:areaUUID',
 
-    PARAM_SUBPARAMS: (paramUUID) => `/s/${paramUUID}`,
-    PARAM_SUBPARAMS_TEMPLATE: '/s/:paramUUID',
+    PARAM_SUBPARAMS: (paramUUID) => `/t/${paramUUID}`,
+    PARAM_SUBPARAMS_TEMPLATE: '/t/:paramUUID',
 
-    SUBPARAM_INDICATORS: (subParamUUID) => `/i/${subParamUUID}`,
-    SUBPARAM_INDICATORS_TEMPLATE: '/i/:subParamUUID',
+    SUBPARAM_INDICATORS: (subParamUUID) => `/t/${subParamUUID}`,
+    SUBPARAM_INDICATORS_TEMPLATE: '/t/:subParamUUID',
   },
 
   INTERNAL_ASSESSOR: {

@@ -9,7 +9,7 @@ import LEVEL from '../../constants/accreditationLevels';
 import Popover from '../../components/Popover';
 import TaskForceModal from '../../components/Task Force/TaskForceModal';
 
-const ProgramAreasDummy = () => {
+const ProgramAreas = () => {
   const { navigate, refs, params, states, datas, helpers, handlers } = useProgramAreas();
   const { loading, error, modalType } = states;
   const {
@@ -156,4 +156,4 @@ const ProgramAreasDummy = () => {
   );
 };
 
-export default ProgramAreasDummy;
+export default ProgramAreas;
