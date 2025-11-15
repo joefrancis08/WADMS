@@ -493,6 +493,7 @@ const useAccreditation = () => {
       activeDocId
     },
     datas: {
+      user,
       items,
       activeItemId,
       query,

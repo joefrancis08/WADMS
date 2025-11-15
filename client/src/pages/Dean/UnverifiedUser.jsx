@@ -220,7 +220,7 @@ const UnverifiedUsers = () => {
     <AdminLayout>
       <main className='flex-1 h-full bg-slate-50'>
         {/* Header */}
-        <div className='sticky top-0 flex flex-col md:flex-row items-center justify-between py-2 px-4 bg-white border-l border-b border-slate-200 z-50 mb-4 gap-2 md:gap-0'>
+        <div className='flex flex-col md:flex-row items-center justify-between py-2 px-4 bg-white border-l border-b border-slate-200 z-50 mb-4 gap-2 md:gap-0'>
           <h2 className='text-xl text-slate-900 font-bold'>Unverified Users</h2>
 
           {/* Search toggle / input */}

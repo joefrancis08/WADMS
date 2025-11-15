@@ -7,6 +7,8 @@ import { Link } from 'react-router-dom';
 import PATH from '../../constants/path';
 import { useUsersBy } from '../../hooks/fetch-react-query/useUsers';
 import { USER_ROLES } from '../../constants/user';
+import { useFetchILP } from '../../hooks/fetch-react-query/useFetchILP';
+import { useMemo } from 'react';
 
 const PROFILE_PIC_PATH = import.meta.env.VITE_PROFILE_PIC_PATH;
 const { TASK_FORCE_CHAIR, TASK_FORCE_MEMBER } = USER_ROLES;
@@ -82,7 +84,33 @@ const GROUPED_ACCREDITATIONS = Object.values(
 const Dashboard = () => {
   const { users = [], loading, error } = useUsersBy({ role: [TASK_FORCE_CHAIR, TASK_FORCE_MEMBER] });
   const { user, isLoading } = useAuth();
+  const { accredInfoLevelPrograms, loading: loadingILP, error: errorILP } = useFetchILP();
   usePageTitle('Dashboard');
+
+
+  console.log(accredInfoLevelPrograms);
+  const infoLevelProgramsData = useMemo(() => accredInfoLevelPrograms?.data ?? [], [accredInfoLevelPrograms.data]);
+
+  const grouped = useMemo(() => {
+      return infoLevelProgramsData.reduce((acc, item) => {
+        const accredTitle = `${item.accreditationInfo.accred_title} ${item.accreditationInfo.accred_year}`;
+        if (!acc[accredTitle]) acc[accredTitle] = {};
+        if (!acc[accredTitle][item.level]) acc[accredTitle][item.level] = [];
+        acc[accredTitle][item.level].push({
+          ...item.program,
+          ilpmId: item.ilpmId,
+          level: item.level,
+          accred_id: item.accreditationInfo.id,
+          accred_uuid: item.accreditationInfo.accred_uuid,
+          accred_year: item.accreditationInfo.accred_year,
+          accred_title: item.accreditationInfo.accred_title,
+          accred_body_name: item.accreditationInfo.accred_body
+        });
+        return acc;
+      }, {});
+    }, [infoLevelProgramsData]);
+
+  console.log(grouped); 
 
   const chairs = users?.filter(u => u.role === TASK_FORCE_CHAIR) ?? [];
   const members = users?.filter(u => u.role === TASK_FORCE_MEMBER) ?? [];
@@ -157,72 +185,79 @@ const Dashboard = () => {
                 {/* Upcoming / Active Accreditation with grouped programs & level chips inline */}
                 <div className='mt-6 overflow-hidden rounded-xl border border-slate-200'>
                   <div className='flex items-center justify-between border-b border-slate-200 px-4 py-3'>
-                    <h3 className='text-sm font-semibold text-slate-900'>Upcoming / Active Accreditation</h3>
+                    <h3 className='text-sm font-semibold text-slate-900'>Active Accreditation</h3>
                     <Link to={PATH.DEAN?.PROGRAMS_TO_BE_ACCREDITED || '#'} className='text-sm font-medium text-emerald-700 hover:underline'>
                       Manage
                     </Link>
                   </div>
 
                   <ul className='divide-y divide-slate-200'>
-                    {GROUPED_ACCREDITATIONS.map((group) => (
-                      <li key={group.title} className='group px-4 py-4'>
+                    {Object.entries(grouped).map(([accredTitle, levelsMap], idx) => (
+                      <li key={idx} className='group px-4 py-4'>
                         {/* Title line */}
                         <div className='mb-2 flex flex-wrap items-center gap-x-2'>
-                          <p className='text-sm font-semibold text-slate-900'>{group.title}</p>
+                          <p className='text-sm font-semibold text-slate-900'>{accredTitle}</p>
                         </div>
 
-                        {/* Render each program with its own level chip + progress */}
+                        {/* Programs under this accreditation */}
                         <div className='space-y-5'>
-                          {group.items.map((a) => {
-                            const progress = PROGRESS_BY_PROGRAM[a.program]; // { overall, areas } or undefined
-                            return (
-                              <div key={a.id} className='rounded-lg border border-slate-200 p-3'>
-                                {/* Program row: Level chip next to program name */}
-                                <div className='flex flex-wrap items-center justify-between gap-3'>
-                                  <div className='min-w-0'>
-                                    <div className='flex flex-wrap items-center gap-2'>
-                                      <span className='inline-flex items-center rounded-full bg-emerald-500 px-2.5 py-0.5 text-xs font-semibold text-white ring-1 ring-emerald-300/50'>
-                                        {a.level}
-                                      </span>
-                                      <p className='truncate text-sm font-medium text-slate-900'>{a.program}</p>
+                          {Object.entries(levelsMap).flatMap(([level, programs]) =>
+                            programs.map((program) => {
+                              const progress = PROGRESS_BY_PROGRAM[program.program]; // matches by program name
+
+                              return (
+                                <div key={program.id || program.program_uuid} className='rounded-lg border border-slate-200 p-3'>
+                                  {/* Program row: Level chip next to program name */}
+                                  <div className='flex flex-wrap items-center justify-between gap-3'>
+                                    <div className='min-w-0'>
+                                      <div className='flex flex-wrap items-center gap-2'>
+                                        <span className='inline-flex items-center rounded-full bg-emerald-500 px-2.5 py-0.5 text-xs font-semibold text-white ring-1 ring-emerald-300/50'>
+                                          {program.level}
+                                        </span>
+                                        <p className='truncate text-sm font-medium text-slate-900'>{program.program}</p>
+                                      </div>
+                                      <p className='mt-1 text-xs text-slate-500'>
+                                        {program.accred_year} • {program.accred_body_name}
+                                      </p>
                                     </div>
-                                    <p className='mt-1 text-xs text-slate-500'>{a.status}</p>
+
+                                    <Link
+                                      to={`${PATH.DEAN.PROGRAM_AREAS({ accredInfoUUID: program.accred_uuid, level: program.level.split(' ').join('-').toLowerCase(), programUUID: program.program_uuid})}`}
+                                      className='shrink-0 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition hover:border-emerald-300 hover:text-emerald-700'
+                                    >
+                                      Open
+                                    </Link>
                                   </div>
 
-                                  <Link
-                                    to={PATH.DEAN?.PROGRAMS_TO_BE_ACCREDITED || '#'}
-                                    className='shrink-0 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition hover:border-emerald-300 hover:text-emerald-700'
-                                  >
-                                    Open
-                                  </Link>
-                                </div>
+                                  {/* Progress section (if available) */}
+                                  {progress && (
+                                    <div className='mt-3 border-t border-dashed border-slate-200 pt-3'>
+                                      <div className='mb-2 flex items-center justify-between'>
+                                        <span className='text-[11px] font-semibold uppercase tracking-wide text-slate-700'>
+                                          Progress
+                                        </span>
+                                        <span className='text-xs font-semibold text-slate-700'>{progress.overall}%</span>
+                                      </div>
+                                      <Progress value={progress.overall} ariaLabel={`${program.program} overall progress`} />
 
-                                {/* Divider + Progress for this program */}
-                                {progress && (
-                                  <div className='mt-3 border-t border-dashed border-slate-200 pt-3'>
-                                    <div className='mb-2 flex items-center justify-between'>
-                                      <span className='text-[11px] font-semibold uppercase tracking-wide text-slate-700'>Progress</span>
-                                      <span className='text-xs font-semibold text-slate-700'>{progress.overall}%</span>
-                                    </div>
-                                    <Progress value={progress.overall} ariaLabel={`${a.program} overall progress`} />
-
-                                    {/* Areas (compact) */}
-                                    <div className='mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3'>
-                                      {progress.areas.map((ar) => (
-                                        <div key={ar.name}>
-                                          <div className='mb-1 flex items-center justify-between'>
-                                            <span className='text-[11px] text-slate-600'>{ar.name}</span>
-                                            <span className='text-[11px] font-medium text-slate-700'>{ar.percent}%</span>
+                                      {/* Areas (compact) */}
+                                      <div className='mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3'>
+                                        {progress.areas.map((area) => (
+                                          <div key={area.name}>
+                                            <div className='mb-1 flex items-center justify-between'>
+                                              <span className='text-[11px] text-slate-600'>{area.name}</span>
+                                              <span className='text-[11px] font-medium text-slate-700'>{area.percent}%</span>
+                                            </div>
+                                            <Progress value={area.percent} ariaLabel={`${area.name} progress`} compact />
                                           </div>
-                                          <Progress value={ar.percent} ariaLabel={`${ar.name} progress`} compact />
-                                        </div>
-                                      ))}
+                                        ))}
+                                      </div>
                                     </div>
-                                  </div>
-                                )}
-                              </div>
-                            );
-                          })}
+                                  )}
+                                </div>
+                              );
+                            })
+                          )}
                         </div>
                       </li>
                     ))}

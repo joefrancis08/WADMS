@@ -338,7 +338,7 @@ const useParamSubparam = () => {
 
     try {
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('files', file);
       formData.append('accredInfoId', accredInfoId);
       formData.append('levelId', levelId);
       formData.append('programId', programId);

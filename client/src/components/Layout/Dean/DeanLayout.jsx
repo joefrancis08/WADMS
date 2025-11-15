@@ -16,11 +16,15 @@ import {
   X,
   House,
   ChevronDown,
+  LogOut,
 } from 'lucide-react';
+import { logoutUser } from '../../../api-calls/users/userAPI';
+import { showErrorToast, showSuccessToast } from '../../../utils/toastNotification';
 
 const PROFILE_PIC_PATH = import.meta.env.VITE_PROFILE_PIC_PATH;
 
 const DeanLayout = ({ children }) => {
+  const { logout } = useAuth();
   const { UU } = USER_ROLES;
   const {
     DASHBOARD,
@@ -100,6 +104,22 @@ const DeanLayout = ({ children }) => {
       <span className='ml-2 rounded-full bg-red-600 px-1.5 py-0.5 text-xs font-semibold text-white'>{value}</span>
     ) : null;
 
+  const handleLogout = async () => {
+    try {
+      const res = await logoutUser();
+      if (res.data.success) {
+        logout();
+        showSuccessToast('Logged out successfully!', 'top-center');
+        localStorage.removeItem('token');
+      } else {
+        showErrorToast('Logout failed. Try again.');
+      }
+    } catch (error) {
+      showErrorToast('Something went wrong. Try again.');
+      console.error(error);
+    }
+  };
+
   return (
     <div className='min-h-screen flex flex-col bg-white text-slate-800'>
       {/* Navbar */}
@@ -122,7 +142,7 @@ const DeanLayout = ({ children }) => {
             <div className='hidden md:flex items-center gap-1 mx-auto'>
               {TABS.map((tab) => {
                 if (tab.type === 'link') {
-                  // 👇 Home uses exact match; others can use hierarchical
+                  // Home uses exact match; others can use hierarchical
                   const active = tab.id === 'home' ? isExactPath(tab.link) : isActivePath(tab.link);
                   return (
                     <Link
@@ -256,6 +276,13 @@ const DeanLayout = ({ children }) => {
                   <p className='text-slate-500 text-xs pt-1'>{user?.email}</p>
                 </div>
               </div>
+              <button
+                onClick={handleLogout}
+                  className='flex w-full items-center justify-center gap-2 bg-red-50 text-red-600 border border-red-200 rounded-full py-2 hover:bg-red-100 transition mt-3'
+                >
+                  <LogOut className='h-5 w-5' />
+                  Log Out
+                </button>
             </div>
           </div>
         )}
