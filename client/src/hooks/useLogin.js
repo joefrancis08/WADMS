@@ -129,13 +129,6 @@ const useLogin = () => {
         password: values.password
       });
 
-      console.log('Backend response:', data);
-
-      const { email } = data.tempUser;
-
-      console.log(data.tempUser);
-      console.log('User:', { email,  });
-
       // Step 3.1: Show toast notif if login is unsuccessful
       if (!data?.success) {
         showErrorToast(LOGIN.UNSUCCESSFUL, 'top-center', 5000);
@@ -157,7 +150,6 @@ const useLogin = () => {
       setOtpExpired(false);
 
     } catch (error) {
-      console.error(error);
       const { response } = error;
       const { data } = response;
       const { emailNotFound, wrongPassword } = data;
