@@ -10,20 +10,33 @@ const login = async (req, res) => {
   const email = (req.body.email || '').trim().toLowerCase();
   const password = (req.body.password || '').trim();
 
+  console.log({ email, password });
+
   try {
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required.', success: false });
     }
 
     const user = await getUserBy('email', email, true, true, false);
+    
     // Avoiding user enumeration
     if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials.', success: false });
+      return res.status(400).json({ 
+        message: 'Invalid credentials.', 
+        success: false,
+        emailNotFound: true
+      });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials.', success: false });
+    if (user.password) {
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ 
+          message: 'Invalid credentials.', 
+          success: false, 
+          wrongPassword: true 
+        });
+      }
     }
 
     // Generate and upsert OTP (valid 5 minutes)
@@ -37,12 +50,8 @@ const login = async (req, res) => {
       await insertOTP({ otpCode: otp, expiresAt, userId: user.id });
     }
 
-    // IMPORTANT: do NOT create any authenticated session here.
-    // If you used to set req.session.pendingUser, remove it to avoid extra sessions.
-    // If you *really* want a pending marker, you can store it in DB or set it and call req.session.save() — but the cleanest is to skip it.
-
     // Send OTP email
-    const BRAND_GREEN = '#16A34A'; // Tailwind green-600
+    const BRAND_GREEN = '#16A34A';
     const SLATE_50 = '#F8FAFC';
     const SLATE_100 = '#F1F5F9';
     const SLATE_200 = '#E2E8F0';
