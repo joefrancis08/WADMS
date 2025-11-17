@@ -69,24 +69,28 @@ const addAreaParameterMapping = async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error);
-    // Catch duplicate entry
-    if (error.message === 'DUPLICATE_ENTRY') {
+    console.error('addAreaParameterMapping error:', error);
+    // MySQL duplicate entry -> respond 409 + include duplicateValue (if parsable)
+    if (error?.code === 'ER_DUP_ENTRY' || error?.errno === 1062) {
+      // try to extract duplicate value from sqlMessage: "Duplicate entry 'VALUE' for key '...'"
+      const msg = error?.sqlMessage ?? error?.message ?? '';
+      const m = msg.match(/Duplicate entry '(.+?)'/);
+      const duplicateValue = m ? m[1] : null;
       return res.status(409).json({
         success: false,
         isDuplicate: true,
-        duplicateValue: error.duplicateValue,
-        message: `${error.duplicateValue} already exist.`
-      })
+        duplicateValue,
+        message: duplicateValue ? `${duplicateValue} already exist.` : 'Duplicate entry.'
+      });
     }
 
-    // Return other server errors
-    res.status(500).json({
+    // Other errors -> 500
+    return res.status(500).json({
       success: false,
       message: 'Internal server error',
-      error
+      error: (error && error.message) ? error.message : error,
     });
-  }
+   }
 };
 
 export default addAreaParameterMapping;

@@ -206,10 +206,34 @@ const useAreaParameters = () => {
       handleCloseModal({ addParam: true });
 
     } catch (error) {
-      const duplicateValue = error?.response?.data?.error?.duplicateValue;
-      setDuplicateValues(prev => [...new Set([...prev, duplicateValue])]);
-      showErrorToast(`${duplicateValue} already exist.`, 'top-center');
-      console.log(error);
+      console.error('handleSaveParameters error - full response:', error?.response ?? error);
+      const resp = error?.response;
+      const isDuplicate = resp?.status === 409 || resp?.data?.isDuplicate === true;
+
+      // Try multiple places where duplicate info might be provided
+      const duplicateValue =
+        resp?.data?.duplicateValue ??
+        resp?.data?.error?.duplicateValue ??
+        resp?.data?.message ??
+        null;
+
+      if (isDuplicate) {
+        // normalize to a string for display
+        const dup = Array.isArray(duplicateValue)
+          ? duplicateValue.find(Boolean) ?? duplicateValue[0]
+          : duplicateValue;
+
+        if (dup) {
+          setDuplicateValues(prev => [...new Set([...prev, dup])]);
+          showErrorToast(`${dup} already exist.`, 'top-center');
+        } else {
+          // duplicate reported but no value provided
+          showErrorToast('The data entered already exist. Please check your input.', 'top-center');
+        }
+      } else {
+        // non-duplicate error
+        showErrorToast('Failed to add parameter. Please try again later.', 'top-center');
+      }
     }
   };
 

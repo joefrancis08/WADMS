@@ -6,6 +6,7 @@ import {
   FileText,
   Folder,
   FolderOpen,
+  FolderPlus,
   LoaderCircle,
   Pen,
   Trash2,
@@ -356,13 +357,23 @@ const AssignmentTab = ({ refs = {}, states = {}, data = {}, handlers = {} }) => 
                                 />
                               ) : (
                                 <>
-                                  <button
+                                  {/* <button
                                     title='Upload'
                                     onClick={() => handleUploadClick(area.areaID)}
                                     className='text-slate-500 hover:bg-slate-50 p-1.5 rounded-full active:scale-95'
                                   >
                                     <Upload size={20} />
-                                  </button>
+                                  </button> */}
+
+                                  {/* If user role is Task Force Chair, he/she can add parameter */}
+                                  {!hasParams && user.role === USER_ROLES.TASK_FORCE_CHAIR && (
+                                    <button
+                                      title='Add parameter'
+                                      className='cursor-pointer p-2 rounded-full hover:bg-slate-200 active:scale-98'
+                                    >
+                                      <FolderPlus size={22}/>
+                                    </button>
+                                  )}
                                   <input
                                     multiple
                                     id={`file-input-area-${area.areaID}`}

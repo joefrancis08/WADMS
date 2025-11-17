@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { showErrorToast, showSuccessToast } from "../../utils/toastNotification";
@@ -364,25 +363,36 @@ export const useProgramsToBeAccredited = () => {
       }
 
     } catch (error) {
-      const duplicates = error?.response?.data?.duplicateValue;
-      const duplicateProgram = error?.response?.data?.duplicateValue[4];
+      console.error('handleSave error', error);
 
-      console.log(error);
-      console.log(duplicateProgram);
+      const resp = error?.response;
+      const isDuplicateResp = resp?.status === 409 || resp?.data?.isDuplicate === true;
+      const duplicates = resp?.data?.duplicateValue ?? null;
 
-      if (options.isFromCard) {
-        showErrorToast(`${duplicateProgram} already exist.`, 'top-center', 5000);
-        setDuplicateValues(prev => [...new Set([...prev, duplicateProgram])]);
+      if (isDuplicateResp) {
+        // normalize duplicates into an array for safe access
+        const dupArr = Array.isArray(duplicates) ? duplicates : (duplicates ? [duplicates] : []);
 
-      } else if (options?.isFromHeader) {
-        const duplicateLevel = error?.response?.data?.duplicateValue[3];
-        setDuplicateValues(prev => [...new Set([...prev, duplicateLevel, duplicateProgram])]);
-        showErrorToast(`${duplicateLevel} and ${duplicateProgram} already exist!`);
+        if (options.isFromCard) {
+          const duplicateProgram = dupArr[4] ?? dupArr[0] ?? 'Program';
+          showErrorToast(`${duplicateProgram} already exist.`, 'top-center', 5000);
+          setDuplicateValues(prev => [...new Set([...prev, duplicateProgram])]);
+
+        } else if (options?.isFromHeader) {
+          const duplicateLevel = dupArr[3] ?? dupArr[0] ?? 'Level';
+          const duplicateProgram = dupArr[4] ?? dupArr[1] ?? '';
+          setDuplicateValues(prev => [...new Set([...prev, duplicateLevel, ...(duplicateProgram ? [duplicateProgram] : [])])]);
+          showErrorToast(`${duplicateLevel}${duplicateProgram ? ' and ' + duplicateProgram : ''} already exist!`);
+
+        } else {
+          setDuplicateValues(prev => [...new Set([...prev, ...dupArr])]);
+          setIsAllDuplicates(true);
+          showErrorToast('The data entered already exist. Please check your input.', 'top-center', 8000);
+        }
 
       } else {
-        setDuplicateValues(prev => [...new Set([...prev, duplicates])]);
-        setIsAllDuplicates(true);
-        showErrorToast('The data entered already exist. Please check your input.', 'top-center', 8000);
+        // Generic non-duplicate error
+        showErrorToast('Failed to save. Please try again later.', 'top-center', 8000);
       }
     }
   };
