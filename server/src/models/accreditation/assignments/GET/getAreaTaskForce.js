@@ -5,7 +5,7 @@ import db from "../../../../config/db.js";
   This can be integrated to getUser.jsx
   but i don't know how so i just put it here.
  */
-const getTaskForceMembers = async (data = {}, connection = null) => {
+const getAreaTaskForce = async (data = {}, connection = null) => {
   const { 
     accredInfoId, 
     levelId, 
@@ -27,12 +27,11 @@ const getTaskForceMembers = async (data = {}, connection = null) => {
       AND aa.level_id = ?
       AND aa.program_id = ?
       AND aa.area_id = ?
-      AND u.role = ?
   `;
 
   try {
     const executor = connection || db;
-    const [rows] = await executor.execute(query, [accredInfoId, levelId, programId, areaId, 'Task Force Member']);
+    const [rows] = await executor.execute(query, [accredInfoId, levelId, programId, areaId]);
     return rows;
 
   } catch (error) {
@@ -41,4 +40,4 @@ const getTaskForceMembers = async (data = {}, connection = null) => {
   }
 };
 
-export default getTaskForceMembers;
+export default getAreaTaskForce;

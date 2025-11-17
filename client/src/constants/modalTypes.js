@@ -41,7 +41,9 @@ const MODAL_TYPES = Object.freeze({
 
   LOGOUT: 'logout-user',
 
-  VIEW_ACCESS_LINK: 'view-access-link'
+  VIEW_ACCESS_LINK: 'view-access-link',
+
+  TASK_FORCE_AREA_ASSIGNMENT: 'task-force-area-assignment'
 });
 
 export default MODAL_TYPES;

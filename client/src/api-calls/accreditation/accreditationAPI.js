@@ -342,6 +342,18 @@ export const fetchAccreditationBodies = (signal) => {
   });
 };
 
+export const fetchAreaTaskForce = ({ accredInfoId, levelId, programId, areaId },signal) => {
+  return apiClient.get(`/accreditation/fetch-area-task-force`, {
+    params: { 
+      accredInfoId, 
+      levelId, 
+      programId, 
+      areaId 
+    },
+    signal
+  });
+};
+
 export const updateDocName = (docId, newFileName) => {
   return apiClient.patch(`/accreditation/rename-document/${docId}`, {
     newFileName

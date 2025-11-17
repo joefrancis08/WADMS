@@ -11,6 +11,9 @@ const DocList = ({
   handleDocOptionClick,
   handleDelete,
   docOptionRef,
+  makeSelectionKey,
+  filterDocs,
+  resolveLevel
 }) => {
   const [menuPos, setMenuPos] = useState(null);
   const buttonRef = useRef(null);

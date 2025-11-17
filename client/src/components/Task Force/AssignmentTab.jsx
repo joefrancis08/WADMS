@@ -1,23 +1,13 @@
-import React, { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { checkList, toga } from '../../assets/icons';
 import {
-  ChevronDown,
   EllipsisVertical,
   FileText,
-  Folder,
-  FolderOpen,
-  FolderPlus,
   LoaderCircle,
   Pen,
   Trash2,
-  Upload,
-  UserPlus,
-  UserRoundPlus,
 } from 'lucide-react';
-import Dropdown from '../Dropdown/Dropdown';
-import { USER_ROLES } from '../../constants/user';
-import useFetchAreaParameters from '../../hooks/fetch-react-query/useFetchAreaParameters';
-import { fetchAreaParameters } from '../../api-calls/accreditation/accreditationAPI';
+import AreaSection from './AreaSection';
 
 /** Utility: unique selection key per hierarchy level */
 const makeSelectionKey = ({
@@ -324,344 +314,31 @@ const AssignmentTab = ({ refs = {}, states = {}, data = {}, handlers = {} }) => 
                         {console.log(groupedAssignments)}
 
                         return (
-                          <div
-                            key={area.areaID}
-                            className='border border-slate-200 rounded-lg p-4 bg-slate-50'
-                          >
-                            {/* Area Row */}
-                            <div
-                              onClick={
-                                hasParams
-                                  ? () =>
-                                      handleDropdownClick({
-                                        isShowParameter: true,
-                                        id: areaKey,
-                                      })
-                                  : undefined
-                              }
-                              className={`flex items-center justify-between p-2 rounded-lg ${
-                                hasParams ? 'hover:bg-slate-100 cursor-pointer' : ''
-                              }`}
-                            >
-                              <div className='flex items-center gap-2'>
-                                <FolderOpen className='text-slate-500' />
-                                <h5 className='text-base font-semibold text-slate-800'>
-                                  {area.area}
-                                </h5>
-                              </div>
-
-                              {hasParams ? (
-                                <ChevronDown
-                                  className={`transition text-slate-500 ${
-                                    activeParamId === areaKey
-                                      && 'rotate-180'
-                                  }`}
-                                />
-                              ) : (
-                                <>
-                                  {/* <button
-                                    title='Upload'
-                                    onClick={() => handleUploadClick(area.areaID)}
-                                    className='text-slate-500 hover:bg-slate-50 p-1.5 rounded-full active:scale-95'
-                                  >
-                                    <Upload size={20} />
-                                  </button> */}
-
-                                  {/* If user role is Task Force Chair, he/she can add parameter */}
-                                  {!hasParams && user.role === USER_ROLES.TASK_FORCE_CHAIR && (
-                                    <button
-                                      title='Add parameter'
-                                      className='cursor-pointer p-2 rounded-full hover:bg-slate-200 active:scale-98'
-                                    >
-                                      <FolderPlus size={22}/>
-                                    </button>
-                                  )}
-                                  <input
-                                    multiple
-                                    id={`file-input-area-${area.areaID}`}
-                                    type='file'
-                                    onChange={(e) => handleFileChange(e, area.areaID)}
-                                    accept='application/pdf,image/*'
-                                    className='hidden'
-                                    data-accred-info-id={accredID}
-                                    data-level-id={levelID}
-                                    data-program-id={programID}
-                                    data-area-id={area.areaID}
-                                  />
-                                </>
-                              )}
-                            </div>
-
-                            {/* === Parameters === */}
-                            {activeParamId === areaKey &&
-                              (area.parameters || []).map((param) => {
-                                const paramKey = `${areaKey}-${param.parameterID}`;
-                                const hasSubParams = (param.subParameters || []).length > 0;
-
-                                return (
-                                  <div key={param.parameterID} className='ml-8 mt-3'>
-                                    <div
-                                      onClick={
-                                        hasSubParams
-                                          ? () =>
-                                              handleDropdownClick({
-                                                isShowSubParam: true,
-                                                id: paramKey,
-                                              })
-                                          : undefined
-                                      }
-                                      className={`flex items-center justify-between p-2 rounded-lg ${
-                                        hasSubParams
-                                          ? 'hover:bg-slate-100 cursor-pointer'
-                                          : ''
-                                      }`}
-                                    >
-                                      <div className='flex items-center gap-2'>
-                                        <Folder className='text-slate-500' />
-                                        <p className='text-slate-800 font-medium'>
-                                          {param.parameter}
-                                        </p>
-                                        {user.role === USER_ROLES.TASK_FORCE_CHAIR && (
-                                          <button
-                                            title='Assign Member' 
-                                            onClick={(e) => e.stopPropagation()}
-                                            className='ml-1 hover:bg-slate-200 p-1 rounded-full cursor-pointer active:scale-95'>
-                                            <UserRoundPlus size={18}/>
-                                          </button>
-                                        )}
-                                      </div>
-
-                                      {hasSubParams ? (
-                                        <ChevronDown
-                                          className={`transition text-slate-500 ${
-                                            activeSubparamId === paramKey
-                                              && 'rotate-180'
-                                          }`}
-                                        />
-                                      ) : (
-                                        <>
-                                          <button
-                                            title='Upload'
-                                            onClick={() =>
-                                              handleUploadClick(param.parameterID)
-                                            }
-                                            className='text-slate-500 hover:bg-emerald-50 p-1.5 rounded-full active:scale-95'
-                                          >
-                                            <Upload size={20} />
-                                          </button>
-                                          <input
-                                            multiple
-                                            id={`file-input-param-${param.parameterID}`}
-                                            type='file'
-                                            onChange={(e) => handleFileChange(e, param.parameterID)}
-                                            accept='application/pdf,image/*'
-                                            className='hidden'
-                                            data-accred-info-id={accredID}
-                                            data-level-id={levelID}
-                                            data-program-id={programID}
-                                            data-area-id={area.areaID}
-                                            data-param-id={param.parameterID}
-                                          />
-                                        </>
-                                      )}
-                                    </div>
-
-                                    {/* Parameter-level docs */}
-                                    {!hasSubParams && (
-                                      <DocList
-                                        ids={{
-                                          accredID,
-                                          levelID,
-                                          programID,
-                                          areaID: area.areaID,
-                                          parameterID: param.parameterID,
-                                        }}
-                                        uploaderDocs={uploaderDocs}
-                                        selectedFiles={selectedFiles}
-                                        loadingUploaderDocuments={loadingUploaderDocuments}
-                                        areaKeyForBranch={areaKey}
-                                        activeDocId={activeDocId}
-                                        handleDocOptionClick={handleDocOptionClick}
-                                        handleDelete={handleDelete}
-                                        docOptionRef={docOptionRef}
-                                      />
-                                    )}
-
-                                    {/* === Subparameters === */}
-                                    {activeSubparamId === paramKey &&
-                                      (param.subParameters || []).map((sub) => {
-                                        const subParamKey = `${paramKey}-${sub.subParameterID}`;
-                                        const hasIndicators =
-                                          (sub.indicators || []).length > 0;
-
-                                        return (
-                                          <div key={sub.subParameterID} className='ml-8 mt-3'>
-                                            <div
-                                              onClick={
-                                                hasIndicators
-                                                  ? () =>
-                                                      handleDropdownClick({
-                                                        isShowIndicator: true,
-                                                        id: subParamKey,
-                                                      })
-                                                  : undefined
-                                              }
-                                              className={`flex items-center justify-between p-2 rounded-lg ${
-                                                hasIndicators
-                                                  ? 'hover:bg-emerald-50 cursor-pointer'
-                                                  : ''
-                                              }`}
-                                            >
-                                              <div className='flex items-center gap-2'>
-                                                <Folder className='text-slate-500' />
-                                                <p className='text-slate-800'>
-                                                  {sub.subParameter}
-                                                </p>
-                                              </div>
-
-                                              {hasIndicators ? (
-                                                <ChevronDown
-                                                  className={`transition text-slate-500 ${
-                                                    activeIndicatorId === subParamKey
-                                                      && 'rotate-180'
-                                                  }`}
-                                                />
-                                              ) : (
-                                                <>
-                                                  <button
-                                                    title='Upload'
-                                                    onClick={() =>
-                                                      handleUploadClick(sub.subParameterID)
-                                                    }
-                                                    className='text-slate-500 hover:bg-slate-50 p-1.5 rounded-full active:scale-95 cursor-pointer'
-                                                  >
-                                                    <Upload size={20} />
-                                                  </button>
-                                                  <input
-                                                    multiple
-                                                    id={`file-input-${sub.subParameterID}`}
-                                                    type='file'
-                                                    onChange={(e) =>
-                                                      handleFileChange(e, sub.subParameterID)
-                                                    }
-                                                    accept='application/pdf,image/*'
-                                                    className='hidden'
-                                                    data-accred-info-id={accredID}
-                                                    data-level-id={levelID}
-                                                    data-program-id={programID}
-                                                    data-area-id={area.areaID}
-                                                    data-param-id={param.parameterID}
-                                                    data-sub-parameter-id={sub.subParameterID}
-                                                  />
-                                                </>
-                                              )}
-                                            </div>
-
-                                            {/* Subparameter-level docs */}
-                                            {!hasIndicators && (
-                                              <DocList
-                                                ids={{
-                                                  accredID,
-                                                  levelID,
-                                                  programID,
-                                                  areaID: area.areaID,
-                                                  parameterID: param.parameterID,
-                                                  subParameterID: sub.subParameterID,
-                                                }}
-                                                uploaderDocs={uploaderDocs}
-                                                selectedFiles={selectedFiles}
-                                                loadingUploaderDocuments={
-                                                  loadingUploaderDocuments
-                                                }
-                                                areaKeyForBranch={areaKey}
-                                                activeDocId={activeDocId}
-                                                handleDocOptionClick={handleDocOptionClick}
-                                                handleDelete={handleDelete}
-                                                docOptionRef={docOptionRef}
-                                              />
-                                            )}
-
-                                            {/* === Indicators === */}
-                                            {activeIndicatorId === subParamKey &&
-                                              (sub.indicators || []).map((ind, idx) => {
-                                                const indicatorKey = `${subParamKey}-IND-${idx}`;
-                                                return (
-                                                  <div
-                                                    key={indicatorKey}
-                                                    className='ml-8 mt-3'
-                                                  >
-                                                    <div className='flex items-center gap-2 p-2 rounded-lg hover:bg-emerald-50'>
-                                                      <Folder className='text-slate-500' />
-                                                      <p className='text-slate-800'>{ind}</p>
-                                                      <>
-                                                        <button
-                                                          title='Upload'
-                                                          onClick={() =>
-                                                            handleUploadClick(
-                                                              `IND-${sub.subParameterID}-${idx}`
-                                                            )
-                                                          }
-                                                          className='text-slate-500 hover:bg-slate-50 p-1.5 rounded-full active:scale-95 cursor-pointer'
-                                                        >
-                                                          <Upload size={20} />
-                                                        </button>
-                                                        <input
-                                                          multiple
-                                                          id={`file-input-ind-${sub.subParameterID}-${idx}`}
-                                                          type='file'
-                                                          onChange={(e) =>
-                                                            handleFileChange(
-                                                              e,
-                                                              `IND-${sub.subParameterID}-${idx}`
-                                                            )
-                                                          }
-                                                          accept='application/pdf,image/*'
-                                                          className='hidden'
-                                                          data-accred-info-id={accredID}
-                                                          data-level-id={levelID}
-                                                          data-program-id={programID}
-                                                          data-area-id={area.areaID}
-                                                          data-param-id={param.parameterID}
-                                                          data-sub-parameter-id={
-                                                            sub.subParameterID
-                                                          }
-                                                          data-indicator-id={idx}
-                                                        />
-                                                      </>
-                                                    </div>
-
-                                                    {/* Indicator-level docs */}
-                                                    <DocList
-                                                      ids={{
-                                                        accredID,
-                                                        levelID,
-                                                        programID,
-                                                        areaID: area.areaID,
-                                                        parameterID: param.parameterID,
-                                                        subParameterID: sub.subParameterID,
-                                                        indicatorID: idx,
-                                                      }}
-                                                      uploaderDocs={uploaderDocs}
-                                                      selectedFiles={selectedFiles}
-                                                      loadingUploaderDocuments={
-                                                        loadingUploaderDocuments
-                                                      }
-                                                      areaKeyForBranch={areaKey}
-                                                      activeDocId={activeDocId}
-                                                      handleDocOptionClick={handleDocOptionClick}
-                                                      handleDelete={handleDelete}
-                                                      docOptionRef={docOptionRef}
-                                                    />
-                                                  </div>
-                                                );
-                                              })}
-                                          </div>
-                                        );
-                                      })}
-                                  </div>
-                                );
-                              })}
-                          </div>
+                          <AreaSection 
+                            accredID={accredID}
+                            levelID={levelID}
+                            programID={programID}
+                            area={area}
+                            areaKey={areaKey}
+                            hasParams={hasParams}
+                            activeParamId={activeParamId}
+                            activeSubparamId={activeSubparamId}
+                            activeIndicatorId={activeIndicatorId}
+                            loadingUploaderDocuments={loadingUploaderDocuments}
+                            activeDocId={activeDocId}
+                            docOptionRef={docOptionRef}
+                            handleDropdownClick={handleDropdownClick}
+                            handleUploadClick={handleUploadClick}
+                            handleFileChange={handleFileChange}
+                            handleDocOptionClick={handleDocOptionClick}
+                            handleDelete={handleDelete}
+                            selectedFiles={selectedFiles}
+                            uploaderDocs={uploaderDocs}
+                            user={user}
+                            makeSelectionKey={makeSelectionKey}
+                            filterDocs={filterDocs}
+                            resolveLevel={resolveLevel}
+                          />
                         );
                       })}
                     </div>

@@ -1,10 +1,10 @@
-import getTaskForceMembers from "../../../../models/accreditation/assignments/GET/getTaskForceMembers.js";
+import getAreaTaskForce from "../../../../models/accreditation/assignments/GET/getAreaTaskForce.js";
 
-const fetchTaskForceMembers = async (req, res) => {
+const fetchAreaTaskForce = async (req, res) => {
   const { accredInfoId, levelId, programId, areaId } = req.query;
 
   try {
-    const data = await getTaskForceMembers({
+    const data = await getAreaTaskForce({
       accredInfoId, 
       levelId, 
       programId, 
@@ -13,7 +13,7 @@ const fetchTaskForceMembers = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      taskForceMembersData: data
+      data
     });
 
   } catch (error) {
@@ -26,4 +26,4 @@ const fetchTaskForceMembers = async (req, res) => {
   }
 };
 
-export default fetchTaskForceMembers;
+export default fetchAreaTaskForce;

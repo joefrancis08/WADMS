@@ -24,7 +24,8 @@ import fetchSubParamProgress from '../controllers/progress/subparameter-progress
 import fetchIndicatorProgress from '../controllers/progress/indicator-progress/fetchIndicatorProgress.js';
 import fetchAssignmentsByUserId from '../controllers/accreditation/assignments/GET/fetchAssignmentsByUserId.js';
 import fetchDocumentsBy from '../controllers/accreditation/document/GET/fetchDocumentsBy.js';
-import fetchTaskForceMembers from '../controllers/accreditation/assignments/GET/fetchTaskForceMembers.js';
+import fetchTaskForceMembers from '../controllers/accreditation/assignments/GET/fetchAreaTaskForce.js';
+import fetchAreaTaskForce from '../controllers/accreditation/assignments/GET/fetchAreaTaskForce.js';
 
 const { D, M, C, I, A } = allowedRoles();
 
@@ -55,7 +56,7 @@ accreditationRouter.get('/fetch-documents', authorize([D, M, C, I, A]), fetchDoc
 accreditationRouter.get('/fetch-documents-by', authorize([D, M, C]), fetchDocumentsBy);
 accreditationRouter.get('/fetch-assignments', authorize([D, M, C]), fetchAssignmentController);
 accreditationRouter.get('/fetch-assignments-by-user-id', authorize([M, C]), fetchAssignmentsByUserId);
-accreditationRouter.get('/fetch-task-force-members', authorize([C]), fetchTaskForceMembers);
+accreditationRouter.get('/fetch-area-task-force', fetchAreaTaskForce);
 accreditationRouter.get('/fetch-program-progress', authorize([D]), fetchProgramProgress);
 accreditationRouter.get('/fetch-area-progress', authorize([D]), fetchAreaProgress);
 accreditationRouter.get('/fetch-parameter-progress', authorize([D]), fetchParamProgress);
