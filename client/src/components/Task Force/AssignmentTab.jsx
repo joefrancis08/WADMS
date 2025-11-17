@@ -16,6 +16,8 @@ import {
 } from 'lucide-react';
 import Dropdown from '../Dropdown/Dropdown';
 import { USER_ROLES } from '../../constants/user';
+import useFetchAreaParameters from '../../hooks/fetch-react-query/useFetchAreaParameters';
+import { fetchAreaParameters } from '../../api-calls/accreditation/accreditationAPI';
 
 /** Utility: unique selection key per hierarchy level */
 const makeSelectionKey = ({
@@ -260,8 +262,6 @@ const AssignmentTab = ({ refs = {}, states = {}, data = {}, handlers = {} }) => 
     handleDelete = () => {},
   } = handlers;
 
-  console.log(user);
-
   if (Object.keys(groupedAssignments || {}).length === 0)
     return (
       <div className='flex flex-col items-center justify-center h-[70vh] gap-6'>
@@ -320,6 +320,8 @@ const AssignmentTab = ({ refs = {}, states = {}, data = {}, handlers = {} }) => 
                       {(program.areas || []).map((area) => {
                         const areaKey = `${accredID}-${levelID}-${programID}-${area.areaID}`;
                         const hasParams = (area.parameters || []).length > 0;
+
+                        {console.log(groupedAssignments)}
 
                         return (
                           <div

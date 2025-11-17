@@ -274,37 +274,6 @@ const AreaParameters = () => {
                     {hoveredId === data.parameter_uuid && <Popover content={content} />}
                   </div>
 
-                  {/* Assignees & Assign button (separate row) */}
-                  <div className="mt-3 flex items-center justify-between">
-                    <ProfileStack
-                      key={childKey}
-                      data={{
-                        assignmentData: deduplicateAssignments(assignmentData, 'parameter'),
-                        taskForce,
-                        accredInfoId,
-                        levelId,
-                        programId,
-                        parameterId,
-                      }}
-                      handlers={{ handleProfileStackClick }}
-                      scope="parameter"
-                      showBorder
-                    />
-
-                    <button
-                      title="Assign Task Force"
-                      onClick={(e) =>
-                        handleFileUserClick(e, {
-                          parameterId: data.parameter_id,
-                          parameter: data.parameter,
-                        })
-                      }
-                      className="rounded-full border border-slate-200 bg-white p-1.5 text-slate-700 shadow-sm transition hover:bg-slate-50 active:opacity-70 cursor-pointer"
-                    >
-                      <FileUser className="h-4 w-4" />
-                    </button>
-                  </div>
-
                   {/* Progress (compact card) */}
                   {loadingParamProgress ? (
                     <p className="mt-2 text-[11px] text-slate-600">Loading progress...</p>

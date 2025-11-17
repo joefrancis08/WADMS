@@ -16,17 +16,6 @@ const addAssignment = async (req, res) => {
     indicatorId = null,
   } = req.body;
 
-  console.log({
-    userIDList,
-    accredInfoId,
-    levelId,
-    programId,
-    areaId,
-    parameterId,
-    subParameterId,
-    indicatorId,
-  });
-
   // Basic required IDs
   if (!accredInfoId || !levelId || !programId || !areaId) {
     return res.status(400).json({

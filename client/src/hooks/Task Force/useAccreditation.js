@@ -22,7 +22,7 @@ const useAccreditation = () => {
     () => accredInfoLevelPrograms?.data ?? [],
     [accredInfoLevelPrograms]
   );
-
+  
   const { assignments } = useFetchAssignmentsByUserId(user?.userId);
   const taskForceAssignments = useMemo(() => assignments?.assignmentData ?? [], [assignments?.assignmentData]);
 
@@ -476,6 +476,9 @@ const useAccreditation = () => {
       console.error(error);
       showErrorToast('Something went wrong. Try again.');
       throw error;
+
+    } finally {
+      setActiveDocId(null);
     }
   };
 
